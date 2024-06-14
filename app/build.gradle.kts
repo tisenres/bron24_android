@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.hilt)
+    kotlin("kapt")
 }
 
 android {
@@ -66,4 +68,23 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.hilt)
+    kapt(libs.hiltCompiler)
+    implementation(libs.hiltViewModel)
+    kapt(libs.hiltCompilerAndroidX)
+    implementation(libs.hiltNavigationCompose)
+
+    implementation(libs.locationServices)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofitMoshi)
+    implementation(libs.okhttpLoggingInterceptor)
+
+    implementation(libs.lifecycleViewModelCompose)
+}
+
+kapt {
+    correctErrorTypes = true
+    generateStubs = true
 }

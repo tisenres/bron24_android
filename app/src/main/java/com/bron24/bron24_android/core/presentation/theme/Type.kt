@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.ui.theme
+package com.bron24.bron24_android.core.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
