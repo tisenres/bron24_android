@@ -10,32 +10,25 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
+// Color schemes
 private val DarkColorScheme = darkColorScheme(
     primary = Black,
     secondary = White,
     tertiary = Green,
-    onTertiary = LightGray,
-//    background = Black,
-//    surface = Black,
-//    onPrimary = Black,
-//    onSecondary = Black,
-//    onTertiary = Black,
-//    onBackground = Color(0xFF1C1B1F),
-//    onSurface = Color(0xFF1C1B1F)
+    surface = DarkGray,
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = White,
     secondary = Black,
     tertiary = Green,
-    onTertiary = DarkGray,
+    surface = LightGray,
 )
 
 @Composable
 fun Bron24_androidTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -43,7 +36,6 @@ fun Bron24_androidTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
