@@ -1,16 +1,22 @@
 package com.bron24.bron24_android.features.language.presentation
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -33,7 +39,7 @@ fun LanguageSelectionScreen(viewModel: LanguageViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
-            .padding(top = 80.dp, start = 24.dp, end = 24.dp, bottom = 44.dp),
+            .padding(top = 80.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -78,7 +84,7 @@ fun LanguageSelectionScreen(viewModel: LanguageViewModel) {
         }
 
         ConfirmButton(
-            isEnabled = true,
+            isEnabled = selectedLanguage != null,
             onClick = {
                 viewModel.confirmLanguageSelection()
             }
@@ -93,17 +99,51 @@ fun LanguageOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Text(
-        text = language,
-        style = TextStyle(
-            color = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface,
-            fontSize = 48.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = robotoFontFamily
-        ),
-        modifier = modifier
-            .clickable(onClick = onClick)
+    var isPressed by remember { mutableStateOf(false) }
+
+    val animatedColor by animateColorAsState(
+        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface,
+        label = ""
     )
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        isPressed = true
+//                        tryAwaitRelease()
+                        isPressed = false
+                        onClick()
+                    }
+                )
+            }
+    ) {
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .height(48.dp)
+                    .background(MaterialTheme.colorScheme.tertiary)
+            )
+        } else {
+            Spacer(modifier = Modifier.width(4.dp))
+        }
+
+        Text(
+            text = language,
+            style = TextStyle(
+                color = animatedColor,
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = robotoFontFamily
+            ),
+            modifier = Modifier.padding(start = 8.dp)
+        )
+    }
 }
 
 @Composable
@@ -115,7 +155,7 @@ fun ConfirmButton(
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            contentColor = if (isEnabled) Color.White else MaterialTheme.colorScheme.surface,
+            contentColor = Color.White,
             containerColor = MaterialTheme.colorScheme.tertiary
         ),
         enabled = isEnabled,
@@ -128,15 +168,8 @@ fun ConfirmButton(
             text = "Keyingi",
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
-            fontFamily = robotoFontFamily
+            fontFamily = robotoFontFamily,
+            color = if (isEnabled) Color.White else Color.Gray
         )
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun SimpleComposablePreview() {
-//    Bron24_androidTheme {
-//        LanguageSelectionScreen()
-//    }
-//}

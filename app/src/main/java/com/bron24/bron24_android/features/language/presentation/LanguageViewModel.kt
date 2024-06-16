@@ -17,8 +17,8 @@ class LanguageViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val _selectedLanguage = MutableStateFlow(Language.UZBEK)
-    val selectedLanguage: StateFlow<Language> = _selectedLanguage
+    private val _selectedLanguage = MutableStateFlow<Language?>(null)
+    val selectedLanguage: StateFlow<Language?> = _selectedLanguage
 
     fun selectLanguage(language: Language) {
         _selectedLanguage.value = language
@@ -26,8 +26,10 @@ class LanguageViewModel @Inject constructor(
 
     fun confirmLanguageSelection() {
         viewModelScope.launch {
-            saveSelectedLanguage(_selectedLanguage.value)
-            updateLocale(getApplication(), _selectedLanguage.value.code)
+            _selectedLanguage.value?.let {
+                saveSelectedLanguage(it)
+                updateLocale(getApplication(), it.code)
+            }
         }
     }
 

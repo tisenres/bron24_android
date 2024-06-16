@@ -83,11 +83,9 @@ dependencies {
 
     implementation(libs.lifecycleViewModelCompose)
 
-    // Hilt for instrumentation tests
     androidTestImplementation(libs.hiltAndroidTesting)
     kaptAndroidTest(libs.hiltCompiler)
 
-    // Hilt for local unit tests
     testImplementation(libs.hiltAndroidTesting)
     kaptTest(libs.hiltCompiler)
 }
