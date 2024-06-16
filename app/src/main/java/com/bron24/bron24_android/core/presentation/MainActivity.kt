@@ -3,7 +3,6 @@ package com.bron24.bron24_android.core.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -13,14 +12,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
-import com.bron24.bron24_android.features.language.presentation.LanguageViewModel
 import com.bron24.bron24_android.features.location.presentation.LocationRequestScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val languageViewModel: LanguageViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
