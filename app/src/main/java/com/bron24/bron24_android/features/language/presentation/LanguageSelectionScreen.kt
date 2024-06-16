@@ -51,18 +51,24 @@ fun LanguageSelectionScreen(
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = "Bron24",
+                modifier = Modifier
+                    .padding(start = 24.dp)
+                    .height(32.dp)
+                    .width(78.dp),
                 style = TextStyle(
                     fontFamily = robotoFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
+                    lineHeight = 32.sp
                 ),
-                modifier = Modifier
-                    .padding(start = 24.dp)
             )
 
             Text(
                 text = "Dastur tilini tanlang",
+                modifier = Modifier
+                    .padding(top = 24.dp, start = 24.dp)
+                    .height(128.dp),
                 style = TextStyle(
                     fontFamily = robotoFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -70,8 +76,6 @@ fun LanguageSelectionScreen(
                     color = MaterialTheme.colorScheme.secondary,
                     lineHeight = 64.sp
                 ),
-                modifier = Modifier
-                    .padding(top = 24.dp, start = 24.dp)
             )
 
             LanguageOption(
@@ -140,11 +144,14 @@ fun LanguageOption(
         Spacer(modifier = Modifier.width(20.dp))
         Text(
             text = language,
+            modifier = Modifier
+                .height(64.dp),
             style = TextStyle(
                 color = animatedColor,
                 fontSize = 48.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = robotoFontFamily
+                fontFamily = robotoFontFamily,
+                lineHeight = 64.sp
             ),
         )
     }
