@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -54,9 +55,26 @@ fun AppNavigator() {
         }
         composable("locationRequest") {
             LocationRequestScreen(
-                onAllowClick = { /* Handle allow click */ },
-                onDenyClick = { /* Handle deny click */ }
+                onAllowClick = {
+                    // Navigate to the next screen or perform an action
+                    navController.navigate("nextScreen") {
+                        popUpTo("locationRequest") { inclusive = true }
+                    }
+                },
+                onDenyClick = {
+                    // Navigate to the next screen or perform an action
+                    navController.navigate("nextScreen") {
+                        popUpTo("locationRequest") { inclusive = true }
+                    }
+                }
             )
+        }
+        // Define the nextScreen composable or any other destination
+        composable("nextScreen") {
+            // Content for the next screen
+            Surface(color = MaterialTheme.colorScheme.background) {
+                Text("Next Screen Content")
+            }
         }
     }
 }

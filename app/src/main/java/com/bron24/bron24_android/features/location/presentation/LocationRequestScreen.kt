@@ -1,5 +1,8 @@
 package com.bron24.bron24_android.features.location.presentation
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +19,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.presentation.robotoFontFamily
@@ -32,8 +38,27 @@ import com.bron24.bron24_android.features.language.presentation.robotoFontFamily
 @Composable
 fun LocationRequestScreen(
     onAllowClick: () -> Unit,
-    onDenyClick: () -> Unit
+    onDenyClick: () -> Unit,
+    viewModel: LocationViewModel = hiltViewModel()
 ) {
+    val locationPermissionGranted = viewModel.locationPermissionGranted.collectAsState()
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            viewModel.setLocationPermissionGranted(isGranted)
+            if (isGranted) {
+                onAllowClick()
+            } else {
+                onDenyClick()
+            }
+        }
+    )
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.checkLocationPermission()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -80,21 +105,25 @@ fun LocationRequestScreen(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .height(40.dp)
-
             )
         }
 
         Column {
             LocationButton(
                 text = stringResource(id = R.string.allow_button),
-                onClick = onAllowClick,
+                onClick = {
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 10.dp)
             )
 
             OutlinedButton(
-                onClick = onDenyClick,
+                onClick = {
+                    viewModel.setLocationPermissionGranted(false)
+                    onDenyClick()
+                },
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.tertiary
                 ),
