@@ -32,7 +32,10 @@ val robotoFontFamily = FontFamily(
 )
 
 @Composable
-fun LanguageSelectionScreen(viewModel: LanguageViewModel) {
+fun LanguageSelectionScreen(
+    viewModel: LanguageViewModel,
+    onNavigateToLocationRequest: () -> Unit
+) {
     val selectedLanguage by viewModel.selectedLanguage.collectAsState()
 
     Column(
@@ -87,6 +90,7 @@ fun LanguageSelectionScreen(viewModel: LanguageViewModel) {
             isEnabled = selectedLanguage != null,
             onClick = {
                 viewModel.confirmLanguageSelection()
+                onNavigateToLocationRequest()
             }
         )
     }
@@ -115,7 +119,7 @@ fun LanguageOption(
                 detectTapGestures(
                     onPress = {
                         isPressed = true
-//                        tryAwaitRelease()
+                        tryAwaitRelease()
                         isPressed = false
                         onClick()
                     }

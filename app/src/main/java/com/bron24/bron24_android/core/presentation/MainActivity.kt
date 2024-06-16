@@ -4,9 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
 import com.bron24.bron24_android.features.language.presentation.LanguageViewModel
+import com.bron24.bron24_android.features.location.presentation.LocationRequestScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,8 +25,31 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Bron24_androidTheme {
-                LanguageSelectionScreen(languageViewModel)
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    AppNavigator()
+                }
             }
+        }
+    }
+}
+
+@Composable
+fun AppNavigator() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "languageSelection") {
+        composable("languageSelection") {
+            LanguageSelectionScreen(
+                viewModel = hiltViewModel(),
+                onNavigateToLocationRequest = {
+                    navController.navigate("locationRequest")
+                }
+            )
+        }
+        composable("locationRequest") {
+            LocationRequestScreen(
+                onAllowClick = { /* Handle allow click */ },
+                onDenyClick = { /* Handle deny click */ }
+            )
         }
     }
 }
