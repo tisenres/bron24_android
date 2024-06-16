@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
-    kotlin("kapt")
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -52,7 +53,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -71,7 +71,7 @@ dependencies {
 
     implementation(libs.hilt)
     kapt(libs.hiltCompiler)
-    implementation(libs.hiltViewModel)
+//    implementation(libs.hiltViewModel)
     kapt(libs.hiltCompilerAndroidX)
     implementation(libs.hiltNavigationCompose)
 
@@ -82,6 +82,14 @@ dependencies {
     implementation(libs.okhttpLoggingInterceptor)
 
     implementation(libs.lifecycleViewModelCompose)
+
+    // Hilt for instrumentation tests
+    androidTestImplementation(libs.hiltAndroidTesting)
+    kaptAndroidTest(libs.hiltCompiler)
+
+    // Hilt for local unit tests
+    testImplementation(libs.hiltAndroidTesting)
+    kaptTest(libs.hiltCompiler)
 }
 
 kapt {

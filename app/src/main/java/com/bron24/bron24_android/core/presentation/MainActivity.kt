@@ -7,8 +7,9 @@ import androidx.activity.viewModels
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
 import com.bron24.bron24_android.features.language.presentation.LanguageViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-//@AndroidEntryPoint
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val languageViewModel: LanguageViewModel by viewModels()
 

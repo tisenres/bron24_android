@@ -1,8 +1,8 @@
 package com.bron24.bron24_android.features.language.presentation
 
+import android.app.Application
 import android.content.Context
-import android.content.res.Configuration
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.features.language.domain.Language
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +14,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LanguageViewModel @Inject constructor(
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
+
     private val _selectedLanguage = MutableStateFlow(Language.UZBEK)
     val selectedLanguage: StateFlow<Language> = _selectedLanguage
 
@@ -22,19 +24,24 @@ class LanguageViewModel @Inject constructor(
         _selectedLanguage.value = language
     }
 
-    fun confirmLanguageSelection(selectedLanguage: Language) {
-        // Logic to save the selected language to shared preferences or any persistent storage
-        // and update the locale configuration
+    fun confirmLanguageSelection() {
         viewModelScope.launch {
-            // Save the selected language
-            // Update the app's configuration
+            saveSelectedLanguage(_selectedLanguage.value)
+            updateLocale(getApplication(), _selectedLanguage.value.code)
         }
     }
 
-    fun updateLocale(context: Context, language: String) {
-        val locale = Locale(language)
+    private fun saveSelectedLanguage(language: Language) {
+        val sharedPreferences =
+            getApplication<Application>()
+                .getSharedPreferences("settings", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("selected_language", language.code).apply()
+    }
+
+    private fun updateLocale(context: Context, languageCode: String) {
+        val locale = Locale(languageCode)
         Locale.setDefault(locale)
-        val config = Configuration(context.resources.configuration)
+        val config = context.resources.configuration
         config.setLocale(locale)
         context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }

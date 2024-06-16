@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +27,7 @@ val robotoFontFamily = FontFamily(
 
 @Composable
 fun LanguageSelectionScreen(viewModel: LanguageViewModel) {
-    var selectedLanguage by remember { mutableStateOf(Language.UZBEK) }
+    val selectedLanguage by viewModel.selectedLanguage.collectAsState()
 
     Column(
         modifier = Modifier
@@ -61,7 +63,7 @@ fun LanguageSelectionScreen(viewModel: LanguageViewModel) {
             LanguageOption(
                 language = "O'zbek",
                 isSelected = selectedLanguage == Language.UZBEK,
-                onClick = { selectedLanguage = Language.UZBEK },
+                onClick = { viewModel.selectLanguage(Language.UZBEK) },
                 modifier = Modifier
                     .padding(top = 80.dp)
             )
@@ -69,7 +71,7 @@ fun LanguageSelectionScreen(viewModel: LanguageViewModel) {
             LanguageOption(
                 language = "Russian",
                 isSelected = selectedLanguage == Language.RUSSIAN,
-                onClick = { selectedLanguage = Language.RUSSIAN },
+                onClick = { viewModel.selectLanguage(Language.RUSSIAN) },
                 modifier = Modifier
                     .padding(top = 16.dp)
             )
@@ -78,7 +80,7 @@ fun LanguageSelectionScreen(viewModel: LanguageViewModel) {
         ConfirmButton(
             isEnabled = true,
             onClick = {
-                viewModel.confirmLanguageSelection(selectedLanguage)
+                viewModel.confirmLanguageSelection()
             }
         )
     }
