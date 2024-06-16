@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.features.language.presentation
 
+import android.app.Application
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -21,9 +22,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.core.presentation.AppNavigator
+import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.domain.Language
 
 val robotoFontFamily = FontFamily(
@@ -42,7 +46,7 @@ fun LanguageSelectionScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
-            .padding(top = 80.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
+            .padding(top = 80.dp, end = 24.dp, bottom = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -55,6 +59,8 @@ fun LanguageSelectionScreen(
                     fontSize = 24.sp,
                     color = MaterialTheme.colorScheme.secondary
                 ),
+                modifier = Modifier
+                    .padding(start = 24.dp)
             )
 
             Text(
@@ -66,7 +72,8 @@ fun LanguageSelectionScreen(
                     color = MaterialTheme.colorScheme.secondary,
                     lineHeight = 64.sp
                 ),
-                modifier = Modifier.padding(top = 24.dp)
+                modifier = Modifier
+                    .padding(top = 24.dp, start = 24.dp)
             )
 
             LanguageOption(
@@ -114,7 +121,6 @@ fun LanguageOption(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
@@ -130,11 +136,12 @@ fun LanguageOption(
             Box(
                 modifier = Modifier
                     .width(4.dp)
-                    .height(48.dp)
-                    .background(MaterialTheme.colorScheme.tertiary)
+                    .height(64.dp)
+                    .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(3.dp))
             )
+            Spacer(modifier = Modifier.width(20.dp))
         } else {
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(24.dp))
         }
 
         Text(
@@ -145,7 +152,6 @@ fun LanguageOption(
                 fontWeight = FontWeight.Bold,
                 fontFamily = robotoFontFamily
             ),
-            modifier = Modifier.padding(start = 8.dp)
         )
     }
 }
@@ -167,6 +173,7 @@ fun ConfirmButton(
         modifier = modifier
             .fillMaxWidth()
             .height(52.dp)
+            .padding(start = 24.dp)
     ) {
         Text(
             text = "Keyingi",
@@ -175,5 +182,17 @@ fun ConfirmButton(
             fontFamily = robotoFontFamily,
             color = if (isEnabled) Color.White else Color.Gray
         )
+    }
+}
+
+@Preview
+@Composable
+fun SimpleComposablePreview() {
+    Bron24_androidTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            LanguageSelectionScreen(viewModel = LanguageViewModel(Application())) {
+
+            }
+        }
     }
 }
