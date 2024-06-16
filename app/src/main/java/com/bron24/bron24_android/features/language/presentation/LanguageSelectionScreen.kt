@@ -75,7 +75,7 @@ fun LanguageSelectionScreen(
             )
 
             LanguageOption(
-                language = "O'zbek",
+                language = "O‘zbek",
                 isSelected = selectedLanguage == Language.UZBEK,
                 onClick = { viewModel.selectLanguage(Language.UZBEK) },
                 modifier = Modifier

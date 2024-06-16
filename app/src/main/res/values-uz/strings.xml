@@ -1,3 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Bron24</string>
+    <string name="location_request_title">Joylashuvdan foydalanish</string>
+    <string name="location_request_description">Sizga yaqin maydonlarni topishimiz uchun joylashuvingizdan foydalanamiz</string>
+    <string name="allow_button">Ruxsat berish</string>
+    <string name="deny_button">Hozir emas</string>
 </resources>

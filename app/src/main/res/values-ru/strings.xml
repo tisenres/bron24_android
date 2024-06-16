@@ -1,2 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Bron24</string>
+    <string name="location_request_title">Использование местоположения</string>
+    <string name="location_request_description">Мы используем местоположение, чтобы найти ближайшие площадки</string>
+    <string name="allow_button">Разрешить</string>
+    <string name="deny_button">Не сейчас</string>
+</resources>

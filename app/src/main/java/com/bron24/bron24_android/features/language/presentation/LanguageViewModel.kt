@@ -5,11 +5,11 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.features.language.domain.Language
+import com.bron24.bron24_android.features.language.domain.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +28,7 @@ class LanguageViewModel @Inject constructor(
         viewModelScope.launch {
             _selectedLanguage.value?.let {
                 saveSelectedLanguage(it)
-                updateLocale(getApplication(), it.code)
+                LocaleManager.setLocale(getApplication(), it.code)
             }
         }
     }
@@ -38,13 +38,5 @@ class LanguageViewModel @Inject constructor(
             getApplication<Application>()
                 .getSharedPreferences("settings", Context.MODE_PRIVATE)
         sharedPreferences.edit().putString("selected_language", language.code).apply()
-    }
-
-    private fun updateLocale(context: Context, languageCode: String) {
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-        val config = context.resources.configuration
-        config.setLocale(locale)
-        context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }
 }

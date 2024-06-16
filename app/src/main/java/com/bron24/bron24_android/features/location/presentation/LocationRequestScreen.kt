@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.features.location.presentation
 
-import android.app.Application
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,11 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.presentation.robotoFontFamily
 
@@ -35,13 +36,13 @@ fun LocationRequestScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 80.dp, start = 24.dp, end = 24.dp, bottom = 44.dp),
+            .padding(top = 80.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(horizontalAlignment = Alignment.Start) {
             Text(
-                text = "Bron24",
+                text = stringResource(id = R.string.app_name),
                 style = TextStyle(
                     fontFamily = robotoFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -52,7 +53,7 @@ fun LocationRequestScreen(
             )
 
             Text(
-                text = "Joylashuvdan foydalanish",
+                text = stringResource(id = R.string.location_request_title),
                 style = TextStyle(
                     fontFamily = robotoFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -60,12 +61,13 @@ fun LocationRequestScreen(
                     color = MaterialTheme.colorScheme.onBackground,
                     lineHeight = 48.sp
                 ),
-                modifier = Modifier.padding(top = 24.dp)
+                modifier = Modifier
+                    .padding(top = 24.dp)
                     .height(96.dp)
             )
 
             Text(
-                text = "Sizga yaqin maydonlarni topishimiz uchun joylashuvingizdan foydalanamiz",
+                text = stringResource(id = R.string.location_request_description),
                 style = TextStyle(
                     fontFamily = robotoFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -73,7 +75,8 @@ fun LocationRequestScreen(
                     color = MaterialTheme.colorScheme.onBackground,
                     lineHeight = 20.sp
                 ),
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier
+                    .padding(top = 16.dp)
                     .height(40.dp)
 
             )
@@ -81,7 +84,7 @@ fun LocationRequestScreen(
 
         Column {
             LocationButton(
-                text = "Ruxsat berish",
+                text = stringResource(id = R.string.allow_button),
                 onClick = onAllowClick,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -100,7 +103,7 @@ fun LocationRequestScreen(
                     .height(52.dp)
             ) {
                 Text(
-                    text = "Hozir emas",
+                    text = stringResource(id = R.string.deny_button),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
                     fontFamily = robotoFontFamily
