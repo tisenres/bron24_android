@@ -46,7 +46,9 @@ fun AppNavigator() {
             LanguageSelectionScreen(
                 viewModel = hiltViewModel(),
                 onNavigateToLocationRequest = {
-                    navController.navigate("locationRequest")
+                    navController.navigate("locationRequest") {
+                        popUpTo("languageSelection") { inclusive = true }
+                    }
                 }
             )
         }

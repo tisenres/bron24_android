@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.features.location.presentation
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +37,7 @@ fun LocationRequestScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary)
             .padding(top = 80.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -47,7 +49,7 @@ fun LocationRequestScreen(
                     fontFamily = robotoFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.secondary,
                     lineHeight = 32.sp
                 ),
             )
@@ -58,7 +60,7 @@ fun LocationRequestScreen(
                     fontFamily = robotoFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 38.sp,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.secondary,
                     lineHeight = 48.sp
                 ),
                 modifier = Modifier
@@ -72,7 +74,7 @@ fun LocationRequestScreen(
                     fontFamily = robotoFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.secondary,
                     lineHeight = 20.sp
                 ),
                 modifier = Modifier
