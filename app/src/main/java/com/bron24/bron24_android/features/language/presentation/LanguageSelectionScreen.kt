@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.core.presentation.AppNavigator
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.domain.Language
 
@@ -88,8 +86,6 @@ fun LanguageSelectionScreen(
                 language = "Russian",
                 isSelected = selectedLanguage == Language.RUSSIAN,
                 onClick = { viewModel.selectLanguage(Language.RUSSIAN) },
-                modifier = Modifier
-                    .padding(top = 16.dp)
             )
         }
 
@@ -132,18 +128,16 @@ fun LanguageOption(
                 )
             }
     ) {
-        if (isSelected) {
-            Box(
-                modifier = Modifier
-                    .width(4.dp)
-                    .height(64.dp)
-                    .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(3.dp))
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-        } else {
-            Spacer(modifier = Modifier.width(24.dp))
-        }
-
+        Box(
+            modifier = Modifier
+                .width(4.dp)
+                .height(64.dp)
+                .background(
+                    if (isSelected) MaterialTheme.colorScheme.tertiary else Color.Transparent,
+                    shape = RoundedCornerShape(3.dp)
+                )
+        )
+        Spacer(modifier = Modifier.width(20.dp))
         Text(
             text = language,
             style = TextStyle(
