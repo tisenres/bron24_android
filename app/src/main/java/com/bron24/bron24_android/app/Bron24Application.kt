@@ -6,7 +6,7 @@ import com.bron24.bron24_android.features.language.domain.LocaleManager
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class App : Application() {
+class Bron24Application : Application() {
 
     override fun onCreate() {
         super.onCreate()

@@ -6,16 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.domain.LocaleManager
-import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
-import com.bron24.bron24_android.features.location.presentation.LocationRequestScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Bron24_androidTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    AppNavigator()
+                    MainScreen()
                 }
             }
         }
@@ -36,45 +28,5 @@ class MainActivity : ComponentActivity() {
         val languageCode = sharedPreferences.getString("selected_language", "uz") ?: "uz"
         val context = LocaleManager.setLocale(newBase, languageCode)
         super.attachBaseContext(context)
-    }
-}
-
-@Composable
-fun AppNavigator() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "languageSelection") {
-        composable("languageSelection") {
-            LanguageSelectionScreen(
-                viewModel = hiltViewModel(),
-                onNavigateToLocationRequest = {
-                    navController.navigate("locationRequest") {
-                        popUpTo("languageSelection") { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable("locationRequest") {
-            LocationRequestScreen(
-                onAllowClick = {
-                    // Navigate to the next screen or perform an action
-                    navController.navigate("nextScreen") {
-                        popUpTo("locationRequest") { inclusive = true }
-                    }
-                },
-                onDenyClick = {
-                    // Navigate to the next screen or perform an action
-                    navController.navigate("nextScreen") {
-                        popUpTo("locationRequest") { inclusive = true }
-                    }
-                }
-            )
-        }
-        // Define the nextScreen composable or any other destination
-        composable("nextScreen") {
-            // Content for the next screen
-            Surface(color = MaterialTheme.colorScheme.background) {
-                Text("Next Screen Content")
-            }
-        }
     }
 }
