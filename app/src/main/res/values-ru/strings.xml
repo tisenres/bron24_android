@@ -5,6 +5,7 @@
     <string name="uz_language">O‘zbek</string>
     <string name="ru_language">Russian</string>
     <string name="en_language">English</string>
+    <string name="next">Далее</string>
     <string name="location_request_title">Использование местоположения</string>
     <string name="location_request_description">Мы используем местоположение, чтобы найти ближайшие площадки</string>
     <string name="allow_button">Разрешить</string>

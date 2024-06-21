@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.features.language.presentation
 
-import android.app.Application
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -120,7 +119,7 @@ fun LanguageOption(
     )
 
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         modifier = modifier
             .fillMaxWidth()
             .pointerInput(Unit) {
@@ -137,7 +136,7 @@ fun LanguageOption(
         Box(
             modifier = Modifier
                 .width(4.dp)
-                .height(64.dp)
+                .height(48.dp)
                 .background(
                     if (isSelected) MaterialTheme.colorScheme.tertiary else Color.Transparent,
                     shape = RoundedCornerShape(3.dp)
@@ -179,11 +178,12 @@ fun ConfirmButton(
             .padding(start = 24.dp)
     ) {
         Text(
-            text = "Next",
+            text = stringResource(id = R.string.next),
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = robotoFontFamily,
-            color = if (isEnabled) Color.White else Color.Gray
+            color = if (isEnabled) Color.White else Color.Gray,
+            lineHeight = 32.sp
         )
     }
 }
@@ -194,7 +194,7 @@ fun SimpleComposablePreview() {
     Bron24_androidTheme {
 //        Surface(color = MaterialTheme.colorScheme.background) {
 //            LanguageSelectionScreen(viewModel = LanguageViewModel(Application())) {
-//
+//                 Mocked navigation action for preview
 //            }
 //        }
     }

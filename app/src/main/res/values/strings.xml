@@ -4,6 +4,7 @@
     <string name="uz_language">O‘zbek</string>
     <string name="ru_language">Russian</string>
     <string name="en_language">English</string>
+    <string name="next">Next</string>
     <string name="location_request_title">Use Location</string>
     <string name="location_request_description">We use your location to find fields near you</string>
     <string name="allow_button">Allow</string>

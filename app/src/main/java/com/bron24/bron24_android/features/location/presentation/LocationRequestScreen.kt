@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.presentation.robotoFontFamily
 
 @Composable
@@ -66,11 +65,14 @@ fun LocationRequestScreen(
             .background(MaterialTheme.colorScheme.primary)
             .padding(top = 80.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = stringResource(id = R.string.app_name),
+                modifier = Modifier
+                    .height(32.dp)
+                    .width(78.dp),
                 style = TextStyle(
                     fontFamily = robotoFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -92,6 +94,7 @@ fun LocationRequestScreen(
                 modifier = Modifier
                     .padding(top = 24.dp)
                     .height(96.dp)
+                    .width(345.dp)
             )
 
             Text(
@@ -104,8 +107,9 @@ fun LocationRequestScreen(
                     lineHeight = 20.sp
                 ),
                 modifier = Modifier
-                    .padding(top = 16.dp)
+                    .padding(top = 8.dp)
                     .height(40.dp)
+                    .width(345.dp)
             )
         }
 
@@ -138,7 +142,8 @@ fun LocationRequestScreen(
                     text = stringResource(id = R.string.deny_button),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
-                    fontFamily = robotoFontFamily
+                    fontFamily = robotoFontFamily,
+                    lineHeight = 32.sp
                 )
             }
         }
@@ -166,7 +171,8 @@ fun LocationButton(
             text = text,
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
-            fontFamily = robotoFontFamily
+            fontFamily = robotoFontFamily,
+            lineHeight = 32.sp
         )
     }
 }
@@ -174,12 +180,13 @@ fun LocationButton(
 @Preview
 @Composable
 fun SimpleComposablePreview() {
-    Bron24_androidTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            LocationRequestScreen(
-                onAllowClick = { /*TODO*/ },
-                onDenyClick = { /*TODO*/ }
-            )
-        }
-    }
+//    Bron24_androidTheme {
+//        Surface(color = MaterialTheme.colorScheme.background) {
+//            LocationRequestScreen(
+//                onAllowClick = { /*,
+//                onDenyClick = { /*
+//                viewModel = viewModel
+//            )
+//        }
+//    }
 }
