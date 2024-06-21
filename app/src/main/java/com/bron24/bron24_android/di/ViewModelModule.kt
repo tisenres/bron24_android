@@ -1,0 +1,30 @@
+package com.bron24.bron24_android.di
+
+import android.app.Application
+import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
+import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
+import com.bron24.bron24_android.features.language.presentation.LanguageViewModel
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
+
+@Module
+@InstallIn(ActivityComponent::class)
+object ViewModelModule {
+
+    @Provides
+    @ActivityScoped
+    fun provideLanguageViewModel(
+        application: Application,
+        getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
+        updateSelectedLanguageUseCase: UpdateSelectedLanguageUseCase
+    ): LanguageViewModel {
+        return LanguageViewModel(
+            application,
+            getAvailableLanguagesUseCase,
+            updateSelectedLanguageUseCase
+        )
+    }
+}

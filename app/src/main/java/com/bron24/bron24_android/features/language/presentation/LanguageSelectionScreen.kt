@@ -7,16 +7,12 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -26,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
-import com.bron24.bron24_android.features.language.domain.Language
+import com.bron24.bron24_android.features.language.domain.model.Language
 
 val robotoFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -50,7 +46,7 @@ fun LanguageSelectionScreen(
     ) {
         Column(horizontalAlignment = Alignment.Start) {
             Text(
-                text = "Bron24",
+                text = stringResource(id = R.string.app_name),
                 modifier = Modifier
                     .padding(start = 24.dp)
                     .height(32.dp)
@@ -65,7 +61,7 @@ fun LanguageSelectionScreen(
             )
 
             Text(
-                text = "Dastur tilini tanlang",
+                text = stringResource(id = R.string.select_langauge),
                 modifier = Modifier
                     .padding(top = 24.dp, start = 24.dp)
                     .height(128.dp),
@@ -79,7 +75,7 @@ fun LanguageSelectionScreen(
             )
 
             LanguageOption(
-                language = "O‘zbek",
+                language = stringResource(id = R.string.uz_language),
                 isSelected = selectedLanguage == Language.UZBEK,
                 onClick = { viewModel.selectLanguage(Language.UZBEK) },
                 modifier = Modifier
@@ -87,9 +83,15 @@ fun LanguageSelectionScreen(
             )
 
             LanguageOption(
-                language = "Russian",
+                language = stringResource(id = R.string.ru_language),
                 isSelected = selectedLanguage == Language.RUSSIAN,
                 onClick = { viewModel.selectLanguage(Language.RUSSIAN) },
+            )
+
+            LanguageOption(
+                language = stringResource(id = R.string.en_language),
+                isSelected = selectedLanguage == Language.ENGLISH,
+                onClick = { viewModel.selectLanguage(Language.ENGLISH) },
             )
         }
 
@@ -177,7 +179,7 @@ fun ConfirmButton(
             .padding(start = 24.dp)
     ) {
         Text(
-            text = "Keyingi",
+            text = "Next",
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = robotoFontFamily,
@@ -190,10 +192,10 @@ fun ConfirmButton(
 @Composable
 fun SimpleComposablePreview() {
     Bron24_androidTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            LanguageSelectionScreen(viewModel = LanguageViewModel(Application())) {
-
-            }
-        }
+//        Surface(color = MaterialTheme.colorScheme.background) {
+//            LanguageSelectionScreen(viewModel = LanguageViewModel(Application())) {
+//
+//            }
+//        }
     }
 }

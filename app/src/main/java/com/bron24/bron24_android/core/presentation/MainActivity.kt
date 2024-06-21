@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
-import com.bron24.bron24_android.features.language.domain.LocaleManager
+import com.bron24.bron24_android.features.language.domain.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

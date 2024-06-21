@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.language.domain
+package com.bron24.bron24_android.features.language.domain.util
 
 import android.content.Context
 import android.content.res.Configuration

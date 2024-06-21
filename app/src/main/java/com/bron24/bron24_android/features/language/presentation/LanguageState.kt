@@ -1,4 +1,0 @@
-package com.bron24.bron24_android.features.language.presentation
-
-class LanguageState {
-}

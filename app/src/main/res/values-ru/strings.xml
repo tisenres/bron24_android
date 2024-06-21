@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Bron24</string>
+    <string name="select_langauge">Выберите язык</string>
+    <string name="uz_language">O‘zbek</string>
+    <string name="ru_language">Russian</string>
+    <string name="en_language">English</string>
     <string name="location_request_title">Использование местоположения</string>
     <string name="location_request_description">Мы используем местоположение, чтобы найти ближайшие площадки</string>
     <string name="allow_button">Разрешить</string>
