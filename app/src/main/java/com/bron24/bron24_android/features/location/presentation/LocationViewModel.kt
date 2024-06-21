@@ -1,29 +1,39 @@
 package com.bron24.bron24_android.features.location.presentation
 
-import android.Manifest
 import android.app.Application
-import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.features.location.domain.model.LocationPermissionState
+import com.bron24.bron24_android.features.location.domain.usecases.CheckLocationPermissionUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LocationViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class LocationViewModel @Inject constructor(
+    application: Application,
+    private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase
+) : AndroidViewModel(application) {
 
-    private val _locationPermissionGranted = MutableStateFlow(false)
-    val locationPermissionGranted: StateFlow<Boolean> = _locationPermissionGranted
+    private val _locationPermissionState = MutableStateFlow<LocationPermissionState>(LocationPermissionState.Denied)
+    val locationPermissionState: StateFlow<LocationPermissionState> = _locationPermissionState
 
     fun checkLocationPermission() {
-        val context = getApplication<Application>().applicationContext
-        val permission = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-        _locationPermissionGranted.value = permission == PackageManager.PERMISSION_GRANTED
+        viewModelScope.launch {
+            checkLocationPermissionUseCase.execute().collect { permissionState ->
+                _locationPermissionState.value = permissionState
+            }
+        }
     }
 
     fun setLocationPermissionGranted(granted: Boolean) {
-        viewModelScope.launch {
-            _locationPermissionGranted.value = granted
+        _locationPermissionState.value = if (granted) {
+            LocationPermissionState.Granted
+        } else {
+            LocationPermissionState.Denied
         }
     }
 }

@@ -5,6 +5,8 @@ import com.bron24.bron24_android.features.language.data.local.LanguagePreference
 import com.bron24.bron24_android.features.language.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
+import com.bron24.bron24_android.features.location.data.LocationRepository
+import com.bron24.bron24_android.features.location.domain.usecases.CheckLocationPermissionUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,5 +46,19 @@ object AppModule {
         languageRepository: LanguageRepositoryImpl
     ): UpdateSelectedLanguageUseCase {
         return UpdateSelectedLanguageUseCase(languageRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocationRepository(@ApplicationContext context: Context): LocationRepository {
+        return LocationRepository(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCheckLocationPermissionUseCase(
+        repository: LocationRepository
+    ): CheckLocationPermissionUseCase {
+        return CheckLocationPermissionUseCase(repository)
     }
 }
