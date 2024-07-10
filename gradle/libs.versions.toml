@@ -9,7 +9,6 @@ lifecycleRuntimeKtx = "2.8.2"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
 hilt = "2.51.1"
-hiltViewModel = "1.0.0-alpha03"
 hiltCompiler = "1.2.0"
 hiltNavigationCompose = "1.2.0"
 locationServices = "21.3.0"
@@ -34,7 +33,6 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hiltCompiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
-#hiltViewModel = { group = "androidx.hilt", name = "hilt-lifecycle-viewmodel", version.ref = "hiltViewModel" }
 hiltCompilerAndroidX = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltCompiler" }
 hiltNavigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 hiltAndroidTesting = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
