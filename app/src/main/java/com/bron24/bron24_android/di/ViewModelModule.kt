@@ -28,14 +28,4 @@ object ViewModelModule {
             context
         )
     }
-
-//    @Provides
-//    @ActivityScoped
-//    fun provideLocationViewModel(
-//        checkLocationPermissionUseCase: CheckLocationPermissionUseCase
-//    ): LocationViewModel {
-//        return LocationViewModel(
-//            checkLocationPermissionUseCase
-//        )
-//    }
 }

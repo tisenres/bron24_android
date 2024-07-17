@@ -87,12 +87,6 @@ fun LanguageSelectionScreen(
                 isSelected = selectedLanguage == Language.RUSSIAN,
                 onClick = { viewModel.selectLanguage(Language.RUSSIAN) },
             )
-
-//            LanguageOption(
-//                language = stringResource(id = R.string.en_language),
-//                isSelected = selectedLanguage == Language.ENGLISH,
-//                onClick = { viewModel.selectLanguage(Language.ENGLISH) },
-//            )
         }
 
         ConfirmButton(
@@ -193,6 +187,6 @@ fun ConfirmButton(
 @Composable
 fun SimpleComposablePreview() {
     Bron24_androidTheme {
-        // Preview setup can be added here if needed
+
     }
 }
