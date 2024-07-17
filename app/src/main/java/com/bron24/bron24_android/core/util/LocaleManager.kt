@@ -11,13 +11,14 @@ object LocaleManager {
         Locale.setDefault(locale)
 
         val config = Configuration(context.resources.configuration)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            config.setLocale(locale)
-            return context.createConfigurationContext(config)
+        config.setLocale(locale)
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            context.createConfigurationContext(config)
         } else {
-            config.locale = locale
+            @Suppress("DEPRECATION")
             context.resources.updateConfiguration(config, context.resources.displayMetrics)
-            return context
+            context
         }
     }
 }

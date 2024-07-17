@@ -9,4 +9,5 @@
     <string name="location_request_description">We use your location to find fields near you</string>
     <string name="allow_button">Allow</string>
     <string name="deny_button">Not now</string>
+    <string name="select_city">Select city</string>
 </resources>

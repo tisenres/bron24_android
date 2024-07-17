@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.features.language.presentation.components.LanguageSelectionScreen
+import com.bron24.bron24_android.features.cityselection.presentation.components.CitySelectionScreen
 
 @Composable
 fun MainScreen() {
@@ -19,26 +20,22 @@ fun MainScreen() {
                 LanguageSelectionScreen(
                     viewModel = hiltViewModel(),
                     onNavigateToLocationRequest = {
-                        navController.navigate("nextScreen") {
+                        navController.navigate("citySelection") {
                             popUpTo("languageSelection") { inclusive = true }
                         }
                     }
                 )
             }
-//            composable("locationRequest") {
-//                LocationRequestScreen(
-//                    onAllowClick = {
-//                        navController.navigate("nextScreen") {
-//                            popUpTo("locationRequest") { inclusive = true }
-//                        }
-//                    },
-//                    onDenyClick = {
-//                        navController.navigate("nextScreen") {
-//                            popUpTo("locationRequest") { inclusive = true }
-//                        }
-//                    }
-//                )
-//            }
+            composable("citySelection") {
+                CitySelectionScreen(
+                    viewModel = hiltViewModel(),
+                    onNavigateToLocationRequest = {
+                        navController.navigate("nextScreen") {
+                            popUpTo("citySelection") { inclusive = true }
+                        }
+                    }
+                )
+            }
             composable("nextScreen") {
                 // Content for the next screen
                 Surface(color = MaterialTheme.colorScheme.background) {

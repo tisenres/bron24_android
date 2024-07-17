@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.language.presentation.components
+package com.bron24.bron24_android.features.cityselection.presentation.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -21,8 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
-import com.bron24.bron24_android.features.language.domain.model.Language
-import com.bron24.bron24_android.features.language.presentation.LanguageViewModel
+import com.bron24.bron24_android.features.cityselection.domain.model.City
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -30,11 +29,11 @@ val gilroyFontFamily = FontFamily(
 )
 
 @Composable
-fun LanguageSelectionScreen(
-    viewModel: LanguageViewModel,
+fun CitySelectionScreen(
+    viewModel: CityViewModel,
     onNavigateToLocationRequest: () -> Unit
 ) {
-    val selectedLanguage by viewModel.selectedLanguage.collectAsState()
+    val selectedCity by viewModel.selectedCity.collectAsState()
 
     Column(
         modifier = Modifier
@@ -61,7 +60,7 @@ fun LanguageSelectionScreen(
             )
 
             Text(
-                text = "Dastur tilini tanlang",
+                text = stringResource(id = R.string.select_city),
                 modifier = Modifier
                     .padding(top = 24.dp, start = 24.dp)
                     .height(128.dp),
@@ -74,25 +73,43 @@ fun LanguageSelectionScreen(
                 ),
             )
 
-            LanguageOption(
-                language = "O‘zbek",
-                isSelected = selectedLanguage == Language.UZBEK,
-                onClick = { viewModel.selectLanguage(Language.UZBEK) },
+            CityOption(
+                city = City.TASHKENT,
+                isSelected = selectedCity == City.TASHKENT,
+                onClick = { viewModel.selectCity(City.TASHKENT) },
                 modifier = Modifier
                     .padding(top = 80.dp)
             )
 
-            LanguageOption(
-                language = "Russian",
-                isSelected = selectedLanguage == Language.RUSSIAN,
-                onClick = { viewModel.selectLanguage(Language.RUSSIAN) },
+            CityOption(
+                city = City.SAMARKAND,
+                isSelected = selectedCity == City.SAMARKAND,
+                onClick = { viewModel.selectCity(City.SAMARKAND) },
+            )
+
+            CityOption(
+                city = City.BUKHARA,
+                isSelected = selectedCity == City.BUKHARA,
+                onClick = { viewModel.selectCity(City.BUKHARA) },
+            )
+
+            CityOption(
+                city = City.NAVOIY,
+                isSelected = selectedCity == City.NAVOIY,
+                onClick = { viewModel.selectCity(City.NAVOIY) },
+            )
+
+            CityOption(
+                city = City.QASHQADARYO,
+                isSelected = selectedCity == City.QASHQADARYO,
+                onClick = { viewModel.selectCity(City.QASHQADARYO) },
             )
         }
 
         ConfirmButton(
-            isEnabled = selectedLanguage != null,
+            isEnabled = selectedCity != null,
             onClick = {
-                viewModel.confirmLanguageSelection()
+                viewModel.confirmCitySelection()
                 onNavigateToLocationRequest()
             }
         )
@@ -100,8 +117,8 @@ fun LanguageSelectionScreen(
 }
 
 @Composable
-fun LanguageOption(
-    language: String,
+fun CityOption(
+    city: City,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -139,7 +156,7 @@ fun LanguageOption(
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
-            text = language,
+            text = city.displayName,
             modifier = Modifier
                 .height(64.dp),
             style = TextStyle(
@@ -173,7 +190,7 @@ fun ConfirmButton(
             .padding(start = 24.dp)
     ) {
         Text(
-            text = "Keyingi",
+            text = stringResource(id = R.string.next),
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = gilroyFontFamily,
@@ -187,5 +204,6 @@ fun ConfirmButton(
 @Composable
 fun SimpleComposablePreview() {
     Bron24_androidTheme {
+        // Add preview content here if needed
     }
 }
