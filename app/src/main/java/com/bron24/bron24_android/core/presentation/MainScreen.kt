@@ -8,8 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
-import com.bron24.bron24_android.features.location.presentation.LocationRequestScreen
+import com.bron24.bron24_android.features.language.presentation.components.LanguageSelectionScreen
 
 @Composable
 fun MainScreen() {
@@ -20,26 +19,26 @@ fun MainScreen() {
                 LanguageSelectionScreen(
                     viewModel = hiltViewModel(),
                     onNavigateToLocationRequest = {
-                        navController.navigate("locationRequest") {
+                        navController.navigate("nextScreen") {
                             popUpTo("languageSelection") { inclusive = true }
                         }
                     }
                 )
             }
-            composable("locationRequest") {
-                LocationRequestScreen(
-                    onAllowClick = {
-                        navController.navigate("nextScreen") {
-                            popUpTo("locationRequest") { inclusive = true }
-                        }
-                    },
-                    onDenyClick = {
-                        navController.navigate("nextScreen") {
-                            popUpTo("locationRequest") { inclusive = true }
-                        }
-                    }
-                )
-            }
+//            composable("locationRequest") {
+//                LocationRequestScreen(
+//                    onAllowClick = {
+//                        navController.navigate("nextScreen") {
+//                            popUpTo("locationRequest") { inclusive = true }
+//                        }
+//                    },
+//                    onDenyClick = {
+//                        navController.navigate("nextScreen") {
+//                            popUpTo("locationRequest") { inclusive = true }
+//                        }
+//                    }
+//                )
+//            }
             composable("nextScreen") {
                 // Content for the next screen
                 Surface(color = MaterialTheme.colorScheme.background) {

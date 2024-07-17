@@ -3,10 +3,9 @@ package com.bron24.bron24_android.di
 import android.content.Context
 import com.bron24.bron24_android.features.language.data.local.LanguagePreference
 import com.bron24.bron24_android.features.language.data.repository.LanguageRepositoryImpl
+import com.bron24.bron24_android.features.language.domain.repository.LanguageRepository
 import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
-import com.bron24.bron24_android.features.location.data.LocationRepository
-import com.bron24.bron24_android.features.location.domain.usecases.CheckLocationPermissionUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,14 +27,14 @@ object AppModule {
     @Singleton
     fun provideLanguageRepository(
         languagePreference: LanguagePreference
-    ): LanguageRepositoryImpl {
+    ): LanguageRepository {
         return LanguageRepositoryImpl(languagePreference)
     }
 
     @Provides
     @Singleton
     fun provideGetAvailableLanguagesUseCase(
-        languageRepository: LanguageRepositoryImpl
+        languageRepository: LanguageRepository
     ): GetAvailableLanguagesUseCase {
         return GetAvailableLanguagesUseCase(languageRepository)
     }
@@ -43,22 +42,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUpdateSelectedLanguageUseCase(
-        languageRepository: LanguageRepositoryImpl
+        languageRepository: LanguageRepository
     ): UpdateSelectedLanguageUseCase {
         return UpdateSelectedLanguageUseCase(languageRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLocationRepository(@ApplicationContext context: Context): LocationRepository {
-        return LocationRepository(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCheckLocationPermissionUseCase(
-        repository: LocationRepository
-    ): CheckLocationPermissionUseCase {
-        return CheckLocationPermissionUseCase(repository)
     }
 }

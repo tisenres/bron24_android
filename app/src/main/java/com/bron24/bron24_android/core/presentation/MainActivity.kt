@@ -23,10 +23,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun attachBaseContext(newBase: Context) {
-        val sharedPreferences = newBase.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val languageCode = sharedPreferences.getString("selected_language", "uz") ?: "uz"
-        val context = LocaleManager.setLocale(newBase, languageCode)
-        super.attachBaseContext(context)
-    }
+//    override fun attachBaseContext(newBase: Context) {
+//        val sharedPreferences = newBase.getSharedPreferences("settings", Context.MODE_PRIVATE)
+//        val languageCode = sharedPreferences.getString("selected_language", "uz") ?: "uz"
+//        val context = LocaleManager.setLocale(newBase, languageCode)
+//        super.attachBaseContext(context)
+//    }
 }

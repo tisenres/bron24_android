@@ -1,13 +1,13 @@
 package com.bron24.bron24_android.features.language.domain.usecases
 
-import com.bron24.bron24_android.features.language.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.features.language.domain.model.Language
+import com.bron24.bron24_android.features.language.domain.repository.LanguageRepository
 import javax.inject.Inject
 
 class GetAvailableLanguagesUseCase @Inject constructor(
-    private val languageRepository: LanguageRepositoryImpl
+    private val languageRepository: LanguageRepository
 ) {
-    fun execute(): List<Language> {
+    operator fun invoke(): List<Language> {
         return languageRepository.getAvailableLanguages()
     }
 }

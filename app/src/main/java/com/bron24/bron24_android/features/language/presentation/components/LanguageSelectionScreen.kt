@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.language.presentation
+package com.bron24.bron24_android.features.language.presentation.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.language.domain.model.Language
+import com.bron24.bron24_android.features.language.presentation.LanguageViewModel
 
 val robotoFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -87,11 +88,11 @@ fun LanguageSelectionScreen(
                 onClick = { viewModel.selectLanguage(Language.RUSSIAN) },
             )
 
-            LanguageOption(
-                language = stringResource(id = R.string.en_language),
-                isSelected = selectedLanguage == Language.ENGLISH,
-                onClick = { viewModel.selectLanguage(Language.ENGLISH) },
-            )
+//            LanguageOption(
+//                language = stringResource(id = R.string.en_language),
+//                isSelected = selectedLanguage == Language.ENGLISH,
+//                onClick = { viewModel.selectLanguage(Language.ENGLISH) },
+//            )
         }
 
         ConfirmButton(
@@ -192,10 +193,6 @@ fun ConfirmButton(
 @Composable
 fun SimpleComposablePreview() {
     Bron24_androidTheme {
-//        Surface(color = MaterialTheme.colorScheme.background) {
-//            LanguageSelectionScreen(viewModel = LanguageViewModel(Application())) {
-//                 Mocked navigation action for preview
-//            }
-//        }
+        // Preview setup can be added here if needed
     }
 }
