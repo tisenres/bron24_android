@@ -4,6 +4,8 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -34,6 +36,7 @@ fun CitySelectionScreen(
     onNavigateToLocationRequest: () -> Unit
 ) {
     val selectedCity by viewModel.selectedCity.collectAsState()
+    val availableCities by viewModel.availableCities.collectAsState()
 
     Column(
         modifier = Modifier
@@ -73,37 +76,17 @@ fun CitySelectionScreen(
                 ),
             )
 
-            CityOption(
-                city = City.TASHKENT,
-                isSelected = selectedCity == City.TASHKENT,
-                onClick = { viewModel.selectCity(City.TASHKENT) },
-                modifier = Modifier
-                    .padding(top = 80.dp)
-            )
-
-            CityOption(
-                city = City.SAMARKAND,
-                isSelected = selectedCity == City.SAMARKAND,
-                onClick = { viewModel.selectCity(City.SAMARKAND) },
-            )
-
-            CityOption(
-                city = City.BUKHARA,
-                isSelected = selectedCity == City.BUKHARA,
-                onClick = { viewModel.selectCity(City.BUKHARA) },
-            )
-
-            CityOption(
-                city = City.NAVOIY,
-                isSelected = selectedCity == City.NAVOIY,
-                onClick = { viewModel.selectCity(City.NAVOIY) },
-            )
-
-            CityOption(
-                city = City.QASHQADARYO,
-                isSelected = selectedCity == City.QASHQADARYO,
-                onClick = { viewModel.selectCity(City.QASHQADARYO) },
-            )
+            LazyColumn {
+                items(availableCities) { city ->
+                    CityOption(
+                        city = city,
+                        isSelected = selectedCity == city,
+                        onClick = { viewModel.selectCity(city) },
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                    )
+                }
+            }
         }
 
         ConfirmButton(

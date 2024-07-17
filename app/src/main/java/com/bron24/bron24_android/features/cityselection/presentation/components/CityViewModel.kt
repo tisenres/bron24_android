@@ -20,6 +20,15 @@ class CityViewModel @Inject constructor(
     private val _selectedCity = MutableStateFlow<City?>(null)
     val selectedCity: StateFlow<City?> = _selectedCity
 
+    private val _availableCities = MutableStateFlow<List<City>>(emptyList())
+    val availableCities: StateFlow<List<City>> = _availableCities
+
+    init {
+        viewModelScope.launch {
+            _availableCities.value = getAvailableCitiesUseCase.execute()
+        }
+    }
+
     fun selectCity(city: City) {
         _selectedCity.value = city
     }
