@@ -3,8 +3,8 @@ package com.bron24.bron24_android.features.language.presentation
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.features.language.domain.model.Language
 import com.bron24.bron24_android.core.util.LocaleManager
+import com.bron24.bron24_android.features.language.domain.model.Language
 import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,14 +24,15 @@ class LanguageViewModel @Inject constructor(
     private val _selectedLanguage = MutableStateFlow<Language?>(null)
     val selectedLanguage: StateFlow<Language?> = _selectedLanguage
 
-//    init {
-//        viewModelScope.launch {
-//            _selectedLanguage.value = getAvailableLanguagesUseCase().firstOrNull()
-//        }
-//    }
+    init {
+        viewModelScope.launch {
+            _selectedLanguage.value = getAvailableLanguagesUseCase().firstOrNull()
+        }
+    }
 
     fun selectLanguage(language: Language) {
         _selectedLanguage.value = language
+        LocaleManager.setLocale(context, language.code)
     }
 
     fun confirmLanguageSelection() {

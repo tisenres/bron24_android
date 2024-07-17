@@ -10,6 +10,7 @@
         android:name=".app.Bron24Application"
         android:allowBackup="true"
         android:configChanges="locale"
+        android:localeConfig="@xml/locales_config"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -17,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bron24_android"
-        tools:targetApi="31">
+        tools:targetApi="tiramisu">
         <activity
             android:name=".core.presentation.MainActivity"
             android:exported="true"

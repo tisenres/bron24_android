@@ -1,13 +1,11 @@
 package com.bron24.bron24_android.core.presentation
 
-import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
-import com.bron24.bron24_android.core.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,18 +13,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Bron24_androidTheme {
-                Surface(color = MaterialTheme.colorScheme.background) {
+            CompositionLocalProvider {
+                Bron24_androidTheme {
                     MainScreen()
                 }
             }
         }
     }
 
-//    override fun attachBaseContext(newBase: Context) {
-//        val sharedPreferences = newBase.getSharedPreferences("settings", Context.MODE_PRIVATE)
-//        val languageCode = sharedPreferences.getString("selected_language", "uz") ?: "uz"
-//        val context = LocaleManager.setLocale(newBase, languageCode)
-//        super.attachBaseContext(context)
-//    }
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Recreate your activity or refresh the UI elements as needed
+        setContent {
+            CompositionLocalProvider {
+                Bron24_androidTheme {
+                    MainScreen()
+                }
+            }
+        }
+    }
 }

@@ -75,7 +75,7 @@ fun LanguageSelectionScreen(
             )
 
             LanguageOption(
-                language = "O‘zbek",
+                language = stringResource(id = R.string.uz_language),
                 isSelected = selectedLanguage == Language.UZBEK,
                 onClick = { viewModel.selectLanguage(Language.UZBEK) },
                 modifier = Modifier
@@ -83,7 +83,7 @@ fun LanguageSelectionScreen(
             )
 
             LanguageOption(
-                language = "Russian",
+                language = stringResource(id = R.string.ru_language),
                 isSelected = selectedLanguage == Language.RUSSIAN,
                 onClick = { viewModel.selectLanguage(Language.RUSSIAN) },
             )
@@ -173,7 +173,7 @@ fun ConfirmButton(
             .padding(start = 24.dp)
     ) {
         Text(
-            text = "Keyingi",
+            text = stringResource(id = R.string.next),
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = gilroyFontFamily,

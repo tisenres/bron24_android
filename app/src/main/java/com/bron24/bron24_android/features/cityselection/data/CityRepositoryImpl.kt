@@ -6,7 +6,7 @@ import com.bron24.bron24_android.features.cityselection.domain.repository.CityRe
 import javax.inject.Inject
 
 class CityRepositoryImpl @Inject constructor(
-    private val context: Context
+    context: Context
 ) : CityRepository {
     private val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
