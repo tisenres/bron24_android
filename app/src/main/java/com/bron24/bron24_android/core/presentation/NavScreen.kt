@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,13 +16,9 @@ import com.bron24.bron24_android.features.cityselection.presentation.CitySelecti
 import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
 
 @Composable
-fun NavScreen() {
-    val navController = rememberNavController()
+fun NavScreen(navController: NavHostController = rememberNavController()) {
     Surface(color = MaterialTheme.colorScheme.background) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.LanguageSelection.route
-        ) {
+        NavHost(navController = navController, startDestination = Screen.LanguageSelection.route) {
             composable(Screen.LanguageSelection.route) {
                 LanguageSelectionScreen(
                     viewModel = hiltViewModel(),
@@ -43,52 +40,48 @@ fun NavScreen() {
                 )
             }
             composable(Screen.Main.route) {
-                MainNavHost(navController = navController)
+                Scaffold(
+                    bottomBar = { BottomNavigationBar(navController = navController) }
+                ) { paddingValues ->
+                    MainNavHost(navController = navController, modifier = Modifier.padding(paddingValues))
+                }
             }
         }
     }
 }
 
 @Composable
-fun MainNavHost(navController: NavHostController) {
-    Scaffold(
-        bottomBar = { BottomNavigationBar(navController = navController) }
+fun MainNavHost(navController: NavHostController, modifier: Modifier) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.HomePage.route,
+        modifier = modifier
     ) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.HomePage.route,
-            modifier = Modifier.padding(it)
-        ) {
-            composable(Screen.HomePage.route) {
-                HomePage()
-            }
-            composable(Screen.CartPage.route) {
-                CartPage()
-            }
-            composable(Screen.ProfilePage.route) {
-                ProfilePage()
-            }
+        composable(Screen.HomePage.route) {
+            HomePage()
         }
-    }
-}
-
-@Composable
-fun HomePage() {
-    Surface(color = MaterialTheme.colorScheme.background) {
-        Text("Home Page Content")
-    }
-}
-
-@Composable
-fun CartPage() {
-    Surface(color = MaterialTheme.colorScheme.background) {
-        Text("Cart Page Content")
+        composable(Screen.CartPage.route) {
+            CartPage()
+        }
+        composable(Screen.ProfilePage.route) {
+            ProfilePage()
+        }
     }
 }
 
 @Composable
 fun ProfilePage() {
-    Surface(color = MaterialTheme.colorScheme.background) {
-        Text("Profile Page Content")
+    TODO("Not yet implemented")
+}
+
+@Composable
+fun CartPage() {
+    TODO("Not yet implemented")
+}
+
+@Composable
+fun HomePage() {
+    Surface(color = Color.White) {
+        Text("Home Page Content")
     }
 }
