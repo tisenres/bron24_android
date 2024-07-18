@@ -23,7 +23,86 @@ fun HomePage() {
             imageUrl = "https://via.placeholder.com/340x82",
             overlayImageUrl = "https://via.placeholder.com/21x25"
         ),
-        // Add more sample venues if needed
+        Venue(
+            name = "Bunyodkor kompleksi",
+            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
+            distance = "3km",
+            rating = "4.0",
+            price = "100sum/hour",
+            freeSlots = "14 slots today",
+            imageUrl = "https://via.placeholder.com/340x82",
+            overlayImageUrl = "https://via.placeholder.com/21x25"
+        ),
+        Venue(
+            name = "Bunyodkor kompleksi",
+            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
+            distance = "3km",
+            rating = "4.0",
+            price = "100sum/hour",
+            freeSlots = "14 slots today",
+            imageUrl = "https://via.placeholder.com/340x82",
+            overlayImageUrl = "https://via.placeholder.com/21x25"
+        ),
+        Venue(
+            name = "Bunyodkor kompleksi",
+            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
+            distance = "3km",
+            rating = "4.0",
+            price = "100sum/hour",
+            freeSlots = "14 slots today",
+            imageUrl = "https://via.placeholder.com/340x82",
+            overlayImageUrl = "https://via.placeholder.com/21x25"
+        ),
+        Venue(
+            name = "Bunyodkor kompleksi",
+            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
+            distance = "3km",
+            rating = "4.0",
+            price = "100sum/hour",
+            freeSlots = "14 slots today",
+            imageUrl = "https://via.placeholder.com/340x82",
+            overlayImageUrl = "https://via.placeholder.com/21x25"
+        ),
+        Venue(
+            name = "Bunyodkor kompleksi",
+            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
+            distance = "3km",
+            rating = "4.0",
+            price = "100sum/hour",
+            freeSlots = "14 slots today",
+            imageUrl = "https://via.placeholder.com/340x82",
+            overlayImageUrl = "https://via.placeholder.com/21x25"
+        ),
+        Venue(
+            name = "Bunyodkor kompleksi",
+            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
+            distance = "3km",
+            rating = "4.0",
+            price = "100sum/hour",
+            freeSlots = "14 slots today",
+            imageUrl = "https://via.placeholder.com/340x82",
+            overlayImageUrl = "https://via.placeholder.com/21x25"
+        ),
+        Venue(
+            name = "Bunyodkor kompleksi",
+            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
+            distance = "3km",
+            rating = "4.0",
+            price = "100sum/hour",
+            freeSlots = "14 slots today",
+            imageUrl = "https://via.placeholder.com/340x82",
+            overlayImageUrl = "https://via.placeholder.com/21x25"
+        ),
+        Venue(
+            name = "Bunyodkor kompleksi",
+            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
+            distance = "3km",
+            rating = "4.0",
+            price = "100sum/hour",
+            freeSlots = "14 slots today",
+            imageUrl = "https://via.placeholder.com/340x82",
+            overlayImageUrl = "https://via.placeholder.com/21x25"
+        ),
     )
 
     LazyColumn(
