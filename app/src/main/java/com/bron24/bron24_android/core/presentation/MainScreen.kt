@@ -11,8 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.bron24.bron24_android.features.language.presentation.components.LanguageSelectionScreen
-import com.bron24.bron24_android.features.cityselection.presentation.components.CitySelectionScreen
+import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
+import com.bron24.bron24_android.features.cityselection.presentation.CitySelectionScreen
 import com.bron24.bron24_android.core.util.LocaleManager
 
 @Composable

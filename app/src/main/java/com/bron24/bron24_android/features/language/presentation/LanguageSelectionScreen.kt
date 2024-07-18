@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.cityselection.presentation.components
+package com.bron24.bron24_android.features.language.presentation
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
-import com.bron24.bron24_android.features.cityselection.domain.model.City
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -31,12 +30,12 @@ val gilroyFontFamily = FontFamily(
 )
 
 @Composable
-fun CitySelectionScreen(
-    viewModel: CityViewModel,
+fun LanguageSelectionScreen(
+    viewModel: LanguageViewModel,
     onNavigateToLocationRequest: () -> Unit
 ) {
-    val selectedCity by viewModel.selectedCity.collectAsState()
-    val availableCities by viewModel.availableCities.collectAsState()
+    val selectedLanguage by viewModel.selectedLanguage.collectAsState()
+    val availableLanguages by viewModel.availableLanguages.collectAsState()
 
     Column(
         modifier = Modifier
@@ -63,7 +62,7 @@ fun CitySelectionScreen(
             )
 
             Text(
-                text = stringResource(id = R.string.select_city),
+                text = "Dastur tilini tanlang",
                 modifier = Modifier
                     .padding(top = 24.dp, start = 24.dp)
                     .height(128.dp),
@@ -77,11 +76,11 @@ fun CitySelectionScreen(
             )
 
             LazyColumn {
-                items(availableCities) { city ->
-                    CityOption(
-                        city = city,
-                        isSelected = selectedCity == city,
-                        onClick = { viewModel.selectCity(city) },
+                items(availableLanguages) { language ->
+                    LanguageOption(
+                        language = language.displayName,
+                        isSelected = selectedLanguage == language,
+                        onClick = { viewModel.selectLanguage(language) },
                         modifier = Modifier
                             .padding(top = 16.dp)
                     )
@@ -90,9 +89,9 @@ fun CitySelectionScreen(
         }
 
         ConfirmButton(
-            isEnabled = selectedCity != null,
+            isEnabled = selectedLanguage != null,
             onClick = {
-                viewModel.confirmCitySelection()
+                viewModel.confirmLanguageSelection()
                 onNavigateToLocationRequest()
             }
         )
@@ -100,8 +99,8 @@ fun CitySelectionScreen(
 }
 
 @Composable
-fun CityOption(
-    city: City,
+fun LanguageOption(
+    language: String,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -109,7 +108,7 @@ fun CityOption(
     var isPressed by remember { mutableStateOf(false) }
 
     val animatedColor by animateColorAsState(
-        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface,
+        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) MaterialTheme.colorScheme.tertiary else Color.Gray,
         label = ""
     )
 
@@ -139,7 +138,7 @@ fun CityOption(
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
-            text = city.displayName,
+            text = language,
             modifier = Modifier
                 .height(64.dp),
             style = TextStyle(

@@ -1,9 +1,11 @@
-package com.bron24.bron24_android.features.language.presentation.components
+package com.bron24.bron24_android.features.cityselection.presentation
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,8 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
-import com.bron24.bron24_android.features.language.domain.model.Language
-import com.bron24.bron24_android.features.language.presentation.LanguageViewModel
+import com.bron24.bron24_android.features.cityselection.domain.model.City
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -30,11 +31,12 @@ val gilroyFontFamily = FontFamily(
 )
 
 @Composable
-fun LanguageSelectionScreen(
-    viewModel: LanguageViewModel,
+fun CitySelectionScreen(
+    viewModel: CityViewModel,
     onNavigateToLocationRequest: () -> Unit
 ) {
-    val selectedLanguage by viewModel.selectedLanguage.collectAsState()
+    val selectedCity by viewModel.selectedCity.collectAsState()
+    val availableCities by viewModel.availableCities.collectAsState()
 
     Column(
         modifier = Modifier
@@ -61,7 +63,7 @@ fun LanguageSelectionScreen(
             )
 
             Text(
-                text = "Dastur tilini tanlang",
+                text = stringResource(id = R.string.select_city),
                 modifier = Modifier
                     .padding(top = 24.dp, start = 24.dp)
                     .height(128.dp),
@@ -74,25 +76,23 @@ fun LanguageSelectionScreen(
                 ),
             )
 
-            LanguageOption(
-                language = stringResource(id = R.string.uz_language),
-                isSelected = selectedLanguage == Language.UZBEK,
-                onClick = { viewModel.selectLanguage(Language.UZBEK) },
-                modifier = Modifier
-                    .padding(top = 80.dp)
-            )
-
-            LanguageOption(
-                language = stringResource(id = R.string.ru_language),
-                isSelected = selectedLanguage == Language.RUSSIAN,
-                onClick = { viewModel.selectLanguage(Language.RUSSIAN) },
-            )
+            LazyColumn {
+                items(availableCities) { city ->
+                    CityOption(
+                        city = city,
+                        isSelected = selectedCity == city,
+                        onClick = { viewModel.selectCity(city) },
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                    )
+                }
+            }
         }
 
         ConfirmButton(
-            isEnabled = selectedLanguage != null,
+            isEnabled = selectedCity != null,
             onClick = {
-                viewModel.confirmLanguageSelection()
+                viewModel.confirmCitySelection()
                 onNavigateToLocationRequest()
             }
         )
@@ -100,8 +100,8 @@ fun LanguageSelectionScreen(
 }
 
 @Composable
-fun LanguageOption(
-    language: String,
+fun CityOption(
+    city: City,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -139,7 +139,7 @@ fun LanguageOption(
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
-            text = language,
+            text = city.displayName,
             modifier = Modifier
                 .height(64.dp),
             style = TextStyle(
@@ -187,5 +187,6 @@ fun ConfirmButton(
 @Composable
 fun SimpleComposablePreview() {
     Bron24_androidTheme {
+        // Add preview content here if needed
     }
 }

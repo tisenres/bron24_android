@@ -3,7 +3,7 @@ package com.bron24.bron24_android.di
 import android.content.Context
 import com.bron24.bron24_android.features.cityselection.domain.usecases.GetAvailableCitiesUseCase
 import com.bron24.bron24_android.features.cityselection.domain.usecases.UpdateSelectedCityUseCase
-import com.bron24.bron24_android.features.cityselection.presentation.components.CityViewModel
+import com.bron24.bron24_android.features.cityselection.presentation.CityViewModel
 import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
 import com.bron24.bron24_android.features.language.presentation.LanguageViewModel

@@ -24,15 +24,17 @@ class LanguageViewModel @Inject constructor(
     private val _selectedLanguage = MutableStateFlow<Language?>(null)
     val selectedLanguage: StateFlow<Language?> = _selectedLanguage
 
+    private val _availableLanguages = MutableStateFlow<List<Language>>(emptyList())
+    val availableLanguages: StateFlow<List<Language>> = _availableLanguages
+
     init {
         viewModelScope.launch {
-            _selectedLanguage.value = getAvailableLanguagesUseCase().firstOrNull()
+            _availableLanguages.value = getAvailableLanguagesUseCase()
         }
     }
 
     fun selectLanguage(language: Language) {
         _selectedLanguage.value = language
-        LocaleManager.setLocale(context, language.code)
     }
 
     fun confirmLanguageSelection() {

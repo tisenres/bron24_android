@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.cityselection.presentation.components
+package com.bron24.bron24_android.features.cityselection.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
