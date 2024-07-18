@@ -21,15 +21,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Recreate your activity or refresh the UI elements as needed
-        setContent {
-            CompositionLocalProvider {
-                Bron24_androidTheme {
-                    MainScreen()
-                }
-            }
-        }
-    }
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        // Recreate your activity or refresh the UI elements as needed
+//        setContent {
+//            CompositionLocalProvider {
+//                Bron24_androidTheme {
+//                    MainScreen()
+//                }
+//            }
+//        }
+//    }
 }

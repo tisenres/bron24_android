@@ -1,30 +1,23 @@
 package com.bron24.bron24_android.core.presentation
 
-import android.content.Context
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
+import com.bron24.bron24_android.core.domain.model.Screen
+import com.bron24.bron24_android.core.presentation.components.BottomNavigationBar
 import com.bron24.bron24_android.features.cityselection.presentation.CitySelectionScreen
-import com.bron24.bron24_android.core.util.LocaleManager
+import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
+import com.bron24.bron24_android.features.venuelisting.presentation.HomePage
+import com.bron24.bron24_android.features.venuelisting.presentation.CartPage
+import com.bron24.bron24_android.features.venuelisting.presentation.ProfilePage
 
 @Composable
 fun MainScreen() {
-    val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val languageCode = sharedPreferences.getString("selected_language", "uz") ?: "uz"
-        LocaleManager.updateLocale(context, languageCode)
-    }
-
     val navController = rememberNavController()
     Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(navController = navController, startDestination = "languageSelection") {
@@ -42,15 +35,31 @@ fun MainScreen() {
                 CitySelectionScreen(
                     viewModel = hiltViewModel(),
                     onNavigateToLocationRequest = {
-                        navController.navigate("nextScreen") {
+                        navController.navigate("main") {
                             popUpTo("citySelection") { inclusive = true }
                         }
                     }
                 )
             }
-            composable("nextScreen") {
-                Surface(color = MaterialTheme.colorScheme.background) {
-                    Text("Next Screen Content")
+            composable("main") {
+                Scaffold(
+                    bottomBar = { BottomNavigationBar(navController = navController) }
+                ) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.HomePage.route,
+                        modifier = Modifier.padding(it)
+                    ) {
+                        composable(Screen.HomePage.route) {
+                            HomePage()
+                        }
+                        composable(Screen.CartPage.route) {
+                            CartPage()
+                        }
+                        composable(Screen.ProfilePage.route) {
+                            ProfilePage()
+                        }
+                    }
                 }
             }
         }
