@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.core.domain.model.Screen
 import com.bron24.bron24_android.core.presentation.components.BottomNavigationBar
+import com.bron24.bron24_android.features.home.presentation.HomePage
 
 @Composable
 fun AppScaffold() {
@@ -52,12 +53,5 @@ fun ProfilePage() {
 fun CartPage() {
     Surface(color = MaterialTheme.colorScheme.background) {
         Text("Cart Page Content")
-    }
-}
-
-@Composable
-fun HomePage() {
-    Surface(color = MaterialTheme.colorScheme.background) {
-        Text("Home Page Content")
     }
 }

@@ -8,15 +8,17 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.3"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
-composeNavigation = "2.7.1"
+composeNavigation = "2.7.7"
 hilt = "2.51.1"
 hiltCompiler = "1.2.0"
 hiltNavigationCompose = "1.2.0"
 locationServices = "21.3.0"
-retrofit = "2.9.0"
-okhttpLoggingInterceptor = "5.0.0-alpha.3"
+retrofit = "2.11.0"
+okhttpLoggingInterceptor = "5.0.0-alpha.14"
 lifecycleViewModelCompose = "2.8.3"
 appcompat = "1.7.0"
+coilCompose = "2.7.0"
+retrofitMoshi = "2.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -27,7 +29,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-navigation = { group = "androidx.navigation", name = "navigation-compose", version = "2.7.7" }
+androidx-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -35,15 +37,16 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose"}
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hiltCompiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hiltCompilerAndroidX = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltCompiler" }
 hiltNavigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 hiltAndroidTesting = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 locationServices = { group = "com.google.android.gms", name = "play-services-location", version.ref = "locationServices" }
-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version = "2.11.0" }
-retrofitMoshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version = "2.11.0" }
-okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version = "5.0.0-alpha.14" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofitMoshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofitMoshi" }
+okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLoggingInterceptor" }
 lifecycleViewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }
 
 [plugins]

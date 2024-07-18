@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.hiltNavigationCompose)
 
     implementation(libs.locationServices)
+    implementation(libs.coil)
 
     implementation(libs.retrofit)
     implementation(libs.retrofitMoshi)
