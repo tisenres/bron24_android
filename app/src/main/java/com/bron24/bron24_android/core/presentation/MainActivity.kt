@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.core.presentation
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,7 +14,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CompositionLocalProvider {
                 Bron24_androidTheme {
-                    MainScreen()
+                    NavScreen()
                 }
             }
         }

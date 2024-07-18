@@ -12,12 +12,9 @@ import com.bron24.bron24_android.core.domain.model.Screen
 import com.bron24.bron24_android.core.presentation.components.BottomNavigationBar
 import com.bron24.bron24_android.features.cityselection.presentation.CitySelectionScreen
 import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
-import com.bron24.bron24_android.features.venuelisting.presentation.HomePage
-import com.bron24.bron24_android.features.venuelisting.presentation.CartPage
-import com.bron24.bron24_android.features.venuelisting.presentation.ProfilePage
 
 @Composable
-fun MainScreen() {
+fun NavScreen() {
     val navController = rememberNavController()
     Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(navController = navController, startDestination = "languageSelection") {
@@ -63,5 +60,23 @@ fun MainScreen() {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun HomePage() {
+}
+
+@Composable
+fun CartPage() {
+    Surface(color = MaterialTheme.colorScheme.background) {
+        Text("Cart Page Content")
+    }
+}
+
+@Composable
+fun ProfilePage() {
+    Surface(color = MaterialTheme.colorScheme.background) {
+        Text("Profile Page Content")
     }
 }
