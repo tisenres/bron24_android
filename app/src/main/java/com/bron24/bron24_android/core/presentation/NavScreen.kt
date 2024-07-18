@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -17,47 +18,55 @@ import com.bron24.bron24_android.features.language.presentation.LanguageSelectio
 fun NavScreen() {
     val navController = rememberNavController()
     Surface(color = MaterialTheme.colorScheme.background) {
-        NavHost(navController = navController, startDestination = "languageSelection") {
-            composable("languageSelection") {
+        NavHost(
+            navController = navController,
+            startDestination = Screen.LanguageSelection.route
+        ) {
+            composable(Screen.LanguageSelection.route) {
                 LanguageSelectionScreen(
                     viewModel = hiltViewModel(),
                     onNavigateToLocationRequest = {
-                        navController.navigate("citySelection") {
-                            popUpTo("languageSelection") { inclusive = true }
+                        navController.navigate(Screen.CitySelection.route) {
+                            popUpTo(Screen.LanguageSelection.route) { inclusive = true }
                         }
                     }
                 )
             }
-            composable("citySelection") {
+            composable(Screen.CitySelection.route) {
                 CitySelectionScreen(
                     viewModel = hiltViewModel(),
                     onNavigateToLocationRequest = {
-                        navController.navigate("main") {
-                            popUpTo("citySelection") { inclusive = true }
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo(Screen.CitySelection.route) { inclusive = true }
                         }
                     }
                 )
             }
-            composable("main") {
-                Scaffold(
-                    bottomBar = { BottomNavigationBar(navController = navController) }
-                ) {
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.HomePage.route,
-                        modifier = Modifier.padding(it)
-                    ) {
-                        composable(Screen.HomePage.route) {
-                            HomePage()
-                        }
-                        composable(Screen.CartPage.route) {
-                            CartPage()
-                        }
-                        composable(Screen.ProfilePage.route) {
-                            ProfilePage()
-                        }
-                    }
-                }
+            composable(Screen.Main.route) {
+                MainNavHost(navController = navController)
+            }
+        }
+    }
+}
+
+@Composable
+fun MainNavHost(navController: NavHostController) {
+    Scaffold(
+        bottomBar = { BottomNavigationBar(navController = navController) }
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = Screen.HomePage.route,
+            modifier = Modifier.padding(it)
+        ) {
+            composable(Screen.HomePage.route) {
+                HomePage()
+            }
+            composable(Screen.CartPage.route) {
+                CartPage()
+            }
+            composable(Screen.ProfilePage.route) {
+                ProfilePage()
             }
         }
     }
@@ -65,6 +74,9 @@ fun NavScreen() {
 
 @Composable
 fun HomePage() {
+    Surface(color = MaterialTheme.colorScheme.background) {
+        Text("Home Page Content")
+    }
 }
 
 @Composable

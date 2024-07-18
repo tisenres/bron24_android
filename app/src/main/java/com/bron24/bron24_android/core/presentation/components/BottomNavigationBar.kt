@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.core.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -65,6 +66,20 @@ fun BottomNavigationItem(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-
-
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .background(
+                if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                else Color.Transparent,
+                shape = RoundedCornerShape(50)
+            )
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp, horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        icon()
+        Spacer(modifier = Modifier.height(4.dp))
+        label()
+    }
 }
