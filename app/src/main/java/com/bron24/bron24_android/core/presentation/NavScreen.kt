@@ -7,7 +7,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.bron24.bron24_android.core.domain.model.Screen
-import com.bron24.bron24_android.core.presentation.components.BottomNavigationBar
 import com.bron24.bron24_android.features.cityselection.presentation.CitySelectionScreen
 import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
 
@@ -36,7 +35,7 @@ fun NavScreen(navController: NavHostController) {
                 )
             }
             composable(Screen.Main.route) {
-                AppScaffold(navController = navController)
+                AppScaffold()
             }
         }
     }

@@ -12,7 +12,7 @@ import com.bron24.bron24_android.core.domain.model.Screen
 import com.bron24.bron24_android.core.presentation.components.BottomNavigationBar
 
 @Composable
-fun AppScaffold(navController: NavHostController) {
+fun AppScaffold() {
     val nestedNavController = rememberNavController()
 
     Scaffold(
@@ -43,12 +43,16 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
 
 @Composable
 fun ProfilePage() {
-    TODO("Not yet implemented")
+    Surface(color = MaterialTheme.colorScheme.background) {
+        Text("Profile Page Content")
+    }
 }
 
 @Composable
 fun CartPage() {
-    TODO("Not yet implemented")
+    Surface(color = MaterialTheme.colorScheme.background) {
+        Text("Cart Page Content")
+    }
 }
 
 @Composable

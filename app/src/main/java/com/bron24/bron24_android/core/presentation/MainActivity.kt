@@ -16,11 +16,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Use the ViewModelStoreOwner from the activity context
             val viewModelStoreOwner = this as ViewModelStoreOwner
             val navController = rememberNavController()
 
-            // Set the ViewModelStore on the NavController
             navController.setViewModelStore(viewModelStoreOwner.viewModelStore)
 
             CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
