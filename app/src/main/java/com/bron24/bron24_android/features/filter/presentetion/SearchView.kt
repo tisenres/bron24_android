@@ -16,13 +16,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 
 @Composable
-fun SearchView() {
+fun SearchView(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
-            .padding(20.dp)
+        modifier = modifier
             .size(340.dp, 152.dp)
             .background(
                 color = Color(0xFF33B85C),
@@ -59,7 +59,7 @@ fun SearchView() {
                         .padding(15.dp)
                 ) {
                     Image(
-                        painter = rememberImagePainter("https://via.placeholder.com/28x28"),
+                        painter = rememberAsyncImagePainter("https://via.placeholder.com/28x28"),
                         contentDescription = "Profile",
                         modifier = Modifier
                             .size(28.dp)
@@ -99,5 +99,5 @@ fun SearchView() {
 @Composable
 @Preview(showBackground = true)
 fun PreviewSearchView() {
-    SearchView()
+    SearchView(modifier = Modifier.padding(20.dp))
 }

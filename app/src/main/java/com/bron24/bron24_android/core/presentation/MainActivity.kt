@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 import dagger.hilt.android.AndroidEntryPoint
