@@ -13,8 +13,8 @@ import androidx.compose.runtime.Composable
 @Composable
 fun VenueListingView(venues: List<Venue>) {
     LazyColumn(
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        contentPadding = PaddingValues(start = 29.dp, end = 21.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(venues) { venue ->
             VenueCard(venue = venue)
@@ -25,19 +25,19 @@ fun VenueListingView(venues: List<Venue>) {
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueListingView() {
-    val sampleVenues = listOf(
+
+    val sampleVenues = List(5) {
         Venue(
-            name = "Bunyodkor kompleksi",
+            name = "Bunyodkor kompleksi ${it + 1}",
             address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
-            distance = "3km",
-            rating = "4.0",
-            price = "100sum/hour",
-            freeSlots = "14 slots today",
+            distance = "${(1..10).random()}km",
+            rating = "${(1..5).random()}.0",
+            price = "${(50..150).random()}sum/hour",
+            freeSlots = "${(5..20).random()} slots today",
             imageUrl = "https://via.placeholder.com/340x82",
             overlayImageUrl = "https://via.placeholder.com/21x25"
-        ),
-        // Add more sample venues if needed
-    )
+        )
+    }
 
     VenueListingView(venues = sampleVenues)
 }

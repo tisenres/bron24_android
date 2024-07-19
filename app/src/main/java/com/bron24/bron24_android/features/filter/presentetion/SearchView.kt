@@ -31,9 +31,9 @@ val gilroyFontFamily = FontFamily(
 )
 
 @Composable
-fun SearchView() {
+fun SearchView(modifier: Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .height(144.57.dp)
             .fillMaxWidth()
             .background(
@@ -152,5 +152,5 @@ fun SearchRow() {
 @Composable
 @Preview(showBackground = true)
 fun PreviewSearchView() {
-    SearchView()
+    SearchView(modifier = Modifier.padding(20.dp))
 }
