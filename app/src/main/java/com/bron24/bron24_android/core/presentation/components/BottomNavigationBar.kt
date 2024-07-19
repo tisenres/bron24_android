@@ -5,25 +5,32 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
+import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.domain.model.Screen
+
+val gilroyFontFamily = FontFamily(
+    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
+    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
+)
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -35,30 +42,30 @@ fun BottomNavigationBar(navController: NavController) {
             .fillMaxWidth()
             .height(72.dp)
             .background(Color.White)
-            .padding(vertical = 24.dp, horizontal = 52.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(vertical = 12.dp, horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         BottomNavigationItem(
-            icon = Icons.Filled.Home,
+            icon = R.drawable.baseline_home_24,
             label = "Home",
             selected = currentRoute == Screen.HomePage.route,
             onClick = { navController.navigate(Screen.HomePage.route) }
         )
         BottomNavigationItem(
-            icon = Icons.Filled.Email,
+            icon = R.drawable.baseline_map_24,
             label = "Map",
             selected = currentRoute == Screen.MapPage.route,
             onClick = { navController.navigate(Screen.MapPage.route) }
         )
         BottomNavigationItem(
-            icon = Icons.Filled.ShoppingCart,
+            icon = R.drawable.baseline_wallet_24,
             label = "Cart",
             selected = currentRoute == Screen.CartPage.route,
             onClick = { navController.navigate(Screen.CartPage.route) }
         )
         BottomNavigationItem(
-            icon = Icons.Filled.Person,
+            icon = R.drawable.baseline_person_24,
             label = "Profile",
             selected = currentRoute == Screen.ProfilePage.route,
             onClick = { navController.navigate(Screen.ProfilePage.route) }
@@ -68,7 +75,7 @@ fun BottomNavigationBar(navController: NavController) {
 
 @Composable
 fun BottomNavigationItem(
-    icon: ImageVector,
+    icon: Int,
     label: String,
     selected: Boolean,
     onClick: () -> Unit
@@ -93,19 +100,29 @@ fun BottomNavigationItem(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(id = icon),
             contentDescription = label,
             tint = if (selected) Color(0xFF3DDA7E) else Color.Gray,
             modifier = Modifier.size(24.dp)
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall.copy(
-                fontWeight = FontWeight.Bold,
-                color = if (selected) Color(0xFF3DDA7E) else Color.Gray
+        Spacer(modifier = Modifier.height(10.dp))
+        if (selected) {
+            Text(
+                text = label,
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF3DDA7E),
+                    fontSize = 10.sp,
+                    lineHeight = 12.25.sp,
+                    shadow = Shadow(
+                        color = Color(0xFF3DDA7E),
+                        offset = Offset(0f, 0.5f),
+                        blurRadius = 6f
+                    )
+                )
             )
-        )
+        }
     }
 }
 
