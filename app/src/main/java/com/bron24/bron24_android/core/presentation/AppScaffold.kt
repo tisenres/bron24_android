@@ -33,6 +33,9 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
         composable(Screen.HomePage.route) {
             HomePage()
         }
+        composable(Screen.MapPage.route) {
+            MapPage()
+        }
         composable(Screen.CartPage.route) {
             CartPage()
         }
@@ -46,6 +49,14 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
 fun ProfilePage() {
     Surface(color = MaterialTheme.colorScheme.background) {
         Text("Profile Page Content")
+    }
+}
+
+
+@Composable
+fun MapPage() {
+    Surface(color = MaterialTheme.colorScheme.background) {
+        Text("Map Page Content")
     }
 }
 

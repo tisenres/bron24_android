@@ -51,8 +51,8 @@ fun SearchView(modifier: Modifier) {
                             Color(0xFFA4ECC3),
                             Color(0xFF69CE91),
                         ),
-                        start = Offset.Zero,
-                        end = Offset(0F, 153F),
+                        start = Offset(0f, 153f),
+                        end = Offset(153f, 0f),
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
