@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.features.venuelisting.domain.model.Venue
 
@@ -50,7 +49,7 @@ fun VenueImageSection(venue: Venue) {
             .clip(RoundedCornerShape(10.dp))
     ) {
         Image(
-            painter = rememberImagePainter(venue.imageUrl),
+            painter = painterResource(id = R.drawable.venue_pic),
             contentDescription = "Venue Image",
             modifier = Modifier.fillMaxSize()
         )
@@ -74,7 +73,7 @@ fun VenueDetailsRow(venue: Venue) {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 11.dp)
     ) {
         Text(
             text = venue.address,
@@ -151,7 +150,6 @@ fun VenueFooter(venue: Venue) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp)
     ) {
         Spacer(
             modifier = Modifier
@@ -161,26 +159,62 @@ fun VenueFooter(venue: Venue) {
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 13.dp)
+                .padding(top = 7.dp, bottom = 10.dp, start = 13.5.dp, end = 13.5.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_dollar),
-                contentDescription = "Price Icon",
-                modifier = Modifier.size(10.dp)
-            )
-            Text(
-                text = "Price ${venue.price}",
-                color = Color(0xFF3C2E56),
-                fontSize = 8.sp,
-                modifier = Modifier.padding(start = 2.dp)
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = "Free time: ${venue.freeSlots}",
-                fontSize = 8.sp
-            )
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_dollar),
+                    contentDescription = "Rating Image",
+                    modifier = Modifier
+                        .width(10.dp)
+                        .height(10.dp)
+                )
+                Text(
+                    text = venue.price,
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight(800),
+                        fontSize = 8.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 9.8.sp,
+                    ),
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                Text(
+                    text = "Free time:",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight(800),
+                        fontSize = 8.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 9.8.sp,
+                    ),
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+                Text(
+                    text = venue.freeSlots,
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight(800),
+                        fontSize = 8.sp,
+                        color = Color(0xFF32B768),
+                        lineHeight = 9.8.sp,
+                    ),
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+            }
         }
     }
 }
