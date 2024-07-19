@@ -87,7 +87,7 @@ fun BottomNavigationItem(
                 onClick = onClick
             )
             .background(
-                if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.12f) else Color.Transparent,
+                if (selected) Color(0xFF3DDA7E).copy(alpha = 0.12f) else Color.Transparent,
                 shape = CircleShape
             ),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -95,7 +95,7 @@ fun BottomNavigationItem(
         Icon(
             imageVector = icon,
             contentDescription = label,
-            tint = if (selected) MaterialTheme.colorScheme.primary else Color.Gray,
+            tint = if (selected) Color(0xFF3DDA7E) else Color.Gray,
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -103,7 +103,7 @@ fun BottomNavigationItem(
             text = label,
             style = MaterialTheme.typography.bodySmall.copy(
                 fontWeight = FontWeight.Bold,
-                color = if (selected) MaterialTheme.colorScheme.primary else Color.Gray
+                color = if (selected) Color(0xFF3DDA7E) else Color.Gray
             )
         )
     }
