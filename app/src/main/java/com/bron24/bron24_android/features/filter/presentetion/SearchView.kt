@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,38 +13,46 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
+import com.bron24.bron24_android.R
+
+val gilroyFontFamily = FontFamily(
+    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
+    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
+)
 
 @Composable
 fun SearchView(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .size(340.dp, 152.dp)
+            .size(340.dp, 145.dp)
             .background(
-                color = Color(0xFF33B85C),
+                color = Color(0xFF32B768),
                 shape = RoundedCornerShape(20.dp)
             )
-            .offset(x = 1.dp, y = -3.65.dp)
             .rotate(-1.25f)
     ) {
         Box(
             modifier = Modifier
-                .size(340.dp, 152.dp)
+                .size(340.dp, 145.dp)
                 .background(
-                    brush = androidx.compose.ui.graphics.Brush.horizontalGradient(
+                    brush = Brush.horizontalGradient(
                         colors = listOf(
-                            Color(0xFFA4EEC2),
-                            Color(0xFF69CF91)
+                            Color(0xFFA4ECC3),
+                            Color(0xFF69CE91)
                         )
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
-                .offset(x = -0.92.dp, y = 3.66.dp)
                 .rotate(1.25f)
         ) {
             Column(
@@ -52,24 +61,33 @@ fun SearchView(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.Start,
                     modifier = Modifier
-                        .offset(y = (-39.03).dp)
-                        .rotate(-1f)
+                        .rotate(0.25f)
                         .padding(15.dp)
                 ) {
                     Image(
-                        painter = rememberAsyncImagePainter("https://via.placeholder.com/28x28"),
-                        contentDescription = "Profile",
+                        painter = painterResource(id = R.drawable.ronaldo),
+                        contentDescription = "profile_image",
                         modifier = Modifier
                             .size(28.dp)
                             .clip(CircleShape)
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(15.dp))
                     Text(
-                        text = "Salom, Cristiano Ronaldo!",
-                        fontSize = 14.sp,
-                        color = Color.White
+                        text = "Salom, Crisitano Ronaldo!",
+                        modifier = Modifier
+                            .padding(start = 24.dp)
+                            .height(32.dp)
+                            .width(78.dp),
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.secondary,
+                            lineHeight = 16.8.sp
+                        ),
                     )
                 }
 
@@ -81,7 +99,6 @@ fun SearchView(modifier: Modifier = Modifier) {
                             shape = RoundedCornerShape(5.dp)
                         )
                         .shadow(10.dp, RoundedCornerShape(5.dp))
-                        .offset(y = 23.83.dp)
                         .rotate(-1f)
                         .padding(horizontal = 10.dp, vertical = 5.dp)
                 ) {
