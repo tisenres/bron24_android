@@ -34,13 +34,13 @@ val gilroyFontFamily = FontFamily(
 fun SearchView(modifier: Modifier) {
     Box(
         modifier = modifier
-            .height(144.57.dp)
+            .height(110.dp)
             .fillMaxWidth()
             .background(
                 color = Color(0xFF32B768),
                 shape = RoundedCornerShape(20.dp)
             )
-            .rotate(-1.25f)
+            .rotate(-1.5f)
     ) {
         Box(
             modifier = Modifier
@@ -56,7 +56,7 @@ fun SearchView(modifier: Modifier) {
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
-                .rotate(1.25f)
+                .rotate(1.5f)
         ) {
             Column(
                 horizontalAlignment = Alignment.Start,
@@ -78,7 +78,7 @@ fun ProfileRow() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 18.74.dp, top = 25.36.dp, end = 22.19.dp)
-            .rotate(0.25f)
+            .rotate(0.75f)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -117,7 +117,7 @@ fun SearchRow() {
         horizontalArrangement = Arrangement.Start,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 18.85.dp, top = 34.5.dp, end = 10.02.dp)
+            .padding(start = 18.85.dp, top = 14.5.dp, end = 10.02.dp)
             .background(
                 color = Color(0xFF7ADDA2),
                 shape = RoundedCornerShape(5.dp)
@@ -128,7 +128,7 @@ fun SearchRow() {
             )
             .height(26.dp)
             .padding(horizontal = 10.dp)
-            .rotate(0.25f)
+            .rotate(0.75f)
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_search),

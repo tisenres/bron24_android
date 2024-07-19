@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -31,7 +32,7 @@ fun VenueCard(venue: Venue) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
+            .background(Color(0xFFF6F6F6), RoundedCornerShape(10.dp))
     ) {
         VenueImageSection(venue)
         VenueTitleRow(venue)
@@ -44,25 +45,25 @@ fun VenueCard(venue: Venue) {
 fun VenueImageSection(venue: Venue) {
     Box(
         modifier = Modifier
-            .height(82.dp)
+            .height(130.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
         Image(
             painter = painterResource(id = R.drawable.venue_pic),
             contentDescription = "Venue Image",
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .clip(RoundedCornerShape(10.dp))
+                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
         )
         Image(
-            painter = painterResource(id = R.drawable.ic_filter),
+            painter = painterResource(id = R.drawable.baseline_favorite_24),
             contentDescription = "Overlay Image",
             modifier = Modifier
-                .padding(top = 3.dp)
+                .padding(top = 5.dp, end = 5.dp)
                 .size(21.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .align(Alignment.TopCenter)
+                .align(Alignment.TopEnd)
         )
     }
 }
@@ -155,14 +156,14 @@ fun VenueFooter(venue: Venue) {
             modifier = Modifier
                 .height(1.dp)
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(Color(0xFFEBECEE))
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 7.dp, bottom = 10.dp, start = 13.5.dp, end = 13.5.dp)
+                .padding(top = 7.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.Bottom,

@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun VenueListingView(venues: List<Venue>) {
     LazyColumn(
-        contentPadding = PaddingValues(start = 29.dp, end = 21.dp),
+        contentPadding = PaddingValues(horizontal = 25.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(venues) { venue ->
