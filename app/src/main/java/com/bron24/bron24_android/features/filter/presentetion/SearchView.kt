@@ -84,7 +84,7 @@ fun ProfileRow() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ronaldo),
+                painter = painterResource(id = R.drawable.joxon_pic),
                 contentDescription = "profile_image",
                 modifier = Modifier
                     .size(28.dp)
@@ -92,7 +92,7 @@ fun ProfileRow() {
             )
             Spacer(modifier = Modifier.width(14.92.dp))
             Text(
-                text = "Salom, Cristiano Ronaldo!",
+                text = "Salom, Joxongir aka",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,

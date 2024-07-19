@@ -2,9 +2,7 @@ package com.bron24.bron24_android.features.venuelisting.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,109 +10,128 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bron24.bron24_android.features.venuelisting.domain.model.Venue
-import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberImagePainter
+import com.bron24.bron24_android.R
+import com.bron24.bron24_android.features.venuelisting.domain.model.Venue
+
+val gilroyFontFamily = FontFamily(
+    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
+    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
+)
 
 @Composable
 fun VenueCard(venue: Venue) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier
-            .padding(10.dp)
+            .padding(start = 29.dp, end = 21.dp)
+            .fillMaxWidth()
             .background(Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
-            .clip(RoundedCornerShape(10.dp))
-            .size(340.dp, 171.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(340.dp, 82.dp)
+                .height(82.dp)
+                .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
         ) {
             Image(
                 painter = rememberImagePainter(venue.imageUrl),
                 contentDescription = "Venue Image",
-                modifier = Modifier
-                    .size(340.dp, 82.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                modifier = Modifier.fillMaxSize()
             )
             Image(
-                painter = rememberImagePainter(venue.overlayImageUrl),
+                painter = painterResource(id = R.drawable.ic_filter),
                 contentDescription = "Overlay Image",
                 modifier = Modifier
-                    .size(21.25.dp, 25.23.dp)
-                    .offset(x = 151.94.dp, y = (-24.60).dp)
+                    .padding(top = 3.dp)
+                    .size(21.dp)
                     .clip(RoundedCornerShape(10.dp))
+                    .align(Alignment.TopCenter)
             )
         }
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier.width(320.dp)
+        VenueDetails(venue)
+        VenueFooter(venue)
+    }
+}
+
+@Composable
+fun VenueDetails(venue: Venue) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 13.dp, horizontal = 10.dp)
+            .fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = venue.name,
-                    fontSize = 12.sp,
-                    color = Color(0xFF3C2D56)
-                )
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(16.dp)
-                            .clip(CircleShape)
-                            .background(Color.Gray)
-                    )
-                    Text(
-                        text = venue.rating,
-                        fontSize = 12.sp,
-                        color = Color(0xFF3C2D56)
-                    )
-                }
-            }
             Text(
-                text = "${venue.address}                                            ${venue.distance}",
-                fontSize = 10.sp,
-                lineHeight = 15.sp,
-                color = Color(0xFF949494)
+                text = venue.name,
+                color = Color(0xFF3C2E56),
+                fontSize = 12.sp,
+                modifier = Modifier.weight(1f)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.ic_filter),
+                contentDescription = "Rating Image",
+                modifier = Modifier.size(13.dp)
+            )
+            Text(
+                text = venue.rating,
+                color = Color(0xFF3C2E56),
+                fontSize = 12.sp
             )
         }
-        Column(
-            verticalArrangement = Arrangement.spacedBy(7.dp),
-            modifier = Modifier.fillMaxWidth().height(17.dp)
+        Text(
+            text = "${venue.address} ${venue.distance}",
+            color = Color(0xFF939393),
+            fontSize = 10.sp,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+    }
+}
+
+@Composable
+fun VenueFooter(venue: Venue) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
+        Spacer(
+            modifier = Modifier
+                .height(1.dp)
+                .fillMaxWidth()
+                .background(Color.White)
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 13.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(0.dp)
-                    .background(Color.Transparent)
-                    .border(0.5.dp, Color.White)
+            Image(
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = "Price Icon",
+                modifier = Modifier.size(10.dp)
             )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp)
-            ) {
-                Text(
-                    text = "Price ${venue.price}",
-                    fontSize = 8.sp,
-                    color = Color(0xFF3C2D56)
-                )
-                Text(
-                    text = "Free time: ${venue.freeSlots}",
-                    fontSize = 8.sp,
-                    color = Color(0xFF3C2D56)
-                )
-            }
+            Text(
+                text = "Price ${venue.price}",
+                color = Color(0xFF3C2E56),
+                fontSize = 8.sp,
+                modifier = Modifier.padding(start = 2.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "Free time: ${venue.freeSlots}",
+                fontSize = 8.sp
+            )
         }
     }
 }
@@ -131,7 +148,7 @@ fun PreviewVenueCard() {
             price = "100sum/hour",
             freeSlots = "14 slots today",
             imageUrl = "https://via.placeholder.com/340x82",
-            overlayImageUrl = "https://via.placeholder.com/21x25"
+            overlayImageUrl = "https://via.placeholder.com/21x25",
         )
     )
 }
