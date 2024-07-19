@@ -32,7 +32,7 @@ fun PreviewVenueListingView() {
             address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
             distance = "${(1..10).random()}km",
             rating = "${(1..5).random()}.0",
-            price = "${(50..150).random()}sum/hour",
+            price = "100 000 sum/hour",
             freeSlots = "${(5..20).random()} slots today",
             imageUrl = "https://via.placeholder.com/340x82",
             overlayImageUrl = "https://via.placeholder.com/21x25"

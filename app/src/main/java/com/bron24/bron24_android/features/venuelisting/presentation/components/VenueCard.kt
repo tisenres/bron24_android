@@ -51,7 +51,9 @@ fun VenueImageSection(venue: Venue) {
         Image(
             painter = painterResource(id = R.drawable.venue_pic),
             contentDescription = "Venue Image",
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(10.dp))
         )
         Image(
             painter = painterResource(id = R.drawable.ic_filter),
@@ -67,7 +69,6 @@ fun VenueImageSection(venue: Venue) {
 
 @Composable
 fun VenueDetailsRow(venue: Venue) {
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -119,7 +120,7 @@ fun VenueTitleRow(venue: Venue) {
         )
         Row(
             verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.spacedBy(3.dp), // Adjust spacing as needed
+            horizontalArrangement = Arrangement.spacedBy(3.dp),
             modifier = Modifier
         ) {
             Image(
@@ -141,7 +142,6 @@ fun VenueTitleRow(venue: Venue) {
                 modifier = Modifier.align(Alignment.Bottom)
             )
         }
-
     }
 }
 
@@ -170,13 +170,11 @@ fun VenueFooter(venue: Venue) {
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_dollar),
-                    contentDescription = "Rating Image",
-                    modifier = Modifier
-                        .width(10.dp)
-                        .height(10.dp)
+                    contentDescription = "Price Icon",
+                    modifier = Modifier.size(10.dp)
                 )
                 Text(
-                    text = venue.price,
+                    text = "Price: ${venue.price}",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -228,9 +226,9 @@ fun PreviewVenueCard() {
             address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
             distance = "3km",
             rating = "4.0",
-            price = "100sum/hour",
+            price = "100 000 sum/hour",
             freeSlots = "14 slots today",
-            imageUrl = "https://via.placeholder.com/340x82",
+            imageUrl = "https://via.placeholder.com/340x160",
             overlayImageUrl = "https://via.placeholder.com/21x25",
         )
     )
