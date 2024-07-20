@@ -29,16 +29,27 @@ val gilroyFontFamily = FontFamily(
 )
 
 @Composable
-fun VenueCard(venue: Venue) {
+fun VenueCard(venue: Venue, isLoading: Boolean) {
+
+    val backgroundColor = if (isLoading) {
+        Color.Gray.copy(alpha = 0.47f)
+    } else {
+        Color(0xFFF4FEF4).copy(alpha = 0.47f)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color(0xFFF4FEF4).copy(alpha = 0.47f), RoundedCornerShape(10.dp))
     ) {
-        VenueImageSection(venue)
-        VenueTitleRow(venue)
-        VenueDetailsRow(venue)
-        VenueFooter(venue)
+        if (isLoading) {
+            LoadingPlaceholder()
+        } else {
+            VenueImageSection(venue)
+            VenueTitleRow(venue)
+            VenueDetailsRow(venue)
+            VenueFooter(venue)
+        }
     }
 }
 
@@ -220,6 +231,16 @@ fun VenueFooter(venue: Venue) {
 }
 
 @Composable
+fun LoadingPlaceholder() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(162.dp)
+            .background(Color.Gray.copy(alpha = 0.47f), RoundedCornerShape(10.dp))
+    )
+}
+
+@Composable
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
     VenueCard(
@@ -232,6 +253,8 @@ fun PreviewVenueCard() {
             freeSlots = "14 slots today",
             imageUrl = "https://via.placeholder.com/340x160",
             overlayImageUrl = "https://via.placeholder.com/21x25",
-        )
+        ),
+        isLoading = true
     )
+
 }

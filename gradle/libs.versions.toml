@@ -19,6 +19,7 @@ lifecycleViewModelCompose = "2.8.3"
 appcompat = "1.7.0"
 coilCompose = "2.7.0"
 retrofitMoshi = "2.11.0"
+accompanistShimmer = "0.26.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +49,7 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 retrofitMoshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofitMoshi" }
 okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLoggingInterceptor" }
 lifecycleViewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }
+accompanistShimmer = { group = "com.google.accompanist", name = "accompanist-shimmer", version.ref = "accompanistShimmer" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
