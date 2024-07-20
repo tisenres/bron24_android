@@ -3,7 +3,6 @@ package com.bron24.bron24_android.core.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.rememberRipple
@@ -27,8 +26,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.domain.model.Screen
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -56,13 +53,13 @@ fun BottomNavigationBar(navController: NavController) {
         )
         BottomNavigationItem(
             icon = R.drawable.ic_map,
-            label = "Map",
+            label = "Nearby",
             selected = currentRoute == Screen.MapPage.route,
             onClick = { navController.navigate(Screen.MapPage.route) }
         )
         BottomNavigationItem(
             icon = R.drawable.ic_wallet,
-            label = "Cart",
+            label = "Orders",
             selected = currentRoute == Screen.CartPage.route,
             onClick = { navController.navigate(Screen.CartPage.route) }
         )
@@ -83,40 +80,36 @@ fun BottomNavigationItem(
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val coroutineScope = rememberCoroutineScope()
+    val rippleRadius = 100.dp
 
-    Column(
+    Box(
         modifier = Modifier
-            .padding(10.dp)
+            .size(50.dp)
             .clip(CircleShape)
             .background(if (selected) Color(0xFF3DDA7E).copy(alpha = 0.12f) else Color.Transparent)
             .clickable(
                 interactionSource = interactionSource,
                 indication = rememberRipple(
                     bounded = false,
-                    radius = 100.dp,
+                    radius = rippleRadius,
                     color = if (selected) Color(0xFF3DDA7E) else Color.Gray
                 ),
-                onClick = {
-                    coroutineScope.launch {
-                        val press = PressInteraction.Press(Offset.Zero)
-                        interactionSource.emit(press)
-                        delay(100)
-                        interactionSource.emit(PressInteraction.Release(press))
-                        onClick()
-                    }
-                }
+                onClick = onClick
             ),
-        horizontalAlignment = Alignment.CenterHorizontally
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = painterResource(id = icon),
-            contentDescription = label,
-            tint = if (selected) Color(0xFF3DDA7E) else Color.Gray,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        if (selected) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = label,
+                tint = if (selected) Color(0xFF3DDA7E) else Color.Gray,
+                modifier = Modifier.size(24.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = label,
                 style = TextStyle(
@@ -132,6 +125,7 @@ fun BottomNavigationItem(
                     ) else null
                 )
             )
+
         }
     }
 }
@@ -140,6 +134,5 @@ fun BottomNavigationItem(
 @Composable
 fun BottomNavigationBarPreview() {
     val navController = rememberNavController()
-
     BottomNavigationBar(navController = navController)
 }
