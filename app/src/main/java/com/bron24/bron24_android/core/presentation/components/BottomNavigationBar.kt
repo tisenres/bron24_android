@@ -116,11 +116,6 @@ fun BottomNavigationItem(
                     color = if (selected) Color(0xFF26A045) else Color.Gray,
                     fontSize = 8.sp,
                     lineHeight = 11.sp,
-//                    shadow = if (selected) Shadow(
-//                        color = Color(0xFF3DDA7E),
-//                        offset = Offset(0f, 0.5f),
-//                        blurRadius = 6f
-//                    ) else null
                 )
             )
 

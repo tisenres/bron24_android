@@ -51,8 +51,6 @@ fun CitySelectionScreen(
                 text = stringResource(id = R.string.app_name),
                 modifier = Modifier
                     .padding(start = 24.dp),
-//                    .height(32.dp)
-//                    .width(78.dp),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
