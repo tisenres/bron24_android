@@ -82,30 +82,21 @@ fun BottomNavigationItem(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val rippleRadius = 500.dp
-
     Box(
         modifier = Modifier
-            .padding(10.dp)
-            .size(56.dp)  // Ensure the size is fixed to prevent squeezing
+            .size(50.dp)
             .clip(CircleShape)
-            .background(if (selected) Color(0xFF3DDA7E).copy(alpha = 0.12f) else Color.Transparent)
             .clickable(
-                interactionSource = interactionSource,
+                interactionSource = remember {
+                    MutableInteractionSource()
+                },
                 indication = rememberRipple(
-                    bounded = false,
-                    radius = rippleRadius,
-                    color = if (selected) Color(0xFF3DDA7E) else Color.Gray
+                    bounded = true,
+                    radius = 500.dp,
+                    color = Color(0xFF3DDA7E)
                 ),
                 onClick = {
                     onClick()
-                    LaunchedEffect(interactionSource) {
-                        val press = PressInteraction.Press(Offset.Zero)
-                        interactionSource.emit(press)
-                        delay(500)
-                        interactionSource.emit(PressInteraction.Release(press))
-                    }
                 }
             ),
         contentAlignment = Alignment.Center
