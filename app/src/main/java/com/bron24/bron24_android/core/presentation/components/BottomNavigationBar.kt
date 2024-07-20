@@ -3,7 +3,6 @@ package com.bron24.bron24_android.core.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.rememberRipple
@@ -27,8 +26,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.domain.model.Screen
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -43,7 +40,7 @@ fun BottomNavigationBar(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(72.dp)
+            .height(60.dp)
             .background(Color.White),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
@@ -91,8 +88,8 @@ fun BottomNavigationItem(
                     MutableInteractionSource()
                 },
                 indication = rememberRipple(
-                    bounded = true,
-                    radius = 500.dp,
+                    bounded = false,
+                    radius = 1000.dp,  // Maximum radius
                     color = Color(0xFF3DDA7E)
                 ),
                 onClick = {
@@ -112,7 +109,7 @@ fun BottomNavigationItem(
                 modifier = Modifier.size(24.dp)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = label,
                 style = TextStyle(
@@ -121,11 +118,11 @@ fun BottomNavigationItem(
                     color = if (selected) Color(0xFF3DDA7E) else Color.Gray,
                     fontSize = 10.sp,
                     lineHeight = 12.25.sp,
-                    shadow = if (selected) Shadow(
-                        color = Color(0xFF3DDA7E),
-                        offset = Offset(0f, 0.5f),
-                        blurRadius = 6f
-                    ) else null
+//                    shadow = if (selected) Shadow(
+//                        color = Color(0xFF3DDA7E),
+//                        offset = Offset(0f, 0.5f),
+//                        blurRadius = 6f
+//                    ) else null
                 )
             )
 
