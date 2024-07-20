@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -83,11 +83,13 @@ fun BottomNavigationItem(
 
     Column(
         modifier = Modifier
+            .padding(8.dp)
+            .clip(CircleShape)
             .clickable(
                 interactionSource = interactionSource,
                 indication = rememberRipple(
                     bounded = false,
-                    radius = 24.dp,
+                    radius = 40.dp,
                     color = if (selected) Color(0xFF3DDA7E) else Color.Gray
                 ),
                 onClick = onClick
@@ -111,14 +113,14 @@ fun BottomNavigationItem(
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF3DDA7E),
+                    color = if (selected) Color(0xFF3DDA7E) else Color.Gray,
                     fontSize = 10.sp,
                     lineHeight = 12.25.sp,
-                    shadow = Shadow(
+                    shadow = if (selected) Shadow(
                         color = Color(0xFF3DDA7E),
                         offset = Offset(0f, 0.5f),
                         blurRadius = 6f
-                    )
+                    ) else null
                 )
             )
         }
