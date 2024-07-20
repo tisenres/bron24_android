@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -32,7 +33,7 @@ fun VenueCard(venue: Venue) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF6F6F6), RoundedCornerShape(10.dp))
+            .background(Color(0xFFF4FEF4).copy(alpha = 0.47f), RoundedCornerShape(10.dp))
     ) {
         VenueImageSection(venue)
         VenueTitleRow(venue)
@@ -45,7 +46,7 @@ fun VenueCard(venue: Venue) {
 fun VenueImageSection(venue: Venue) {
     Box(
         modifier = Modifier
-            .height(130.dp)
+            .height(162.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
@@ -61,7 +62,7 @@ fun VenueImageSection(venue: Venue) {
             painter = painterResource(id = R.drawable.baseline_favorite_24),
             contentDescription = "Overlay Image",
             modifier = Modifier
-                .padding(top = 5.dp, end = 5.dp)
+                .padding(top = 10.dp, end = 10.dp)
                 .size(21.dp)
                 .align(Alignment.TopEnd)
         )
@@ -75,16 +76,16 @@ fun VenueDetailsRow(venue: Venue) {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 11.dp)
+            .padding(start = 10.dp, end = 10.dp, top = 15.dp, bottom = 10.dp)
     ) {
         Text(
             text = venue.address,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 10.sp,
+                fontSize = 14.sp,
                 color = Color(0xFF949494),
-                lineHeight = 15.sp,
+                lineHeight = 21.sp,
             ),
         )
         Text(
@@ -92,9 +93,9 @@ fun VenueDetailsRow(venue: Venue) {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 10.sp,
+                fontSize = 14.sp,
                 color = Color(0xFF949494),
-                lineHeight = 15.sp,
+                lineHeight = 21.sp,
             )
         )
     }
@@ -107,16 +108,16 @@ fun VenueTitleRow(venue: Venue) {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 15.dp, start = 10.dp, end = 10.dp)
     ) {
         Text(
             text = venue.name,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight(800),
-                fontSize = 12.sp,
+                fontSize = 16.sp,
                 color = Color(0xFF3C2E56),
-                lineHeight = 14.7.sp,
+                lineHeight = 19.6.sp,
             ),
         )
         Row(
@@ -163,7 +164,7 @@ fun VenueFooter(venue: Venue) {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 7.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+                .padding(top = 10.dp, bottom = 15.dp, start = 10.dp, end = 10.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.Bottom,
@@ -172,16 +173,16 @@ fun VenueFooter(venue: Venue) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_dollar),
                     contentDescription = "Price Icon",
-                    modifier = Modifier.size(10.dp)
+                    modifier = Modifier.size(14.dp)
                 )
                 Text(
                     text = "Price: ${venue.price}",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 8.sp,
+                        fontSize = 12.sp,
                         color = Color(0xFF3C2E56),
-                        lineHeight = 9.8.sp,
+                        lineHeight = 14.7.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom)
                 )
@@ -196,9 +197,9 @@ fun VenueFooter(venue: Venue) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 8.sp,
+                        fontSize = 12.sp,
                         color = Color(0xFF3C2E56),
-                        lineHeight = 9.8.sp,
+                        lineHeight = 14.7.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom)
                 )
@@ -207,9 +208,9 @@ fun VenueFooter(venue: Venue) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 8.sp,
+                        fontSize = 12.sp,
                         color = Color(0xFF32B768),
-                        lineHeight = 9.8.sp,
+                        lineHeight = 14.7.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom)
                 )

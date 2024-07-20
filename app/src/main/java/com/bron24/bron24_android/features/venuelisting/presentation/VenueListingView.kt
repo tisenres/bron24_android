@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 fun VenueListingView(venues: List<Venue>) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 25.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         items(venues) { venue ->
             VenueCard(venue = venue)
