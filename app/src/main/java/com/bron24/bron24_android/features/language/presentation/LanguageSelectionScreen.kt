@@ -91,7 +91,6 @@ fun LanguageSelectionScreen(
                 viewModel.confirmLanguageSelection()
                 onNavigateToLocationRequest()
             },
-//            modifier = Modifier.padding(bottom = 24.dp)
         )
     }
 }

@@ -50,9 +50,9 @@ fun CitySelectionScreen(
             Text(
                 text = stringResource(id = R.string.app_name),
                 modifier = Modifier
-                    .padding(start = 24.dp)
-                    .height(32.dp)
-                    .width(78.dp),
+                    .padding(start = 24.dp),
+//                    .height(32.dp)
+//                    .width(78.dp),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -65,7 +65,7 @@ fun CitySelectionScreen(
             Text(
                 text = stringResource(id = R.string.select_city),
                 modifier = Modifier
-                    .padding(top = 24.dp, start = 24.dp)
+                    .padding(top = 24.dp, start = 24.dp, bottom = 20.dp)
                     .height(128.dp),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
@@ -109,7 +109,7 @@ fun CityOption(
     var isPressed by remember { mutableStateOf(false) }
 
     val animatedColor by animateColorAsState(
-        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface,
+        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) Color(0xFF26A045) else Color.Gray,
         label = ""
     )
 
