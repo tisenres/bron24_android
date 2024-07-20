@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
 
@@ -48,10 +49,7 @@ fun LanguageSelectionScreen(
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = stringResource(id = R.string.app_name),
-                modifier = Modifier
-                    .padding(start = 24.dp)
-                    .height(32.dp)
-                    .width(78.dp),
+                modifier = Modifier.padding(start = 24.dp),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -64,8 +62,7 @@ fun LanguageSelectionScreen(
             Text(
                 text = "Dastur tilini tanlang",
                 modifier = Modifier
-                    .padding(top = 24.dp, start = 24.dp)
-                    .height(128.dp),
+                    .padding(top = 24.dp, start = 24.dp, bottom = 80.dp),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -93,7 +90,8 @@ fun LanguageSelectionScreen(
             onClick = {
                 viewModel.confirmLanguageSelection()
                 onNavigateToLocationRequest()
-            }
+            },
+//            modifier = Modifier.padding(bottom = 24.dp)
         )
     }
 }
@@ -108,7 +106,7 @@ fun LanguageOption(
     var isPressed by remember { mutableStateOf(false) }
 
     val animatedColor by animateColorAsState(
-        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) MaterialTheme.colorScheme.tertiary else Color.Gray,
+        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) Color(0xFF26A045) else Color.Gray,
         label = ""
     )
 
@@ -132,7 +130,7 @@ fun LanguageOption(
                 .width(4.dp)
                 .height(48.dp)
                 .background(
-                    if (isSelected) MaterialTheme.colorScheme.tertiary else Color.Transparent,
+                    if (isSelected) Color(0xFF26A045) else Color.Transparent,
                     shape = RoundedCornerShape(3.dp)
                 )
         )
@@ -162,7 +160,7 @@ fun ConfirmButton(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            containerColor = if (isEnabled) MaterialTheme.colorScheme.tertiary else Color.Gray
+            containerColor = if (isEnabled) Color(0xFF26A045) else Color.Gray
         ),
         enabled = isEnabled,
         shape = RoundedCornerShape(8.dp),
@@ -186,6 +184,10 @@ fun ConfirmButton(
 @Composable
 fun SimpleComposablePreview() {
     Bron24_androidTheme {
-        // Add preview content here if needed
+        LanguageSelectionScreen(
+            viewModel = hiltViewModel(),
+            onNavigateToLocationRequest = {
+            }
+        )
     }
 }

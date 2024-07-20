@@ -3,6 +3,7 @@ package com.bron24.bron24_android.core.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.rememberRipple
@@ -26,6 +27,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.domain.model.Screen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -80,23 +83,29 @@ fun BottomNavigationItem(
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(10.dp)
             .clip(CircleShape)
+            .background(if (selected) Color(0xFF3DDA7E).copy(alpha = 0.12f) else Color.Transparent)
             .clickable(
                 interactionSource = interactionSource,
                 indication = rememberRipple(
                     bounded = false,
-                    radius = 40.dp,
+                    radius = 100.dp,
                     color = if (selected) Color(0xFF3DDA7E) else Color.Gray
                 ),
-                onClick = onClick
-            )
-            .background(
-                if (selected) Color(0xFF3DDA7E).copy(alpha = 0.12f) else Color.Transparent,
-                shape = CircleShape
+                onClick = {
+                    coroutineScope.launch {
+                        val press = PressInteraction.Press(Offset.Zero)
+                        interactionSource.emit(press)
+                        delay(100)
+                        interactionSource.emit(PressInteraction.Release(press))
+                        onClick()
+                    }
+                }
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
