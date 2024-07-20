@@ -17,7 +17,7 @@ fun VenueListingView(venues: List<Venue>) {
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         items(venues) { venue ->
-            VenueCard(venue = venue, true)
+            VenueCard(venue = venue, false)
         }
     }
 }

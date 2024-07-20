@@ -41,31 +41,30 @@ fun BottomNavigationBar(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .height(72.dp)
-            .background(Color.White)
-            .padding(vertical = 12.dp, horizontal = 16.dp),
+            .background(Color.White),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         BottomNavigationItem(
-            icon = R.drawable.baseline_home_24,
+            icon = R.drawable.ic_home,
             label = "Home",
             selected = currentRoute == Screen.HomePage.route,
             onClick = { navController.navigate(Screen.HomePage.route) }
         )
         BottomNavigationItem(
-            icon = R.drawable.baseline_map_24,
+            icon = R.drawable.ic_map,
             label = "Map",
             selected = currentRoute == Screen.MapPage.route,
             onClick = { navController.navigate(Screen.MapPage.route) }
         )
         BottomNavigationItem(
-            icon = R.drawable.baseline_wallet_24,
+            icon = R.drawable.ic_wallet,
             label = "Cart",
             selected = currentRoute == Screen.CartPage.route,
             onClick = { navController.navigate(Screen.CartPage.route) }
         )
         BottomNavigationItem(
-            icon = R.drawable.baseline_person_24,
+            icon = R.drawable.ic_person,
             label = "Profile",
             selected = currentRoute == Screen.ProfilePage.route,
             onClick = { navController.navigate(Screen.ProfilePage.route) }

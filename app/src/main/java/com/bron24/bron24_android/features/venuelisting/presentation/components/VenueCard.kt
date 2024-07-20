@@ -301,6 +301,6 @@ fun PreviewVenueCard() {
             imageUrl = "https://via.placeholder.com/340x160",
             overlayImageUrl = "https://via.placeholder.com/21x25",
         ),
-        isLoading = true // Change to false to see the actual content
+        isLoading = false // Change to false to see the actual content
     )
 }
