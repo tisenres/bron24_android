@@ -34,13 +34,13 @@ val gilroyFontFamily = FontFamily(
 fun SearchView(modifier: Modifier) {
     Box(
         modifier = modifier
-            .height(110.dp)
+            .height(120.dp)
             .fillMaxWidth()
             .background(
-                color = Color(0xFF32B768),
+                color = Color(0xFF0E7B3A),
                 shape = RoundedCornerShape(20.dp)
             )
-            .rotate(-1.5f)
+            .rotate(-2f)
     ) {
         Box(
             modifier = Modifier
@@ -48,15 +48,15 @@ fun SearchView(modifier: Modifier) {
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(
-                            Color(0xFFA4ECC3),
-                            Color(0xFF69CE91),
+                            Color(0xFF26A045),
+                            Color(0xFF3AD461)
                         ),
-                        start = Offset(0f, 153f),
-                        end = Offset(153f, 0f),
+                        start = Offset(0f, 500f),
+                        end = Offset(500f, 1000f), // Adjust to control the gradient direction
                     ),
                     shape = RoundedCornerShape(20.dp)
                 )
-                .rotate(1.5f)
+                .rotate(2f)
         ) {
             Column(
                 horizontalAlignment = Alignment.Start,
@@ -78,7 +78,6 @@ fun ProfileRow() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 18.74.dp, top = 25.36.dp, end = 22.19.dp)
-            .rotate(0.75f)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -117,9 +116,9 @@ fun SearchRow() {
         horizontalArrangement = Arrangement.Start,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 18.85.dp, top = 14.5.dp, end = 10.02.dp)
+            .padding(start = 20.dp, top = 15.dp, end = 20.dp)
             .background(
-                color = Color(0xFF7ADDA2),
+                color = Color(0xFFFFFFFF),
                 shape = RoundedCornerShape(5.dp)
             )
             .shadow(
@@ -128,23 +127,24 @@ fun SearchRow() {
             )
             .height(26.dp)
             .padding(horizontal = 10.dp)
-            .rotate(0.75f)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_search),
+            painter = painterResource(id = R.drawable.baseline_search_24),
             contentDescription = "search_icon",
-            modifier = Modifier.size(11.dp)
+            modifier = Modifier
+                .size(11.dp)
         )
-        Spacer(modifier = Modifier.width(8.96.dp))
+        Spacer(modifier = Modifier.width(6.dp))
         Text(
             text = "Search your stadium",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 10.sp,
-                color = Color(0xFFC2F5D7),
+                color = Color(0xFFA8A8A8),
                 lineHeight = 12.sp
             ),
+            modifier = Modifier
         )
     }
 }

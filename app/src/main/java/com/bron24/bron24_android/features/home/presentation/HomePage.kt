@@ -30,7 +30,7 @@ fun HomePage() {
         .fillMaxSize()
         .background(Color.White)
     ) {
-        SearchView(modifier = Modifier.padding(vertical = 25.dp, horizontal = 25.dp))
+        SearchView(modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp))
         VenueListingView(venues = sampleVenues)
     }
 }

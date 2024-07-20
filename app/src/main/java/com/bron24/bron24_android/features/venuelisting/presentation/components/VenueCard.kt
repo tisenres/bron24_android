@@ -277,7 +277,7 @@ fun VenueFooter(venue: Venue) {
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
                         fontSize = 12.sp,
-                        color = Color(0xFF32B768),
+                        color = Color(0xFF26A045),
                         lineHeight = 14.7.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom)

@@ -11,9 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -89,8 +87,8 @@ fun BottomNavigationItem(
                 },
                 indication = rememberRipple(
                     bounded = false,
-                    radius = 1000.dp,  // Maximum radius
-                    color = Color(0xFF3DDA7E)
+                    radius = 1000.dp,
+                    color = Color(0xFF26A045)
                 ),
                 onClick = {
                     onClick()
@@ -105,7 +103,7 @@ fun BottomNavigationItem(
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = label,
-                tint = if (selected) Color(0xFF3DDA7E) else Color.Gray,
+                tint = if (selected) Color(0xFF26A045) else Color.Gray,
                 modifier = Modifier.size(24.dp)
             )
 
@@ -115,9 +113,9 @@ fun BottomNavigationItem(
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = if (selected) Color(0xFF3DDA7E) else Color.Gray,
-                    fontSize = 10.sp,
-                    lineHeight = 12.25.sp,
+                    color = if (selected) Color(0xFF26A045) else Color.Gray,
+                    fontSize = 8.sp,
+                    lineHeight = 11.sp,
 //                    shadow = if (selected) Shadow(
 //                        color = Color(0xFF3DDA7E),
 //                        offset = Offset(0f, 0.5f),
