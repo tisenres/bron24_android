@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.features.venuelisting.domain.model.Venue
+import com.valentinilk.shimmer.shimmer
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -30,17 +30,17 @@ val gilroyFontFamily = FontFamily(
 
 @Composable
 fun VenueCard(venue: Venue, isLoading: Boolean) {
-
-    val backgroundColor = if (isLoading) {
-        Color.Gray.copy(alpha = 0.47f)
-    } else {
-        Color(0xFFF4FEF4).copy(alpha = 0.47f)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color(0xFFF4FEF4).copy(alpha = 0.47f), RoundedCornerShape(10.dp))
+            .let {
+                if (isLoading) {
+                    it.shimmer()
+                } else {
+                    it
+                }
+            }
     ) {
         if (isLoading) {
             LoadingPlaceholder()
@@ -50,6 +50,63 @@ fun VenueCard(venue: Venue, isLoading: Boolean) {
             VenueDetailsRow(venue)
             VenueFooter(venue)
         }
+    }
+}
+
+@Composable
+fun LoadingPlaceholder() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(162.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.Gray.copy(alpha = 0.47f))
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.Gray.copy(alpha = 0.47f))
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.Gray.copy(alpha = 0.47f))
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.Gray.copy(alpha = 0.47f))
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.Gray.copy(alpha = 0.47f))
+        )
     }
 }
 
@@ -231,20 +288,10 @@ fun VenueFooter(venue: Venue) {
 }
 
 @Composable
-fun LoadingPlaceholder() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(162.dp)
-            .background(Color.Gray.copy(alpha = 0.47f), RoundedCornerShape(10.dp))
-    )
-}
-
-@Composable
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
     VenueCard(
-        Venue(
+        venue = Venue(
             name = "Bunyodkor kompleksi",
             address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
             distance = "3km",
@@ -254,7 +301,6 @@ fun PreviewVenueCard() {
             imageUrl = "https://via.placeholder.com/340x160",
             overlayImageUrl = "https://via.placeholder.com/21x25",
         ),
-        isLoading = true
+        isLoading = true // Change to false to see the actual content
     )
-
 }

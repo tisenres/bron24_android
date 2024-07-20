@@ -19,7 +19,8 @@ lifecycleViewModelCompose = "2.8.3"
 appcompat = "1.7.0"
 coilCompose = "2.7.0"
 retrofitMoshi = "2.11.0"
-accompanistShimmer = "0.26.1"
+#accompanistShimmer = "0.31.1-alpha"
+valentinilkShimmer = "1.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +33,7 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+#accompanistShimmer = { group = "com.google.accompanist", name = "accompanist-shimmer", version.ref = "accompanistShimmer" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
@@ -49,7 +51,7 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 retrofitMoshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofitMoshi" }
 okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLoggingInterceptor" }
 lifecycleViewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }
-accompanistShimmer = { group = "com.google.accompanist", name = "accompanist-shimmer", version.ref = "accompanistShimmer" }
+valentinilkShimmer = { group = "com.valentinilk.shimmer", name = "compose-shimmer", version.ref = "valentinilkShimmer" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

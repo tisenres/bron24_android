@@ -78,7 +78,7 @@ dependencies {
 
     implementation(libs.locationServices)
     implementation(libs.coil)
-    implementation(libs.accompanistShimmer)
+    implementation(libs.valentinilkShimmer)
 
     implementation(libs.retrofit)
     implementation(libs.retrofitMoshi)
