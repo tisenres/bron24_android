@@ -109,7 +109,7 @@ fun CityOption(
     var isPressed by remember { mutableStateOf(false) }
 
     val animatedColor by animateColorAsState(
-        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) Color(0xFF26A045) else Color.Gray,
+        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) Color(0xFF26A045) else Color(0xFFE4E4E4),
         label = ""
     )
 
@@ -133,7 +133,7 @@ fun CityOption(
                 .width(4.dp)
                 .height(48.dp)
                 .background(
-                    if (isSelected) MaterialTheme.colorScheme.tertiary else Color.Transparent,
+                    if (isSelected) Color(0xFF26A045) else Color.Transparent,
                     shape = RoundedCornerShape(3.dp)
                 )
         )
@@ -163,7 +163,7 @@ fun ConfirmButton(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            containerColor = if (isEnabled) MaterialTheme.colorScheme.tertiary else Color.Gray
+            containerColor = if (isEnabled) Color(0xFF26A045) else Color(0xFFE4E4E4)
         ),
         enabled = isEnabled,
         shape = RoundedCornerShape(8.dp),
