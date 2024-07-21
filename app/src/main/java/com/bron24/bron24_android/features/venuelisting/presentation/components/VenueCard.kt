@@ -157,7 +157,7 @@ fun VenueDetailsRow(venue: Venue) {
             ),
         )
         Text(
-            text = venue.distance,
+            text = venue.contact2,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -179,7 +179,7 @@ fun VenueTitleRow(venue: Venue) {
             .padding(top = 15.dp, start = 10.dp, end = 10.dp)
     ) {
         Text(
-            text = venue.name,
+            text = venue.venueName,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight(800),
@@ -201,7 +201,7 @@ fun VenueTitleRow(venue: Venue) {
                     .height(16.dp)
             )
             Text(
-                text = venue.rating,
+                text = venue.sportType,
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -244,7 +244,7 @@ fun VenueFooter(venue: Venue) {
                     modifier = Modifier.size(14.dp)
                 )
                 Text(
-                    text = "Price: ${venue.price}",
+                    text = "Price: ${venue.pricePerHour}",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -272,7 +272,7 @@ fun VenueFooter(venue: Venue) {
                     modifier = Modifier.align(Alignment.Bottom)
                 )
                 Text(
-                    text = venue.freeSlots,
+                    text = venue.description,
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -290,30 +290,30 @@ fun VenueFooter(venue: Venue) {
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
-    VenueCard(
-        venue = Venue(
-            venueId = 1,
-            name = "Sample Venue",
-            type = "Indoor",
-            surface = "Grass",
-            capacity = 100,
-            sportType = "Football",
-            price = "100",
-            description = "Sample description",
-            workingHoursFrom = "09:00",
-            workingHoursTill = "21:00",
-            contact1 = "1234567890",
-            contact2 = null,
-            city = 1,
-            infrastructure = 1,
-            address = 3,
-            owner = 1,
-            distance = "5 km",
-            rating = "4.5",
-            freeSlots = "10",
-            imageUrl = "",
-            overlayImageUrl = ""
-        ),
-        isLoading = false
-    )
+//    VenueCard(
+//        venue = Venue(
+//            venueId = 1,
+//            name = "Sample Venue",
+//            type = "Indoor",
+//            surface = "Grass",
+//            capacity = 100,
+//            sportType = "Football",
+//            price = "100",
+//            description = "Sample description",
+//            workingHoursFrom = "09:00",
+//            workingHoursTill = "21:00",
+//            contact1 = "1234567890",
+//            contact2 = null,
+//            city = 1,
+//            infrastructure = 1,
+//            address = 3,
+//            owner = 1,
+//            distance = "5 km",
+//            rating = "4.5",
+//            freeSlots = "10",
+//            imageUrl = "",
+//            overlayImageUrl = ""
+//        ),
+//        isLoading = false
+//    )
 }
