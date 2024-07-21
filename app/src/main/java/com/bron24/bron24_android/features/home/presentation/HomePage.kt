@@ -19,7 +19,7 @@ fun HomePage() {
             .background(Color.White)
     ) {
         SearchView(modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp))
-        VenueListingView()
+        VenueListingView(modifier = Modifier.padding(bottom = 20.dp))
     }
 }
 

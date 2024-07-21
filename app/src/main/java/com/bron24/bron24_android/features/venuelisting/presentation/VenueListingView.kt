@@ -10,11 +10,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.features.venuelisting.presentation.components.VenueCard
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.bron24.bron24_android.features.venuelisting.domain.entities.Venue
 
 @Composable
 fun VenueListingView(
+    modifier: Modifier = Modifier,
     viewModel: VenueListingViewModel = hiltViewModel()
 ) {
     val venues by viewModel.venues.collectAsState()
@@ -22,10 +23,11 @@ fun VenueListingView(
 
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 25.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        modifier = modifier
     ) {
         if (isLoading) {
-            items(5) { // Display 5 shimmer items while loading
+            items(5) {
                 VenueCard(isLoading = true)
             }
         } else {
