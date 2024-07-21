@@ -21,7 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.features.venuelisting.domain.entities.Address
+import com.bron24.bron24_android.features.venuelisting.domain.entities.City
+import com.bron24.bron24_android.features.venuelisting.domain.entities.Infrastructure
 import com.bron24.bron24_android.features.venuelisting.domain.entities.Venue
+import com.bron24.bron24_android.features.venuelisting.domain.entities.VenueOwner
 import com.valentinilk.shimmer.shimmer
 
 val gilroyFontFamily = FontFamily(
@@ -152,7 +156,7 @@ fun VenueDetailsRow(venue: Venue) {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = Color(0xFF949494),
                 lineHeight = 21.sp,
             ),
@@ -162,7 +166,7 @@ fun VenueDetailsRow(venue: Venue) {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = Color(0xFF949494),
                 lineHeight = 21.sp,
             )
@@ -198,17 +202,17 @@ fun VenueTitleRow(venue: Venue) {
                 painter = painterResource(id = R.drawable.ic_star),
                 contentDescription = "Rating Image",
                 modifier = Modifier
-                    .width(15.dp)
-                    .height(16.dp)
+                    .width(16.dp)
+                    .height(17.dp)
             )
             Text(
                 text = "4.5",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp,
+                    fontSize = 18.sp,
                     color = Color(0xFF3C2E56),
-                    lineHeight = 14.4.sp,
+                    lineHeight = 19.6.sp,
                 ),
                 modifier = Modifier.align(Alignment.Bottom)
             )
@@ -245,7 +249,7 @@ fun VenueFooter(venue: Venue) {
                     modifier = Modifier.size(14.dp)
                 )
                 Text(
-                    text = "Price: ${venue.pricePerHour}",
+                    text = "${venue.pricePerHour} soʻm / hour",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -291,5 +295,47 @@ fun VenueFooter(venue: Venue) {
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
-    // You can provide a sample Venue object here for preview
+    VenueCard(
+        venue = Venue(
+            venueId = 9,
+            venueName = "Nurafshon Sport",
+            venueType = "out",
+            venueSurface = "artificial",
+            peopleCapacity = 12,
+            sportType = "football",
+            pricePerHour = "200000.00",
+            description = "Very good football field",
+            workingHoursFrom = "09:00:00",
+            workingHoursTill = "23:00:00",
+            contact1 = "+998901168321",
+            contact2 = "",
+            createdAt = "createdAt",
+            updatedAt = "updatedAt",
+            city = City(id = 2, cityName = "Tashkent"),
+            previewImage = "http://10.0.2.2:8000/media/previews/venue_pic.jpg",
+            infrastructure = Infrastructure(
+                id = 3,
+                lockerRoom = true,
+                stands = "10",
+                shower = true,
+                parking = true
+            ),
+            address = Address(
+                id = 3,
+                addressName = "Chilonzor 18 kvartal",
+                longitude = "41.271970",
+                latitude = "69.191573",
+                district = "Chilanzar",
+                closestMetroStation = "Chilonzor metro"
+            ),
+            venueOwner = VenueOwner(
+                id = 3,
+                ownerName = "Eldor",
+                tinNumber = 0,
+                contact1 = "0",
+                contact2 = "0"
+            )
+        ),
+        isLoading = false
+    )
 }

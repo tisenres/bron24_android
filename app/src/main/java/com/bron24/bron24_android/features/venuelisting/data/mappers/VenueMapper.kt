@@ -1,15 +1,7 @@
 package com.bron24.bron24_android.features.venuelisting.data.mappers
 
-import com.bron24.bron24_android.features.venuelisting.data.dto.AddressDto
-import com.bron24.bron24_android.features.venuelisting.data.dto.CityDto
-import com.bron24.bron24_android.features.venuelisting.data.dto.InfrastructureDto
-import com.bron24.bron24_android.features.venuelisting.data.dto.VenueDto
-import com.bron24.bron24_android.features.venuelisting.data.dto.VenueOwnerDto
-import com.bron24.bron24_android.features.venuelisting.domain.entities.Address
-import com.bron24.bron24_android.features.venuelisting.domain.entities.City
-import com.bron24.bron24_android.features.venuelisting.domain.entities.Infrastructure
-import com.bron24.bron24_android.features.venuelisting.domain.entities.Venue
-import com.bron24.bron24_android.features.venuelisting.domain.entities.VenueOwner
+import com.bron24.bron24_android.features.venuelisting.data.dto.*
+import com.bron24.bron24_android.features.venuelisting.domain.entities.*
 
 fun VenueDto.toDomainModel(): Venue {
     return Venue(
@@ -19,7 +11,7 @@ fun VenueDto.toDomainModel(): Venue {
         venueSurface = venueSurface,
         peopleCapacity = peopleCapacity,
         sportType = sportType,
-        pricePerHour = pricePerHour,
+        pricePerHour = formatPrice(pricePerHour),
         description = description,
         workingHoursFrom = workingHoursFrom,
         workingHoursTill = workingHoursTill,
@@ -28,7 +20,6 @@ fun VenueDto.toDomainModel(): Venue {
         createdAt = createdAt,
         updatedAt = updatedAt,
         previewImage = previewImage.replace("127.0.0.1", "10.0.2.2"),
-//        previewImage = previewImage,
         address = address.toDomainModel(),
         city = city.toDomainModel(),
         infrastructure = infrastructure.toDomainModel(),
@@ -72,4 +63,10 @@ fun VenueOwnerDto.toDomainModel(): VenueOwner {
         contact1 = contact1,
         contact2 = contact2
     )
+}
+
+fun formatPrice(price: String): String {
+    val floatPrice = price.toFloat()
+    val intPrice = floatPrice.toInt()
+    return String.format("%,d", intPrice).replace(",", " ")
 }
