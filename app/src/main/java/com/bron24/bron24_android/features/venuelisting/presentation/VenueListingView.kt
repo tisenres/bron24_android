@@ -11,19 +11,27 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.features.venuelisting.presentation.components.VenueCard
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.tooling.preview.Preview
+import com.bron24.bron24_android.features.venuelisting.domain.entities.Venue
 
 @Composable
 fun VenueListingView(
     viewModel: VenueListingViewModel = hiltViewModel()
 ) {
     val venues by viewModel.venues.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 25.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        items(venues) { venue ->
-            VenueCard(venue = venue, false)
+        if (isLoading) {
+            items(5) { // Display 5 shimmer items while loading
+                VenueCard(isLoading = true)
+            }
+        } else {
+            items(venues) { venue ->
+                VenueCard(venue = venue, isLoading = false)
+            }
         }
     }
 }

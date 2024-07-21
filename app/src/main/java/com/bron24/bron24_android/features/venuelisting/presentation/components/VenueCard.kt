@@ -34,7 +34,7 @@ val gilroyFontFamily = FontFamily(
 )
 
 @Composable
-fun VenueCard(venue: Venue, isLoading: Boolean) {
+fun VenueCard(venue: Venue? = null, isLoading: Boolean) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -49,7 +49,7 @@ fun VenueCard(venue: Venue, isLoading: Boolean) {
     ) {
         if (isLoading) {
             LoadingPlaceholder()
-        } else {
+        } else if (venue != null) {
             VenueImageSection(venue)
             VenueTitleRow(venue)
             VenueDetailsRow(venue)

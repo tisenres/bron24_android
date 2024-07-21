@@ -181,13 +181,4 @@ fun LocationButton(
 @Preview
 @Composable
 fun SimpleComposablePreview() {
-//    Bron24_androidTheme {
-//        Surface(color = MaterialTheme.colorScheme.background) {
-//            LocationRequestScreen(
-//                onAllowClick = { /*,
-//                onDenyClick = { /*
-//                viewModel = viewModel
-//            )
-//        }
-//    }
 }

@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.features.venuelisting.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.features.venuelisting.domain.entities.Venue
@@ -19,16 +18,19 @@ class VenueListingViewModel @Inject constructor(
     private val _venues = MutableStateFlow<List<Venue>>(emptyList())
     val venues: StateFlow<List<Venue>> = _venues
 
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     init {
         fetchVenues()
     }
 
     private fun fetchVenues() {
         viewModelScope.launch {
+            _isLoading.value = true
             val venueList = getVenuesUseCase()
             _venues.value = venueList
-            Log.d("IMAGE_FETCHED", venueList[0].previewImage)
+            _isLoading.value = false
         }
     }
 }
-
