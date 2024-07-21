@@ -82,6 +82,7 @@ dependencies {
 
     implementation(libs.retrofit)
     implementation(libs.retrofitMoshi)
+    implementation(libs.converterGson)
     implementation(libs.okhttpLoggingInterceptor)
 
     implementation(libs.lifecycleViewModelCompose)

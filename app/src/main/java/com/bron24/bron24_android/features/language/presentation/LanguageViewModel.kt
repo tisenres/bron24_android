@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.core.util.LocaleManager
-import com.bron24.bron24_android.features.language.domain.model.Language
+import com.bron24.bron24_android.features.language.domain.entities.Language
 import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

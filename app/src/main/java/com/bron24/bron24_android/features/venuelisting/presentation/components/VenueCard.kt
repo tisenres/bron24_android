@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.features.venuelisting.domain.model.Venue
+import com.bron24.bron24_android.features.venuelisting.domain.entities.Venue
 import com.valentinilk.shimmer.shimmer
 
 val gilroyFontFamily = FontFamily(
@@ -147,7 +147,7 @@ fun VenueDetailsRow(venue: Venue) {
             .padding(start = 10.dp, end = 10.dp, top = 15.dp, bottom = 10.dp)
     ) {
         Text(
-            text = venue.address,
+            text = venue.address.toString(),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -292,15 +292,28 @@ fun VenueFooter(venue: Venue) {
 fun PreviewVenueCard() {
     VenueCard(
         venue = Venue(
-            name = "Bunyodkor kompleksi",
-            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
-            distance = "3km",
-            rating = "4.0",
-            price = "100 000 sum/hour",
-            freeSlots = "14 slots today",
-            imageUrl = "https://via.placeholder.com/340x160",
-            overlayImageUrl = "https://via.placeholder.com/21x25",
+            venueId = 1,
+            name = "Sample Venue",
+            type = "Indoor",
+            surface = "Grass",
+            capacity = 100,
+            sportType = "Football",
+            price = "100",
+            description = "Sample description",
+            workingHoursFrom = "09:00",
+            workingHoursTill = "21:00",
+            contact1 = "1234567890",
+            contact2 = null,
+            city = 1,
+            infrastructure = 1,
+            address = 3,
+            owner = 1,
+            distance = "5 km",
+            rating = "4.5",
+            freeSlots = "10",
+            imageUrl = "",
+            overlayImageUrl = ""
         ),
-        isLoading = false // Change to false to see the actual content
+        isLoading = false
     )
 }

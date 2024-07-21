@@ -1,7 +1,7 @@
 package com.bron24.bron24_android.features.language.data.repository
 
 import com.bron24.bron24_android.features.language.data.local.LanguagePreference
-import com.bron24.bron24_android.features.language.domain.model.Language
+import com.bron24.bron24_android.features.language.domain.entities.Language
 import com.bron24.bron24_android.features.language.domain.repository.LanguageRepository
 import javax.inject.Inject
 

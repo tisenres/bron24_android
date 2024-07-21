@@ -1,6 +1,6 @@
 package com.bron24.bron24_android.features.cityselection.domain.usecases
 
-import com.bron24.bron24_android.features.cityselection.domain.model.City
+import com.bron24.bron24_android.features.cityselection.domain.entities.City
 import com.bron24.bron24_android.features.cityselection.domain.repository.CityRepository
 import javax.inject.Inject
 

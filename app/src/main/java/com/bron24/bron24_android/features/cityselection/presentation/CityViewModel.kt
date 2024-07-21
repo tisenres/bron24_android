@@ -2,7 +2,7 @@ package com.bron24.bron24_android.features.cityselection.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.features.cityselection.domain.model.City
+import com.bron24.bron24_android.features.cityselection.domain.entities.City
 import com.bron24.bron24_android.features.cityselection.domain.usecases.GetAvailableCitiesUseCase
 import com.bron24.bron24_android.features.cityselection.domain.usecases.UpdateSelectedCityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

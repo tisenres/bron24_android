@@ -5,33 +5,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.bron24.bron24_android.features.filter.presentetion.SearchView
-import com.bron24.bron24_android.features.venuelisting.domain.model.Venue
 import com.bron24.bron24_android.features.venuelisting.presentation.VenueListingView
 
 @Composable
 fun HomePage() {
-    val sampleVenues = List(100) {
-        Venue(
-            name = "Bunyodkor kompleksi ${it + 1}",
-            address = "Mustaqillik maydoni, Tashkent, Uzbekistan",
-            distance = "${(1..10).random()}km",
-            rating = "${(1..5).random()}.0",
-            price = "${(50..150).random()}sum/hour",
-            freeSlots = "${(5..20).random()} slots today",
-            imageUrl = "https://via.placeholder.com/340x82",
-            overlayImageUrl = "https://via.placeholder.com/21x25"
-        )
-    }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
     ) {
         SearchView(modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp))
-        VenueListingView(venues = sampleVenues)
+        VenueListingView()
     }
 }
 
