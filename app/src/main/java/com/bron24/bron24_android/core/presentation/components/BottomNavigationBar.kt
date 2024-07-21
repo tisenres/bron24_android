@@ -46,7 +46,7 @@ fun BottomNavigationBar(navController: NavController) {
                 unselectedIconColor = Color(0xFF888888),
                 selectedTextColor = Color(0xFF26A045),
                 unselectedTextColor = Color(0xFF888888),
-                indicatorColor = Color(0xFFD6D6D6)
+                indicatorColor = Color.Transparent
             )
         )
         NavigationBarItem(
@@ -60,7 +60,7 @@ fun BottomNavigationBar(navController: NavController) {
                 unselectedIconColor = Color(0xFF888888),
                 selectedTextColor = Color(0xFF26A045),
                 unselectedTextColor = Color(0xFF888888),
-                indicatorColor = Color(0xFFD6D6D6)
+                indicatorColor = Color.Transparent
             )
         )
         NavigationBarItem(
@@ -74,7 +74,7 @@ fun BottomNavigationBar(navController: NavController) {
                 unselectedIconColor = Color(0xFF888888),
                 selectedTextColor = Color(0xFF26A045),
                 unselectedTextColor = Color(0xFF888888),
-                indicatorColor = Color(0xFFD6D6D6)
+                indicatorColor = Color.Transparent
             )
         )
         NavigationBarItem(
@@ -88,7 +88,7 @@ fun BottomNavigationBar(navController: NavController) {
                 unselectedIconColor = Color(0xFF888888),
                 selectedTextColor = Color(0xFF26A045),
                 unselectedTextColor = Color(0xFF888888),
-                indicatorColor = Color(0xFFD6D6D6)
+                indicatorColor =Color.Transparent
             )
         )
     }
