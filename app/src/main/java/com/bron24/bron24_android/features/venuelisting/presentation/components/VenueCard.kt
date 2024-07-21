@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.features.venuelisting.domain.entities.Venue
 import com.valentinilk.shimmer.shimmer
@@ -119,7 +120,7 @@ fun VenueImageSection(venue: Venue) {
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
         Image(
-            painter = painterResource(id = R.drawable.venue_pic),
+            painter = rememberAsyncImagePainter(model = venue.previewImage),
             contentDescription = "Venue Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -147,7 +148,7 @@ fun VenueDetailsRow(venue: Venue) {
             .padding(start = 10.dp, end = 10.dp, top = 15.dp, bottom = 10.dp)
     ) {
         Text(
-            text = venue.address.toString(),
+            text = venue.address.addressName,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -157,7 +158,7 @@ fun VenueDetailsRow(venue: Venue) {
             ),
         )
         Text(
-            text = venue.contact2,
+            text = "3 km",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -183,7 +184,7 @@ fun VenueTitleRow(venue: Venue) {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight(800),
-                fontSize = 16.sp,
+                fontSize = 18.sp,
                 color = Color(0xFF3C2E56),
                 lineHeight = 19.6.sp,
             ),
@@ -201,7 +202,7 @@ fun VenueTitleRow(venue: Venue) {
                     .height(16.dp)
             )
             Text(
-                text = venue.sportType,
+                text = "4.5",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -261,7 +262,7 @@ fun VenueFooter(venue: Venue) {
                 horizontalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 Text(
-                    text = "Free time:",
+                    text = "Free time: ",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -272,7 +273,7 @@ fun VenueFooter(venue: Venue) {
                     modifier = Modifier.align(Alignment.Bottom)
                 )
                 Text(
-                    text = venue.description,
+                    text = "12 slots",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -290,30 +291,5 @@ fun VenueFooter(venue: Venue) {
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
-//    VenueCard(
-//        venue = Venue(
-//            venueId = 1,
-//            name = "Sample Venue",
-//            type = "Indoor",
-//            surface = "Grass",
-//            capacity = 100,
-//            sportType = "Football",
-//            price = "100",
-//            description = "Sample description",
-//            workingHoursFrom = "09:00",
-//            workingHoursTill = "21:00",
-//            contact1 = "1234567890",
-//            contact2 = null,
-//            city = 1,
-//            infrastructure = 1,
-//            address = 3,
-//            owner = 1,
-//            distance = "5 km",
-//            rating = "4.5",
-//            freeSlots = "10",
-//            imageUrl = "",
-//            overlayImageUrl = ""
-//        ),
-//        isLoading = false
-//    )
+    // You can provide a sample Venue object here for preview
 }
