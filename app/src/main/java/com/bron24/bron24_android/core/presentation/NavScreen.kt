@@ -7,8 +7,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.bron24.bron24_android.core.domain.model.Screen
-import com.bron24.bron24_android.features.cityselection.presentation.CitySelectionScreen
 import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
+import com.bron24.bron24_android.features.location.presentation.components.LocationRequestScreen
 
 @Composable
 fun NavScreen(navController: NavHostController) {
@@ -18,20 +18,35 @@ fun NavScreen(navController: NavHostController) {
                 LanguageSelectionScreen(
                     viewModel = hiltViewModel(),
                     onNavigateToLocationRequest = {
-                        navController.navigate(Screen.CitySelection.route) {
+                        navController.navigate(Screen.LocationPermission.route) {
                             popUpTo(Screen.LanguageSelection.route) { inclusive = true }
                         }
                     }
                 )
             }
-            composable(Screen.CitySelection.route) {
-                CitySelectionScreen(
-                    viewModel = hiltViewModel(),
-                    onNavigateToLocationRequest = {
+//            composable(Screen.CitySelection.route) {
+//                CitySelectionScreen(
+//                    viewModel = hiltViewModel(),
+//                    onNavigateToLocationRequest = {
+//                        navController.navigate(Screen.Main.route) {
+//                            popUpTo(Screen.CitySelection.route) { inclusive = true }
+//                        }
+//                    }
+//                )
+//            }
+            composable(Screen.LocationPermission.route) {
+                LocationRequestScreen(
+                    onAllowClick = {
                         navController.navigate(Screen.Main.route) {
-                            popUpTo(Screen.CitySelection.route) { inclusive = true }
+                            popUpTo(Screen.LocationPermission.route) { inclusive = true }
                         }
-                    }
+                    },
+                    onDenyClick = {
+                        navController.navigate(Screen.Main.route) {
+                            popUpTo(Screen.LocationPermission.route) { inclusive = true }
+                        }
+                    },
+                    viewModel = hiltViewModel()
                 )
             }
             composable(Screen.Main.route) {

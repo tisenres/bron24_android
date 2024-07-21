@@ -8,6 +8,8 @@ import com.bron24.bron24_android.features.home.presentation.HomeViewModel
 import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
 import com.bron24.bron24_android.features.language.presentation.LanguageViewModel
+import com.bron24.bron24_android.location.domain.usecases.CheckLocationPermissionUseCase
+import com.bron24.bron24_android.features.location.presentation.LocationViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +44,16 @@ object ViewModelModule {
         return CityViewModel(
             getAvailableCitiesUseCase,
             updateSelectedCityUseCase
+        )
+    }
+
+    @Provides
+    @ActivityScoped
+    fun provideLocationViewModel(
+        checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
+    ): LocationViewModel {
+        return LocationViewModel(
+            checkLocationPermissionUseCase
         )
     }
 

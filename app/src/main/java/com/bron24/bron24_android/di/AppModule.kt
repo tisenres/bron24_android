@@ -10,6 +10,9 @@ import com.bron24.bron24_android.features.language.data.repository.LanguageRepos
 import com.bron24.bron24_android.features.language.domain.repository.LanguageRepository
 import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
+import com.bron24.bron24_android.location.data.local.PermissionChecker
+import com.bron24.bron24_android.location.domain.repository.LocationRepository
+import com.bron24.bron24_android.location.domain.usecases.CheckLocationPermissionUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,14 +28,6 @@ object AppModule {
     @Singleton
     fun provideLanguagePreference(@ApplicationContext context: Context): LanguagePreference {
         return LanguagePreference(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLanguageRepository(
-        languagePreference: LanguagePreference
-    ): LanguageRepository {
-        return LanguageRepositoryImpl(languagePreference)
     }
 
     @Provides
@@ -71,5 +66,25 @@ object AppModule {
         cityRepository: CityRepository
     ): UpdateSelectedCityUseCase {
         return UpdateSelectedCityUseCase(cityRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLanguageRepository(
+        languagePreference: LanguagePreference
+    ): LanguageRepository {
+        return LanguageRepositoryImpl(languagePreference)
+    }
+
+    @Provides
+    @Singleton
+    fun providePermissionChecker(@ApplicationContext context: Context): PermissionChecker {
+        return PermissionChecker(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCheckLocationPermissionUseCase(repository: LocationRepository): CheckLocationPermissionUseCase {
+        return CheckLocationPermissionUseCase(repository)
     }
 }
