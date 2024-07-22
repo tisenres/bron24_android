@@ -3,7 +3,6 @@ package com.bron24.bron24_android.features.language.presentation
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.core.util.LocaleManager
 import com.bron24.bron24_android.features.language.domain.entities.Language
 import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
@@ -41,7 +40,7 @@ class LanguageViewModel @Inject constructor(
         viewModelScope.launch {
             _selectedLanguage.value?.let { language ->
                 updateSelectedLanguageUseCase(language)
-                LocaleManager.setLocale(context, language.code)
+//                LocaleManager.updateLocale(context, language.code)
             }
         }
     }

@@ -2,7 +2,7 @@ package com.bron24.bron24_android.app
 
 import android.app.Application
 import android.content.Context
-import com.bron24.bron24_android.core.util.LocaleManager
+import com.bron24.bron24_android.helper.util.LocaleManager
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
