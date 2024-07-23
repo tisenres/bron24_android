@@ -1,7 +1,5 @@
 package com.bron24.bron24_android.features.language.presentation
 
-import android.content.Context
-import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -27,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
-import java.util.*
+import com.bron24.bron24_android.helper.util.LocaleManager
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -45,7 +43,7 @@ fun LanguageSelectionScreen(
 
     LaunchedEffect(selectedLanguage) {
         selectedLanguage?.let {
-            setLocale(context, it.code)
+            LocaleManager.setLocale(context, it.code)
         }
     }
 
@@ -201,18 +199,4 @@ fun SimpleComposablePreview() {
             }
         )
     }
-}
-
-// Function to set the locale
-fun setLocale(context: Context, languageCode: String) {
-    val locale = Locale(languageCode)
-    Locale.setDefault(locale)
-
-    val resources = context.resources
-    val config = Configuration(resources.configuration)
-    config.setLocale(locale)
-    resources.updateConfiguration(config, resources.displayMetrics)
-
-    // Update context to apply the new locale
-    context.createConfigurationContext(config)
 }
