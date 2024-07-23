@@ -7,8 +7,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.bron24.bron24_android.core.domain.model.Screen
+import com.bron24.bron24_android.core.presentation.components.introscreens.HowItWorksPager
 import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
 import com.bron24.bron24_android.features.location.presentation.components.LocationRequestScreen
+
 
 @Composable
 fun NavScreen(navController: NavHostController) {
@@ -18,22 +20,15 @@ fun NavScreen(navController: NavHostController) {
                 LanguageSelectionScreen(
                     viewModel = hiltViewModel(),
                     onNavigateToLocationRequest = {
-                        navController.navigate(Screen.LocationPermission.route) {
+                        navController.navigate(Screen.HowItWorksPager.route) {
                             popUpTo(Screen.LanguageSelection.route) { inclusive = true }
                         }
                     }
                 )
             }
-//            composable(Screen.CitySelection.route) {
-//                CitySelectionScreen(
-//                    viewModel = hiltViewModel(),
-//                    onNavigateToLocationRequest = {
-//                        navController.navigate(Screen.Main.route) {
-//                            popUpTo(Screen.CitySelection.route) { inclusive = true }
-//                        }
-//                    }
-//                )
-//            }
+            composable(Screen.HowItWorksPager.route) {
+                HowItWorksPager(navController)
+            }
             composable(Screen.LocationPermission.route) {
                 LocationRequestScreen(
                     onAllowClick = {
