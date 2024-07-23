@@ -9,7 +9,7 @@ class LanguageRepositoryImpl @Inject constructor(
     private val languagePreference: LanguagePreference
 ) : LanguageRepository {
     override fun getAvailableLanguages(): List<Language> {
-        return listOf(Language.UZBEK(), Language.RUSSIAN())
+        return Language.values()
     }
 
     override fun getSelectedLanguage(): Language {

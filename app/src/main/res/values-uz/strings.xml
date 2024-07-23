@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bron24</string>
+    <string name="select_langauge">Dastur tilini tanlang</string>
+    <string name="uz_language">O‘zbek</string>
+    <string name="ru_language">Russian</string>
+    <string name="en_language">English</string>
+    <string name="next">Keyingi</string>
+    <string name="location_request_title">Joylashuvdan foydalanish</string>
+    <string name="location_request_description">Sizga yaqin maydonlarni topishimiz uchun joylashuvingizdan foydalanamiz</string>
+    <string name="allow_button">Ruxsat berish</string>
+    <string name="deny_button">Hozir emas</string>
+    <string name="select_city">Shahringizni tanlang</string>
+</resources>

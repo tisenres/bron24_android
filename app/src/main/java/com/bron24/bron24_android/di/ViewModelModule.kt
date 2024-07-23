@@ -26,12 +26,10 @@ object ViewModelModule {
     fun provideLanguageViewModel(
         getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
         updateSelectedLanguageUseCase: UpdateSelectedLanguageUseCase,
-        @ApplicationContext context: Context
     ): LanguageViewModel {
         return LanguageViewModel(
             getAvailableLanguagesUseCase,
             updateSelectedLanguageUseCase,
-            context
         )
     }
 
