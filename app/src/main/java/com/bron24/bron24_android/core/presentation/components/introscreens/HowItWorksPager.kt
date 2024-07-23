@@ -37,7 +37,7 @@ fun HowItWorksPager(navController: NavHostController) {
             itemsIndexed(listOf(0, 1)) { index, _ ->
                 Box(modifier = Modifier.fillParentMaxSize()) {
                     when (index) {
-                        0 -> HowItWorksScreen1(onNextClick = { pagerState.value = 1 })
+                        0 -> HowItWorksScreen1()
                         1 -> HowItWorksScreen2(onFinishClick = {
                             navController.navigate(Screen.LocationPermission.route) {
                                 popUpTo(Screen.HowItWorksPager.route) { inclusive = true }

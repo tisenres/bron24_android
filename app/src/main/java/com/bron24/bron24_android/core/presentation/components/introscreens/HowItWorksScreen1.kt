@@ -1,47 +1,76 @@
 package com.bron24.bron24_android.core.presentation.components.introscreens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 
+val gilroyFontFamily = FontFamily(
+    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
+    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
+)
+
 @Composable
-fun HowItWorksScreen1(onNextClick: () -> Unit) {
+fun HowItWorksScreen1() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painterResource(id = R.drawable.ronaldo), contentDescription = null)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Nearby stadiums")
+        Image(
+            painterResource(id = R.drawable.nearby_stadiums),
+            contentDescription = null,
+            modifier = Modifier.size(350.dp)
+        )
+        Text(
+            text = "Nearby stadiums",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = Color(0xFF3C2E56),
+                lineHeight = 29.4.sp
+            ),
+        )
         Text(
             text = "You don't have to go far to find or call a good stadium, we have provided all the stadiums that is near you",
-            textAlign = TextAlign.Center
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = Color.Black,
+                lineHeight = 16.8.sp,
+                textAlign = TextAlign.Center,
+                letterSpacing = (-0.028).em
+            ),
+            modifier = Modifier
+                .width(331.dp)
+                .padding(top = 8.dp)
         )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onNextClick) {
-            Text(text = "Next")
-        }
-        Spacer(modifier = Modifier.weight(1f))
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun PreviewHowItWorks1() {
+    HowItWorksScreen1()
 }

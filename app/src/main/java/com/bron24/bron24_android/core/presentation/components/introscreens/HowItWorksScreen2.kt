@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -21,8 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 
 @Composable
@@ -30,21 +36,45 @@ fun HowItWorksScreen2(onFinishClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painterResource(id = R.drawable.ronaldo), contentDescription = null)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Just select stadium")
-        Text(
-            text = "Choose the stadium you like the most, choose the time and date of the game and you just Bron it :)",
-            textAlign = TextAlign.Center
+        Image(
+            painterResource(id = R.drawable.select_stadium),
+            contentDescription = null,
+            modifier = Modifier.size(350.dp)
         )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onFinishClick) {
-            Text(text = "Finish")
-        }
-        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = "Just select a stadium",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = Color(0xFF3C2E56),
+                lineHeight = 29.4.sp
+            ),
+        )
+        Text(
+            text = "Choose the stadium you like the most, choose the time and\n" +
+                    "date of the game and you just Bron it :)",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = Color.Black,
+                lineHeight = 16.8.sp,
+                textAlign = TextAlign.Center,
+                letterSpacing = (-0.028).em
+            ),
+            modifier = Modifier
+                .width(331.dp)
+                .padding(top = 8.dp)
+        )
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun PreviewHowItWorks2() {
+    HowItWorksScreen2({})
 }
