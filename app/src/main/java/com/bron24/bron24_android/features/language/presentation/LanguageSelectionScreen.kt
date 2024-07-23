@@ -105,7 +105,7 @@ fun LanguageOption(
     var isPressed by remember { mutableStateOf(false) }
 
     val animatedColor by animateColorAsState(
-        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) Color(0xFF26A045) else Color(0xFFE4E4E4),
+        targetValue = if (isPressed) MaterialTheme.colorScheme.primary else if (isSelected) Color(0xFF32B768) else Color(0xFFE4E4E4),
         label = ""
     )
 
@@ -129,7 +129,7 @@ fun LanguageOption(
                 .width(4.dp)
                 .height(48.dp)
                 .background(
-                    if (isSelected) Color(0xFF26A045) else Color.Transparent,
+                    if (isSelected) Color(0xFF32B768) else Color.Transparent,
                     shape = RoundedCornerShape(3.dp)
                 )
         )
@@ -159,7 +159,7 @@ fun ConfirmButton(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            containerColor = if (isEnabled) Color(0xFF26A045) else Color(0xFFE4E4E4)
+            containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4)
         ),
         enabled = isEnabled,
         shape = RoundedCornerShape(8.dp),

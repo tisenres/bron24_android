@@ -131,10 +131,10 @@ fun LocationRequestScreen(
                     onDenyClick()
                 },
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.tertiary
+                    contentColor = Color(0xFF32B768)
                 ),
                 shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary),
+                border = BorderStroke(1.dp, Color(0xFF32B768)),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
@@ -161,7 +161,7 @@ fun LocationButton(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            containerColor = MaterialTheme.colorScheme.tertiary
+            containerColor = Color(0xFF32B768)
         ),
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
