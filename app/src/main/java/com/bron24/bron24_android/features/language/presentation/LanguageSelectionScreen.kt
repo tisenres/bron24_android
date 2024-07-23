@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.features.language.presentation
 
+import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -13,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
+import java.util.*
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -32,11 +36,19 @@ val gilroyFontFamily = FontFamily(
 
 @Composable
 fun LanguageSelectionScreen(
-    viewModel: LanguageViewModel,
+    viewModel: LanguageViewModel = hiltViewModel(),
     onNavigateToLocationRequest: () -> Unit
 ) {
     val selectedLanguage by viewModel.selectedLanguage.collectAsState()
     val availableLanguages by viewModel.availableLanguages.collectAsState()
+    val context = LocalContext.current
+
+    // Observe changes to selectedLanguage and update the locale
+    LaunchedEffect(selectedLanguage) {
+        selectedLanguage?.let {
+            setLocale(context, it.code)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -60,7 +72,7 @@ fun LanguageSelectionScreen(
             )
 
             Text(
-                text = "Dastur tilini tanlang",
+                text = stringResource(id = R.string.select_langauge),
                 modifier = Modifier
                     .padding(top = 24.dp, start = 24.dp, bottom = 80.dp),
                 style = TextStyle(
@@ -189,4 +201,18 @@ fun SimpleComposablePreview() {
             }
         )
     }
+}
+
+// Function to set the locale
+fun setLocale(context: Context, languageCode: String) {
+    val locale = Locale(languageCode)
+    Locale.setDefault(locale)
+
+    val resources = context.resources
+    val config = Configuration(resources.configuration)
+    config.setLocale(locale)
+    resources.updateConfiguration(config, resources.displayMetrics)
+
+    // Update context to apply the new locale
+    context.createConfigurationContext(config)
 }
