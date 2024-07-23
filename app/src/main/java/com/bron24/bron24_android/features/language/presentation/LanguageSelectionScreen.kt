@@ -43,7 +43,6 @@ fun LanguageSelectionScreen(
     val availableLanguages by viewModel.availableLanguages.collectAsState()
     val context = LocalContext.current
 
-    // Observe changes to selectedLanguage and update the locale
     LaunchedEffect(selectedLanguage) {
         selectedLanguage?.let {
             setLocale(context, it.code)
@@ -74,7 +73,8 @@ fun LanguageSelectionScreen(
             Text(
                 text = stringResource(id = R.string.select_langauge),
                 modifier = Modifier
-                    .padding(top = 24.dp, start = 24.dp, bottom = 80.dp),
+                    .padding(top = 24.dp, start = 24.dp, bottom = 80.dp, end = 90.dp)
+                    .height(128.dp),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
