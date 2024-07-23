@@ -42,9 +42,7 @@ fun LanguageSelectionScreen(
     val context = LocalContext.current
 
     LaunchedEffect(selectedLanguage) {
-        selectedLanguage?.let {
-            LocaleManager.setLocale(context, it.code)
-        }
+        LocaleManager.setLocale(context, selectedLanguage.code)
     }
 
     Column(
