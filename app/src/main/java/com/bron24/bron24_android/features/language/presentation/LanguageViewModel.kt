@@ -26,6 +26,7 @@ class LanguageViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _availableLanguages.value = getAvailableLanguagesUseCase()
+            _selectedLanguage.value = Language.UZBEK()
         }
     }
 

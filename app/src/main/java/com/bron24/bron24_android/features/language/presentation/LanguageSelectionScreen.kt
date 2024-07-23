@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
+import com.bron24.bron24_android.helper.util.LocaleManager
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -42,7 +43,7 @@ fun LanguageSelectionScreen(
 
     LaunchedEffect(selectedLanguage) {
         selectedLanguage.let {
-            com.bron24.bron24_android.helper.util.LocaleManager.setLocale(context, it.code)
+            LocaleManager.setLocale(context, it.code)
         }
     }
 
@@ -116,7 +117,7 @@ fun LanguageOption(
     val animatedColor by animateColorAsState(
         targetValue = when {
             isPressed -> MaterialTheme.colorScheme.primary
-            isSelected -> Color(0xFF32B768) // Green color when selected
+            isSelected -> Color(0xFF32B768)
             else -> Color(0xFFE4E4E4)
         },
         label = ""
