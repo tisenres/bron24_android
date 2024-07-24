@@ -13,6 +13,5 @@ class LanguagePreference(private val context: Context) {
 
     fun setSelectedLanguage(languageCode: String) {
         preferences.edit().putString("selected_language", languageCode).apply()
-        LocaleManager.updateLocale(context, languageCode)
     }
 }

@@ -17,34 +17,34 @@ object LocaleManager {
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
 
-        context.createConfigurationContext(config)
+//        context.createConfigurationContext(config)
     }
 
-    private fun updateResourcesLocale(context: Context, locale: Locale): Context {
-        val config = context.resources.configuration
-        config.setLocale(locale)
-        return context.createConfigurationContext(config)
-    }
+//    private fun updateResourcesLocale(context: Context, locale: Locale): Context {
+//        val config = context.resources.configuration
+//        config.setLocale(locale)
+//        return context.createConfigurationContext(config)
+//    }
+//
+//    @Suppress("DEPRECATION")
+//    private fun updateResourcesLocaleLegacy(context: Context, locale: Locale): Context {
+//        val config = context.resources.configuration
+//        config.locale = locale
+//        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+//        return context
+//    }
 
-    @Suppress("DEPRECATION")
-    private fun updateResourcesLocaleLegacy(context: Context, locale: Locale): Context {
-        val config = context.resources.configuration
-        config.locale = locale
-        context.resources.updateConfiguration(config, context.resources.displayMetrics)
-        return context
-    }
-
-    fun updateLocale(context: Context, languageCode: String) {
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val localeList = LocaleListCompat.forLanguageTags(languageCode)
-            AppCompatDelegate.setApplicationLocales(localeList)
-        } else {
-            val config = context.resources.configuration
-            config.setLocale(locale)
-            context.resources.updateConfiguration(config, context.resources.displayMetrics)
-        }
-    }
+//    fun updateLocale(context: Context, languageCode: String) {
+//        val locale = Locale(languageCode)
+//        Locale.setDefault(locale)
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            val localeList = LocaleListCompat.forLanguageTags(languageCode)
+//            AppCompatDelegate.setApplicationLocales(localeList)
+//        } else {
+//            val config = context.resources.configuration
+//            config.setLocale(locale)
+//            context.resources.updateConfiguration(config, context.resources.displayMetrics)
+//        }
+//    }
 }

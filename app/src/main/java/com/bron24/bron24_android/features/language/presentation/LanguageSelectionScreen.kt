@@ -72,7 +72,7 @@ fun LanguageSelectionScreen(
             )
 
             Text(
-                text = stringResource(id = R.string.select_langauge),
+                text = stringResource(id = R.string.select_language), // Corrected "select_langauge" to "select_language"
                 modifier = Modifier
                     .padding(top = 24.dp, start = 24.dp, bottom = 80.dp, end = 90.dp)
                     .height(128.dp),
@@ -87,16 +87,14 @@ fun LanguageSelectionScreen(
 
             LazyColumn {
                 items(availableLanguages) { language ->
-                    key(language.code) {
-                        LanguageOption(
-                            language = language,
-                            isSelected = selectedLanguage == language,
-                            onClick = {
-                                viewModel.selectLanguage(language)
-                            },
-                            modifier = Modifier.padding(top = 16.dp)
-                        )
-                    }
+                    LanguageOption(
+                        language = language,
+                        isSelected = selectedLanguage == language,
+                        onClick = {
+                            viewModel.selectLanguage(language)
+                        },
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
                 }
             }
         }
@@ -118,13 +116,9 @@ fun LanguageOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isSelectedState = remember(language, isSelected) { mutableStateOf(isSelected) }
-    var isPressed by remember { mutableStateOf(false) }
-
     val animatedColor by animateColorAsState(
         targetValue = when {
-            isPressed -> MaterialTheme.colorScheme.primary
-            isSelectedState.value -> Color(0xFF32B768)
+            isSelected -> Color(0xFF32B768)
             else -> Color(0xFFE4E4E4)
         },
         label = ""
@@ -137,10 +131,7 @@ fun LanguageOption(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
-                        isPressed = true
                         tryAwaitRelease()
-                        isPressed = false
-                        isSelectedState.value = true
                         onClick()
                     }
                 )
@@ -151,7 +142,7 @@ fun LanguageOption(
                 .width(4.dp)
                 .height(48.dp)
                 .background(
-                    if (isSelectedState.value) Color(0xFF32B768) else Color.Transparent,
+                    if (isSelected) Color(0xFF32B768) else Color.Transparent,
                     shape = RoundedCornerShape(3.dp)
                 )
         )

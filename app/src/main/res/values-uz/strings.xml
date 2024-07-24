@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Bron24</string>
-    <string name="select_langauge">Dastur tilini tanlang</string>
+    <string name="select_language">Dastur tilini tanlang</string>
     <string name="uz_language">O‘zbek</string>
     <string name="ru_language">Russian</string>
     <string name="en_language">English</string>
