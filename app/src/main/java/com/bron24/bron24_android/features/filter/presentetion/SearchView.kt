@@ -35,7 +35,7 @@ fun SearchView(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(210.dp)
+            .height(180.dp)
             .background(
                 color = Color(0xFF32B768),
                 shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
@@ -67,7 +67,7 @@ fun ProfileRow() {
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 Text(
-                    text = stringResource(id = R.string.hello) + ", Cristiano Ronaldo!",
+                    text = stringResource(id = R.string.hello) + ", Joxongir!",
                     style = TextStyle(
                         fontFamily = interFontFamily,
                         fontWeight = FontWeight.Bold,
@@ -77,7 +77,7 @@ fun ProfileRow() {
                         letterSpacing = (-0.028).em
                     )
                 )
-                Spacer(modifier = Modifier.height(3.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Toshkent viloyati",
                     style = TextStyle(
@@ -118,7 +118,7 @@ fun SearchRow() {
             Image(
                 painter = painterResource(id = R.drawable.ic_search_green),
                 contentDescription = "search_icon",
-                modifier = Modifier.size(14.dp),
+                modifier = Modifier.size(15.dp),
             )
             Spacer(modifier = Modifier.width(9.dp))
             Text(
