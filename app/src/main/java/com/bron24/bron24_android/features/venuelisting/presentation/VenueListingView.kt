@@ -10,8 +10,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.features.venuelisting.presentation.components.VenueCard
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import com.bron24.bron24_android.core.presentation.theme.interFontFamily
 
 @Composable
 fun VenueListingView(
@@ -26,6 +37,35 @@ fun VenueListingView(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = modifier
     ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Special Offers",
+                style = TextStyle(
+                    fontFamily = interFontFamily,
+                    fontWeight = FontWeight(600),
+                    fontSize = 24.sp,
+                    lineHeight = 30.sp,
+                    color = Color.Black
+                )
+            )
+            Text(
+                text = "See all",
+                style = TextStyle(
+                    fontFamily = interFontFamily,
+                    fontWeight = FontWeight(600),
+                    fontSize = 16.sp,
+                    lineHeight = 20.sp,
+                    color = Color(0xFF32B768)
+                )
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         if (isLoading) {
             items(5) {
                 VenueCard(isLoading = true)
