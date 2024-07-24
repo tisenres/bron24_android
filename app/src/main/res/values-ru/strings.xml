@@ -15,4 +15,6 @@
     <string name="nearby_stadiums_desc">Вам не нужно далеко идти, чтобы найти или позвонить в хороший стадион, мы предоставили все стадионы, которые находятся рядом с вами</string>
     <string name="select_stadium">Просто выберите стадион</string>
     <string name="select_stadium_desc">Выберите стадион, который вам больше всего нравится, выберите время и дату игры, и просто забронируйте его :)</string>
+    <string name="hello">Привет</string>
+
 </resources>

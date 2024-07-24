@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.filter.presentation
+package com.bron24.bron24_android.features.filter.presentetion
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,14 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.core.presentation.theme.interFontFamily
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -63,30 +66,30 @@ fun ProfileRow() {
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 Text(
-                    text = "Salom, Cristiano Ronaldo!",
+                    text = stringResource(id = R.string.hello) + ", Cristiano Ronaldo!",
                     style = TextStyle(
-                        fontFamily = gilroyFontFamily,
+                        fontFamily = interFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
-                        color = Color.White
+                        color = Color.White,
+                        lineHeight = 17.sp,
+                        letterSpacing = (-0.028).em
                     )
                 )
+                Spacer(modifier = Modifier.height(3.dp))
                 Text(
                     text = "Toshkent viloyati",
                     style = TextStyle(
-                        fontFamily = gilroyFontFamily,
+                        fontFamily = interFontFamily,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
-                        color = Color.White
+                        fontSize = 12.sp,
+                        color = Color.White,
+                        lineHeight = 14.sp,
+                        letterSpacing = (-0.028).em
                     )
                 )
             }
         }
-        Image(
-            painter = painterResource(id = R.drawable.ic_filter),
-            contentDescription = "filter_icon",
-            modifier = Modifier.size(24.dp)
-        )
     }
 }
 
@@ -107,7 +110,8 @@ fun SearchRow() {
         Image(
             painter = painterResource(id = R.drawable.baseline_search_24),
             contentDescription = "search_icon",
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier
+                .size(24.dp)
                 .padding(start = 10.dp)
         )
         Spacer(modifier = Modifier.width(9.dp))

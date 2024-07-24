@@ -43,6 +43,14 @@ val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_medium, weight = FontWeight.Medium)
 )
 
+val interFontFamily = FontFamily(
+    Font(resId = R.font.inter_regular, weight = FontWeight.Normal),
+    Font(resId = R.font.inter_bold, weight = FontWeight.Bold),
+    Font(resId = R.font.inter_black, weight = FontWeight.Black),
+    Font(resId = R.font.inter_light, weight = FontWeight.Light),
+    Font(resId = R.font.inter_medium, weight = FontWeight.Medium)
+)
+
 val gilroyTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = gilroyFontFamily,

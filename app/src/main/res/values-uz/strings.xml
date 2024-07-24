@@ -15,4 +15,5 @@
     <string name="nearby_stadiums_desc">Yaxshi stadion topish yoki chaqirish uchun uzoqqa borishingiz shart emas, biz sizga yaqin bo\'lgan barcha stadionlarni taqdim etdik</string>
     <string name="select_stadium">Faqat stadionni tanlang</string>
     <string name="select_stadium_desc">Sizga yoqqan stadionni tanlang, o\'yin vaqti va sanasini tanlang va shunchaki Bron qiling :)</string>
+    <string name="hello">Salom</string>
 </resources>
