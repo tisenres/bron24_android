@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
@@ -43,39 +44,40 @@ fun LanguageSelectionScreen(
     val context = LocalContext.current
     var triggerRecomposition by remember { mutableStateOf(false) }
 
-    // Set locale immediately when the language changes
     LaunchedEffect(selectedLanguage) {
         LocaleManager.setLocale(context, selectedLanguage.code)
-        triggerRecomposition = !triggerRecomposition // Toggle the state to force recomposition
+        triggerRecomposition = !triggerRecomposition
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
-            .padding(top = 80.dp, end = 24.dp, bottom = 24.dp),
+            .padding(top = 30.dp, end = 24.dp, bottom = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(horizontalAlignment = Alignment.Start) {
-            // Trigger recomposition by using the state
             if (triggerRecomposition) {
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    modifier = Modifier.padding(start = 24.dp),
+                    modifier = Modifier
+                        .padding(start = 24.dp)
+                        .height(32.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
-                        color = MaterialTheme.colorScheme.secondary,
-                        lineHeight = 32.sp
+                        fontSize = 26.sp,
+                        color = Color(0xFF32B768),
+                        lineHeight = 32.sp,
+                        letterSpacing = (-0.028).em
                     ),
                 )
 
                 Text(
                     text = stringResource(id = R.string.select_language),
                     modifier = Modifier
-                        .padding(top = 24.dp, start = 24.dp, bottom = 80.dp, end = 90.dp)
+                        .padding(top = 16.dp, start = 24.dp, bottom = 30.dp, end = 90.dp)
                         .height(128.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
@@ -88,20 +90,23 @@ fun LanguageSelectionScreen(
             } else {
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    modifier = Modifier.padding(start = 24.dp),
+                    modifier = Modifier
+                        .padding(start = 24.dp)
+                        .height(32.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
-                        color = MaterialTheme.colorScheme.secondary,
-                        lineHeight = 32.sp
+                        fontSize = 26.sp,
+                        color = Color(0xFF32B768),
+                        lineHeight = 32.sp,
+                        letterSpacing = (-0.028).em
                     ),
                 )
 
                 Text(
                     text = stringResource(id = R.string.select_language),
                     modifier = Modifier
-                        .padding(top = 24.dp, start = 24.dp, bottom = 80.dp, end = 90.dp)
+                        .padding(top = 16.dp, start = 24.dp, bottom = 30.dp, end = 90.dp)
                         .height(128.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
@@ -146,7 +151,7 @@ fun LanguageOption(
 ) {
     val animatedColor by animateColorAsState(
         targetValue = when {
-            isSelected -> Color(0xFF32B768)
+            isSelected -> Color(0xFF26A045)
             else -> Color(0xFFE4E4E4)
         },
         label = ""
@@ -168,11 +173,11 @@ fun LanguageOption(
         Box(
             modifier = Modifier
                 .width(4.dp)
-                .height(48.dp)
+                .height(64.dp)
                 .background(
-                    if (isSelected) Color(0xFF32B768) else Color.Transparent,
+                    if (isSelected) Color(0xFF26A045) else Color.Transparent,
                     shape = RoundedCornerShape(3.dp)
-                )
+                ),
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
@@ -199,7 +204,7 @@ fun ConfirmButton(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4)
+            containerColor = if (isEnabled) Color(0xFF26A045) else Color(0xFFE4E4E4)
         ),
         enabled = isEnabled,
         shape = RoundedCornerShape(8.dp),

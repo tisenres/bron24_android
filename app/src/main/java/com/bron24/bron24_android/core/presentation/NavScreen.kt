@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import com.bron24.bron24_android.core.domain.model.Screen
 import com.bron24.bron24_android.core.presentation.components.introscreens.HowItWorksPager
 import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
-import com.bron24.bron24_android.features.location.presentation.components.LocationRequestScreen
+import com.bron24.bron24_android.features.location.presentation.LocationRequestScreen
 
 
 @Composable

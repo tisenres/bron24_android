@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.location.presentation.components
+package com.bron24.bron24_android.features.location.presentation
 
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,14 +26,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.features.venuelisting.presentation.components.gilroyFontFamily
-import com.bron24.bron24_android.features.location.presentation.LocationViewModel
+
+val gilroyFontFamily = FontFamily(
+    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
+    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
+)
 
 @Composable
 fun LocationRequestScreen(
@@ -54,8 +61,6 @@ fun LocationRequestScreen(
         }
     )
 
-    val permissionState = viewModel.locationPermissionState.collectAsState()
-
     LaunchedEffect(key1 = Unit) {
         viewModel.checkLocationPermission()
     }
@@ -64,22 +69,20 @@ fun LocationRequestScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
-            .padding(top = 80.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
+            .padding(top = 30.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.Start
     ) {
         Column(horizontalAlignment = Alignment.Start) {
             Text(
                 text = stringResource(id = R.string.app_name),
-                modifier = Modifier
-                    .height(32.dp)
-                    .width(78.dp),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    lineHeight = 32.sp
+                    fontSize = 26.sp,
+                    color = Color(0xFF32B768),
+                    lineHeight = 32.sp,
+                    letterSpacing = (-0.028).em
                 ),
             )
 
@@ -89,13 +92,12 @@ fun LocationRequestScreen(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 38.sp,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = Color(0xFF060606),
                     lineHeight = 48.sp
                 ),
                 modifier = Modifier
-                    .padding(top = 24.dp)
+                    .padding(top = 16.dp)
                     .height(96.dp)
-                    .width(345.dp)
             )
 
             Text(
@@ -108,7 +110,7 @@ fun LocationRequestScreen(
                     lineHeight = 20.sp
                 ),
                 modifier = Modifier
-                    .padding(top = 8.dp)
+                    .padding(top = 16.dp)
                     .height(40.dp)
                     .width(345.dp)
             )
