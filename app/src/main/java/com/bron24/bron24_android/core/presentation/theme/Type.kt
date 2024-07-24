@@ -44,29 +44,94 @@ val gilroyFontFamily = FontFamily(
 )
 
 val gilroyTypography = Typography(
-    h1 = TextStyle(
+    displayLarge = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Black,
-        fontSize = 30.sp
+        fontSize = 57.sp,
+        lineHeight = 64.sp
     ),
-    h2 = TextStyle(
+    displayMedium = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Black,
+        fontSize = 45.sp,
+        lineHeight = 52.sp
+    ),
+    displaySmall = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Black,
+        fontSize = 36.sp,
+        lineHeight = 44.sp
+    ),
+    headlineLarge = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp
+        fontSize = 32.sp,
+        lineHeight = 40.sp
     ),
-    body1 = TextStyle(
+    headlineMedium = TextStyle(
         fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        lineHeight = 36.sp
     ),
-    button = TextStyle(
+    headlineSmall = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        lineHeight = 32.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        lineHeight = 28.sp
+    ),
+    titleMedium = TextStyle(
         fontFamily = gilroyFontFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp
+        fontSize = 16.sp,
+        lineHeight = 24.sp
     ),
-    caption = TextStyle(
+    titleSmall = TextStyle(
         fontFamily = gilroyFontFamily,
-        fontWeight = FontWeight.Light,
-        fontSize = 12.sp
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        lineHeight = 20.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 16.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        lineHeight = 20.sp
+    ),
+    labelMedium = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        lineHeight = 16.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 16.sp
     )
 )

@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,7 +39,7 @@ fun HowItWorksScreen2(onFinishClick: () -> Unit) {
             contentScale = ContentScale.FillWidth
         )
         Text(
-            text = "Just select a stadium",
+            text = stringResource(id = R.string.select_stadium),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -49,8 +50,7 @@ fun HowItWorksScreen2(onFinishClick: () -> Unit) {
             modifier = Modifier.padding(top = 6.dp, bottom = 20.dp)
         )
         Text(
-            text = "Choose the stadium you like the most, choose the time and\n" +
-                    "date of the game and you just Bron it :)",
+            text = stringResource(id = R.string.select_stadium_desc),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,

@@ -26,13 +26,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
+import com.bron24.bron24_android.core.presentation.theme.gilroyFontFamily
 import com.bron24.bron24_android.features.language.domain.entities.Language
 import com.bron24.bron24_android.helper.util.LocaleManager
-
-val gilroyFontFamily = FontFamily(
-    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
-    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
-)
 
 @Composable
 fun LanguageSelectionScreen(
@@ -66,7 +62,7 @@ fun LanguageSelectionScreen(
                         .height(32.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 26.sp,
                         color = Color(0xFF32B768),
                         lineHeight = 31.85.sp,
@@ -173,7 +169,7 @@ fun LanguageOption(
         Box(
             modifier = Modifier
                 .width(4.dp)
-                .height(64.dp)
+                .height(48.dp)
                 .background(
                     if (isSelected) Color(0xFF26A045) else Color.Transparent,
                     shape = RoundedCornerShape(3.dp)

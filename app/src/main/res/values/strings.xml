@@ -11,4 +11,8 @@
     <string name="allow_button">Allow</string>
     <string name="deny_button">Not now</string>
     <string name="select_city">Select city</string>
+    <string name="nearby_stadiums">Nearby stadiums</string>
+    <string name="nearby_stadiums_desc">You don\'t have to go far to find or call a good stadium, we have provided all the stadiums that is near you</string>
+    <string name="select_stadium">Just select a stadium</string>
+    <string name="select_stadium_desc">Choose the stadium you like the most, choose the time and date of the game and you just Bron it :)</string>
 </resources>

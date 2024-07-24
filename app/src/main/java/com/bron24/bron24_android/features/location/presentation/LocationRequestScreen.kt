@@ -33,11 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-
-val gilroyFontFamily = FontFamily(
-    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
-    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
-)
+import com.bron24.bron24_android.core.presentation.theme.gilroyFontFamily
 
 @Composable
 fun LocationRequestScreen(
@@ -75,7 +71,7 @@ fun LocationRequestScreen(
                 text = stringResource(id = R.string.app_name),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.ExtraBold,
+                    fontWeight = FontWeight.Bold,
                     fontSize = 26.sp,
                     color = Color(0xFF32B768),
                     lineHeight = 31.85.sp,
