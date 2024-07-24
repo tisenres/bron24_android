@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -97,33 +98,55 @@ fun ProfileRow() {
 fun SearchRow() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 25.dp, end = 17.dp, bottom = 29.dp)
-            .background(
-                color = Color.White,
-                shape = RoundedCornerShape(5.dp)
-            )
-            .height(50.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.baseline_search_24),
-            contentDescription = "search_icon",
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
             modifier = Modifier
-                .size(24.dp)
-                .padding(start = 10.dp)
-        )
-        Spacer(modifier = Modifier.width(9.dp))
-        Text(
-            text = "Search your stadium",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
-                color = Color(0xFFA8A8A8)
+                .weight(1f)
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(5.dp)
+                )
+                .height(50.dp)
+                .padding(horizontal = 10.dp, vertical = 15.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_search_green),
+                contentDescription = "search_icon",
+                modifier = Modifier.size(14.dp),
             )
-        )
+            Spacer(modifier = Modifier.width(9.dp))
+            Text(
+                text = "Search your stadium",
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = Color(0xFF9C9E9C),
+                    lineHeight = 18.sp
+                )
+            )
+        }
+        Spacer(modifier = Modifier.width(19.dp))
+        Box(
+            modifier = Modifier
+                .size(50.dp)
+                .clip(RoundedCornerShape(5.dp))
+                .background(color = Color.White),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_filter), // Adjust the resource ID for your filter icon
+                contentDescription = "filter_icon",
+                colorFilter = ColorFilter.tint(Color(0xFF32B768)),
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 
