@@ -16,7 +16,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bron24.bron24_android.core.domain.model.Screen
@@ -54,7 +53,7 @@ fun HowItWorksPager(navController: NavHostController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 24.dp, vertical = 32.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -66,12 +65,12 @@ fun HowItWorksPager(navController: NavHostController) {
                 Text(text = "Skip",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 14.sp,
                         color = Color.Black,
                         lineHeight = 17.15.sp,
                         textAlign = TextAlign.Center,
-                        letterSpacing = (-0.028).em
+                        letterSpacing = (-0.78).sp
                     )
                 )
             }
@@ -83,10 +82,10 @@ fun HowItWorksPager(navController: NavHostController) {
                 for (i in 0..1) {
                     Box(
                         modifier = Modifier
-                            .size(8.dp)
-                            .padding(2.dp)
+                            .size(10.dp)
+                            .padding(10.dp)
                             .background(
-                                if (pagerState.firstVisibleItemIndex == i) Color.Green else Color.LightGray,
+                                if (pagerState.firstVisibleItemIndex == i) Color(0xFF32B768) else Color(0xFFD9D9D9),
                                 shape = CircleShape
                             )
                     )
@@ -107,12 +106,12 @@ fun HowItWorksPager(navController: NavHostController) {
                 Text(text = "Next",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 14.sp,
                         color = Color(0xFF32B768),
                         lineHeight = 17.15.sp,
                         textAlign = TextAlign.Center,
-                        letterSpacing = (-0.028).em
+                        letterSpacing = (-0.78).sp
                     )
                 )
             }

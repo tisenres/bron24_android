@@ -41,11 +41,12 @@ fun HowItWorksScreen2(onFinishClick: () -> Unit) {
             text = "Just select a stadium",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.ExtraBold,
                 fontSize = 24.sp,
                 color = Color(0xFF3C2E56),
                 lineHeight = 29.4.sp
             ),
+            modifier = Modifier.padding(top = 6.dp, bottom = 20.dp)
         )
         Text(
             text = "Choose the stadium you like the most, choose the time and\n" +

@@ -66,11 +66,11 @@ fun LanguageSelectionScreen(
                         .height(32.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 26.sp,
                         color = Color(0xFF32B768),
-                        lineHeight = 32.sp,
-                        letterSpacing = (-0.028).em
+                        lineHeight = 31.85.sp,
+                        letterSpacing = (-0.78).sp
                     ),
                 )
 
@@ -83,7 +83,7 @@ fun LanguageSelectionScreen(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 48.sp,
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = Color(0xFF060606),
                         lineHeight = 64.sp
                     ),
                 )
@@ -99,7 +99,7 @@ fun LanguageSelectionScreen(
                         fontSize = 26.sp,
                         color = Color(0xFF32B768),
                         lineHeight = 32.sp,
-                        letterSpacing = (-0.028).em
+                        letterSpacing = (-0.78).sp
                     ),
                 )
 
@@ -112,7 +112,7 @@ fun LanguageSelectionScreen(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 48.sp,
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = Color(0xFF060606),
                         lineHeight = 64.sp
                     ),
                 )

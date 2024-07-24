@@ -20,7 +20,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,11 +30,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.features.venuelisting.presentation.components.gilroyFontFamily
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
@@ -78,11 +75,11 @@ fun LocationRequestScreen(
                 text = stringResource(id = R.string.app_name),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.ExtraBold,
                     fontSize = 26.sp,
                     color = Color(0xFF32B768),
-                    lineHeight = 32.sp,
-                    letterSpacing = (-0.028).em
+                    lineHeight = 31.85.sp,
+                    letterSpacing = (-0.78).sp
                 ),
             )
 
@@ -133,10 +130,10 @@ fun LocationRequestScreen(
                     onDenyClick()
                 },
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color(0xFF32B768)
+                    contentColor = Color(0xFF26A045)
                 ),
                 shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, Color(0xFF32B768)),
+                border = BorderStroke(1.dp, Color(0xFF26A045)),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
@@ -163,7 +160,7 @@ fun LocationButton(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            containerColor = Color(0xFF32B768)
+            containerColor = Color(0xFF26A045)
         ),
         shape = RoundedCornerShape(8.dp),
         modifier = modifier

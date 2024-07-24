@@ -45,7 +45,7 @@ fun Bron24_androidTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = gilroyTypography,
         content = content
     )
 }
