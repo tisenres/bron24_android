@@ -41,13 +41,12 @@ fun LanguageSelectionScreen(
     val selectedLanguage by viewModel.selectedLanguage.collectAsState()
     val availableLanguages by viewModel.availableLanguages.collectAsState()
     val context = LocalContext.current
+    var triggerRecomposition by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        viewModel.selectLanguage(Language.UZBEK())
-    }
-
+    // Set locale immediately when the language changes
     LaunchedEffect(selectedLanguage) {
         LocaleManager.setLocale(context, selectedLanguage.code)
+        triggerRecomposition = !triggerRecomposition // Toggle the state to force recomposition
     }
 
     Column(
@@ -59,31 +58,60 @@ fun LanguageSelectionScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(horizontalAlignment = Alignment.Start) {
-            Text(
-                text = stringResource(id = R.string.app_name),
-                modifier = Modifier.padding(start = 24.dp),
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    lineHeight = 32.sp
-                ),
-            )
+            // Trigger recomposition by using the state
+            if (triggerRecomposition) {
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    modifier = Modifier.padding(start = 24.dp),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        lineHeight = 32.sp
+                    ),
+                )
 
-            Text(
-                text = stringResource(id = R.string.select_language), // Corrected "select_langauge" to "select_language"
-                modifier = Modifier
-                    .padding(top = 24.dp, start = 24.dp, bottom = 80.dp, end = 90.dp)
-                    .height(128.dp),
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 48.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    lineHeight = 64.sp
-                ),
-            )
+                Text(
+                    text = stringResource(id = R.string.select_language),
+                    modifier = Modifier
+                        .padding(top = 24.dp, start = 24.dp, bottom = 80.dp, end = 90.dp)
+                        .height(128.dp),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 48.sp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        lineHeight = 64.sp
+                    ),
+                )
+            } else {
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    modifier = Modifier.padding(start = 24.dp),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        lineHeight = 32.sp
+                    ),
+                )
+
+                Text(
+                    text = stringResource(id = R.string.select_language),
+                    modifier = Modifier
+                        .padding(top = 24.dp, start = 24.dp, bottom = 80.dp, end = 90.dp)
+                        .height(128.dp),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 48.sp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        lineHeight = 64.sp
+                    ),
+                )
+            }
 
             LazyColumn {
                 items(availableLanguages) { language ->
