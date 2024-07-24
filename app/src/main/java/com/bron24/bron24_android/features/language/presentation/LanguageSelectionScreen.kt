@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
+import com.bron24.bron24_android.features.language.domain.entities.Language
 import com.bron24.bron24_android.helper.util.LocaleManager
 
 val gilroyFontFamily = FontFamily(
@@ -41,10 +42,12 @@ fun LanguageSelectionScreen(
     val availableLanguages by viewModel.availableLanguages.collectAsState()
     val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+        viewModel.selectLanguage(Language.UZBEK())
+    }
+
     LaunchedEffect(selectedLanguage) {
-        selectedLanguage.let {
-            LocaleManager.setLocale(context, it.code)
-        }
+        LocaleManager.setLocale(context, selectedLanguage.code)
     }
 
     Column(
@@ -84,19 +87,22 @@ fun LanguageSelectionScreen(
 
             LazyColumn {
                 items(availableLanguages) { language ->
-                    LanguageOption(
-                        language = language.displayName,
-                        isSelected = selectedLanguage == language,
-                        onClick = { viewModel.selectLanguage(language) },
-                        modifier = Modifier
-                            .padding(top = 16.dp)
-                    )
+                    key(language.code) {
+                        LanguageOption(
+                            language = language,
+                            isSelected = selectedLanguage == language,
+                            onClick = {
+                                viewModel.selectLanguage(language)
+                            },
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
+                    }
                 }
             }
         }
 
         ConfirmButton(
-            isEnabled = selectedLanguage != null,
+            isEnabled = true,
             onClick = {
                 viewModel.confirmLanguageSelection()
                 onNavigateToLocationRequest()
@@ -107,17 +113,18 @@ fun LanguageSelectionScreen(
 
 @Composable
 fun LanguageOption(
-    language: String,
+    language: Language,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isSelectedState = remember(language, isSelected) { mutableStateOf(isSelected) }
     var isPressed by remember { mutableStateOf(false) }
 
     val animatedColor by animateColorAsState(
         targetValue = when {
             isPressed -> MaterialTheme.colorScheme.primary
-            isSelected -> Color(0xFF32B768)
+            isSelectedState.value -> Color(0xFF32B768)
             else -> Color(0xFFE4E4E4)
         },
         label = ""
@@ -133,6 +140,7 @@ fun LanguageOption(
                         isPressed = true
                         tryAwaitRelease()
                         isPressed = false
+                        isSelectedState.value = true
                         onClick()
                     }
                 )
@@ -143,15 +151,14 @@ fun LanguageOption(
                 .width(4.dp)
                 .height(48.dp)
                 .background(
-                    if (isSelected) Color(0xFF32B768) else Color.Transparent,
+                    if (isSelectedState.value) Color(0xFF32B768) else Color.Transparent,
                     shape = RoundedCornerShape(3.dp)
                 )
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
-            text = language,
-            modifier = Modifier
-                .height(64.dp),
+            text = language.displayName,
+            modifier = Modifier.height(64.dp),
             style = TextStyle(
                 color = animatedColor,
                 fontSize = 48.sp,
