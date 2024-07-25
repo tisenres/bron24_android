@@ -27,11 +27,11 @@ import com.bron24.bron24_android.core.presentation.theme.interFontFamily
 fun AdsSection(modifier: Modifier = Modifier) {
     var currentPage by remember { mutableStateOf(0) }
 
-    Column {
+    Column(modifier = modifier) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = modifier.fillMaxWidth()
         ) {
             Text(
                 text = "Special Offers",
@@ -55,8 +55,6 @@ fun AdsSection(modifier: Modifier = Modifier) {
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -75,10 +73,9 @@ fun AdsSection(modifier: Modifier = Modifier) {
             OfferImage(currentPage)
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
         Row(
             horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
             repeat(3) { index ->
@@ -98,8 +95,8 @@ fun AdsSection(modifier: Modifier = Modifier) {
 fun OfferImage(page: Int) {
     val imageRes = when (page) {
         0 -> R.drawable.offer_image_1
-        1 -> R.drawable.offer_image_2
-        else -> R.drawable.offer_image_3
+        1 -> R.drawable.ronaldo
+        else -> R.drawable.joxon_pic
     }
     Image(
         painter = painterResource(id = imageRes),
@@ -107,7 +104,7 @@ fun OfferImage(page: Int) {
         modifier = Modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(16.dp)),
-        contentScale = ContentScale.Fit
+        contentScale = ContentScale.Crop // Ensures the image fills the whole area
     )
 }
 
