@@ -1,18 +1,16 @@
 package com.bron24.bron24_android.core.presentation.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -20,8 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.*
-import coil.compose.rememberImagePainter
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.core.domain.model.Screen
 
@@ -81,30 +79,32 @@ fun CustomBottomBarItem(
     val selectedColor = Color(0xFF3DDA7E)
     val unselectedColor = Color(0xFF888888)
 
+    var currentColor by remember { mutableStateOf(unselectedColor) }
+
+    LaunchedEffect(isSelected) {
+        currentColor = if (isSelected) selectedColor else unselectedColor
+    }
+
     Column(
         modifier = Modifier
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = {
+                    onClick()
+                    currentColor = selectedColor
+                },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null // Remove ripple effect
+            )
             .wrapContentWidth(Alignment.CenterHorizontally)
             .wrapContentHeight(Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Icon(
             painter = painterResource(id = iconRes),
             contentDescription = label,
-            tint = if (isSelected) selectedColor else unselectedColor,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable(
-                    onClick = onClick,
-                    indication = rememberRipple(
-                        bounded = false,
-                        radius = 24.dp,
-                        color = if (isSelected) selectedColor else unselectedColor
-                    ),
-                    interactionSource = remember { MutableInteractionSource() }
-                )
+            tint = currentColor,
+            modifier = Modifier.size(24.dp)
         )
         Text(
             text = label,
@@ -112,7 +112,7 @@ fun CustomBottomBarItem(
             fontWeight = FontWeight.Bold,
             fontSize = 10.sp,
             lineHeight = 12.25.sp,
-            color = if (isSelected) selectedColor else unselectedColor,
+            color = currentColor,
             modifier = Modifier.padding(top = 5.dp)
         )
     }
