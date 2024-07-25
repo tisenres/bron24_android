@@ -31,14 +31,14 @@ fun SearchView(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(180.dp)
+            .height(100.dp)
             .background(
                 color = Color(0xFF32B768),
                 shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
             ),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.Center
     ) {
-        ProfileRow()
+//        ProfileRow()
         SearchRow()
     }
 }
@@ -97,7 +97,7 @@ fun SearchRow() {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 25.dp, end = 17.dp, bottom = 29.dp)
+            .padding(top = 10.dp, start = 17.dp, end = 17.dp, bottom = 10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
