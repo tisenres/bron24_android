@@ -2,7 +2,9 @@ package com.bron24.bron24_android.core.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,8 +37,8 @@ fun BottomNavigationBar(navController: NavController) {
             .fillMaxWidth()
             .height(72.dp)
             .background(Color.White)
-            .padding(start = 20.dp, end = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(70.dp),
+            .padding(start = 30.dp, end = 30.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         CustomBottomBarItem(
@@ -88,7 +90,17 @@ fun CustomBottomBarItem(
             painter = painterResource(id = iconRes),
             contentDescription = label,
             tint = if (isSelected) selectedColor else unselectedColor,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier
+                .size(24.dp)
+                .clickable(
+                    onClick = onClick,
+                    indication = rememberRipple(
+                        bounded = false,
+                        radius = 24.dp,
+                        color = if (isSelected) selectedColor else unselectedColor
+                    ),
+                    interactionSource = remember { MutableInteractionSource() }
+                )
         )
         Text(
             text = label,
