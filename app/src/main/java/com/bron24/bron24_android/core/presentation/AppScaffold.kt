@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.bron24.bron24_android.core.domain.model.Screen
 import com.bron24.bron24_android.core.presentation.components.BottomNavigationBar
 import com.bron24.bron24_android.features.home.presentation.HomePage
+import com.bron24.bron24_android.features.map.presentation.VenueMapView
 
 @Composable
 fun AppScaffold() {
@@ -55,9 +55,7 @@ fun ProfilePage() {
 
 @Composable
 fun MapPage() {
-    Surface(color = MaterialTheme.colorScheme.background) {
-        Text("Map Page Content")
-    }
+    VenueMapView()
 }
 
 @Composable

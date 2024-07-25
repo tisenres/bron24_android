@@ -1,7 +1,11 @@
 package com.bron24.bron24_android.features.venuelisting.data.mappers
 
+import com.bron24.bron24_android.core.domain.entities.Address
+import com.bron24.bron24_android.core.domain.entities.City
+import com.bron24.bron24_android.core.domain.entities.Infrastructure
+import com.bron24.bron24_android.core.domain.entities.Venue
+import com.bron24.bron24_android.core.domain.entities.VenueOwner
 import com.bron24.bron24_android.features.venuelisting.data.dto.*
-import com.bron24.bron24_android.features.venuelisting.domain.entities.*
 
 fun VenueDto.toDomainModel(): Venue {
     return Venue(

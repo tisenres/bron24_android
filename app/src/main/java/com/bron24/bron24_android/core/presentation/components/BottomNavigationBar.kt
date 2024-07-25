@@ -21,7 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.core.domain.model.Screen
+import com.bron24.bron24_android.core.presentation.Screen
 
 val gilroyFontFamily = FontFamily(
     Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),

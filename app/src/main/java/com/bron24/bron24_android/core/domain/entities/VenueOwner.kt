@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.venuelisting.domain.entities
+package com.bron24.bron24_android.core.domain.entities
 
 data class VenueOwner(
     val id: Int,

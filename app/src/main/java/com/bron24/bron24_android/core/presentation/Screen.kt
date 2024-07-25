@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.core.domain.model
+package com.bron24.bron24_android.core.presentation
 
 sealed class Screen(val route: String) {
     object LanguageSelection : Screen("languageSelection")

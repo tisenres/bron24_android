@@ -2,8 +2,8 @@ package com.bron24.bron24_android.features.venuelisting.data.repository
 
 import com.bron24.bron24_android.features.venuelisting.data.mappers.toDomainModel
 import com.bron24.bron24_android.features.venuelisting.data.remote.VenueApiService
-import com.bron24.bron24_android.features.venuelisting.domain.entities.Venue
-import com.bron24.bron24_android.features.venuelisting.domain.repository.VenueRepository
+import com.bron24.bron24_android.core.domain.entities.Venue
+import com.bron24.bron24_android.core.domain.repository.VenueRepository
 import javax.inject.Inject
 
 class VenueRepositoryImpl @Inject constructor(
