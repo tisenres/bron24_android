@@ -32,7 +32,7 @@
 
         <meta-data
             android:name="com.yandex.maps.apikey"
-            android:value="d3dbe533-78a4-4794-b09d-0c4e636ea0fa"/>
+            android:value="3c062e82-1411-437c-9157-f7e96556b098"/>
     </application>
 
 </manifest>
