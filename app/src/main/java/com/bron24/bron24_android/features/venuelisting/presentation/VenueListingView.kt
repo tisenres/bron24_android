@@ -34,8 +34,7 @@ fun VenueListingView(
     ) {
 
         item {
-            AdsSection( modifier = Modifier
-                .padding(horizontal = 24.dp, vertical = 15.dp))
+            AdsSection()
         }
         item {
             Text(
@@ -51,7 +50,7 @@ fun VenueListingView(
                     .fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         if (isLoading) {

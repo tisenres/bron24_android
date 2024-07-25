@@ -55,6 +55,8 @@ fun AdsSection(modifier: Modifier = Modifier) {
             )
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,6 +74,8 @@ fun AdsSection(modifier: Modifier = Modifier) {
         ) {
             OfferImage(currentPage)
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             horizontalArrangement = Arrangement.Center,

@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bron24.bron24_android.features.adssection.presentation.AdsSection
 import com.bron24.bron24_android.features.filter.presentetion.SearchView
 import com.bron24.bron24_android.features.venuelisting.presentation.VenueListingView
 
@@ -20,8 +19,7 @@ fun HomePage() {
             .background(Color.White)
     ) {
         SearchView(modifier = Modifier.padding(bottom = 17.dp))
-        VenueListingView(modifier = Modifier.fillMaxWidth())
-
+        VenueListingView()
     }
 }
 
