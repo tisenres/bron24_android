@@ -77,7 +77,7 @@ fun CustomBottomBarItem(
     onClick: () -> Unit
 ) {
     val selectedColor = Color(0xFF3DDA7E)
-    val unselectedColor = Color(0xFF888888)
+    val unselectedColor = Color(0xFFC6C6C6)
 
     var currentColor by remember { mutableStateOf(unselectedColor) }
 
@@ -93,7 +93,7 @@ fun CustomBottomBarItem(
                     currentColor = selectedColor
                 },
                 interactionSource = remember { MutableInteractionSource() },
-                indication = null // Remove ripple effect
+                indication = null
             )
             .wrapContentWidth(Alignment.CenterHorizontally)
             .wrapContentHeight(Alignment.CenterVertically),

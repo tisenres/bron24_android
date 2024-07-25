@@ -90,7 +90,6 @@ fun LocationRequestScreen(
                 ),
                 modifier = Modifier
                     .padding(top = 16.dp)
-                    .height(96.dp)
             )
 
             Text(

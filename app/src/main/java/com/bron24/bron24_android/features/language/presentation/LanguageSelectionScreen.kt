@@ -119,7 +119,7 @@ fun LanguageSelectionScreen(
                         onClick = {
                             viewModel.selectLanguage(language)
                         },
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        modifier = Modifier.padding(vertical = 16.dp)
                     )
                 }
             }
@@ -151,7 +151,7 @@ fun LanguageOption(
     )
 
     Row(
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
             .pointerInput(Unit) {
@@ -161,7 +161,7 @@ fun LanguageOption(
                         onClick()
                     }
                 )
-            }
+            },
     ) {
         Box(
             modifier = Modifier
@@ -175,7 +175,7 @@ fun LanguageOption(
         Spacer(modifier = Modifier.width(20.dp))
         Text(
             text = language.displayName,
-            modifier = Modifier.height(64.dp),
+//            modifier = Modifier.height(64.dp),
             style = TextStyle(
                 color = animatedColor,
                 fontSize = 48.sp,
@@ -221,9 +221,6 @@ fun ConfirmButton(
 @Composable
 fun SimpleComposablePreview() {
     Bron24_androidTheme {
-        LanguageSelectionScreen(
-            onNavigateToLocationRequest = {
-            }
-        )
+        LanguageSelectionScreen (hiltViewModel()) {}
     }
 }
