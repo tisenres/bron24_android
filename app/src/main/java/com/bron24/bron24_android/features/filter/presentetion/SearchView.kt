@@ -23,12 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.core.presentation.theme.gilroyFontFamily
 import com.bron24.bron24_android.core.presentation.theme.interFontFamily
-
-val gilroyFontFamily = FontFamily(
-    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
-    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
-)
 
 @Composable
 fun SearchView(modifier: Modifier = Modifier) {
@@ -71,9 +67,9 @@ fun ProfileRow() {
                     style = TextStyle(
                         fontFamily = interFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         color = Color.White,
-                        lineHeight = 17.sp,
+                        lineHeight = 19.sp,
                         letterSpacing = (-0.028).em
                     )
                 )
@@ -83,9 +79,9 @@ fun ProfileRow() {
                     style = TextStyle(
                         fontFamily = interFontFamily,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = Color.White,
-                        lineHeight = 14.sp,
+                        lineHeight = 16.sp,
                         letterSpacing = (-0.028).em
                     )
                 )

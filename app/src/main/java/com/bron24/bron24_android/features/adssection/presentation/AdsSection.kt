@@ -31,7 +31,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = "Special Offers",
@@ -83,12 +83,14 @@ fun AdsSection(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         ) {
             repeat(3) { index ->
-                val color = if (index == currentPage) Color(0xFF32B768) else Color(0xFFCCCCCC)
                 Box(
                     modifier = Modifier
                         .size(10.dp)
-                        .background(color, shape = CircleShape)
                         .padding(10.dp)
+                        .background(
+                            if (currentPage == index) Color(0xFF32B768) else Color(0xFFD9D9D9),
+                            shape = CircleShape
+                        )
                 )
             }
         }
@@ -98,7 +100,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
 @Composable
 fun OfferImage(page: Int) {
     val imageRes = when (page) {
-        0 -> R.drawable.offer_image_1
+        0 -> R.drawable.offer_image_1 // Ensure you have offer_image_1.png in your drawable resources
         1 -> R.drawable.ronaldo
         else -> R.drawable.joxon_pic
     }
@@ -107,8 +109,8 @@ fun OfferImage(page: Int) {
         contentDescription = "offer_image",
         modifier = Modifier
             .fillMaxSize()
-            .clip(RoundedCornerShape(16.dp)),
-        contentScale = ContentScale.Crop // Ensures the image fills the whole area
+            .clip(RoundedCornerShape(10.dp)),
+        contentScale = ContentScale.Crop
     )
 }
 

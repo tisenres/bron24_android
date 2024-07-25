@@ -29,14 +29,13 @@ fun VenueListingView(
 
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 25.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = modifier
     ) {
-
         item {
             AdsSection()
         }
         item {
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Football fields",
                 style = TextStyle(
@@ -60,6 +59,7 @@ fun VenueListingView(
         } else {
             items(venues) { venue ->
                 VenueCard(venue = venue, isLoading = false)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
