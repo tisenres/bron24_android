@@ -68,7 +68,7 @@ fun HowItWorksScreen1() {
             ),
             modifier = Modifier
                 .width(331.dp)
-                .padding(top = 8.dp)
+                .padding(top = 16.dp)
         )
     }
 }

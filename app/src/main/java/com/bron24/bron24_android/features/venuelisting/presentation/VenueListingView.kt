@@ -32,6 +32,7 @@ fun VenueListingView(
         modifier = modifier
     ) {
         item {
+            Spacer(modifier = Modifier.height(16.dp))
             AdsSection()
         }
         item {

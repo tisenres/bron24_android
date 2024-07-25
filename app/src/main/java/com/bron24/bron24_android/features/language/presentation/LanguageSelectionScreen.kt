@@ -16,12 +16,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
@@ -122,7 +119,7 @@ fun LanguageSelectionScreen(
                         onClick = {
                             viewModel.selectLanguage(language)
                         },
-                        modifier = Modifier.padding(top = 16.dp)
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
             }

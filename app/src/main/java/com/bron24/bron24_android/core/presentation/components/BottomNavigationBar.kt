@@ -42,9 +42,9 @@ fun BottomNavigationBar(navController: NavController) {
             onClick = { navController.navigate(Screen.HomePage.route) },
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF26A045),
+                selectedIconColor = Color(0xFF3DDA7E),
                 unselectedIconColor = Color(0xFF888888),
-                selectedTextColor = Color(0xFF26A045),
+                selectedTextColor = Color(0xFF3DDA7E),
                 unselectedTextColor = Color(0xFF888888),
                 indicatorColor = Color.Transparent
             )
@@ -56,9 +56,9 @@ fun BottomNavigationBar(navController: NavController) {
             onClick = { navController.navigate(Screen.MapPage.route) },
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF26A045),
+                selectedIconColor = Color(0xFF3DDA7E),
                 unselectedIconColor = Color(0xFF888888),
-                selectedTextColor = Color(0xFF26A045),
+                selectedTextColor = Color(0xFF3DDA7E),
                 unselectedTextColor = Color(0xFF888888),
                 indicatorColor = Color.Transparent
             )
@@ -70,9 +70,9 @@ fun BottomNavigationBar(navController: NavController) {
             onClick = { navController.navigate(Screen.CartPage.route) },
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF26A045),
+                selectedIconColor = Color(0xFF3DDA7E),
                 unselectedIconColor = Color(0xFF888888),
-                selectedTextColor = Color(0xFF26A045),
+                selectedTextColor = Color(0xFF3DDA7E),
                 unselectedTextColor = Color(0xFF888888),
                 indicatorColor = Color.Transparent
             )
@@ -84,9 +84,9 @@ fun BottomNavigationBar(navController: NavController) {
             onClick = { navController.navigate(Screen.ProfilePage.route) },
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = Color(0xFF26A045),
+                selectedIconColor = Color(0xFF3DDA7E),
                 unselectedIconColor = Color(0xFF888888),
-                selectedTextColor = Color(0xFF26A045),
+                selectedTextColor = Color(0xFF3DDA7E),
                 unselectedTextColor = Color(0xFF888888),
                 indicatorColor =Color.Transparent
             )

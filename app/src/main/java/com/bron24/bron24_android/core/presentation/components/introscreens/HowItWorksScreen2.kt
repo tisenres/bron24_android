@@ -47,7 +47,6 @@ fun HowItWorksScreen2(onFinishClick: () -> Unit) {
                 color = Color(0xFF3C2E56),
                 lineHeight = 29.4.sp
             ),
-            modifier = Modifier.padding(top = 6.dp, bottom = 20.dp)
         )
         Text(
             text = stringResource(id = R.string.select_stadium_desc),
@@ -62,7 +61,7 @@ fun HowItWorksScreen2(onFinishClick: () -> Unit) {
             ),
             modifier = Modifier
                 .width(357.dp)
-                .padding(top = 8.dp)
+                .padding(top = 16.dp)
         )
     }
 }
