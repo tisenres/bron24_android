@@ -60,10 +60,10 @@ fun AdsSection(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(160.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .pointerInput(Unit) {
-                    detectHorizontalDragGestures { change, dragAmount ->
+                    detectHorizontalDragGestures { _, dragAmount ->
                         if (dragAmount > 0) {
                             currentPage = (currentPage - 1).coerceAtLeast(0)
                         } else {
@@ -78,19 +78,19 @@ fun AdsSection(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            repeat(3) { index ->
+            repeat(4) { index ->
                 Box(
                     modifier = Modifier
                         .size(10.dp)
-                        .padding(10.dp)
                         .background(
-                            if (currentPage == index) Color(0xFF32B768) else Color(0xFFD9D9D9),
+                            color = if (currentPage == index) Color(0xFF32B768) else Color(0xFFD9D9D9),
                             shape = CircleShape
                         )
+                        .padding(horizontal = 10.dp)
                 )
             }
         }
@@ -100,9 +100,10 @@ fun AdsSection(modifier: Modifier = Modifier) {
 @Composable
 fun OfferImage(page: Int) {
     val imageRes = when (page) {
-        0 -> R.drawable.offer_image_1 // Ensure you have offer_image_1.png in your drawable resources
-        1 -> R.drawable.ronaldo
-        else -> R.drawable.joxon_pic
+        0 -> R.drawable.offer_image_1
+        1 -> R.drawable.offer_image_1
+        2 -> R.drawable.offer_image_1
+        else -> R.drawable.offer_image_1
     }
     Image(
         painter = painterResource(id = imageRes),
