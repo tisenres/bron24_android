@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetVenuesUseCase @Inject constructor(
     private val repository: VenueRepository
 ) {
-    suspend operator fun invoke(): List<Venue> {
+    suspend fun execute(): List<Venue> {
         return repository.getVenues()
     }
 }

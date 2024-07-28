@@ -28,7 +28,7 @@ class VenueListingViewModel @Inject constructor(
     private fun fetchVenues() {
         viewModelScope.launch {
             _isLoading.value = true
-            val venueList = getVenuesUseCase()
+            val venueList = getVenuesUseCase.execute()
             _venues.value = venueList
             _isLoading.value = false
         }
