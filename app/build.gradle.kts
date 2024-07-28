@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.valentinilkShimmer)
     implementation(libs.yandex.maps)
+    implementation(libs.maps.compose)
 
     implementation(libs.retrofit)
     implementation(libs.retrofitMoshi)
