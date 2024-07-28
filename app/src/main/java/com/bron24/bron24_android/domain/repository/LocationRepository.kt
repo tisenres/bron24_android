@@ -7,5 +7,4 @@ import kotlinx.coroutines.flow.Flow
 interface LocationRepository {
     fun getCurrentLocation(): Flow<Location>
     fun checkLocationPermission(): Flow<LocationPermissionState>
-    fun requestLocationPermission()
 }
