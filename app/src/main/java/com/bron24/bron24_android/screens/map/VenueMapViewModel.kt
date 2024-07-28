@@ -3,8 +3,8 @@ package com.bron24.bron24_android.screens.map
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
-import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.user.Location
+import com.bron24.bron24_android.domain.entity.venue.Venue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VenueMapViewModel @Inject constructor(
-    private val model: VenueMapModel,
+    private val model: VenueMapModel
 ) : ViewModel() {
     private val _venues = MutableStateFlow<List<Venue>>(emptyList())
     val venues: StateFlow<List<Venue>> = _venues
@@ -26,7 +26,7 @@ class VenueMapViewModel @Inject constructor(
 
     init {
         fetchVenuesForMap()
-//        _locationPermissionState()
+        checkLocationPermission()
     }
 
     private fun fetchVenuesForMap() {
@@ -44,21 +44,18 @@ class VenueMapViewModel @Inject constructor(
         }
     }
 
-//    private fun getLocationPermission(): LocationPermissionState {
-//        return
-//        viewModelScope.launch {
-//            model.checkLocationPermission().collect { permissionState ->
-//                _locationPermissionState.value = permissionState
-////                    updateCurrentLocation()
-//            }
-//        }
-//    }
-
-//    private fun requestLocationPermission() {
-//        requestLocationPermissionUseCase.execute()
-//    }
+    private fun checkLocationPermission() {
+        viewModelScope.launch {
+            model.checkLocationPermission().collect { permissionState ->
+                _locationPermissionState.value = permissionState
+                if (permissionState == LocationPermissionState.GRANTED) {
+                    updateCurrentLocation()
+                }
+            }
+        }
+    }
 
     fun onVenueTapped(venue: Venue) {
-        // Handle venue tap, e.g., navigate to a detail screen
+        // TODO: Handle venue tap
     }
 }

@@ -2,6 +2,8 @@ package com.bron24.bron24_android.screens.map
 
 import android.Manifest
 import android.app.Activity
+import android.content.pm.PackageManager
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -18,6 +20,7 @@ import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 
@@ -43,15 +46,26 @@ fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
                 lifecycleOwner.lifecycle.addObserver(
                     MapViewLifecycleObserver(this)
                 )
+                // Center the camera on Tashkent initially
+                map.move(
+                    CameraPosition(Point(41.311158, 69.279737), 11.0f, 0.0f, 0.0f)
+                )
             }
         },
         update = { mapView ->
             mapView.map.mapObjects.clear()
 
+            // Add venue markers
             venues.forEach { venue ->
-                val point = Point(venue.address.latitude, venue.address.longitude)
+                val point = Point(venue.address.latitude.toDouble(), venue.address.longitude.toDouble())
+                Log.d("Map Point", "Venue: ${venue.address.addressName}, Point: ${point.latitude}, ${point.longitude}")
                 val placemark = mapView.map.mapObjects.addPlacemark(point)
-                placemark.setIcon(ImageProvider.fromResource(context, R.drawable.joxon_pic))
+                placemark.setIcon(
+                    ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_green),
+                    IconStyle().apply {
+                        scale = 2.0f // Increase the size of the marker
+                    }
+                )
                 placemark.userData = venue
 
                 placemark.addTapListener { mapObject, _ ->
@@ -63,15 +77,25 @@ fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
                 }
             }
 
+            // Add current location marker and move camera
             currentLocation?.let { location ->
                 val currentLocationPoint = Point(location.latitude, location.longitude)
                 val currentLocationPlacemark = mapView.map.mapObjects.addPlacemark(currentLocationPoint)
-                currentLocationPlacemark.setIcon(ImageProvider.fromResource(context, R.drawable.ronaldo))
+                currentLocationPlacemark.setIcon(
+                    ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_red),
+                    IconStyle().apply {
+                        scale = 2.0f // Increase the size of the current location marker
+                    }
+                )
+
+                Log.d("Current Location", "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
 
                 // Move camera to the current location
                 mapView.map.move(
                     CameraPosition(currentLocationPoint, 15.0f, 0.0f, 0.0f)
                 )
+            } ?: run {
+                Log.d("Current Location", "Current location is null")
             }
         }
     )

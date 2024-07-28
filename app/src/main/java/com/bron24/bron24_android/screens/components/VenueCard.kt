@@ -323,8 +323,8 @@ fun PreviewVenueCard() {
             address = Address(
                 id = 3,
                 addressName = "Chilonzor 18 kvartal",
-                longitude = 41.271970,
-                latitude = 69.191573,
+                longitude = "41.271970",
+                latitude = "69.191573",
                 district = "Chilanzar",
                 closestMetroStation = "Chilonzor metro"
             ),

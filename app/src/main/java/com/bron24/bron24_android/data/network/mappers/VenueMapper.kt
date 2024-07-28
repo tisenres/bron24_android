@@ -27,7 +27,8 @@ fun VenueDto.toDomainModel(): Venue {
         contact2 = contact2,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        previewImage = previewImage.replace("127.0.0.1", "10.0.2.2"),
+//        previewImage = previewImage.replace("127.0.0.1", "10.0.2.2"),
+        previewImage = previewImage,
         address = address.toDomainModel(),
         city = city.toDomainModel(),
         infrastructure = infrastructure.toDomainModel(),
@@ -39,8 +40,8 @@ fun AddressDto.toDomainModel(): Address {
     return Address(
         id = id,
         addressName = addressName,
-        longitude = longitude.toDouble(),
-        latitude = latitude.toDouble(),
+        longitude = longitude,
+        latitude = latitude,
         district = district,
         closestMetroStation = closestMetroStation
     )
