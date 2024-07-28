@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.venuelisting.presentation.components
+package com.bron24.bron24_android.features.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

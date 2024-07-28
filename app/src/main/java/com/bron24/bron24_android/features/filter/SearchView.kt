@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.filter.presentetion
+package com.bron24.bron24_android.features.filter
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

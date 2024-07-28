@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.home.presentation
+package com.bron24.bron24_android.features.home
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -6,5 +6,4 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor() : ViewModel() {
-    // Your logic here
 }

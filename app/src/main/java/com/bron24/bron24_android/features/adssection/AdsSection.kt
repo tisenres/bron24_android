@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.adssection.presentation
+package com.bron24.bron24_android.features.adssection
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

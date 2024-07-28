@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.map.presentation
+package com.bron24.bron24_android.features.map
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable

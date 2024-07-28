@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.venuelisting.presentation
+package com.bron24.bron24_android.features.venuelisting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

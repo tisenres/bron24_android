@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.map.presentation
+package com.bron24.bron24_android.features.map
 
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

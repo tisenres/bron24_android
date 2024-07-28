@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.venuelisting.presentation
+package com.bron24.bron24_android.features.venuelisting
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,9 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bron24.bron24_android.features.venuelisting.presentation.components.VenueCard
+import com.bron24.bron24_android.features.components.VenueCard
 import com.bron24.bron24_android.features.main.theme.interFontFamily
-import com.bron24.bron24_android.features.adssection.presentation.AdsSection
+import com.bron24.bron24_android.features.adssection.AdsSection
 
 @Composable
 fun VenueListingView(

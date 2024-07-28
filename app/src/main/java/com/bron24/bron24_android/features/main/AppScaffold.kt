@@ -9,8 +9,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.features.main.components.BottomNavigationBar
-import com.bron24.bron24_android.features.home.presentation.HomePage
-import com.bron24.bron24_android.features.map.presentation.SimpleYandexMapView
+import com.bron24.bron24_android.features.home.HomePage
+import com.bron24.bron24_android.features.map.SimpleYandexMapView
 
 @Composable
 fun AppScaffold() {
