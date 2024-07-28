@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.location.presentation
+package com.bron24.bron24_android.features.location
 
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult

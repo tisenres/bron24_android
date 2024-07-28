@@ -6,8 +6,8 @@ import com.bron24.bron24_android.features.cityselection.presentation.CityViewMod
 import com.bron24.bron24_android.features.home.presentation.HomeViewModel
 import com.bron24.bron24_android.features.language.LanguageModel
 import com.bron24.bron24_android.features.language.LanguageViewModel
-import com.bron24.bron24_android.features.location.domain.usecases.CheckLocationPermissionUseCase
-import com.bron24.bron24_android.features.location.presentation.LocationViewModel
+import com.bron24.bron24_android.features.location.LocationModel
+import com.bron24.bron24_android.features.location.LocationViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,11 +41,9 @@ object ViewModelModule {
     @Provides
     @ActivityScoped
     fun provideLocationViewModel(
-        checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
+        locationModel: LocationModel
     ): LocationViewModel {
-        return LocationViewModel(
-            checkLocationPermissionUseCase
-        )
+        return LocationViewModel(locationModel)
     }
 
     @Provides

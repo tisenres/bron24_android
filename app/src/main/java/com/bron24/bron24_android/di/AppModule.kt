@@ -6,9 +6,7 @@ import com.bron24.bron24_android.features.cityselection.data.CityRepositoryImpl
 import com.bron24.bron24_android.features.cityselection.domain.repository.CityRepository
 import com.bron24.bron24_android.features.cityselection.domain.usecases.GetAvailableCitiesUseCase
 import com.bron24.bron24_android.features.cityselection.domain.usecases.UpdateSelectedCityUseCase
-import com.bron24.bron24_android.location.data.local.PermissionChecker
-import com.bron24.bron24_android.features.location.domain.repository.LocationRepository
-import com.bron24.bron24_android.features.location.domain.usecases.CheckLocationPermissionUseCase
+import com.bron24.bron24_android.data.PermissionChecker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,11 +50,5 @@ object AppModule {
     @Singleton
     fun providePermissionChecker(@ApplicationContext context: Context): PermissionChecker {
         return PermissionChecker(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCheckLocationPermissionUseCase(repository: LocationRepository): CheckLocationPermissionUseCase {
-        return CheckLocationPermissionUseCase(repository)
     }
 }
