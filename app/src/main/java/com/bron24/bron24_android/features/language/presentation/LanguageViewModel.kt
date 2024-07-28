@@ -2,9 +2,7 @@ package com.bron24.bron24_android.features.language.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.features.language.domain.entities.Language
-import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
-import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
+import com.bron24.bron24_android.domain.entity.user.Language
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,11 +11,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LanguageViewModel @Inject constructor(
-    private val getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
-    private val updateSelectedLanguageUseCase: UpdateSelectedLanguageUseCase
+    private val model: LanguageModel
 ) : ViewModel() {
 
-    private val _selectedLanguage = MutableStateFlow<Language>(Language.UZBEK())
+    private val _selectedLanguage = MutableStateFlow(Language("uz", "O`zbek"))
     val selectedLanguage: StateFlow<Language> = _selectedLanguage
 
     private val _availableLanguages = MutableStateFlow<List<Language>>(emptyList())
@@ -25,7 +22,7 @@ class LanguageViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _availableLanguages.value = getAvailableLanguagesUseCase()
+            _availableLanguages.value = model.getAvailableLanguagesUseCase()
         }
     }
 
@@ -37,7 +34,7 @@ class LanguageViewModel @Inject constructor(
 
     fun confirmLanguageSelection() {
         viewModelScope.launch {
-            updateSelectedLanguageUseCase(_selectedLanguage.value)
+            model.updateSelectedLanguageUseCase(_selectedLanguage.value)
         }
     }
 }

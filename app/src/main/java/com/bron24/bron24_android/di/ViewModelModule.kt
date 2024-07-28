@@ -4,8 +4,7 @@ import com.bron24.bron24_android.features.cityselection.domain.usecases.GetAvail
 import com.bron24.bron24_android.features.cityselection.domain.usecases.UpdateSelectedCityUseCase
 import com.bron24.bron24_android.features.cityselection.presentation.CityViewModel
 import com.bron24.bron24_android.features.home.presentation.HomeViewModel
-import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
-import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
+import com.bron24.bron24_android.features.language.presentation.LanguageModel
 import com.bron24.bron24_android.features.language.presentation.LanguageViewModel
 import com.bron24.bron24_android.features.location.domain.usecases.CheckLocationPermissionUseCase
 import com.bron24.bron24_android.features.location.presentation.LocationViewModel
@@ -22,13 +21,9 @@ object ViewModelModule {
     @Provides
     @ActivityScoped
     fun provideLanguageViewModel(
-        getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
-        updateSelectedLanguageUseCase: UpdateSelectedLanguageUseCase,
+        languageModel: LanguageModel
     ): LanguageViewModel {
-        return LanguageViewModel(
-            getAvailableLanguagesUseCase,
-            updateSelectedLanguageUseCase,
-        )
+        return LanguageViewModel(languageModel)
     }
 
     @Provides

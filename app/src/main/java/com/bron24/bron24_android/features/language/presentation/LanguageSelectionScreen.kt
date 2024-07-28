@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.user.Language
 import com.bron24.bron24_android.features.main.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.features.language.domain.entities.Language
 import com.bron24.bron24_android.helper.util.LocaleManager
 
 @Composable
@@ -38,7 +38,7 @@ fun LanguageSelectionScreen(
     var triggerRecomposition by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedLanguage) {
-        LocaleManager.setLocale(context, selectedLanguage.code)
+        LocaleManager.setLocale(context, selectedLanguage.languageCode)
         triggerRecomposition = !triggerRecomposition
     }
 
@@ -174,7 +174,7 @@ fun LanguageOption(
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
-            text = language.displayName,
+            text = language.languageName,
 //            modifier = Modifier.height(64.dp),
             style = TextStyle(
                 color = animatedColor,
