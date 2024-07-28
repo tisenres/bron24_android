@@ -3,8 +3,8 @@ package com.bron24.bron24_android.di
 import com.bron24.bron24_android.domain.usecases.language.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.domain.usecases.language.SetUserLanguageUseCase
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
-import com.bron24.bron24_android.features.language.LanguageModel
-import com.bron24.bron24_android.features.location.LocationModel
+import com.bron24.bron24_android.screens.language.LanguageModel
+import com.bron24.bron24_android.screens.location.LocationModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

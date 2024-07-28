@@ -2,10 +2,10 @@ package com.bron24.bron24_android.di
 
 import android.content.Context
 import com.bron24.bron24_android.data.local.preference.LanguagePreference
-import com.bron24.bron24_android.features.cityselection.data.CityRepositoryImpl
-import com.bron24.bron24_android.features.cityselection.domain.repository.CityRepository
-import com.bron24.bron24_android.features.cityselection.domain.usecases.GetAvailableCitiesUseCase
-import com.bron24.bron24_android.features.cityselection.domain.usecases.UpdateSelectedCityUseCase
+import com.bron24.bron24_android.screens.cityselection.data.CityRepositoryImpl
+import com.bron24.bron24_android.screens.cityselection.domain.repository.CityRepository
+import com.bron24.bron24_android.screens.cityselection.domain.usecases.GetAvailableCitiesUseCase
+import com.bron24.bron24_android.screens.cityselection.domain.usecases.UpdateSelectedCityUseCase
 import com.bron24.bron24_android.data.PermissionChecker
 import dagger.Module
 import dagger.Provides

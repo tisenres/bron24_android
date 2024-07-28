@@ -1,13 +1,13 @@
 package com.bron24.bron24_android.di
 
-import com.bron24.bron24_android.features.cityselection.domain.usecases.GetAvailableCitiesUseCase
-import com.bron24.bron24_android.features.cityselection.domain.usecases.UpdateSelectedCityUseCase
-import com.bron24.bron24_android.features.cityselection.presentation.CityViewModel
-import com.bron24.bron24_android.features.home.HomeViewModel
-import com.bron24.bron24_android.features.language.LanguageModel
-import com.bron24.bron24_android.features.language.LanguageViewModel
-import com.bron24.bron24_android.features.location.LocationModel
-import com.bron24.bron24_android.features.location.LocationViewModel
+import com.bron24.bron24_android.screens.cityselection.domain.usecases.GetAvailableCitiesUseCase
+import com.bron24.bron24_android.screens.cityselection.domain.usecases.UpdateSelectedCityUseCase
+import com.bron24.bron24_android.screens.cityselection.presentation.CityViewModel
+import com.bron24.bron24_android.screens.home.HomeViewModel
+import com.bron24.bron24_android.screens.language.LanguageModel
+import com.bron24.bron24_android.screens.language.LanguageViewModel
+import com.bron24.bron24_android.screens.location.LocationModel
+import com.bron24.bron24_android.screens.location.LocationViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
