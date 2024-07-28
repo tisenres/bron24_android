@@ -39,8 +39,8 @@ fun AddressDto.toDomainModel(): Address {
     return Address(
         id = id,
         addressName = addressName,
-        longitude = longitude,
-        latitude = latitude,
+        longitude = longitude.toDouble(),
+        latitude = latitude.toDouble(),
         district = district,
         closestMetroStation = closestMetroStation
     )
