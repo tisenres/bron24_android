@@ -8,13 +8,20 @@ import javax.inject.Inject
 class LanguageRepositoryImpl @Inject constructor(
     private val languagePreference: LanguagePreference
 ) : LanguageRepository {
+
+    private val availableLanguages = listOf(
+        Language("uz", "O`zbek"),
+        Language("ru", "Russian"),
+        Language("en", "English")
+        )
+
     override fun getAvailableLanguages(): List<Language> {
-        return listOf(Language("uz", "wewewe"))
+        return availableLanguages
     }
 
     override fun getSelectedLanguage(): Language {
         val languageCode = languagePreference.getSelectedLanguage() ?: Language("uz", "wewewe").languageCode
-        return listOf(Language("uz", "wewewe")).first { it.languageCode == languageCode }
+        return availableLanguages.first { it.languageCode == languageCode }
     }
 
     override fun setSelectedLanguage(language: Language) {

@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.features.language.presentation
+package com.bron24.bron24_android.features.language
 
 import com.bron24.bron24_android.domain.usecases.language.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.domain.entity.user.Language

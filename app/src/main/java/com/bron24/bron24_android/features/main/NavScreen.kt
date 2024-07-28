@@ -16,7 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.bron24.bron24_android.features.introscreens.HowItWorksPager
-import com.bron24.bron24_android.features.language.presentation.LanguageSelectionScreen
+import com.bron24.bron24_android.features.language.LanguageSelectionScreen
 import com.bron24.bron24_android.features.location.presentation.LocationRequestScreen
 import kotlinx.coroutines.launch
 
