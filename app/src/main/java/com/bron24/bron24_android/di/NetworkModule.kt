@@ -1,6 +1,6 @@
 package com.bron24.bron24_android.di
 
-import com.bron24.bron24_android.features.venuelisting.data.remote.VenueApiService
+import com.bron24.bron24_android.data.network.VenueApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

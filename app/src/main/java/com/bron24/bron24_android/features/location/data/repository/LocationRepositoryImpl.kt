@@ -1,8 +1,8 @@
 package com.bron24.bron24_android.location.data.repository
 
 import com.bron24.bron24_android.location.data.local.PermissionChecker
-import com.bron24.bron24_android.location.domain.entities.LocationPermissionState
-import com.bron24.bron24_android.location.domain.repository.LocationRepository
+import com.bron24.bron24_android.features.location.domain.entities.LocationPermissionState
+import com.bron24.bron24_android.features.location.domain.repository.LocationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

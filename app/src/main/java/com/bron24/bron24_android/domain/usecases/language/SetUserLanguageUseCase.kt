@@ -1,0 +1,12 @@
+package com.bron24.bron24_android.domain.usecases.language
+
+import com.bron24.bron24_android.domain.entity.user.Language
+import com.bron24.bron24_android.domain.repository.LanguageRepository
+
+class SetUserLanguageUseCase(
+    private val languageRepository: LanguageRepository
+) {
+    fun execute(language: Language) {
+        return languageRepository.setSelectedLanguage(language)
+    }
+}

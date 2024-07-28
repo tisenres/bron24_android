@@ -11,8 +11,8 @@ import com.bron24.bron24_android.features.language.domain.repository.LanguageRep
 import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
 import com.bron24.bron24_android.location.data.local.PermissionChecker
-import com.bron24.bron24_android.location.domain.repository.LocationRepository
-import com.bron24.bron24_android.location.domain.usecases.CheckLocationPermissionUseCase
+import com.bron24.bron24_android.features.location.domain.repository.LocationRepository
+import com.bron24.bron24_android.features.location.domain.usecases.CheckLocationPermissionUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

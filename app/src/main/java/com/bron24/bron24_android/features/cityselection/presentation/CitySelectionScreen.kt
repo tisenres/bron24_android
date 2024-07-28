@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
+import com.bron24.bron24_android.features.main.theme.Bron24_androidTheme
 import com.bron24.bron24_android.features.cityselection.domain.entities.City
 
 val gilroyFontFamily = FontFamily(

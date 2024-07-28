@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.core.presentation.theme.Bron24_androidTheme
-import com.bron24.bron24_android.core.presentation.theme.gilroyFontFamily
+import com.bron24.bron24_android.features.main.theme.Bron24_androidTheme
+import com.bron24.bron24_android.features.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.features.language.domain.entities.Language
 import com.bron24.bron24_android.helper.util.LocaleManager
 

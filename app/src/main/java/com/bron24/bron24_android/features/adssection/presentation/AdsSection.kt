@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.core.presentation.theme.interFontFamily
+import com.bron24.bron24_android.features.main.theme.interFontFamily
 
 @Composable
 fun AdsSection(modifier: Modifier = Modifier) {

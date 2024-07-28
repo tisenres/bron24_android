@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.core.domain.entities.Address
-import com.bron24.bron24_android.core.domain.entities.City
-import com.bron24.bron24_android.core.domain.entities.Infrastructure
-import com.bron24.bron24_android.core.domain.entities.Venue
-import com.bron24.bron24_android.core.domain.entities.VenueOwner
+import com.bron24.bron24_android.domain.entity.venue.Address
+import com.bron24.bron24_android.domain.entity.venue.City
+import com.bron24.bron24_android.domain.entity.venue.Infrastructure
+import com.bron24.bron24_android.domain.entity.venue.Venue
+import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 import com.valentinilk.shimmer.shimmer
 
 val gilroyFontFamily = FontFamily(

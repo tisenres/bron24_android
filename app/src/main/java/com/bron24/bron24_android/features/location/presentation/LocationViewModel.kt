@@ -2,8 +2,8 @@ package com.bron24.bron24_android.features.location.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.location.domain.entities.LocationPermissionState
-import com.bron24.bron24_android.location.domain.usecases.CheckLocationPermissionUseCase
+import com.bron24.bron24_android.features.location.domain.entities.LocationPermissionState
+import com.bron24.bron24_android.features.location.domain.usecases.CheckLocationPermissionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

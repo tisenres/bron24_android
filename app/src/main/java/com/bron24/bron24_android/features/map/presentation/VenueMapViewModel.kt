@@ -1,13 +1,13 @@
 package com.bron24.bron24_android.features.map.presentation
 
-import com.bron24.bron24_android.core.domain.usecases.GetVenuesUseCase
+import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.core.domain.entities.Venue
+import com.bron24.bron24_android.domain.entity.venue.Venue
 import kotlinx.coroutines.launch
 
 @HiltViewModel

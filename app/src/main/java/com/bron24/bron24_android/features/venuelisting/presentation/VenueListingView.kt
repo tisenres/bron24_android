@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.features.venuelisting.presentation.components.VenueCard
-import com.bron24.bron24_android.core.presentation.theme.interFontFamily
+import com.bron24.bron24_android.features.main.theme.interFontFamily
 import com.bron24.bron24_android.features.adssection.presentation.AdsSection
 
 @Composable

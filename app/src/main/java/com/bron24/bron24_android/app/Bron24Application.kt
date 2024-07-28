@@ -10,7 +10,7 @@ import dagger.hilt.android.HiltAndroidApp
 class Bron24Application : Application() {
     override fun onCreate() {
         super.onCreate()
-        MapKitFactory.setApiKey("3c062e82-1411-437c-9157-f7e96556b098")
+        MapKitFactory.setApiKey("d3dbe533-78a4-4794-b09d-0c4e636ea0fa")
         MapKitFactory.initialize(this)
     }
 }
