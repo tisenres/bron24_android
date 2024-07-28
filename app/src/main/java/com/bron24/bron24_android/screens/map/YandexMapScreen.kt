@@ -2,7 +2,6 @@ package com.bron24.bron24_android.screens.map
 
 import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -14,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -22,11 +22,12 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 
 @Composable
-fun SimpleYandexMapView(viewModel: VenueMapViewModel = hiltViewModel()) {
+fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val venues by viewModel.venues.collectAsState(initial = emptyList())
     val currentLocation by viewModel.currentLocation.collectAsState(initial = null)
+    val locationPermissionState by viewModel.locationPermissionState.collectAsState()
 
     DisposableEffect(Unit) {
         MapKitFactory.initialize(context)
@@ -41,9 +42,6 @@ fun SimpleYandexMapView(viewModel: VenueMapViewModel = hiltViewModel()) {
             MapView(ctx).apply {
                 lifecycleOwner.lifecycle.addObserver(
                     MapViewLifecycleObserver(this)
-                )
-                map.move(
-                    CameraPosition(Point(41.311158, 69.279737), 11.0f, 0.0f, 0.0f)
                 )
             }
         },
@@ -68,21 +66,24 @@ fun SimpleYandexMapView(viewModel: VenueMapViewModel = hiltViewModel()) {
             currentLocation?.let { location ->
                 val currentLocationPoint = Point(location.latitude, location.longitude)
                 val currentLocationPlacemark = mapView.map.mapObjects.addPlacemark(currentLocationPoint)
-                currentLocationPlacemark.setIcon(ImageProvider.fromResource(context, R.drawable.joxon_pic))
+                currentLocationPlacemark.setIcon(ImageProvider.fromResource(context, R.drawable.ronaldo))
+
+                // Move camera to the current location
+                mapView.map.move(
+                    CameraPosition(currentLocationPoint, 15.0f, 0.0f, 0.0f)
+                )
             }
         }
     )
 
-    LaunchedEffect(Unit) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Request permissions
+    LaunchedEffect(locationPermissionState) {
+        if (locationPermissionState == LocationPermissionState.DENIED) {
             ActivityCompat.requestPermissions(
                 context as Activity,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
-        } else {
+        } else if (locationPermissionState == LocationPermissionState.GRANTED) {
             viewModel.updateCurrentLocation()
         }
     }

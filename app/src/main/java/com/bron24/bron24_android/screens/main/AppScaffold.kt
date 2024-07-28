@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.screens.main.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.home.HomePage
-import com.bron24.bron24_android.screens.map.SimpleYandexMapView
+import com.bron24.bron24_android.screens.map.YandexMapScreen
 
 @Composable
 fun AppScaffold() {
@@ -55,7 +55,7 @@ fun ProfilePage() {
 
 @Composable
 fun MapPage() {
-    SimpleYandexMapView()
+    YandexMapScreen()
 }
 
 @Composable

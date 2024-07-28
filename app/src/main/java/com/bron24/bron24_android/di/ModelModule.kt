@@ -45,11 +45,13 @@ object ModelModule {
     @Singleton
     fun provideVenueMapModel(
         getVenuesUseCase: GetVenuesUseCase,
-        getCurrentLocationUseCase: GetCurrentLocationUseCase
+        getCurrentLocationUseCase: GetCurrentLocationUseCase,
+        checkLocationPermissionUseCase: CheckLocationPermissionUseCase
     ): VenueMapModel {
         return VenueMapModel(
             getVenuesUseCase,
-            getCurrentLocationUseCase
+            getCurrentLocationUseCase,
+            checkLocationPermissionUseCase
         )
     }
 }
