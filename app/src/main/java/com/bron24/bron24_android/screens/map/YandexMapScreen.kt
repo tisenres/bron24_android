@@ -1,138 +1,63 @@
 package com.bron24.bron24_android.screens.map
 
-import android.Manifest
-import android.app.Activity
-import android.content.pm.PackageManager
-import android.graphics.PointF
-import android.util.Log
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
-import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.runtime.image.ImageProvider
+import com.yandex.mapkit.geometry.Point
+import com.bron24.bron24_android.domain.entity.user.Location
+import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 
 @Composable
 fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val venues by viewModel.venues.collectAsState(initial = emptyList())
-    val currentLocation by viewModel.currentLocation.collectAsState(initial = null)
-    val locationPermissionState by viewModel.locationPermissionState.collectAsState()
+    val venues by viewModel.venues.collectAsState()
+    val currentLocation by viewModel.currentLocation.collectAsState()
+//    val locationPermissionState by viewModel.locationPermissionState.collectAsState()
 
-    DisposableEffect(Unit) {
-        MapKitFactory.initialize(context)
-        onDispose {
-            MapKitFactory.getInstance().onStop()
-        }
-    }
-
-    AndroidView(
-        modifier = Modifier.fillMaxSize(),
-        factory = { ctx ->
-            MapView(ctx).apply {
-                lifecycleOwner.lifecycle.addObserver(MapViewLifecycleObserver(this))
-                // Center the camera on the user's location at startup if available
-                currentLocation?.let { location ->
-                    map.move(
-                        CameraPosition(Point(location.latitude, location.longitude), 15.0f, 0.0f, 0.0f)
-                    )
-                } ?: run {
-                    // Center the camera on Tashkent initially
-                    map.move(
-                        CameraPosition(Point(41.311158, 69.279737), 11.0f, 0.0f, 0.0f)
-                    )
-                }
+    Box(modifier = Modifier.fillMaxSize()) {
+        val mapView = rememberMapViewWithLifecycle()
+        AndroidView(factory = { mapView }) { mapView ->
+            currentLocation?.let {
+                mapView.map.move(CameraPosition(Point(it.latitude, it.longitude), 14.0f, 0.0f, 0.0f))
+                addCurrentLocationMarker(mapView, it)
             }
-        },
-        update = { mapView ->
-            mapView.map.mapObjects.clear()
-
-            // Add venue markers
             venues.forEach { venue ->
-                val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                Log.d("Map Point", "Venue: ${venue.venueName}, Point: ${point.latitude}, ${point.longitude}")
-                val placemark = mapView.map.mapObjects.addPlacemark(point)
-                placemark.setIcon(
-                    ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_green),
-                    IconStyle().apply {
-                        anchor = PointF(0.5f, 1.0f)
-                        scale = 2.0f
-                    }
-                )
-                placemark.userData = venue
-
-                placemark.addTapListener { mapObject, _ ->
-                    val tappedVenue = mapObject.userData as? Venue
-                    tappedVenue?.let {
-                        viewModel.onVenueTapped(it)
-                    }
-                    true
-                }
+                addVenueMarker(mapView, venue)
             }
-
-            // Add current location marker and move camera
-            currentLocation?.let { location ->
-                val currentLocationPoint = Point(location.latitude, location.longitude)
-                val currentLocationPlacemark = mapView.map.mapObjects.addPlacemark(currentLocationPoint)
-                currentLocationPlacemark.setIcon(
-                    ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_red),
-                    IconStyle().apply {
-                        anchor = PointF(0.5f, 1.0f)
-                        scale = 2.0f
-                    }
-                )
-
-                Log.d("Current Location", "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
-
-                // Move camera to the current location
-                mapView.map.move(
-                    CameraPosition(currentLocationPoint, 15.0f, 0.0f, 0.0f)
-                )
-            } ?: run {
-                Log.d("Current Location", "Current location is null")
-            }
-        }
-    )
-
-    LaunchedEffect(locationPermissionState) {
-        if (locationPermissionState == LocationPermissionState.DENIED) {
-            ActivityCompat.requestPermissions(
-                context as Activity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        } else if (locationPermissionState == LocationPermissionState.GRANTED) {
-            viewModel.updateCurrentLocation()
         }
     }
 }
 
-const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+@Composable
+fun rememberMapViewWithLifecycle(): MapView {
+    val context = LocalContext.current
+    val mapView = remember { MapView(context) }
 
-class MapViewLifecycleObserver(
-    private val mapView: MapView
-) : DefaultLifecycleObserver {
-    override fun onStart(owner: LifecycleOwner) {
+    DisposableEffect(Unit) {
         mapView.onStart()
         MapKitFactory.getInstance().onStart()
+        onDispose {
+            mapView.onStop()
+            MapKitFactory.getInstance().onStop()
+        }
     }
+    return mapView
+}
 
-    override fun onStop(owner: LifecycleOwner) {
-        mapView.onStop()
-        MapKitFactory.getInstance().onStop()
-    }
+fun addCurrentLocationMarker(mapView: MapView, location: Location) {
+    mapView.map.mapObjects.addPlacemark(Point(location.latitude, location.longitude))
+}
+
+fun addVenueMarker(mapView: MapView, venue: VenueCoordinates) {
+    mapView.map.mapObjects.addPlacemark(Point(venue.latitude.toDouble(), venue.longitude.toDouble()))
 }
