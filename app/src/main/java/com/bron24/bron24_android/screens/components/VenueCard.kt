@@ -124,7 +124,7 @@ fun VenueImageSection(venue: Venue) {
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
         Image(
-            painter = rememberAsyncImagePainter(model = venue.previewImage),
+            painter = rememberAsyncImagePainter(model = R.drawable.ic_dollar),
             contentDescription = "Venue Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -295,47 +295,5 @@ fun VenueFooter(venue: Venue) {
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
-    VenueCard(
-        venue = Venue(
-            venueId = 9,
-            venueName = "Nurafshon Sport",
-            venueType = "out",
-            venueSurface = "artificial",
-            peopleCapacity = 12,
-            sportType = "football",
-            pricePerHour = "200000.00",
-            description = "Very good football field",
-            workingHoursFrom = "09:00:00",
-            workingHoursTill = "23:00:00",
-            contact1 = "+998901168321",
-            contact2 = "",
-            createdAt = "createdAt",
-            updatedAt = "updatedAt",
-            city = City(id = 2, cityName = "Tashkent"),
-            previewImage = "http://10.0.2.2:8000/media/previews/venue_pic.jpg",
-            infrastructure = Infrastructure(
-                id = 3,
-                lockerRoom = true,
-                stands = "10",
-                shower = true,
-                parking = true
-            ),
-            address = Address(
-                id = 3,
-                addressName = "Chilonzor 18 kvartal",
-                longitude = "41.271970",
-                latitude = "69.191573",
-                district = "Chilanzar",
-                closestMetroStation = "Chilonzor metro"
-            ),
-            venueOwner = VenueOwner(
-                id = 3,
-                ownerName = "Eldor",
-                tinNumber = 0,
-                contact1 = "0",
-                contact2 = "0"
-            )
-        ),
-        isLoading = false
-    )
+
 }

@@ -2,7 +2,6 @@ package com.bron24.bron24_android.screens.map
 
 import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
@@ -57,13 +56,13 @@ fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
 
             // Add venue markers
             venues.forEach { venue ->
-                val point = Point(venue.address.latitude.toDouble(), venue.address.longitude.toDouble())
-                Log.d("Map Point", "Venue: ${venue.address.addressName}, Point: ${point.latitude}, ${point.longitude}")
+                val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
+                Log.d("Map Point", "Venue: ${venue.venueName}, Point: ${point.latitude}, ${point.longitude}")
                 val placemark = mapView.map.mapObjects.addPlacemark(point)
                 placemark.setIcon(
-                    ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_green),
+                    ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_red),
                     IconStyle().apply {
-                        scale = 2.0f // Increase the size of the marker
+                        scale = 2.0f
                     }
                 )
                 placemark.userData = venue
@@ -82,7 +81,7 @@ fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
                 val currentLocationPoint = Point(location.latitude, location.longitude)
                 val currentLocationPlacemark = mapView.map.mapObjects.addPlacemark(currentLocationPoint)
                 currentLocationPlacemark.setIcon(
-                    ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_red),
+                    ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_green),
                     IconStyle().apply {
                         scale = 2.0f // Increase the size of the current location marker
                     }
@@ -92,7 +91,7 @@ fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
 
                 // Move camera to the current location
                 mapView.map.move(
-                    CameraPosition(currentLocationPoint, 15.0f, 0.0f, 0.0f)
+                    CameraPosition(Point(41.311153, 69.279729), 11.0f, 0.0f, 0.0f)
                 )
             } ?: run {
                 Log.d("Current Location", "Current location is null")

@@ -4,6 +4,7 @@ import com.bron24.bron24_android.domain.usecases.language.GetAvailableLanguagesU
 import com.bron24.bron24_android.domain.usecases.language.SetUserLanguageUseCase
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
+import com.bron24.bron24_android.domain.usecases.venue.GetVenuesCoordinatesUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import com.bron24.bron24_android.screens.language.LanguageModel
 import com.bron24.bron24_android.screens.location.LocationModel
@@ -44,12 +45,12 @@ object ModelModule {
     @Provides
     @Singleton
     fun provideVenueMapModel(
-        getVenuesUseCase: GetVenuesUseCase,
+        getVenuesCoordinatesUseCase: GetVenuesCoordinatesUseCase,
         getCurrentLocationUseCase: GetCurrentLocationUseCase,
         checkLocationPermissionUseCase: CheckLocationPermissionUseCase
     ): VenueMapModel {
         return VenueMapModel(
-            getVenuesUseCase,
+            getVenuesCoordinatesUseCase,
             getCurrentLocationUseCase,
             checkLocationPermissionUseCase
         )

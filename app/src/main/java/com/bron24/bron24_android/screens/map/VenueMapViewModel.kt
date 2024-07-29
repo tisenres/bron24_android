@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.Venue
+import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +16,8 @@ import javax.inject.Inject
 class VenueMapViewModel @Inject constructor(
     private val model: VenueMapModel
 ) : ViewModel() {
-    private val _venues = MutableStateFlow<List<Venue>>(emptyList())
-    val venues: StateFlow<List<Venue>> = _venues
+    private val _venues = MutableStateFlow<List<VenueCoordinates>>(emptyList())
+    val venues: StateFlow<List<VenueCoordinates>> = _venues
 
     private val _currentLocation = MutableStateFlow<Location?>(null)
     val currentLocation: StateFlow<Location?> = _currentLocation
@@ -31,7 +32,7 @@ class VenueMapViewModel @Inject constructor(
 
     private fun fetchVenuesForMap() {
         viewModelScope.launch {
-            val venuesList = model.getVenuesUseCase()
+            val venuesList = model.getVenuesCoordinatesUseCase()
             _venues.value = venuesList
         }
     }
