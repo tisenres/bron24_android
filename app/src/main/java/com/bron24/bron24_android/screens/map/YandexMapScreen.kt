@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.map
 
 import android.Manifest
 import android.app.Activity
+import android.graphics.PointF
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
@@ -15,11 +16,11 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
-import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.IconStyle
+import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 
@@ -47,39 +48,81 @@ fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
                 )
                 // Center the camera on Tashkent initially
                 map.move(
-                    CameraPosition(Point(41.311158, 69.279737), 11.0f, 0.0f, 0.0f)
+                    CameraPosition(Point(41.271970, 69.191573), 6.0f, 150.0f, 30.0f)
                 )
             }
         },
         update = { mapView ->
             mapView.map.mapObjects.clear()
 
-            // Add venue markers
-            venues.forEach { venue ->
-                val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                Log.d("Map Point", "Venue: ${venue.venueName}, Point: ${point.latitude}, ${point.longitude}")
-                val placemark = mapView.map.mapObjects.addPlacemark(point)
-                placemark.setIcon(
-                    ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_red),
+            val placemark = mapView.map.mapObjects.addPlacemark().apply {
+                geometry = Point(41.271970, 69.191573)
+                setText(
+                    "Special place",
+                    TextStyle().apply {
+                        size = 10f
+                        placement = TextStyle.Placement.RIGHT
+                        offset = 5f
+                    },
+                )
+            }
+
+            placemark.useCompositeIcon().apply {
+                setIcon(
+                    "pin",
+                    ImageProvider.fromResource(context, R.drawable.ic_dollar),
                     IconStyle().apply {
-                        scale = 2.0f
+                        anchor = PointF(0.5f, 1.0f)
+                        scale = 0.9f
                     }
                 )
-                placemark.userData = venue
-
-                placemark.addTapListener { mapObject, _ ->
-                    val tappedVenue = mapObject.userData as? Venue
-                    tappedVenue?.let {
-                        viewModel.onVenueTapped(it)
+                setIcon(
+                    "point",
+                    ImageProvider.fromResource(context, R.drawable.ic_star),
+                    IconStyle().apply {
+                        anchor = PointF(0.5f, 0.5f)
+                        flat = true
+                        scale = 0.05f
                     }
-                    true
-                }
+                )
             }
+
+
+
+            // Add venue markers
+//            venues.forEach { venue ->
+//                val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
+//                Log.d(
+//                    "Map Point",
+//                    "Venue: ${venue.venueName}, Point: ${point.latitude}, ${point.longitude}"
+//                )
+//
+//                val placemark = mapView.map.mapObjects.addPlacemark().apply {
+//                    geometry = point
+//                    setIcon(
+//                        ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_red),
+//                        IconStyle().apply {
+//                            scale = 2.0f
+//                        }
+//                    )
+//                }
+//
+//                placemark.userData = venue
+//
+//                placemark.addTapListener { mapObject, _ ->
+//                    val tappedVenue = mapObject.userData as? Venue
+//                    tappedVenue?.let {
+//                        viewModel.onVenueTapped(it)
+//                    }
+//                    true
+//                }
+//            }
 
             // Add current location marker and move camera
             currentLocation?.let { location ->
                 val currentLocationPoint = Point(location.latitude, location.longitude)
-                val currentLocationPlacemark = mapView.map.mapObjects.addPlacemark(currentLocationPoint)
+                val currentLocationPlacemark =
+                    mapView.map.mapObjects.addPlacemark(currentLocationPoint)
                 currentLocationPlacemark.setIcon(
                     ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_green),
                     IconStyle().apply {
@@ -87,7 +130,10 @@ fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
                     }
                 )
 
-                Log.d("Current Location", "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
+                Log.d(
+                    "Current Location",
+                    "Latitude: ${location.latitude}, Longitude: ${location.longitude}"
+                )
 
                 // Move camera to the current location
                 mapView.map.move(
@@ -103,7 +149,10 @@ fun YandexMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
         if (locationPermissionState == LocationPermissionState.DENIED) {
             ActivityCompat.requestPermissions(
                 context as Activity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         } else if (locationPermissionState == LocationPermissionState.GRANTED) {
