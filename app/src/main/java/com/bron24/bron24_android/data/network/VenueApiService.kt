@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.network
 
+import com.bron24.bron24_android.data.network.dto.PictureDto
 import com.bron24.bron24_android.data.network.dto.VenueCoordinatesDto
 import com.bron24.bron24_android.data.network.dto.VenueDetailsDto
 import com.bron24.bron24_android.data.network.dto.VenueDto
@@ -14,7 +15,7 @@ interface VenueApiService {
     suspend fun getVenuesCoordinates(): List<VenueCoordinatesDto>
 
     @GET("api/v1/venues/pictures/{id}/")
-    suspend fun getVenuePictures(@Path("id") id: Int): List<String>
+    suspend fun getVenuePictures(@Path("id") id: Int): List<PictureDto>
 
     @GET("api/v1/venues/{id}/")
     suspend fun getVenueDetails(venueId: String): VenueDetailsDto
