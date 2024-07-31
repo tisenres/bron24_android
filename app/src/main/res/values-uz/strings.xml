@@ -6,6 +6,7 @@
     <string name="ru_language">Russian</string>
     <string name="en_language">English</string>
     <string name="next">Keyingi</string>
+    <string name="skip">Irg‘imoq</string>
     <string name="location_request_title">Joylashuvdan foydalanish</string>
     <string name="location_request_description">Sizga yaqin maydonlarni topishimiz uchun joylashuvingizdan foydalanamiz</string>
     <string name="allow_button">Ruxsat berish</string>
