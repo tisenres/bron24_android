@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.screens.map
 
 import android.content.Context
+import android.graphics.PointF
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -10,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
@@ -19,6 +21,7 @@ import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.runtime.image.ImageProvider
 
@@ -65,20 +68,23 @@ fun rememberMapViewWithLifecycle(context: Context): MapView {
 }
 
 fun addCurrentLocationMarker(context: Context, mapView: MapView, location: Location) {
-    mapView.map.mapObjects.addPlacemark(Point(location.latitude, location.longitude)).apply {
-        setIcon(ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_red))
-    }
+    mapView.map.mapObjects.addPlacemark(
+        Point(location.latitude, location.longitude)
+    )
 }
 
 fun addVenueMarker(context: Context, mapView: MapView, venue: VenueCoordinates) {
-    mapView.map.mapObjects.addPlacemark(Point(venue.latitude.toDouble(), venue.longitude.toDouble())).apply {
-        setText(
-            "Special place",
-            TextStyle().apply {
-                size = 10f
-                placement = TextStyle.Placement.RIGHT
-                offset = 5f
-            }
-        )
-    }
+    val placemark = mapView.map.mapObjects.addPlacemark(
+        Point(venue.latitude.toDouble(), venue.longitude.toDouble())
+    )
+
+    placemark.setText(
+        context.getString(R.string.football_field),
+        TextStyle().apply {
+            size = 10f
+            placement = TextStyle.Placement.RIGHT
+            offset = 5f
+        }
+    )
 }
+
