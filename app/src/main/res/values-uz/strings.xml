@@ -12,17 +12,21 @@
     <string name="deny_button">Hozir emas</string>
     <string name="select_city">Shahringizni tanlang</string>
     <string name="nearby_stadiums">Yaqin atrofdagi stadionlar</string>
-    <string name="nearby_stadiums_desc">Yaxshi stadion topish yoki chaqirish uchun uzoqqa borishingiz shart emas, biz sizga yaqin bo\'lgan barcha stadionlarni taqdim etdik</string>
-    <string name="select_stadium">Faqat stadionni tanlang</string>
-    <string name="select_stadium_desc">Sizga yoqqan stadionni tanlang, o\'yin vaqti va sanasini tanlang va shunchaki Bron qiling :)</string>
+    <string name="nearby_stadiums_desc">Yaxshi stadion topish yoki chaqirish uchun uzoqqa borishingiz shart emas, biz sizga yaqin bo‘lgan barcha stadionlarni taqdim etdik</string>
+    <string name="select_stadium">Stadionni tanlang</string>
+    <string name="select_stadium_desc">Sizga yoqqan stadionni tanlang, o‘yin vaqti va sanasini tanlang va shunchaki bron qiling :)</string>
     <string name="hello">Salom</string>
     <string name="football_field">Futbol maydoni</string>
     <string name="free_time">Bo‘sh vaqt</string>
-    <string name="som_per_hour">soʻm / soat</string>
+    <string name="som_per_hour">so‘m / soat</string>
     <string name="km">km</string>
     <string name="slots">uyalar</string>
     <string name="football_fields">Futbol maydonlari</string>
     <string name="search_stadium">Stadioningizni qidiring</string>
     <string name="special_offers">Siz uchun</string>
     <string name="see_all">Hammasini ko‘rish</string>
+    <string name="home">Bosh sahifa</string>
+    <string name="nearby">Yaqin atrof</string>
+    <string name="profile">Profil</string>
+    <string name="orders">Buyurtmalar</string>
 </resources>

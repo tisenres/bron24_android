@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -44,25 +45,25 @@ fun BottomNavigationBar(navController: NavController) {
     ) {
         CustomBottomBarItem(
             iconRes = R.drawable.ic_home,
-            label = "Home",
+            label = stringResource(id = R.string.home),
             isSelected = currentRoute == Screen.HomePage.route,
             onClick = { navController.navigate(Screen.HomePage.route) }
         )
         CustomBottomBarItem(
             iconRes = R.drawable.ic_map,
-            label = "Nearby",
+            label = stringResource(id = R.string.nearby),
             isSelected = currentRoute == Screen.MapPage.route,
             onClick = { navController.navigate(Screen.MapPage.route) }
         )
         CustomBottomBarItem(
             iconRes = R.drawable.ic_wallet,
-            label = "Orders",
+            label = stringResource(id = R.string.orders),
             isSelected = currentRoute == Screen.CartPage.route,
             onClick = { navController.navigate(Screen.CartPage.route) }
         )
         CustomBottomBarItem(
             iconRes = R.drawable.ic_person,
-            label = "Profile",
+            label = stringResource(id = R.string.profile),
             isSelected = currentRoute == Screen.ProfilePage.route,
             onClick = { navController.navigate(Screen.ProfilePage.route) }
         )

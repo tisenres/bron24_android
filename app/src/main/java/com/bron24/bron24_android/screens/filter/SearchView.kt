@@ -135,7 +135,7 @@ fun SearchRow() {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_filter), // Adjust the resource ID for your filter icon
+                painter = painterResource(id = R.drawable.ic_filter),
                 contentDescription = "filter_icon",
                 colorFilter = ColorFilter.tint(Color(0xFF32B768)),
                 modifier = Modifier.size(18.dp)

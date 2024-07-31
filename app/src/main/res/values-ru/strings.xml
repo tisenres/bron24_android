@@ -25,4 +25,8 @@
     <string name="search_stadium">Поиск стадиона</string>
     <string name="special_offers">Для вас</string>
     <string name="see_all">Подробнее</string>
+    <string name="home">Главная</string>
+    <string name="nearby">Рядом</string>
+    <string name="profile">Профиль</string>
+    <string name="orders">Заказы</string>
 </resources>

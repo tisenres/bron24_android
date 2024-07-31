@@ -25,4 +25,8 @@
     <string name="search_stadium">Search your stadium</string>
     <string name="special_offers">For you</string>
     <string name="see_all">See all</string>
+    <string name="home">Home</string>
+    <string name="nearby">Nearby</string>
+    <string name="profile">Profile</string>
+    <string name="orders">Orders</string>
 </resources>
