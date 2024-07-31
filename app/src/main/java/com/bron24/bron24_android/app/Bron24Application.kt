@@ -11,6 +11,5 @@ class Bron24Application : Application() {
     override fun onCreate() {
         super.onCreate()
         MapKitFactory.setApiKey("3c062e82-1411-437c-9157-f7e96556b098")
-        MapKitFactory.initialize(this)
     }
 }
