@@ -17,16 +17,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Address
-import com.bron24.bron24_android.domain.entity.venue.City
-import com.bron24.bron24_android.domain.entity.venue.Infrastructure
 import com.bron24.bron24_android.domain.entity.venue.Venue
-import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 import com.valentinilk.shimmer.shimmer
 
 val gilroyFontFamily = FontFamily(
@@ -162,6 +160,7 @@ fun VenueDetailsRow(venue: Venue) {
                 lineHeight = 21.sp,
             ),
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         Text(
             text = "3 " + stringResource(id = R.string.km),
@@ -173,6 +172,7 @@ fun VenueDetailsRow(venue: Venue) {
                 lineHeight = 21.sp,
             ),
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -196,6 +196,7 @@ fun VenueTitleRow(venue: Venue) {
                 lineHeight = 19.6.sp,
             ),
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         Row(
             verticalAlignment = Alignment.Bottom,
@@ -302,7 +303,7 @@ fun VenueFooter(venue: Venue ) {
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
     val venue = Venue(
-        venueName = "Test name LONG LONG LONG LONG LONG  LONG LONG LONG LONG LONG  LONG LONG LONG LONG LONG  LONG LONG LONG LONG LONG",
+        venueName = "Test G",
         pricePerHour = "800000",
         address = Address(
             id = 6,
