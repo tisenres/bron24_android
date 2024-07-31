@@ -21,10 +21,10 @@ class VenueRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getVenuePictures(venueId: Int): List<String> {
-        val venuePictures = apiService.getVenuePictures(venueId)
-        Log.d("IMAGES_LIST", venuePictures.toString())
-        return emptyList()
-//        return .map { it.url }
+//        val venuePictures = apiService.getVenuePictures(venueId)
+//        Log.d("IMAGES_LIST", venuePictures.toString())
+//        return emptyList()
+        return apiService.getVenuePictures(venueId).map { it.url }
     }
 
     override suspend fun getVenueDetailsById(venueId: String): VenueDetails {
