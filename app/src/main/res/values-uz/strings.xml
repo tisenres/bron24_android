@@ -17,4 +17,7 @@
     <string name="select_stadium_desc">Sizga yoqqan stadionni tanlang, o\'yin vaqti va sanasini tanlang va shunchaki Bron qiling :)</string>
     <string name="hello">Salom</string>
     <string name="football_field">Futbol maydoni</string>
+    <string name="free_time">Bo‘sh vaqt</string>
+    <string name="som_per_hour">soʻm / soat</string>
+    <string name="slots">uyalar</string>
 </resources>

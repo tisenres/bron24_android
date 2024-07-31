@@ -17,4 +17,8 @@
     <string name="select_stadium_desc">Выберите стадион, который вам больше всего нравится, выберите время и дату игры, и просто забронируйте его :)</string>
     <string name="hello">Привет</string>
     <string name="football_field">Футбольное поле</string>
+    <string name="free_time">Свободно</string>
+    <string name="som_per_hour">сум / час</string>
+    <string name="km">км</string>
+    <string name="slots">мест</string>
 </resources>

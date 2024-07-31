@@ -17,4 +17,8 @@
     <string name="select_stadium_desc">Choose the stadium you like the most, choose the time and date of the game and you just Bron it :)</string>
     <string name="hello">Hello</string>
     <string name="football_field">Football field</string>
+    <string name="free_time">Free time</string>
+    <string name="som_per_hour">soʻm / hour</string>
+    <string name="km">km</string>
+    <string name="slots">slots</string>
 </resources>

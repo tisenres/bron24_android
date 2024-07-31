@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -149,27 +150,29 @@ fun VenueDetailsRow(venue: Venue) {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 10.dp, end = 10.dp, top = 15.dp, bottom = 10.dp)
+            .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 10.dp)
     ) {
         Text(
             text = venue.address.addressName,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 color = Color(0xFF949494),
                 lineHeight = 21.sp,
             ),
+            maxLines = 1,
         )
         Text(
-            text = "3 km",
+            text = "3 " + stringResource(id = R.string.km),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 color = Color(0xFF949494),
                 lineHeight = 21.sp,
-            )
+            ),
+            maxLines = 1,
         )
     }
 }
@@ -181,17 +184,18 @@ fun VenueTitleRow(venue: Venue) {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 15.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
     ) {
         Text(
             text = venue.venueName,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight(800),
-                fontSize = 18.sp,
+                fontSize = 16.sp,
                 color = Color(0xFF3C2E56),
                 lineHeight = 19.6.sp,
             ),
+            maxLines = 1,
         )
         Row(
             verticalAlignment = Alignment.Bottom,
@@ -202,17 +206,18 @@ fun VenueTitleRow(venue: Venue) {
                 painter = painterResource(id = R.drawable.ic_star),
                 contentDescription = "Rating Image",
                 modifier = Modifier
-                    .width(16.dp)
-                    .height(17.dp)
+                    .width(14.dp)
+                    .height(14.dp)
+                    .align(Alignment.CenterVertically)
             )
             Text(
                 text = "4.5",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 18.sp,
+                    fontSize = 12.sp,
                     color = Color(0xFF3C2E56),
-                    lineHeight = 19.6.sp,
+                    lineHeight = 14.4.sp,
                 ),
                 modifier = Modifier.align(Alignment.Bottom)
             )
@@ -221,7 +226,7 @@ fun VenueTitleRow(venue: Venue) {
 }
 
 @Composable
-fun VenueFooter(venue: Venue) {
+fun VenueFooter(venue: Venue ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -249,7 +254,7 @@ fun VenueFooter(venue: Venue) {
                     modifier = Modifier.size(14.dp)
                 )
                 Text(
-                    text = "${venue.pricePerHour} soʻm / hour",
+                    text = venue.pricePerHour +  " " + stringResource(id = R.string.som_per_hour),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -266,7 +271,7 @@ fun VenueFooter(venue: Venue) {
                 horizontalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 Text(
-                    text = "Free time: ",
+                    text = stringResource(id = R.string.free_time) + ":",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -277,7 +282,7 @@ fun VenueFooter(venue: Venue) {
                     modifier = Modifier.align(Alignment.Bottom)
                 )
                 Text(
-                    text = "12 slots",
+                    text = "12 " + stringResource(id = R.string.slots),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -285,7 +290,8 @@ fun VenueFooter(venue: Venue) {
                         color = Color(0xFF26A045),
                         lineHeight = 14.7.sp,
                     ),
-                    modifier = Modifier.align(Alignment.Bottom)
+                    modifier = Modifier.align(Alignment.Bottom),
+                    maxLines = 1,
                 )
             }
         }
@@ -295,5 +301,15 @@ fun VenueFooter(venue: Venue) {
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
-
+    val venue = Venue(
+        venueName = "Test name LONG LONG LONG LONG LONG  LONG LONG LONG LONG LONG  LONG LONG LONG LONG LONG  LONG LONG LONG LONG LONG",
+        pricePerHour = "800000",
+        address = Address(
+            id = 6,
+            addressName = "Bunyodkor kochasi",
+            district = "Chilonzor",
+            closestMetroStation = "Novza"
+        )
+    )
+    VenueCard(venue, isLoading = false)
 }
