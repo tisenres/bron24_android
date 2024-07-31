@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.screens.components.VenueCard
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.screens.adssection.AdsSection
+import com.bron24.bron24_android.R
 
 @Composable
 fun VenueListingView(
@@ -38,7 +40,7 @@ fun VenueListingView(
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Football fields",
+                text = stringResource(id = R.string.football_fields),
                 style = TextStyle(
                     fontFamily = interFontFamily,
                     fontWeight = FontWeight(600),

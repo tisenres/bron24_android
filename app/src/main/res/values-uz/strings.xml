@@ -19,5 +19,10 @@
     <string name="football_field">Futbol maydoni</string>
     <string name="free_time">Bo‘sh vaqt</string>
     <string name="som_per_hour">soʻm / soat</string>
+    <string name="km">km</string>
     <string name="slots">uyalar</string>
+    <string name="football_fields">Futbol maydonlari</string>
+    <string name="search_stadium">Stadioningizni qidiring</string>
+    <string name="special_offers">Siz uchun</string>
+    <string name="see_all">Hammasini ko‘rish</string>
 </resources>

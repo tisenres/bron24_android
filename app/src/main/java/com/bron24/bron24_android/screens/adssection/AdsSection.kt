@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +35,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Special Offers",
+                text = stringResource(id = R.string.special_offers),
                 style = TextStyle(
                     fontFamily = interFontFamily,
                     fontWeight = FontWeight(600),
@@ -44,7 +45,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
                 )
             )
             Text(
-                text = "See all",
+                text = stringResource(id = R.string.see_all),
                 style = TextStyle(
                     fontFamily = interFontFamily,
                     fontWeight = FontWeight(600),
@@ -87,7 +88,9 @@ fun AdsSection(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(10.dp)
                         .background(
-                            color = if (currentPage == index) Color(0xFF32B768) else Color(0xFFD9D9D9),
+                            color = if (currentPage == index) Color(0xFF32B768) else Color(
+                                0xFFD9D9D9
+                            ),
                             shape = CircleShape
                         )
                         .padding(horizontal = 10.dp)

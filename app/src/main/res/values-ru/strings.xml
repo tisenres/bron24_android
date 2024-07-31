@@ -7,18 +7,22 @@
     <string name="en_language">English</string>
     <string name="next">Далее</string>
     <string name="location_request_title">Использование местоположения</string>
-    <string name="location_request_description">Мы используем местоположение, чтобы найти ближайшие площадки</string>
+    <string name="location_request_description">Мы используем местоположение, чтобы найти ближайшие для вас площадки</string>
     <string name="allow_button">Разрешить</string>
     <string name="deny_button">Не сейчас</string>
     <string name="select_city">Выберите город</string>
-    <string name="nearby_stadiums">Ближайшие стадионы</string>
-    <string name="nearby_stadiums_desc">Вам не нужно далеко идти, чтобы найти или позвонить в хороший стадион, мы предоставили все стадионы, которые находятся рядом с вами</string>
-    <string name="select_stadium">Просто выберите стадион</string>
-    <string name="select_stadium_desc">Выберите стадион, который вам больше всего нравится, выберите время и дату игры, и просто забронируйте его :)</string>
+    <string name="nearby_stadiums">Стадионы рядом</string>
+    <string name="nearby_stadiums_desc">Не тратьте время на поиски! Все лучшие стадионы уже рядом с вами – выбирайте и звоните!</string>
+    <string name="select_stadium">Выберите стадион</string>
+    <string name="select_stadium_desc">Найдите идеальный стадион, выберите удобное время и дату игры и забронируйте его всего за несколько кликов!</string>
     <string name="hello">Привет</string>
     <string name="football_field">Футбольное поле</string>
     <string name="free_time">Свободно</string>
     <string name="som_per_hour">сум / час</string>
     <string name="km">км</string>
     <string name="slots">мест</string>
+    <string name="football_fields">Футбольные стадионы</string>
+    <string name="search_stadium">Поиск стадиона</string>
+    <string name="special_offers">Для вас</string>
+    <string name="see_all">Подробнее</string>
 </resources>

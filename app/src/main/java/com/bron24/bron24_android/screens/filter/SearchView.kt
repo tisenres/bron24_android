@@ -116,7 +116,7 @@ fun SearchRow() {
             )
             Spacer(modifier = Modifier.width(9.dp))
             Text(
-                text = "Search your stadium",
+                text = stringResource(id = R.string.search_stadium),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,

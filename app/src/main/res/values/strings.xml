@@ -21,4 +21,8 @@
     <string name="som_per_hour">soʻm / hour</string>
     <string name="km">km</string>
     <string name="slots">slots</string>
+    <string name="football_fields">Football fields</string>
+    <string name="search_stadium">Search your stadium</string>
+    <string name="special_offers">For you</string>
+    <string name="see_all">See all</string>
 </resources>

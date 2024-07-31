@@ -145,7 +145,7 @@ fun VenueImageSection(venue: Venue) {
 fun VenueDetailsRow(venue: Venue) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 10.dp)
@@ -160,7 +160,8 @@ fun VenueDetailsRow(venue: Venue) {
                 lineHeight = 21.sp,
             ),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
         )
         Text(
             text = "3 " + stringResource(id = R.string.km),
@@ -172,7 +173,8 @@ fun VenueDetailsRow(venue: Venue) {
                 lineHeight = 21.sp,
             ),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 10.dp)
         )
     }
 }
@@ -196,12 +198,13 @@ fun VenueTitleRow(venue: Venue) {
                 lineHeight = 19.6.sp,
             ),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
         )
         Row(
-            verticalAlignment = Alignment.Bottom,
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(3.dp),
-            modifier = Modifier
+            modifier = Modifier.padding(start = 10.dp) // Adding padding to ensure spacing between title and rating
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_star),
@@ -220,14 +223,14 @@ fun VenueTitleRow(venue: Venue) {
                     color = Color(0xFF3C2E56),
                     lineHeight = 14.4.sp,
                 ),
-                modifier = Modifier.align(Alignment.Bottom)
+                modifier = Modifier.align(Alignment.CenterVertically)
             )
         }
     }
 }
 
 @Composable
-fun VenueFooter(venue: Venue ) {
+fun VenueFooter(venue: Venue) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -255,7 +258,7 @@ fun VenueFooter(venue: Venue ) {
                     modifier = Modifier.size(14.dp)
                 )
                 Text(
-                    text = venue.pricePerHour +  " " + stringResource(id = R.string.som_per_hour),
+                    text = venue.pricePerHour + " " + stringResource(id = R.string.som_per_hour),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
@@ -293,6 +296,7 @@ fun VenueFooter(venue: Venue ) {
                     ),
                     modifier = Modifier.align(Alignment.Bottom),
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -303,11 +307,11 @@ fun VenueFooter(venue: Venue ) {
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
     val venue = Venue(
-        venueName = "Test G",
+        venueName = "Test name LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG",
         pricePerHour = "800000",
         address = Address(
             id = 6,
-            addressName = "Bunyodkor kochasi",
+            addressName = "Bunyodkor  LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONkochasi",
             district = "Chilonzor",
             closestMetroStation = "Novza"
         )
