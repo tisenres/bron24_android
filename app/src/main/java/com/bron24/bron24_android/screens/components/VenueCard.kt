@@ -123,7 +123,7 @@ fun VenueImageSection(venue: Venue) {
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
         Image(
-            painter = rememberAsyncImagePainter(model = R.drawable.ic_dollar),
+            painter = rememberAsyncImagePainter(venue.imageUrls?.firstOrNull() ?: ""),
             contentDescription = "Venue Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -313,8 +313,9 @@ fun PreviewVenueCard() {
             id = 6,
             addressName = "Bunyodkor  LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONkochasi",
             district = "Chilonzor",
-            closestMetroStation = "Novza"
-        )
+            closestMetroStation = "Novza",
+        ),
+        imageUrls = emptyList()
     )
     VenueCard(venue, isLoading = false)
 }

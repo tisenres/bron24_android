@@ -1,9 +1,10 @@
 package com.bron24.bron24_android.data.network
 
 import com.bron24.bron24_android.data.network.dto.VenueCoordinatesDto
+import com.bron24.bron24_android.data.network.dto.VenueDetailsDto
 import com.bron24.bron24_android.data.network.dto.VenueDto
-import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface VenueApiService {
     @GET("api/v1/venues/")
@@ -11,4 +12,10 @@ interface VenueApiService {
 
     @GET("api/v1/venues/coordinates/")
     suspend fun getVenuesCoordinates(): List<VenueCoordinatesDto>
+
+    @GET("api/v1/venues/pictures/{id}/")
+    suspend fun getVenuePictures(@Path("id") id: Int): List<String>
+
+    @GET("api/v1/venues/{id}/")
+    suspend fun getVenueDetails(venueId: String): VenueDetailsDto
 }

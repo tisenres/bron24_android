@@ -8,6 +8,11 @@ class GetVenuesUseCase @Inject constructor(
     private val repository: VenueRepository
 ) {
     suspend fun execute(): List<Venue> {
-        return repository.getVenues()
+        val venues = repository.getVenues()
+        val venuesWithPictures = venues.map { venue ->
+            val pictures = repository.getVenuePictures(venue.address.id)
+            venue.copy(imageUrls = pictures)
+        }
+        return venuesWithPictures
     }
 }
