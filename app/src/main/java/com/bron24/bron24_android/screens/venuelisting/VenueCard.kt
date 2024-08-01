@@ -46,7 +46,7 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
                     it.shimmer()
                 } else {
                     it.clickable {
-                        navController.navigate(Screen.VenueDetails.route.replace("{venueId}", venue?.address?.id.toString()))
+                        navController.navigate(Screen.VenueDetails.route.replace("{venueId}", venue?.venueId.toString()))
                     }
                 }
             }

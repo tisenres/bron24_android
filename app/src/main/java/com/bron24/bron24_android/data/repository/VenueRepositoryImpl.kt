@@ -27,7 +27,7 @@ class VenueRepositoryImpl @Inject constructor(
         return apiService.getVenuePictures(venueId).map { it.url }
     }
 
-    override suspend fun getVenueDetailsById(venueId: String): VenueDetails {
+    override suspend fun getVenueDetailsById(venueId: Int): VenueDetails {
         return apiService.getVenueDetails(venueId).toDomainModel()
     }
 }

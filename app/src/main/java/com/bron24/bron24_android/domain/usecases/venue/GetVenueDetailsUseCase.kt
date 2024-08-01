@@ -8,7 +8,7 @@ class GetVenueDetailsUseCase @Inject constructor(
     private val venueRepository: VenueRepository
 ) {
 
-    suspend fun execute(venueId: String): VenueDetails {
+    suspend fun execute(venueId: Int): VenueDetails {
         return venueRepository.getVenueDetailsById(venueId)
     }
 }

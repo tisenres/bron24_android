@@ -8,5 +8,5 @@ interface VenueRepository {
     suspend fun getVenues(): List<Venue>
     suspend fun getVenuesCoordinates(): List<VenueCoordinates>
     suspend fun getVenuePictures(venueId: Int): List<String>
-    suspend fun getVenueDetailsById(venueId: String): VenueDetails
+    suspend fun getVenueDetailsById(venueId: Int): VenueDetails
 }

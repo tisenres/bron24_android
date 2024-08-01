@@ -1,7 +1,5 @@
 package com.bron24.bron24_android.screens.venuedetails
 
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,6 +9,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +27,12 @@ import com.bron24.bron24_android.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VenueDetailsScreen(viewModel: VenueDetailsViewModel, venueId: Int) {
+    val venueDetails = viewModel.venueDetails.collectAsState().value
+
+    LaunchedEffect(venueId) {
+        viewModel.fetchVenueDetails(venueId)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -46,125 +53,136 @@ fun VenueDetailsScreen(viewModel: VenueDetailsViewModel, venueId: Int) {
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            // Venue Image
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-            ) {
-                Image(
-                    painter = rememberAsyncImagePainter("https://example.com/venue_image.jpg"),
-                    contentDescription = "Venue Image",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            // Venue Details
+        venueDetails?.let { details ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                    .background(Color.White)
-                    .padding(16.dp)
+                    .padding(paddingValues)
             ) {
-                Text(
-                    text = "Bunyodkor kompleksi",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                // Venue Image
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(details),
+                        contentDescription = "Venue Image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Mustaqillik maydoni, Chilanzar, Tashkent, Uzbekistan",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "+998 77 806 0278",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Rating
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                // Venue Details
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                        .background(Color.White)
+                        .padding(16.dp)
+                ) {
                     Text(
-                        text = "4.8",
-                        fontSize = 18.sp,
+                        text = details.venueName,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    // Add star rating component here
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Text(
-                        text = "(4,981)",
+                        text = details.address.addressName,
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
-                }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = "Infrastructure",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Infrastructure items
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    InfrastructureItem("Natural", R.drawable.ic_dollar)
-                    InfrastructureItem("Camera", R.drawable.ic_dollar)
-                    InfrastructureItem("Shower", R.drawable.ic_dollar)
-                    InfrastructureItem("Parking", R.drawable.ic_dollar)
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    InfrastructureItem("Waiting room", R.drawable.ic_dollar)
-                    InfrastructureItem("Changing room", R.drawable.ic_dollar)
-                    InfrastructureItem("Indoor", R.drawable.ic_dollar)
-                    InfrastructureItem("9:00 - 23:00", R.drawable.ic_dollar)
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
                     Text(
-                        text = "100sum/hour",
+                        text = details.contact1,
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Rating
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "4.5",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        // Add star rating component here
+                        Text(
+                            text = "12",
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Infrastructure",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Button(
-                        onClick = { /* Handle order */ },
-                        modifier = Modifier.width(120.dp)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Infrastructure items
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Order")
+                        InfrastructureItem("Natural", R.drawable.ic_dollar)
+                        InfrastructureItem("Camera", R.drawable.ic_dollar)
+                        InfrastructureItem("Shower", R.drawable.ic_dollar)
+                        InfrastructureItem("Parking", R.drawable.ic_dollar)
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        InfrastructureItem("Waiting room", R.drawable.ic_dollar)
+                        InfrastructureItem("Changing room", R.drawable.ic_dollar)
+                        InfrastructureItem("Indoor", R.drawable.ic_dollar)
+                        InfrastructureItem("9:00 - 23:00", R.drawable.ic_dollar)
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${details.pricePerHour}sum/hour",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Button(
+                            onClick = { /* Handle order */ },
+                            modifier = Modifier.width(120.dp)
+                        ) {
+                            Text("Order")
+                        }
                     }
                 }
+            }
+        } ?: run {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
     }
