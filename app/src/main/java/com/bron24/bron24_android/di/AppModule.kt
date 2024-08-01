@@ -7,6 +7,8 @@ import com.bron24.bron24_android.screens.cityselection.domain.repository.CityRep
 import com.bron24.bron24_android.screens.cityselection.domain.usecases.GetAvailableCitiesUseCase
 import com.bron24.bron24_android.screens.cityselection.domain.usecases.UpdateSelectedCityUseCase
 import com.bron24.bron24_android.data.PermissionChecker
+import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
+import com.bron24.bron24_android.helper.util.LocaleManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,5 +52,13 @@ object AppModule {
     @Singleton
     fun providePermissionChecker(@ApplicationContext context: Context): PermissionChecker {
         return PermissionChecker(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocaleManager(
+        getSelectedLanguageUseCase: GetSelectedLanguageUseCase
+    ): LocaleManager {
+        return LocaleManager(getSelectedLanguageUseCase)
     }
 }

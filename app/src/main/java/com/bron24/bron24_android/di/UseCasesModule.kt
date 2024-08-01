@@ -8,6 +8,7 @@ import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
 import com.bron24.bron24_android.domain.repository.LanguageRepository
 import com.bron24.bron24_android.domain.repository.LocationRepository
 import com.bron24.bron24_android.domain.usecases.language.GetAvailableLanguagesUseCase
+import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
 import com.bron24.bron24_android.domain.usecases.language.SetUserLanguageUseCase
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
@@ -36,6 +37,14 @@ object UseCasesModule {
         languageRepository: LanguageRepository
     ): SetUserLanguageUseCase {
         return SetUserLanguageUseCase(languageRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetSelectedLanguageUseCase(
+        languageRepository: LanguageRepository
+    ): GetSelectedLanguageUseCase {
+        return GetSelectedLanguageUseCase(languageRepository)
     }
 
     @Provides

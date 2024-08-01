@@ -7,6 +7,7 @@ import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseC
 import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesCoordinatesUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
+import com.bron24.bron24_android.helper.util.LocaleManager
 import com.bron24.bron24_android.screens.language.LanguageModel
 import com.bron24.bron24_android.screens.location.LocationModel
 import com.bron24.bron24_android.screens.map.VenueMapModel
@@ -25,11 +26,13 @@ object ModelModule {
     @Singleton
     fun provideLanguageModel(
         getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
-        setUserLanguageUseCase: SetUserLanguageUseCase
+        setUserLanguageUseCase: SetUserLanguageUseCase,
+        localeManager: LocaleManager
     ): LanguageModel {
         return LanguageModel(
             getAvailableLanguagesUseCase,
-            setUserLanguageUseCase
+            setUserLanguageUseCase,
+            localeManager
         )
     }
 

@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.language
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.user.Language
@@ -32,9 +33,9 @@ class LanguageViewModel @Inject constructor(
         }
     }
 
-    fun confirmLanguageSelection() {
+    fun confirmLanguageSelection(context: Context) {
         viewModelScope.launch {
-            model.updateSelectedLanguageUseCase(_selectedLanguage.value)
+            model.updateSelectedLanguageUseCase(context, _selectedLanguage.value)
         }
     }
 }
