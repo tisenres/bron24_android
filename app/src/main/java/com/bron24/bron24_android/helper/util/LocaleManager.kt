@@ -14,6 +14,7 @@ class LocaleManager @Inject constructor(
 ) {
 
     fun setLocale(context: Context, languageCode: String) {
+        Log.d("LocaleManager", "Setting locale to: $languageCode")
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
 
@@ -21,6 +22,7 @@ class LocaleManager @Inject constructor(
         val config = Configuration(resources.configuration)
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
+        Log.d("LocaleManager", "Locale set to: ${Locale.getDefault().language}")
     }
 
     fun applySavedLocale(context: Context) {
