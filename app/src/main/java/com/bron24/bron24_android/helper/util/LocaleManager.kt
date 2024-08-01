@@ -1,26 +1,12 @@
 package com.bron24.bron24_android.helper.util
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.content.res.Configuration
-import android.util.Log
-import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
+import android.os.Build
 import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
 object LocaleManager {
-
-//    fun setLocale(context: Context, languageCode: String) {
-//        Log.d("LocaleManager", "Setting locale to: $languageCode")
-//        val locale = Locale(languageCode)
-//        Locale.setDefault(locale)
-//
-//        val resources = context.resources
-//        val config = Configuration(resources.configuration)
-//        config.setLocale(locale)
-//        resources.updateConfiguration(config, resources.displayMetrics)
-//        Log.d("LocaleManager", "Locale set to: ${Locale.getDefault().language}")
-//    }
 
     fun setLocale(context: Context, languageCode: String) {
         val locale = Locale(languageCode)
@@ -30,14 +16,37 @@ object LocaleManager {
         val config = Configuration(resources.configuration)
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
+        context.createConfigurationContext(config)
 
-//        context.createConfigurationContext(config)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            updateResources(context, languageCode)
+        } else {
+            updateResourcesLegacy(context, languageCode)
+        }
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
+    private fun updateResources(context: Context, language: String): Context {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
 
-//    fun applySavedLocale(context: Context) {
-//        val selectedLanguageCode = getSelectedLanguageUseCase.execute().languageCode
-//        Log.d("SELECTED_LANG", selectedLanguageCode)
-//        setLocale(context, selectedLanguageCode)
-//    }
+        val config = context.resources.configuration
+        config.setLocale(locale)
+        config.setLayoutDirection(locale)
+
+        return context.createConfigurationContext(config)
+    }
+
+    @SuppressWarnings("deprecation")
+    private fun updateResourcesLegacy(context: Context, language: String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+
+        val resources = context.resources
+        val config = resources.configuration
+        config.locale = locale
+        config.setLayoutDirection(locale)
+
+        resources.updateConfiguration(config, resources.displayMetrics)
+    }
 }
