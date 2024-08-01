@@ -27,9 +27,10 @@ class LanguageViewModel @Inject constructor(
         }
     }
 
-    fun selectLanguage(language: Language) {
+    fun selectLanguage(context: Context, language: Language) {
         if (_selectedLanguage.value != language) {
             _selectedLanguage.value = language
+            model.selectLanguage(context, language)
         }
     }
 

@@ -14,12 +14,12 @@ class Bron24Application : Application() {
 //    lateinit var localeManager: LocaleManager
 
 //    override fun attachBaseContext(base: Context) {
-//        super.attachBaseContext(base)
+//        val languageCode = "ru" // You can dynamically set this value based on your app's logic
+//        super.attachBaseContext(LocaleManager.updateLocale(base, languageCode))
 //    }
 
     override fun onCreate() {
         super.onCreate()
         MapKitFactory.setApiKey("3c062e82-1411-437c-9157-f7e96556b098")
-//        localeManager.applySavedLocale(this)
     }
 }

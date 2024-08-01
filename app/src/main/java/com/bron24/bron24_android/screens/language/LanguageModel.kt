@@ -10,6 +10,7 @@ import javax.inject.Inject
 class LanguageModel @Inject constructor(
     private val getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
     private val setUserLanguageUseCase: SetUserLanguageUseCase,
+    private val localeManager: LocaleManager
 ) {
     fun getAvailableLanguagesUseCase(): List<Language> {
         return getAvailableLanguagesUseCase.execute()
@@ -17,7 +18,11 @@ class LanguageModel @Inject constructor(
 
     fun updateSelectedLanguageUseCase(context: Context, language: Language) {
         setUserLanguageUseCase.execute(language)
-        LocaleManager.setLocale(context, language.languageCode)
+        localeManager.setLocale(context, language.languageCode)
+    }
+
+    fun selectLanguage(context: Context, language: Language) {
+        localeManager.setLocale(context, language.languageCode)
     }
 }
 

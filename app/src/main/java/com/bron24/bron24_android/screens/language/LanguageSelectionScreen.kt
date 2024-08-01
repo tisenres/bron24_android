@@ -38,7 +38,8 @@ fun LanguageSelectionScreen(
     var triggerRecomposition by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedLanguage) {
-        LocaleManager.setLocale(context, selectedLanguage.languageCode)
+//        LocaleManager.setLocale(context, selectedLanguage.languageCode)
+        viewModel.selectLanguage(context, selectedLanguage)
         triggerRecomposition = !triggerRecomposition
     }
 
@@ -117,7 +118,7 @@ fun LanguageSelectionScreen(
                         language = language,
                         isSelected = selectedLanguage == language,
                         onClick = {
-                            viewModel.selectLanguage(language)
+                            viewModel.selectLanguage(context, language)
                         },
                         modifier = Modifier.padding(vertical = 16.dp)
                     )
