@@ -46,7 +46,7 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
                     it.shimmer()
                 } else {
                     it.clickable {
-                        navController.navigate("${Screen.VenueDetails.route}/${venue?.address?.id}")
+                        navController.navigate(Screen.VenueDetails.route.replace("{venueId}", venue?.address?.id.toString()))
                     }
                 }
             }
@@ -312,6 +312,7 @@ fun VenueFooter(venue: Venue) {
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
     val venue = Venue(
+        venueId = 5,
         venueName = "Test name LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG",
         pricePerHour = "800000",
         address = Address(

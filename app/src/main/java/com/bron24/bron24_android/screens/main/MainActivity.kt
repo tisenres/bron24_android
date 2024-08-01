@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
 import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -25,7 +26,8 @@ class MainActivity : ComponentActivity() {
 
             CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
                 Bron24_androidTheme {
-                    NavScreen(navController = navController)
+                    val mainViewModel: MainViewModel = hiltViewModel()
+                    NavScreen(navController = navController, mainViewModel = mainViewModel)
                 }
             }
         }

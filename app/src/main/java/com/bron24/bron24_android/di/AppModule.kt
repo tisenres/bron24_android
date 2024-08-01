@@ -1,7 +1,7 @@
 package com.bron24.bron24_android.di
 
 import android.content.Context
-import com.bron24.bron24_android.data.local.preference.LanguagePreference
+import com.bron24.bron24_android.data.local.preference.AppPreference
 import com.bron24.bron24_android.screens.cityselection.data.CityRepositoryImpl
 import com.bron24.bron24_android.screens.cityselection.domain.repository.CityRepository
 import com.bron24.bron24_android.screens.cityselection.domain.usecases.GetAvailableCitiesUseCase
@@ -20,8 +20,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLanguagePreference(@ApplicationContext context: Context): LanguagePreference {
-        return LanguagePreference(context)
+    fun provideAppPreference(@ApplicationContext context: Context): AppPreference {
+        return AppPreference(context)
     }
 
     @Provides

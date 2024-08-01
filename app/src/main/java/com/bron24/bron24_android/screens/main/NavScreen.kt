@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,11 +26,15 @@ import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun NavScreen(navController: NavHostController) {
-    Surface(color = MaterialTheme.colorScheme.background) {
-        val coroutineScope = rememberCoroutineScope()
+fun NavScreen(navController: NavHostController, mainViewModel: MainViewModel) {
+    val coroutineScope = rememberCoroutineScope()
+    val isOnboardingCompleted by mainViewModel.isOnboardingCompleted.collectAsState()
 
-        NavHost(navController = navController, startDestination = Screen.LanguageSelection.route) {
+    Surface(color = MaterialTheme.colorScheme.background) {
+        NavHost(
+            navController = navController,
+            startDestination = if (isOnboardingCompleted) Screen.Main.route else Screen.LanguageSelection.route
+        ) {
             composable(Screen.LanguageSelection.route) {
                 AnimatedScreenTransition {
                     LanguageSelectionScreen(
@@ -54,6 +59,7 @@ fun NavScreen(navController: NavHostController) {
                     LocationRequestScreen(
                         onAllowClick = {
                             coroutineScope.launch {
+                                mainViewModel.setOnboardingCompleted()
                                 navController.navigate(Screen.Main.route) {
                                     popUpTo(Screen.LocationPermission.route) { inclusive = true }
                                 }
@@ -61,6 +67,7 @@ fun NavScreen(navController: NavHostController) {
                         },
                         onDenyClick = {
                             coroutineScope.launch {
+                                mainViewModel.setOnboardingCompleted()
                                 navController.navigate(Screen.Main.route) {
                                     popUpTo(Screen.LocationPermission.route) { inclusive = true }
                                 }

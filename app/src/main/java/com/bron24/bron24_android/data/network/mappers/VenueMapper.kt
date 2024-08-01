@@ -17,6 +17,7 @@ import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 
 fun VenueDto.toDomainModel(): Venue {
     return Venue(
+        venueId = venueId,
         venueName = venueName,
         pricePerHour = formatPrice(pricePerHour),
         address = address.toDomainModel(),

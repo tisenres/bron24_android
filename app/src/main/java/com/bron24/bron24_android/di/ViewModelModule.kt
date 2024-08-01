@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.di
 
+import com.bron24.bron24_android.domain.usecases.onboarding.OnboardingUseCase
 import com.bron24.bron24_android.screens.cityselection.domain.usecases.GetAvailableCitiesUseCase
 import com.bron24.bron24_android.screens.cityselection.domain.usecases.UpdateSelectedCityUseCase
 import com.bron24.bron24_android.screens.cityselection.presentation.CityViewModel
@@ -8,6 +9,8 @@ import com.bron24.bron24_android.screens.language.LanguageModel
 import com.bron24.bron24_android.screens.language.LanguageViewModel
 import com.bron24.bron24_android.screens.location.LocationModel
 import com.bron24.bron24_android.screens.location.LocationViewModel
+import com.bron24.bron24_android.screens.main.MainViewModel
+import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.map.VenueMapModel
 import com.bron24.bron24_android.screens.map.VenueMapViewModel
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsModel
@@ -71,5 +74,13 @@ object ViewModelModule {
         venueDetailsModel: VenueDetailsModel
     ): VenueDetailsViewModel {
         return VenueDetailsViewModel(venueDetailsModel)
+    }
+
+    @Provides
+    @ActivityScoped
+    fun provideMainViewModel(
+        onboardingUseCase: OnboardingUseCase
+    ): MainViewModel {
+        return MainViewModel(onboardingUseCase)
     }
 }
