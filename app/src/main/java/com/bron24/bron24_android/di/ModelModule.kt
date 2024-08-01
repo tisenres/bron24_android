@@ -27,12 +27,10 @@ object ModelModule {
     fun provideLanguageModel(
         getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
         setUserLanguageUseCase: SetUserLanguageUseCase,
-        localeManager: LocaleManager
     ): LanguageModel {
         return LanguageModel(
             getAvailableLanguagesUseCase,
-            setUserLanguageUseCase,
-            localeManager
+            setUserLanguageUseCase
         )
     }
 

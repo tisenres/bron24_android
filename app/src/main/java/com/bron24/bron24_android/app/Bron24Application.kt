@@ -10,17 +10,16 @@ import com.yandex.mapkit.MapKitFactory
 @HiltAndroidApp
 class Bron24Application : Application() {
 
-    @Inject
-    lateinit var localeManager: LocaleManager
+//    @Inject
+//    lateinit var localeManager: LocaleManager
 
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
-        // LocaleManager will be applied in onCreate after injection
-    }
+//    override fun attachBaseContext(base: Context) {
+//        super.attachBaseContext(base)
+//    }
 
     override fun onCreate() {
         super.onCreate()
         MapKitFactory.setApiKey("3c062e82-1411-437c-9157-f7e96556b098")
-        localeManager.applySavedLocale(this)
+//        localeManager.applySavedLocale(this)
     }
 }

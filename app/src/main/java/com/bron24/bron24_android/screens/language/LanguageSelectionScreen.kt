@@ -38,6 +38,7 @@ fun LanguageSelectionScreen(
     var triggerRecomposition by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedLanguage) {
+        LocaleManager.setLocale(context, selectedLanguage.languageCode)
         triggerRecomposition = !triggerRecomposition
     }
 

@@ -8,13 +8,21 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class LocaleManager @Inject constructor(
-    private val getSelectedLanguageUseCase: GetSelectedLanguageUseCase
-) {
+object LocaleManager {
+
+//    fun setLocale(context: Context, languageCode: String) {
+//        Log.d("LocaleManager", "Setting locale to: $languageCode")
+//        val locale = Locale(languageCode)
+//        Locale.setDefault(locale)
+//
+//        val resources = context.resources
+//        val config = Configuration(resources.configuration)
+//        config.setLocale(locale)
+//        resources.updateConfiguration(config, resources.displayMetrics)
+//        Log.d("LocaleManager", "Locale set to: ${Locale.getDefault().language}")
+//    }
 
     fun setLocale(context: Context, languageCode: String) {
-        Log.d("LocaleManager", "Setting locale to: $languageCode")
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
 
@@ -22,12 +30,14 @@ class LocaleManager @Inject constructor(
         val config = Configuration(resources.configuration)
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
-        Log.d("LocaleManager", "Locale set to: ${Locale.getDefault().language}")
+
+//        context.createConfigurationContext(config)
     }
 
-    fun applySavedLocale(context: Context) {
-        val selectedLanguageCode = getSelectedLanguageUseCase.execute().languageCode
-        Log.d("SELECTED_LANG", selectedLanguageCode)
-        setLocale(context, selectedLanguageCode)
-    }
+
+//    fun applySavedLocale(context: Context) {
+//        val selectedLanguageCode = getSelectedLanguageUseCase.execute().languageCode
+//        Log.d("SELECTED_LANG", selectedLanguageCode)
+//        setLocale(context, selectedLanguageCode)
+//    }
 }
