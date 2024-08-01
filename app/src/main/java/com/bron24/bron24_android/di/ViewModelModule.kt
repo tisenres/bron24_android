@@ -10,6 +10,8 @@ import com.bron24.bron24_android.screens.location.LocationModel
 import com.bron24.bron24_android.screens.location.LocationViewModel
 import com.bron24.bron24_android.screens.map.VenueMapModel
 import com.bron24.bron24_android.screens.map.VenueMapViewModel
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsModel
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,5 +63,13 @@ object ViewModelModule {
         venueMapModel: VenueMapModel
     ): VenueMapViewModel {
         return VenueMapViewModel(venueMapModel)
+    }
+
+    @Provides
+    @ActivityScoped
+    fun provideVenueDetailsViewModel(
+        venueDetailsModel: VenueDetailsModel
+    ): VenueDetailsViewModel {
+        return VenueDetailsViewModel(venueDetailsModel)
     }
 }

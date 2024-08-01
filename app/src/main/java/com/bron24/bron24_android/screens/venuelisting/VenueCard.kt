@@ -1,7 +1,8 @@
-package com.bron24.bron24_android.screens.components
+package com.bron24.bron24_android.screens.venuelisting
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -21,10 +22,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.Venue
+import com.bron24.bron24_android.screens.main.Screen
 import com.valentinilk.shimmer.shimmer
 
 val gilroyFontFamily = FontFamily(
@@ -33,7 +36,7 @@ val gilroyFontFamily = FontFamily(
 )
 
 @Composable
-fun VenueCard(venue: Venue? = null, isLoading: Boolean) {
+fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -42,7 +45,9 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean) {
                 if (isLoading) {
                     it.shimmer()
                 } else {
-                    it
+                    it.clickable {
+                        navController.navigate("${Screen.VenueDetails.route}/${venue?.address?.id}")
+                    }
                 }
             }
     ) {
@@ -317,5 +322,4 @@ fun PreviewVenueCard() {
         ),
         imageUrls = emptyList()
     )
-    VenueCard(venue, isLoading = false)
 }

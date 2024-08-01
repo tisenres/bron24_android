@@ -16,13 +16,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bron24.bron24_android.screens.components.VenueCard
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.screens.adssection.AdsSection
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.screens.venuelisting.VenueCard
+import com.bron24.bron24_android.screens.venuelisting.VenueListingViewModel
 
 @Composable
 fun VenueListingView(
+    navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: VenueListingViewModel = hiltViewModel()
 ) {
@@ -57,11 +61,11 @@ fun VenueListingView(
 
         if (isLoading) {
             items(5) {
-                VenueCard(isLoading = true)
+                VenueCard(isLoading = true, navController = navController)
             }
         } else {
             items(venues) { venue ->
-                VenueCard(venue = venue, isLoading = false)
+                VenueCard(venue = venue, isLoading = false, navController = navController)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
@@ -71,59 +75,6 @@ fun VenueListingView(
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueListingView() {
-    // Placeholder for Venue model and sample data
-    data class Venue(
-        val venueId: Int,
-        val name: String,
-        val type: String,
-        val surface: String,
-        val capacity: Int,
-        val sportType: String,
-        val price: String,
-        val description: String,
-        val workingHoursFrom: String,
-        val workingHoursTill: String,
-        val contact1: String,
-        val contact2: String?,
-        val city: Int,
-        val infrastructure: Int,
-        val address: Int,
-        val owner: Int,
-        val distance: String,
-        val rating: String,
-        val freeSlots: String,
-        val imageUrl: String,
-        val overlayImageUrl: String
-    )
-
-    val sampleVenues = listOf(
-        Venue(
-            venueId = 1,
-            name = "Sample Venue",
-            type = "Indoor",
-            surface = "Grass",
-            capacity = 100,
-            sportType = "Football",
-            price = "100",
-            description = "Sample description",
-            workingHoursFrom = "09:00",
-            workingHoursTill = "21:00",
-            contact1 = "1234567890",
-            contact2 = null,
-            city = 1,
-            infrastructure = 1,
-            address = 3,
-            owner = 1,
-            distance = "5 km",
-            rating = "4.5",
-            freeSlots = "10",
-            imageUrl = "",
-            overlayImageUrl = ""
-        )
-    )
-
-    VenueListingView(
-        modifier = Modifier.fillMaxWidth(),
-        viewModel = hiltViewModel()
-    )
+    val navController = rememberNavController()
+    VenueListingView(navController = navController)
 }

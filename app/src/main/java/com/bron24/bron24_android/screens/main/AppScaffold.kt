@@ -31,7 +31,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
         modifier = modifier
     ) {
         composable(Screen.HomePage.route) {
-            HomePage()
+            HomePage(navController)
         }
         composable(Screen.MapPage.route) {
             MapPage()

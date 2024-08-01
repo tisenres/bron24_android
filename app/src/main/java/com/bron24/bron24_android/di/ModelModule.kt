@@ -4,11 +4,13 @@ import com.bron24.bron24_android.domain.usecases.language.GetAvailableLanguagesU
 import com.bron24.bron24_android.domain.usecases.language.SetUserLanguageUseCase
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
+import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesCoordinatesUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import com.bron24.bron24_android.screens.language.LanguageModel
 import com.bron24.bron24_android.screens.location.LocationModel
 import com.bron24.bron24_android.screens.map.VenueMapModel
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,6 +55,16 @@ object ModelModule {
             getVenuesCoordinatesUseCase,
             getCurrentLocationUseCase,
             checkLocationPermissionUseCase
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideVenueDetailsModel(
+        getVenueDetailsUseCase: GetVenueDetailsUseCase,
+    ): VenueDetailsModel {
+        return VenueDetailsModel(
+            getVenueDetailsUseCase
         )
     }
 }
