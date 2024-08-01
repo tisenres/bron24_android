@@ -14,15 +14,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
 import com.bron24.bron24_android.screens.language.LanguageSelectionScreen
 import com.bron24.bron24_android.screens.location.LocationRequestScreen
-import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
-import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -80,15 +76,6 @@ fun NavScreen(navController: NavHostController, mainViewModel: MainViewModel) {
             composable(Screen.Main.route) {
                 AnimatedScreenTransition {
                     AppScaffold()
-                }
-            }
-            composable(
-                route = "${Screen.VenueDetails.route}/{venueId}",
-                arguments = listOf(navArgument("venueId") { type = NavType.IntType })
-            ) {
-                it.arguments?.getInt("venueId")?.let { arg ->
-                    val viewModel: VenueDetailsViewModel = hiltViewModel()
-                    VenueDetailsScreen(viewModel = viewModel, venueId = arg)
                 }
             }
         }

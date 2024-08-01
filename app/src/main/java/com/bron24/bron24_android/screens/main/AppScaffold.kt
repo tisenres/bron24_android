@@ -5,12 +5,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.bron24.bron24_android.screens.main.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.map.YandexMapScreen
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 
 @Composable
 fun AppScaffold() {
@@ -41,6 +46,14 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
         }
         composable(Screen.ProfilePage.route) {
             ProfilePage()
+        }
+        composable(
+            route = Screen.VenueDetails.route,
+            arguments = listOf(navArgument("venueId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
+            val viewModel: VenueDetailsViewModel = hiltViewModel()
+            VenueDetailsScreen(viewModel = viewModel, venueId = venueId)
         }
     }
 }
