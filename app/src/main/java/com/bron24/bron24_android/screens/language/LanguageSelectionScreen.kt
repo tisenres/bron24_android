@@ -25,7 +25,6 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.user.Language
 import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.helper.util.LocaleManager
 
 @Composable
 fun LanguageSelectionScreen(
@@ -38,7 +37,6 @@ fun LanguageSelectionScreen(
     var triggerRecomposition by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedLanguage) {
-//        LocaleManager.setLocale(context, selectedLanguage.languageCode)
         viewModel.selectLanguage(context, selectedLanguage)
         triggerRecomposition = !triggerRecomposition
     }
@@ -120,7 +118,7 @@ fun LanguageSelectionScreen(
                         onClick = {
                             viewModel.selectLanguage(context, language)
                         },
-                        modifier = Modifier.padding(vertical = 16.dp)
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
                 }
             }
@@ -155,6 +153,7 @@ fun LanguageOption(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
+            .height(64.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
@@ -176,7 +175,6 @@ fun LanguageOption(
         Spacer(modifier = Modifier.width(20.dp))
         Text(
             text = language.languageName,
-//            modifier = Modifier.height(64.dp),
             style = TextStyle(
                 color = animatedColor,
                 fontSize = 48.sp,
