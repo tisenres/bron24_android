@@ -134,7 +134,7 @@ fun H7(modifier: Modifier = Modifier) {
                 .background(color = Color.Black.copy(alpha = 0.64f))
         )
         Image(
-            painter = painterResource(id = R.drawable.ic_dollar),
+            painter = painterResource(id = R.drawable.football_field),
             contentDescription = "image 18",
             modifier = Modifier
                 .align(alignment = Alignment.TopStart)
@@ -190,7 +190,7 @@ fun H7(modifier: Modifier = Modifier) {
                 .padding(all = 10.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_dollar),
+                painter = painterResource(id = R.drawable.baseline_ios_share_24),
                 contentDescription = "Share",
                 modifier = Modifier.requiredSize(size = 16.dp)
             )
@@ -206,7 +206,7 @@ fun H7(modifier: Modifier = Modifier) {
                 .padding(all = 10.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_dollar),
+                painter = painterResource(id = R.drawable.baseline_favorite_24_black),
                 contentDescription = "Love",
                 contentScale = ContentScale.Inside,
                 modifier = Modifier.requiredSize(size = 16.dp)
@@ -223,7 +223,7 @@ fun H7(modifier: Modifier = Modifier) {
                 .padding(all = 10.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_dollar),
+                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                 contentDescription = "Line arrow-left",
                 modifier = Modifier.requiredSize(size = 16.dp)
             )
