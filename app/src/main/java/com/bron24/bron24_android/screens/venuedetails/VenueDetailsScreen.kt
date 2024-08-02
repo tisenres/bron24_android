@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.venuedetails
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,55 +21,47 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import kotlinx.coroutines.launch
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
     onDismiss: () -> Unit
 ) {
+
+    val sheetState = rememberBottomSheetState(
+        initialValue = SheetValue.PartiallyExpanded,
+        defineValues = {
+            // Bottom sheet height is 100 dp.
+            SheetValue.Collapsed at height(100.dp)
+            // Bottom sheet offset is 60%, meaning it takes 40% of the screen.
+            SheetValue.PartiallyExpanded at offset(percent = 60)
+            // Bottom sheet height is equal to its content height.
+            SheetValue.Expanded at contentHeight
+        }
+    )
+
     val venueDetails = viewModel.venueDetails.collectAsState().value
-    val sheetState = rememberModalBottomSheetState(false)
-    val coroutineScope = rememberCoroutineScope()
+//    val coroutineScope = rememberCoroutineScope()
+    val scaffoldState = io.morfly.compose.bottomsheet.material3.rememberBottomSheetScaffoldState(sheetState)
 
-    LaunchedEffect(venueId) {
-        viewModel.fetchVenueDetails(venueId)
-        coroutineScope.launch {
-            sheetState.show()
+    io.morfly.compose.bottomsheet.material3.BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetContent = {
+            VenueDetailsContent(details = venueDetails)
+        },
+        content = {
+            // Screen content
         }
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Main content of the previous screen can be added here, if needed
-
-        venueDetails?.let { details ->
-            ModalBottomSheet(
-                onDismissRequest = {
-                    onDismiss() // Call the onDismiss function when the sheet is dismissed
-                },
-                sheetState = sheetState,
-                content = {
-                    VenueDetailsContent(details)
-                }
-            )
-        } ?: run {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-    }
+    )
 }
 
 @Composable
-fun VenueDetailsContent(details: VenueDetails) {
+fun VenueDetailsContent(details: VenueDetails?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,7 +106,7 @@ fun VenueDetailsContent(details: VenueDetails) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = details.venueName,
+            text = details?.venueName ?: "",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
@@ -121,7 +114,7 @@ fun VenueDetailsContent(details: VenueDetails) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = details.address.addressName,
+            text = details?.address?.addressName ?: "",
             fontSize = 14.sp,
             color = Color.Gray
         )
@@ -129,7 +122,7 @@ fun VenueDetailsContent(details: VenueDetails) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = details.contact1,
+            text = details?.contact1 ?: "",
             fontSize = 14.sp,
             color = Color.Gray
         )
@@ -146,7 +139,7 @@ fun VenueDetailsContent(details: VenueDetails) {
             Spacer(modifier = Modifier.width(4.dp))
             // Add star rating component here
             Text(
-                text = "${details.city} reviews",
+                text = "${details?.city} reviews",
                 fontSize = 14.sp,
                 color = Color.Gray
             )
@@ -195,7 +188,7 @@ fun VenueDetailsContent(details: VenueDetails) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "${details.pricePerHour}sum/hour",
+                text = "${details?.pricePerHour}sum/hour",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )

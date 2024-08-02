@@ -25,6 +25,7 @@ runtimeLivedata = "1.6.8"
 playServicesMaps = "19.0.0"
 mapsCompose = "1.0.0"
 yandexMaps = "4.6.1-lite"
+morflyCompose = "0.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,6 +61,7 @@ androidx-runtime-livedata = { group = "androidx.compose.runtime", name = "runtim
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
 yandex-maps = { group = "com.yandex.android", name = "maps.mobile", version.ref = "yandexMaps" }
+morfly-compose = { group = "io.morfly.compose", name = "advanced-bottomsheet-material3", version.ref = "morflyCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

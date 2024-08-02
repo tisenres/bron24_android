@@ -73,6 +73,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.morfly.compose)
+
     implementation(libs.hilt)
     kapt(libs.hiltCompiler)
     kapt(libs.hiltCompilerAndroidX)
