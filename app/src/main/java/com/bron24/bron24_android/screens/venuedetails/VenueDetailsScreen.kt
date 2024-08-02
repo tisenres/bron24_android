@@ -24,6 +24,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
+import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
+import io.morfly.compose.bottomsheet.material3.rememberBottomSheetScaffoldState
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -47,9 +50,9 @@ fun VenueDetailsScreen(
 
     val venueDetails = viewModel.venueDetails.collectAsState().value
 //    val coroutineScope = rememberCoroutineScope()
-    val scaffoldState = io.morfly.compose.bottomsheet.material3.rememberBottomSheetScaffoldState(sheetState)
+    val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
 
-    io.morfly.compose.bottomsheet.material3.BottomSheetScaffold(
+    BottomSheetScaffold(
         scaffoldState = scaffoldState,
         sheetContent = {
             VenueDetailsContent(details = venueDetails)
