@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.screens.main
 
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.navigation.compose.composable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -49,7 +51,9 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
         }
         composable(
             route = Screen.VenueDetails.route,
-            arguments = listOf(navArgument("venueId") { type = NavType.IntType })
+            arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
+            enterTransition = { slideInVertically(initialOffsetY = { it }) },
+            exitTransition = { slideOutVertically(targetOffsetY = { it }) }
         ) { backStackEntry ->
             val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
             val viewModel: VenueDetailsViewModel = hiltViewModel()
