@@ -4,8 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
@@ -26,7 +26,11 @@ import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VenueDetailsScreen(viewModel: VenueDetailsViewModel, venueId: Int) {
+fun VenueDetailsScreen(
+    viewModel: VenueDetailsViewModel,
+    venueId: Int,
+    onDismiss: () -> Unit
+) {
     val venueDetails = viewModel.venueDetails.collectAsState().value
     val sheetState = rememberModalBottomSheetState(false)
     val coroutineScope = rememberCoroutineScope()
@@ -38,41 +42,23 @@ fun VenueDetailsScreen(viewModel: VenueDetailsViewModel, venueId: Int) {
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { },
-                navigationIcon = {
-                    IconButton(onClick = { /* Handle back navigation */ }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Main content of the previous screen can be added here, if needed
+
+        venueDetails?.let { details ->
+            ModalBottomSheet(
+                onDismissRequest = {
+                    onDismiss() // Call the onDismiss function when the sheet is dismissed
                 },
-                actions = {
-                    IconButton(onClick = { /* Handle share */ }) {
-                        Icon(Icons.Default.Share, contentDescription = "Share")
-                    }
-                    IconButton(onClick = { /* Handle favorite */ }) {
-                        Icon(Icons.Default.Favorite, contentDescription = "Favorite")
-                    }
+                sheetState = sheetState,
+                content = {
+                    VenueDetailsContent(details)
                 }
             )
-        }
-    ) { paddingValues ->
-        venueDetails?.let { details ->
-            Box(modifier = Modifier.padding(paddingValues)) {
-                ModalBottomSheet(
-                    onDismissRequest = { /* Handle dismiss */ },
-                    sheetState = sheetState,
-                    content = {
-                        VenueDetailsContent(details)
-                    }
-                )
-            }
         } ?: run {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()

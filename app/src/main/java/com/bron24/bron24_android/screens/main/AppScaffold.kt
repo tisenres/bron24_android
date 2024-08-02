@@ -57,7 +57,12 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
         ) { backStackEntry ->
             val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
             val viewModel: VenueDetailsViewModel = hiltViewModel()
-            VenueDetailsScreen(viewModel = viewModel, venueId = venueId)
+            VenueDetailsScreen(
+                viewModel = viewModel,
+                venueId = venueId,
+                onDismiss = {
+                    navController.popBackStack() // Navigate back when dismissed
+                })
         }
     }
 }
