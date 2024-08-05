@@ -31,4 +31,5 @@
     <string name="profile">Profile</string>
     <string name="orders">Orders</string>
     <string name="phone_number">Phone number</string>
+    <string name="continue_text">Continue</string>
 </resources>
