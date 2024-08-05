@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,9 +16,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.howitworks.gilroyFontFamily
-import androidx.compose.foundation.text.ClickableText
 
 @Composable
 fun PhoneNumberInputScreen(
@@ -46,18 +44,9 @@ fun PhoneNumberInputScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(horizontal = 20.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo_bron24),
-            contentDescription = "Logo Bron24",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp, start = 80.dp, end = 80.dp, bottom = 52.dp),
-            contentScale = ContentScale.FillWidth
-        )
-
+        Logo()
         CustomPhoneNumberField(
             value = phoneNumber,
             onValueChange = { newValue ->
@@ -67,24 +56,24 @@ fun PhoneNumberInputScreen(
                 }
             }
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TermsAndConditionsText()
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        ConfirmButton(
-            isEnabled = true,
-            onClick = {
-                authViewModel.requestOTP()
-                onContinueClick()
-            },
-        )
+        Spacer(modifier = Modifier.weight(1f))
+        BottomSection(authViewModel, onContinueClick)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@Composable
+fun Logo() {
+    Image(
+        painter = painterResource(id = R.drawable.logo_bron24),
+        contentDescription = "Logo Bron24",
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp, start = 80.dp, end = 80.dp, bottom = 52.dp),
+        contentScale = ContentScale.FillWidth
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomPhoneNumberField(
     value: String,
@@ -114,8 +103,7 @@ fun CustomPhoneNumberField(
             Icon(
                 painter = painterResource(id = R.drawable.baseline_person_outline_24),
                 contentDescription = "User Icon",
-                modifier = Modifier
-                    .size(24.dp),
+                modifier = Modifier.size(24.dp),
                 tint = Color(0xFFB8BDCA)
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -158,15 +146,27 @@ fun CustomPhoneNumberField(
 }
 
 @Composable
+fun BottomSection(authViewModel: MockAuthViewModel, onContinueClick: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        TermsAndConditionsText()
+        Spacer(modifier = Modifier.height(12.dp))
+        ConfirmButton(
+            isEnabled = true,
+            onClick = {
+                authViewModel.requestOTP()
+                onContinueClick()
+            }
+        )
+    }
+}
+
+@Composable
 fun TermsAndConditionsText() {
     val uriHandler = LocalUriHandler.current
     val annotatedText = buildAnnotatedString {
         append("By clicking on the Continue button you accept our ")
 
-        pushStringAnnotation(
-            tag = "URL",
-            annotation = "https://example.com/terms"
-        )
+        pushStringAnnotation(tag = "URL", annotation = "https://example.com/terms")
         withStyle(
             style = SpanStyle(
                 color = Color(0xFF32B768),
