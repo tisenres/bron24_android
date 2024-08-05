@@ -30,4 +30,9 @@
     <string name="nearby">Yaqin atrof</string>
     <string name="profile">Profil</string>
     <string name="orders">Buyurtmalar</string>
+    <string name="phone_number">Telefon raqami</string>
+    <string name="continue_text">Davom etish</string>
+    <string name="terms_and_conditions">Davom etish tugmasini bosish orqali siz bizning</string>
+    <string name="terms_and_conditions_text"><![CDATA[Shartlar va qoidalar\n]]></string>
+
 </resources>

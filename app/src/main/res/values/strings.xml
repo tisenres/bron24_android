@@ -32,6 +32,6 @@
     <string name="orders">Orders</string>
     <string name="phone_number">Phone number</string>
     <string name="continue_text">Continue</string>
-    <string name="terms_and_conditions">By clicking on the Continue button you accept our </string>
+    <string name="terms_and_conditions">By clicking on the Continue button you accept our</string>
     <string name="terms_and_conditions_text"><![CDATA[Terms & Conditions\n]]></string>
 </resources>

@@ -186,7 +186,7 @@ fun BottomSection(
             .padding(bottom = 16.dp)
     ) {
         TermsAndConditionsText()
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         ConfirmButton(
             isEnabled = true,
             onClick = {
@@ -201,9 +201,9 @@ fun BottomSection(
 fun TermsAndConditionsText() {
     val uriHandler = LocalUriHandler.current
     val annotatedText = buildAnnotatedString {
-        append("By clicking on the Continue button you accept our ")
+        append(stringResource(id = R.string.terms_and_conditions) + " ")
 
-        pushStringAnnotation(tag = "URL", annotation = "https://example.com/terms")
+        pushStringAnnotation(tag = "URL", annotation = "https://bron24.com/terms")
         withStyle(
             style = SpanStyle(
                 color = Color(0xFF32B768),
@@ -214,7 +214,7 @@ fun TermsAndConditionsText() {
                 letterSpacing = (-0.028).em
             )
         ) {
-            append("Terms & Conditions")
+            append(stringResource(id = R.string.terms_and_conditions_text))
         }
         pop()
     }
@@ -235,7 +235,6 @@ fun TermsAndConditionsText() {
                     uriHandler.openUri(annotation.item)
                 }
         },
-        modifier = Modifier.padding(vertical = 16.dp)
     )
 }
 

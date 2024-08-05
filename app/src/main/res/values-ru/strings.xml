@@ -30,4 +30,8 @@
     <string name="nearby">Рядом</string>
     <string name="profile">Профиль</string>
     <string name="orders">Заказы</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="continue_text">Продолжить</string>
+    <string name="terms_and_conditions">Нажимая, вы соглашаетесь с нашими</string>
+    <string name="terms_and_conditions_text"><![CDATA[Условиями использования\n]]></string>
 </resources>
