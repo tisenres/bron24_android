@@ -3,7 +3,9 @@ package com.bron24.bron24_android.screens.auth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.FlowRowScopeInstance.align
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -73,7 +75,6 @@ fun Logo() {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CustomPhoneNumberField(
     value: String,
@@ -91,9 +92,10 @@ fun CustomPhoneNumberField(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .height(58.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(Color(0xFFF6F6F6))
-            .padding(10.dp)
+            .padding(horizontal = 10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -122,7 +124,7 @@ fun CustomPhoneNumberField(
                         letterSpacing = (-0.028).em
                     )
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(3.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -137,21 +139,27 @@ fun CustomPhoneNumberField(
                             letterSpacing = (-0.028).em
                         )
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    TextField(
+                    Spacer(modifier = Modifier.width(3.dp))
+                    BasicTextField(
                         value = value.removePrefix("+998"),
                         onValueChange = { newValue -> onValueChange("+998$newValue") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number
                         ),
                         singleLine = true,
-                        textStyle = TextStyle(fontSize = 14.sp),
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedTextColor = Color(0xFF1F2B37)
+                        textStyle = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            color = Color.Black,
+                            lineHeight = 16.8.sp,
+                            letterSpacing = (-0.028).em
                         ),
+                        decorationBox = { innerTextField ->
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                innerTextField()
+                            }
+                        },
                         modifier = Modifier
                             .focusRequester(focusRequester)
                             .fillMaxWidth()
@@ -244,7 +252,8 @@ fun ConfirmButton(
             fontWeight = FontWeight.Normal,
             fontFamily = gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
-            lineHeight = 32.sp
+            lineHeight = 32.sp,
+            letterSpacing = (-0.028).em
         )
     }
 }
