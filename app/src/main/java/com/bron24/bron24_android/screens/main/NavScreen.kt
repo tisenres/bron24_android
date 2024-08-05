@@ -4,18 +4,13 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.bron24.bron24_android.screens.auth.OTPInputScreen
+import com.bron24.bron24_android.screens.auth.PhoneNumberInputScreen
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
 import com.bron24.bron24_android.screens.language.LanguageSelectionScreen
 import com.bron24.bron24_android.screens.location.LocationRequestScreen
@@ -35,7 +30,7 @@ fun NavScreen(navController: NavHostController, mainViewModel: MainViewModel) {
                 AnimatedScreenTransition {
                     LanguageSelectionScreen(
                         viewModel = hiltViewModel(),
-                        onNavigateToLocationRequest = {
+                        onNavigateToHowItWorksRequest = {
                             coroutineScope.launch {
                                 navController.navigate(Screen.HowItWorksPager.route) {
                                     popUpTo(Screen.LanguageSelection.route) { inclusive = true }
@@ -47,7 +42,37 @@ fun NavScreen(navController: NavHostController, mainViewModel: MainViewModel) {
             }
             composable(Screen.HowItWorksPager.route) {
                 AnimatedScreenTransition {
-                    HowItWorksPager(navController)
+                    HowItWorksPager(
+                        onNavigateToAuthScreens = {
+                            coroutineScope.launch {
+                                navController.navigate(Screen.PhoneNumberInput.route) {
+                                    popUpTo(Screen.HowItWorksPager.route) { inclusive = true }
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+            composable(Screen.PhoneNumberInput.route) {
+                AnimatedScreenTransition {
+                    PhoneNumberInputScreen(
+                        authViewModel = hiltViewModel(),
+                        onContinueClick = {
+                            navController.navigate(Screen.OTPInput.route)
+                        }
+                    )
+                }
+            }
+            composable(Screen.OTPInput.route) {
+                AnimatedScreenTransition {
+                    OTPInputScreen(
+                        authViewModel = hiltViewModel(),
+                        onOTPVerified = {
+                            navController.navigate(Screen.LocationPermission.route) {
+                                popUpTo(Screen.OTPInput.route) { inclusive = true }
+                            }
+                        }
+                    )
                 }
             }
             composable(Screen.LocationPermission.route) {

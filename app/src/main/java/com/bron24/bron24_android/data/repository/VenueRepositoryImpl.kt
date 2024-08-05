@@ -1,8 +1,7 @@
 package com.bron24.bron24_android.data.repository
 
-import android.util.Log
 import com.bron24.bron24_android.data.network.mappers.toDomainModel
-import com.bron24.bron24_android.data.network.VenueApiService
+import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
@@ -21,9 +20,6 @@ class VenueRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getVenuePictures(venueId: Int): List<String> {
-//        val venuePictures = apiService.getVenuePictures(venueId)
-//        Log.d("IMAGES_LIST", venuePictures.toString())
-//        return emptyList()
         return apiService.getVenuePictures(venueId).map { it.url }
     }
 

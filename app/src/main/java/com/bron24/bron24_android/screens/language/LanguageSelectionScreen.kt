@@ -29,7 +29,7 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 @Composable
 fun LanguageSelectionScreen(
     viewModel: LanguageViewModel = hiltViewModel(),
-    onNavigateToLocationRequest: () -> Unit
+    onNavigateToHowItWorksRequest: () -> Unit
 ) {
     val selectedLanguage by viewModel.selectedLanguage.collectAsState()
     val availableLanguages by viewModel.availableLanguages.collectAsState()
@@ -128,7 +128,7 @@ fun LanguageSelectionScreen(
             isEnabled = true,
             onClick = {
                 viewModel.confirmLanguageSelection(context)
-                onNavigateToLocationRequest()
+                onNavigateToHowItWorksRequest()
             },
         )
     }

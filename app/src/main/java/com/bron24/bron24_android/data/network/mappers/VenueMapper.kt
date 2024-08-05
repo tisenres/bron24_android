@@ -1,12 +1,12 @@
 package com.bron24.bron24_android.data.network.mappers
 
-import com.bron24.bron24_android.data.network.dto.AddressDto
-import com.bron24.bron24_android.data.network.dto.CityDto
-import com.bron24.bron24_android.data.network.dto.InfrastructureDto
-import com.bron24.bron24_android.data.network.dto.VenueCoordinatesDto
-import com.bron24.bron24_android.data.network.dto.VenueDetailsDto
-import com.bron24.bron24_android.data.network.dto.VenueDto
-import com.bron24.bron24_android.data.network.dto.VenueOwnerDto
+import com.bron24.bron24_android.data.network.dto.venue.AddressDto
+import com.bron24.bron24_android.data.network.dto.venue.CityDto
+import com.bron24.bron24_android.data.network.dto.venue.InfrastructureDto
+import com.bron24.bron24_android.data.network.dto.venue.VenueCoordinatesDto
+import com.bron24.bron24_android.data.network.dto.venue.VenueDetailsDto
+import com.bron24.bron24_android.data.network.dto.venue.VenueDto
+import com.bron24.bron24_android.data.network.dto.venue.VenueOwnerDto
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.City
 import com.bron24.bron24_android.domain.entity.venue.Infrastructure

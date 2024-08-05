@@ -1,9 +1,9 @@
-package com.bron24.bron24_android.data.network
+package com.bron24.bron24_android.data.network.apiservices
 
-import com.bron24.bron24_android.data.network.dto.PictureDto
-import com.bron24.bron24_android.data.network.dto.VenueCoordinatesDto
-import com.bron24.bron24_android.data.network.dto.VenueDetailsDto
-import com.bron24.bron24_android.data.network.dto.VenueDto
+import com.bron24.bron24_android.data.network.dto.venue.PictureDto
+import com.bron24.bron24_android.data.network.dto.venue.VenueCoordinatesDto
+import com.bron24.bron24_android.data.network.dto.venue.VenueDetailsDto
+import com.bron24.bron24_android.data.network.dto.venue.VenueDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 

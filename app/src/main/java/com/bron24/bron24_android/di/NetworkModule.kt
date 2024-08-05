@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.di
 
-import com.bron24.bron24_android.data.network.VenueApiService
+import com.bron24.bron24_android.data.network.apiservices.OTPApiService
+import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,7 +27,6 @@ object NetworkModule {
             .build()
 
         return Retrofit.Builder()
-//            .baseUrl("http://127.0.0.1:8000/") // This maps to the host machine's localhost
             .baseUrl("http://10.0.2.2:8000/") // This maps to the host machine's localhost
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
@@ -37,5 +37,11 @@ object NetworkModule {
     @Singleton
     fun provideVenueApiService(retrofit: Retrofit): VenueApiService {
         return retrofit.create(VenueApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOTPApiService(retrofit: Retrofit): OTPApiService {
+        return retrofit.create(OTPApiService::class.java)
     }
 }

@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.data.network.dto
+package com.bron24.bron24_android.data.network.dto.venue
 
 import com.google.gson.annotations.SerializedName
 

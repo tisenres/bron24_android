@@ -3,8 +3,11 @@ package com.bron24.bron24_android.di
 import android.content.Context
 import com.bron24.bron24_android.data.PermissionChecker
 import com.bron24.bron24_android.data.local.preference.AppPreference
+import com.bron24.bron24_android.data.network.apiservices.OTPApiService
+import com.bron24.bron24_android.data.repository.AuthRepositoryImpl
 import com.bron24.bron24_android.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
+import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.LanguageRepository
 import com.bron24.bron24_android.domain.repository.LocationRepository
 import com.bron24.bron24_android.domain.usecases.language.GetAvailableLanguagesUseCase
@@ -50,9 +53,9 @@ object UseCasesModule {
     @Provides
     @Singleton
     fun provideCheckLocationPermissionUseCase(
-        repository: LocationRepository
+        locationRepository: LocationRepository
     ): CheckLocationPermissionUseCase {
-        return CheckLocationPermissionUseCase(repository)
+        return CheckLocationPermissionUseCase(locationRepository)
     }
 
     @Provides
@@ -69,6 +72,15 @@ object UseCasesModule {
         appPreference: AppPreference
     ): LanguageRepository {
         return LanguageRepositoryImpl(appPreference)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        otpService: OTPApiService,
+        appPreference: AppPreference
+    ): AuthRepository {
+        return AuthRepositoryImpl(otpService, appPreference)
     }
 
     @Provides

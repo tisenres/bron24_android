@@ -24,7 +24,9 @@ import com.bron24.bron24_android.screens.main.Screen
 import kotlinx.coroutines.launch
 
 @Composable
-fun HowItWorksPager(navController: NavHostController) {
+fun HowItWorksPager(
+    onNavigateToAuthScreens: () -> Unit
+) {
     val pagerState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -43,9 +45,7 @@ fun HowItWorksPager(navController: NavHostController) {
                     when (index) {
                         0 -> HowItWorksScreen1()
                         1 -> HowItWorksScreen2(onFinishClick = {
-                            navController.navigate(Screen.LocationPermission.route) {
-                                popUpTo(Screen.HowItWorksPager.route) { inclusive = true }
-                            }
+                            onNavigateToAuthScreens()
                         })
                     }
                 }
@@ -60,11 +60,10 @@ fun HowItWorksPager(navController: NavHostController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             TextButton(onClick = {
-                navController.navigate(Screen.LocationPermission.route) {
-                    popUpTo(Screen.HowItWorksPager.route) { inclusive = true }
-                }
+                onNavigateToAuthScreens()
             }) {
-                Text(text = stringResource(id = R.string.skip),
+                Text(
+                    text = stringResource(id = R.string.skip),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.ExtraBold,
@@ -87,7 +86,9 @@ fun HowItWorksPager(navController: NavHostController) {
                             .size(10.dp)
                             .padding(10.dp)
                             .background(
-                                if (pagerState.firstVisibleItemIndex == i) Color(0xFF32B768) else Color(0xFFD9D9D9),
+                                if (pagerState.firstVisibleItemIndex == i) Color(0xFF32B768) else Color(
+                                    0xFFD9D9D9
+                                ),
                                 shape = CircleShape
                             )
                     )
@@ -100,12 +101,11 @@ fun HowItWorksPager(navController: NavHostController) {
                         pagerState.animateScrollToItem(1)
                     }
                 } else {
-                    navController.navigate(Screen.LocationPermission.route) {
-                        popUpTo(Screen.HowItWorksPager.route) { inclusive = true }
-                    }
+                    onNavigateToAuthScreens()
                 }
             }) {
-                Text(text = stringResource(id = R.string.next),
+                Text(
+                    text = stringResource(id = R.string.next),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.ExtraBold,
