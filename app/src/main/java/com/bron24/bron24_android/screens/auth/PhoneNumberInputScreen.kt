@@ -68,12 +68,12 @@ fun Logo() {
         contentDescription = "Logo Bron24",
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 24.dp, start = 80.dp, end = 80.dp, bottom = 52.dp),
+            .padding(top = 24.dp, start = 60.dp, end = 60.dp, bottom = 52.dp),
         contentScale = ContentScale.FillWidth
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CustomPhoneNumberField(
     value: String,
@@ -93,7 +93,7 @@ fun CustomPhoneNumberField(
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(Color(0xFFF6F6F6))
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -122,28 +122,46 @@ fun CustomPhoneNumberField(
                         letterSpacing = (-0.028).em
                     )
                 )
-                TextField(
-                    value = value,
-                    onValueChange = onValueChange,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number
-                    ),
-                    singleLine = true,
-                    textStyle = TextStyle(fontSize = 14.sp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedTextColor = Color(0xFF1F2B37)
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester)
-                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "+998",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            color = Color(0xFFB8BDCA),
+                            lineHeight = 16.8.sp,
+                            letterSpacing = (-0.028).em
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextField(
+                        value = value.removePrefix("+998"),
+                        onValueChange = { newValue -> onValueChange("+998$newValue") },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        singleLine = true,
+                        textStyle = TextStyle(fontSize = 14.sp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedTextColor = Color(0xFF1F2B37)
+                        ),
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                            .fillMaxWidth()
+                    )
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun BottomSection(authViewModel: MockAuthViewModel, onContinueClick: () -> Unit) {
