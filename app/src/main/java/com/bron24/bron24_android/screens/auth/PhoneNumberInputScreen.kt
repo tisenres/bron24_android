@@ -1,3 +1,5 @@
+package com.bron24.bron24_android.screens.auth
+
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,7 +38,7 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.auth.MockAuthViewModel
 import com.bron24.bron24_android.screens.howitworks.gilroyFontFamily
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhoneNumberInputScreen(
     authViewModel: MockAuthViewModel = MockAuthViewModel(),
@@ -186,7 +188,9 @@ fun BottomSection(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)
+        modifier = Modifier
+            .bringIntoViewRequester(bringIntoViewRequester)
+            .padding(bottom = 16.dp)
     ) {
         TermsAndConditionsText()
         Spacer(modifier = Modifier.height(12.dp))

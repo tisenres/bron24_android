@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.main
 
-import PhoneNumberInputScreen
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.bron24.bron24_android.screens.auth.OTPInputScreen
+import com.bron24.bron24_android.screens.auth.PhoneNumberInputScreen
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
 import com.bron24.bron24_android.screens.language.LanguageSelectionScreen
 import com.bron24.bron24_android.screens.location.LocationRequestScreen
