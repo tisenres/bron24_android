@@ -1,11 +1,8 @@
 package com.bron24.bron24_android.screens.auth
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
@@ -35,17 +32,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.auth.MockAuthViewModel
 import com.bron24.bron24_android.screens.howitworks.gilroyFontFamily
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PhoneNumberInputScreen(
     authViewModel: MockAuthViewModel = MockAuthViewModel(),
     onContinueClick: () -> Unit = {}
 ) {
     var phoneNumber by remember { mutableStateOf("+998") }
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val focusRequester = remember { FocusRequester() }
 
     Column(
         modifier = Modifier
@@ -54,7 +50,9 @@ fun PhoneNumberInputScreen(
             .padding(horizontal = 20.dp)
             .imePadding()
     ) {
+        Spacer(modifier = Modifier.height(24.dp))
         Logo()
+        Spacer(modifier = Modifier.height(24.dp))
         CustomPhoneNumberField(
             value = phoneNumber,
             onValueChange = { newValue ->
@@ -62,10 +60,11 @@ fun PhoneNumberInputScreen(
                     phoneNumber = newValue
                     authViewModel.updatePhoneNumber(newValue)
                 }
-            }
+            },
+            focusRequester = focusRequester
         )
         Spacer(modifier = Modifier.weight(1f))
-        BottomSection(authViewModel, onContinueClick, bringIntoViewRequester)
+        BottomSection(authViewModel, onContinueClick)
     }
 }
 
@@ -76,18 +75,17 @@ fun Logo() {
         contentDescription = "Logo Bron24",
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 24.dp, start = 60.dp, end = 60.dp, bottom = 52.dp),
+            .padding(horizontal = 60.dp),
         contentScale = ContentScale.FillWidth
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CustomPhoneNumberField(
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester
 ) {
-    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
@@ -179,18 +177,14 @@ fun CustomPhoneNumberField(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomSection(
     authViewModel: MockAuthViewModel,
-    onContinueClick: () -> Unit,
-    bringIntoViewRequester: BringIntoViewRequester
+    onContinueClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .bringIntoViewRequester(bringIntoViewRequester)
-            .padding(bottom = 16.dp)
+        modifier = Modifier.padding(bottom = 16.dp)
     ) {
         TermsAndConditionsText()
         Spacer(modifier = Modifier.height(12.dp))
