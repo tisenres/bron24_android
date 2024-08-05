@@ -3,7 +3,6 @@ package com.bron24.bron24_android.screens.auth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.FlowRowScopeInstance.align
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
@@ -92,10 +91,9 @@ fun CustomPhoneNumberField(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(58.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(Color(0xFFF6F6F6))
-            .padding(horizontal = 10.dp)
+            .padding(10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -111,7 +109,9 @@ fun CustomPhoneNumberField(
             Spacer(modifier = Modifier.width(10.dp))
             Column(
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.phone_number),
@@ -122,11 +122,13 @@ fun CustomPhoneNumberField(
                         color = Color(0xFFB8BDCA),
                         lineHeight = 16.8.sp,
                         letterSpacing = (-0.028).em
-                    )
+                    ),
+                    modifier = Modifier.align(Alignment.Start)
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = "+998",
