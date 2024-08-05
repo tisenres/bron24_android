@@ -1,9 +1,7 @@
 package com.bron24.bron24_android.di
 
-import com.bron24.bron24_android.data.repository.VenueRepositoryImpl
-import com.bron24.bron24_android.domain.repository.VenueRepository
-import com.bron24.bron24_android.data.repository.PreferencesRepositoryImpl
-import com.bron24.bron24_android.domain.repository.PreferencesRepository
+import com.bron24.bron24_android.data.repository.*
+import com.bron24.bron24_android.domain.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

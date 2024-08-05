@@ -17,7 +17,7 @@ import com.bron24.bron24_android.screens.location.LocationRequestScreen
 import kotlinx.coroutines.launch
 
 @Composable
-fun NavScreen(navController: NavHostController, mainViewModel: MainViewModel) {
+fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewModel) {
     val coroutineScope = rememberCoroutineScope()
     val isOnboardingCompleted by mainViewModel.isOnboardingCompleted.collectAsState()
 
@@ -100,7 +100,7 @@ fun NavScreen(navController: NavHostController, mainViewModel: MainViewModel) {
             }
             composable(Screen.Main.route) {
                 AnimatedScreenTransition {
-                    AppScaffold()
+                    MainAppScaffold()
                 }
             }
         }

@@ -20,7 +20,7 @@ import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 
 @Composable
-fun AppScaffold() {
+fun MainAppScaffold() {
     val nestedNavController = rememberNavController()
 
     Scaffold(

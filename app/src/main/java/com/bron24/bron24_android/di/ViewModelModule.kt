@@ -10,7 +10,6 @@ import com.bron24.bron24_android.screens.language.LanguageViewModel
 import com.bron24.bron24_android.screens.location.LocationModel
 import com.bron24.bron24_android.screens.location.LocationViewModel
 import com.bron24.bron24_android.screens.main.MainViewModel
-import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.map.VenueMapModel
 import com.bron24.bron24_android.screens.map.VenueMapViewModel
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsModel

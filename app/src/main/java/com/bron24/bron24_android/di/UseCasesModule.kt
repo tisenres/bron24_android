@@ -8,21 +8,10 @@ import com.bron24.bron24_android.data.repository.AuthRepositoryImpl
 import com.bron24.bron24_android.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
 import com.bron24.bron24_android.data.repository.TokenRepositoryImpl
-import com.bron24.bron24_android.domain.repository.AuthRepository
-import com.bron24.bron24_android.domain.repository.LanguageRepository
-import com.bron24.bron24_android.domain.repository.LocationRepository
-import com.bron24.bron24_android.domain.repository.TokenRepository
-import com.bron24.bron24_android.domain.usecases.auth.ClearTokenUseCase
-import com.bron24.bron24_android.domain.usecases.auth.IsTokenExpiredUseCase
-import com.bron24.bron24_android.domain.usecases.auth.RequestOTPUseCase
-import com.bron24.bron24_android.domain.usecases.auth.SaveTokenUseCase
-import com.bron24.bron24_android.domain.usecases.auth.VerifyAndStoreOTPUseCase
-import com.bron24.bron24_android.domain.usecases.auth.VerifyOTPUseCase
-import com.bron24.bron24_android.domain.usecases.language.GetAvailableLanguagesUseCase
-import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
-import com.bron24.bron24_android.domain.usecases.language.SetUserLanguageUseCase
-import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
-import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
+import com.bron24.bron24_android.domain.usecases.auth.*
+import com.bron24.bron24_android.domain.usecases.language.*
+import com.bron24.bron24_android.domain.usecases.location.*
+import com.bron24.bron24_android.domain.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -76,40 +65,6 @@ object UseCasesModule {
 
     @Provides
     @Singleton
-    fun provideLanguageRepository(
-        appPreference: AppPreference
-    ): LanguageRepository {
-        return LanguageRepositoryImpl(appPreference)
-    }
-
-    @Provides
-    @Singleton
-    fun provideAuthRepository(
-        otpService: OTPApiService,
-        tokenRepository: TokenRepository
-    ): AuthRepository {
-        return AuthRepositoryImpl(otpService, tokenRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun bindLocationRepository(
-        @ApplicationContext context: Context,
-        permissionChecker: PermissionChecker
-    ): LocationRepository {
-        return LocationRepositoryImpl(context, permissionChecker)
-    }
-
-    @Provides
-    @Singleton
-    fun provideTokenRepository(
-        appPreference: AppPreference
-    ): TokenRepository {
-        return TokenRepositoryImpl(appPreference)
-    }
-
-    @Provides
-    @Singleton
     fun provideRequestOTPUseCase(authRepository: AuthRepository): RequestOTPUseCase {
         return RequestOTPUseCase(authRepository)
     }
@@ -146,4 +101,42 @@ object UseCasesModule {
     ): VerifyAndStoreOTPUseCase {
         return VerifyAndStoreOTPUseCase(verifyOTPUseCase, saveTokenUseCase)
     }
+
+    // Repositories - Start
+
+    @Provides
+    @Singleton
+    fun provideLanguageRepository(
+        appPreference: AppPreference
+    ): LanguageRepository {
+        return LanguageRepositoryImpl(appPreference)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        otpService: OTPApiService,
+        tokenRepository: TokenRepository
+    ): AuthRepository {
+        return AuthRepositoryImpl(otpService, tokenRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun bindLocationRepository(
+        @ApplicationContext context: Context,
+        permissionChecker: PermissionChecker
+    ): LocationRepository {
+        return LocationRepositoryImpl(context, permissionChecker)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTokenRepository(
+        appPreference: AppPreference
+    ): TokenRepository {
+        return TokenRepositoryImpl(appPreference)
+    }
+
+    // Repositories - End
 }
