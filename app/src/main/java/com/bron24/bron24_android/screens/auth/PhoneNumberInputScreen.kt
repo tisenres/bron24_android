@@ -10,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -34,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun PhoneNumberInputScreen(
     authViewModel: MockAuthViewModel = MockAuthViewModel(),
@@ -48,7 +46,6 @@ fun PhoneNumberInputScreen(
             .fillMaxSize()
             .background(Color.White)
             .padding(horizontal = 20.dp)
-            .imePadding()
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         Logo()
@@ -184,10 +181,12 @@ fun BottomSection(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(bottom = 16.dp)
+        modifier = Modifier
+            .imePadding()
+            .padding(bottom = 16.dp)
     ) {
         TermsAndConditionsText()
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         ConfirmButton(
             isEnabled = true,
             onClick = {
