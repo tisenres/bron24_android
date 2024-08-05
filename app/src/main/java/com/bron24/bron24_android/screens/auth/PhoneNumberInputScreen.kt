@@ -34,16 +34,15 @@ fun PhoneNumberInputScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.logo_bron24),
             contentDescription = "Logo Bron24",
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp, start = 50.dp, end = 50.dp, bottom = 52.dp),
+                .padding(top = 24.dp, start = 80.dp, end = 80.dp, bottom = 52.dp),
             contentScale = ContentScale.FillWidth
         )
 
@@ -59,25 +58,25 @@ fun PhoneNumberInputScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
+        Text(
+            text = stringResource(id = R.string.terms_and_conditions),
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = Color.Black,
+                lineHeight = 16.8.sp,
+                letterSpacing = (-0.028).em
+            ),
+        )
+
+        ConfirmButton(
+            isEnabled = true,
             onClick = {
                 authViewModel.requestOTP()
                 onContinueClick()
             },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.continue_text),
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    color = Color.White,
-                    lineHeight = 16.8.sp,
-                    letterSpacing = (-0.028).em
-                ),
-            )
-        }
+        )
     }
 }
 
@@ -87,60 +86,84 @@ fun CustomPhoneNumberField(
     value: String,
     onValueChange: (String) -> Unit
 ) {
-    Box(
-        contentAlignment = Alignment.CenterStart,
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color(0xFFF6F6F6))
-            .padding(horizontal = 16.dp, vertical = 12.dp)
             .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(color = Color(0xfff6f6f6))
+            .padding(all = 10.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_person_outline_24),
+            contentDescription = "User Icon",
+            modifier = Modifier
+                .size(18.dp),
+            tint = Color(0xFFB8BDCA)
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_person_outline_24),
-                contentDescription = "User Icon",
-                modifier = Modifier.size(24.dp),
-                tint = Color(0xFFB8BDCA),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column(
-                verticalArrangement = Arrangement.spacedBy(3.dp),
+            Text(
+                text = stringResource(id = R.string.phone_number),
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    color = Color(0xFFB8BDCA),
+                    lineHeight = 16.8.sp,
+                    letterSpacing = (-0.028).em
+                ),
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 8.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.phone_number),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
-                        color = Color(0xFFB8BDCA),
-                        lineHeight = 16.8.sp,
-                        letterSpacing = (-0.028).em
-                    ),
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-                TextField(
-                    value = value,
-                    onValueChange = onValueChange,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number
-                    ),
-                    singleLine = true,
-                    textStyle = TextStyle(fontSize = 14.sp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedTextColor = Color(0xFF1F2B37)
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+                    .wrapContentHeight(align = Alignment.CenterVertically)
+            )
+            TextField(
+                value = value,
+                onValueChange = onValueChange,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                singleLine = true,
+                textStyle = TextStyle(fontSize = 14.sp),
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedTextColor = Color(0xFF1F2B37)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
+    }
+}
+
+@Composable
+fun ConfirmButton(
+    isEnabled: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            contentColor = Color.White,
+            containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4)
+        ),
+        enabled = isEnabled,
+        shape = RoundedCornerShape(10.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(47.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.continue_text),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            fontFamily = com.bron24.bron24_android.screens.main.theme.gilroyFontFamily,
+            color = if (isEnabled) Color.White else Color.Gray,
+            lineHeight = 32.sp
+        )
     }
 }
 
