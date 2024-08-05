@@ -86,54 +86,58 @@ fun CustomPhoneNumberField(
     value: String,
     onValueChange: (String) -> Unit
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(shape = RoundedCornerShape(10.dp))
-            .background(color = Color(0xfff6f6f6))
-            .padding(all = 10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color(0xFFF6F6F6))
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_person_outline_24),
-            contentDescription = "User Icon",
-            modifier = Modifier
-                .size(18.dp),
-            tint = Color(0xFFB8BDCA)
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = stringResource(id = R.string.phone_number),
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    color = Color(0xFFB8BDCA),
-                    lineHeight = 16.8.sp,
-                    letterSpacing = (-0.028).em
-                ),
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_person_outline_24),
+                contentDescription = "User Icon",
                 modifier = Modifier
-                    .wrapContentHeight(align = Alignment.CenterVertically)
+                    .size(24.dp),
+                tint = Color(0xFFB8BDCA)
             )
-            TextField(
-                value = value,
-                onValueChange = onValueChange,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                ),
-                singleLine = true,
-                textStyle = TextStyle(fontSize = 14.sp),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedTextColor = Color(0xFF1F2B37)
-                ),
+            Spacer(modifier = Modifier.width(10.dp))
+            Column(
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.phone_number),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp,
+                        color = Color(0xFFB8BDCA),
+                        lineHeight = 16.8.sp,
+                        letterSpacing = (-0.028).em
+                    )
+                )
+                TextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    singleLine = true,
+                    textStyle = TextStyle(fontSize = 14.sp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedTextColor = Color(0xFF1F2B37)
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -158,11 +162,12 @@ fun ConfirmButton(
     ) {
         Text(
             text = stringResource(id = R.string.continue_text),
-            fontSize = 16.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = com.bron24.bron24_android.screens.main.theme.gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
-            lineHeight = 32.sp
+            lineHeight = 16.8.sp,
+            letterSpacing = (-0.028).em
         )
     }
 }
