@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.screens.auth.AuthModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,9 @@ class AuthViewModel @Inject constructor(
     private val _otpVerifyStatus = MutableStateFlow(false)
     val otpVerifyStatus: StateFlow<Boolean> get() = _otpVerifyStatus
 
+    private val _isTokenExpired = MutableStateFlow(false)
+    val isTokenExpired: StateFlow<Boolean> get() = _isTokenExpired
+
     fun updatePhoneNumber(phone: String) {
         _phoneNumber.value = phone
     }
@@ -38,20 +42,31 @@ class AuthViewModel @Inject constructor(
 
     fun requestOTP() {
         viewModelScope.launch {
-            val response = model.requestOTPUseCase(_phoneNumber.value)
+            val response = model.requestOTP(_phoneNumber.value)
             _otpRequestStatus.value = response.success
         }
     }
 
     fun verifyOTP() {
         viewModelScope.launch {
-            val response = model.verifyOTPUseCase(_phoneNumber.value, _otp.value)
+            val response = model.verifyOTP(_phoneNumber.value, _otp.value)
             if (response.success) {
                 _token.value = response.token ?: ""
                 _otpVerifyStatus.value = true
+                _isTokenExpired.value = false
             } else {
                 _otpVerifyStatus.value = false
             }
+        }
+    }
+
+    fun checkTokenValidity() {
+        _isTokenExpired.value = model.isTokenExpired()
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            model.clearToken()
         }
     }
 }

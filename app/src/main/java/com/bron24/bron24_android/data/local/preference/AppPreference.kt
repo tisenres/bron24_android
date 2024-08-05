@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 private const val IS_ONBOARDING_COMPLETED = "is_onboarding_completed"
 private const val SELECTED_LANGUAGE = "selected_language"
 private const val TOKEN_KEY = "auth_token"
-
+private const val TOKEN_EXPIRY_KEY = "auth_token_expiry"
 
 class AppPreference(private val context: Context) {
 
@@ -29,15 +29,21 @@ class AppPreference(private val context: Context) {
         preferences.edit().putBoolean(IS_ONBOARDING_COMPLETED, completed).apply()
     }
 
-    fun saveToken(token: String) {
+    fun saveToken(token: String, expiry: Long) {
         preferences.edit().putString(TOKEN_KEY, token).apply()
+        preferences.edit().putLong(TOKEN_EXPIRY_KEY, expiry).apply()
     }
 
     fun getToken(): String? {
         return preferences.getString(TOKEN_KEY, null)
     }
 
+    fun getTokenExpiry(): Long {
+        return preferences.getLong(TOKEN_EXPIRY_KEY, 0)
+    }
+
     fun clearToken() {
         preferences.edit().remove(TOKEN_KEY).apply()
+        preferences.edit().remove(TOKEN_EXPIRY_KEY).apply()
     }
 }

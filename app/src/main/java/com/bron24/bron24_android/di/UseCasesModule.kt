@@ -7,9 +7,17 @@ import com.bron24.bron24_android.data.network.apiservices.OTPApiService
 import com.bron24.bron24_android.data.repository.AuthRepositoryImpl
 import com.bron24.bron24_android.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
+import com.bron24.bron24_android.data.repository.TokenRepositoryImpl
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.LanguageRepository
 import com.bron24.bron24_android.domain.repository.LocationRepository
+import com.bron24.bron24_android.domain.repository.TokenRepository
+import com.bron24.bron24_android.domain.usecases.auth.ClearTokenUseCase
+import com.bron24.bron24_android.domain.usecases.auth.IsTokenExpiredUseCase
+import com.bron24.bron24_android.domain.usecases.auth.RequestOTPUseCase
+import com.bron24.bron24_android.domain.usecases.auth.SaveTokenUseCase
+import com.bron24.bron24_android.domain.usecases.auth.VerifyAndStoreOTPUseCase
+import com.bron24.bron24_android.domain.usecases.auth.VerifyOTPUseCase
 import com.bron24.bron24_android.domain.usecases.language.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
 import com.bron24.bron24_android.domain.usecases.language.SetUserLanguageUseCase
@@ -78,9 +86,9 @@ object UseCasesModule {
     @Singleton
     fun provideAuthRepository(
         otpService: OTPApiService,
-        appPreference: AppPreference
+        tokenRepository: TokenRepository
     ): AuthRepository {
-        return AuthRepositoryImpl(otpService, appPreference)
+        return AuthRepositoryImpl(otpService, tokenRepository)
     }
 
     @Provides
@@ -90,5 +98,52 @@ object UseCasesModule {
         permissionChecker: PermissionChecker
     ): LocationRepository {
         return LocationRepositoryImpl(context, permissionChecker)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTokenRepository(
+        appPreference: AppPreference
+    ): TokenRepository {
+        return TokenRepositoryImpl(appPreference)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRequestOTPUseCase(authRepository: AuthRepository): RequestOTPUseCase {
+        return RequestOTPUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVerifyOTPUseCase(authRepository: AuthRepository): VerifyOTPUseCase {
+        return VerifyOTPUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveTokenUseCase(tokenRepository: TokenRepository): SaveTokenUseCase {
+        return SaveTokenUseCase(tokenRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideIsTokenExpiredUseCase(tokenRepository: TokenRepository): IsTokenExpiredUseCase {
+        return IsTokenExpiredUseCase(tokenRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideClearTokenUseCase(tokenRepository: TokenRepository): ClearTokenUseCase {
+        return ClearTokenUseCase(tokenRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVerifyAndStoreOTPUseCase(
+        verifyOTPUseCase: VerifyOTPUseCase,
+        saveTokenUseCase: SaveTokenUseCase
+    ): VerifyAndStoreOTPUseCase {
+        return VerifyAndStoreOTPUseCase(verifyOTPUseCase, saveTokenUseCase)
     }
 }
