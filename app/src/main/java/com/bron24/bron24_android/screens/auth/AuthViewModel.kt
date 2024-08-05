@@ -32,12 +32,21 @@ class AuthViewModel @Inject constructor(
     private val _isTokenExpired = MutableStateFlow(false)
     val isTokenExpired: StateFlow<Boolean> get() = _isTokenExpired
 
-    fun updatePhoneNumber(phone: String) {
-        _phoneNumber.value = phone
-    }
+    private val _isPhoneNumberValid = MutableStateFlow(false)
+    val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
 
     fun updateOTP(code: String) {
         _otp.value = code
+    }
+
+    fun updatePhoneNumber(phone: String) {
+        _phoneNumber.value = phone
+        _isPhoneNumberValid.value = isValidUzbekPhoneNumber(phone)
+    }
+
+    private fun isValidUzbekPhoneNumber(phone: String): Boolean {
+        val regex = "^\\+998[0-9]{9}$".toRegex()
+        return regex.matches(phone)
     }
 
     fun requestOTP() {

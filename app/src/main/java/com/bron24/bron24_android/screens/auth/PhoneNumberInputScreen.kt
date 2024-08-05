@@ -23,6 +23,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -30,15 +31,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun PhoneNumberInputScreen(
-    authViewModel: MockAuthViewModel = MockAuthViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel(),
     onContinueClick: () -> Unit = {}
 ) {
     var phoneNumber by remember { mutableStateOf("+998") }
+    val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
     val focusRequester = remember { FocusRequester() }
 
     Column(
@@ -55,13 +58,13 @@ fun PhoneNumberInputScreen(
             onValueChange = { newValue ->
                 if (newValue.startsWith("+998")) {
                     phoneNumber = newValue
-                    authViewModel.updatePhoneNumber(newValue)
                 }
             },
-            focusRequester = focusRequester
+            focusRequester = focusRequester,
+            authViewModel = authViewModel
         )
         Spacer(modifier = Modifier.weight(1f))
-        BottomSection(authViewModel, onContinueClick)
+        BottomSection(authViewModel, onContinueClick, isPhoneNumberValid)
     }
 }
 
@@ -81,7 +84,8 @@ fun Logo() {
 fun CustomPhoneNumberField(
     value: String,
     onValueChange: (String) -> Unit,
-    focusRequester: FocusRequester
+    focusRequester: FocusRequester,
+    authViewModel: AuthViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -146,9 +150,16 @@ fun CustomPhoneNumberField(
                     Spacer(modifier = Modifier.width(3.dp))
                     BasicTextField(
                         value = value.removePrefix("+998"),
-                        onValueChange = { newValue -> onValueChange("+998$newValue") },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Number
+                        onValueChange = { newValue ->
+                            if (newValue.length <= 9) {
+                                val fullNumber = "+998$newValue"
+                                onValueChange(fullNumber)
+                                authViewModel.updatePhoneNumber(fullNumber)
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.NumberPassword,
+                            imeAction = ImeAction.Done
                         ),
                         singleLine = true,
                         textStyle = TextStyle(
@@ -176,8 +187,9 @@ fun CustomPhoneNumberField(
 
 @Composable
 fun BottomSection(
-    authViewModel: MockAuthViewModel,
-    onContinueClick: () -> Unit
+    authViewModel: AuthViewModel,
+    onContinueClick: () -> Unit,
+    isPhoneNumberValid: Boolean
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -188,7 +200,7 @@ fun BottomSection(
         TermsAndConditionsText()
         Spacer(modifier = Modifier.height(12.dp))
         ConfirmButton(
-            isEnabled = true,
+            isEnabled = isPhoneNumberValid,
             onClick = {
                 authViewModel.requestOTP()
                 onContinueClick()
@@ -272,7 +284,7 @@ fun ConfirmButton(
 @Composable
 private fun PhoneNumberInputScreenPreview() {
     PhoneNumberInputScreen(
-        authViewModel = MockAuthViewModel(),
+        authViewModel = hiltViewModel(),
         onContinueClick = {}
     )
 }
