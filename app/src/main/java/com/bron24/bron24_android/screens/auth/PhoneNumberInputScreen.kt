@@ -8,10 +8,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -28,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.howitworks.gilroyFontFamily
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.ui.platform.LocalUriHandler
 
 @Composable
 fun PhoneNumberInputScreen(
@@ -40,6 +45,7 @@ fun PhoneNumberInputScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White)
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -66,6 +72,8 @@ fun PhoneNumberInputScreen(
 
         TermsAndConditionsText()
 
+        Spacer(modifier = Modifier.height(12.dp))
+
         ConfirmButton(
             isEnabled = true,
             onClick = {
@@ -76,12 +84,21 @@ fun PhoneNumberInputScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CustomPhoneNumberField(
     value: String,
     onValueChange: (String) -> Unit
 ) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -131,7 +148,9 @@ fun CustomPhoneNumberField(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedTextColor = Color(0xFF1F2B37)
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
                 )
             }
         }
@@ -142,7 +161,7 @@ fun CustomPhoneNumberField(
 fun TermsAndConditionsText() {
     val uriHandler = LocalUriHandler.current
     val annotatedText = buildAnnotatedString {
-        append(stringResource(id = R.string.terms_and_conditions))
+        append("By clicking on the Continue button you accept our ")
 
         pushStringAnnotation(
             tag = "URL",
@@ -158,7 +177,7 @@ fun TermsAndConditionsText() {
                 letterSpacing = (-0.028).em
             )
         ) {
-            append(stringResource(id = R.string.terms_and_conditions_text))
+            append("Terms & Conditions")
         }
         pop()
     }
@@ -205,7 +224,7 @@ fun ConfirmButton(
             text = stringResource(id = R.string.continue_text),
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
-            fontFamily = com.bron24.bron24_android.screens.main.theme.gilroyFontFamily,
+            fontFamily = gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
             lineHeight = 32.sp
         )
