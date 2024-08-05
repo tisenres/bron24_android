@@ -14,15 +14,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.howitworks.gilroyFontFamily
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.ui.platform.LocalUriHandler
 
 @Composable
 fun PhoneNumberInputScreen(
@@ -58,17 +64,7 @@ fun PhoneNumberInputScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = stringResource(id = R.string.terms_and_conditions),
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                color = Color.Black,
-                lineHeight = 16.8.sp,
-                letterSpacing = (-0.028).em
-            ),
-        )
+        TermsAndConditionsText()
 
         ConfirmButton(
             isEnabled = true,
@@ -143,6 +139,51 @@ fun CustomPhoneNumberField(
 }
 
 @Composable
+fun TermsAndConditionsText() {
+    val uriHandler = LocalUriHandler.current
+    val annotatedText = buildAnnotatedString {
+        append(stringResource(id = R.string.terms_and_conditions))
+
+        pushStringAnnotation(
+            tag = "URL",
+            annotation = "https://example.com/terms"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = Color(0xFF32B768),
+                textDecoration = TextDecoration.Underline,
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                letterSpacing = (-0.028).em
+            )
+        ) {
+            append(stringResource(id = R.string.terms_and_conditions_text))
+        }
+        pop()
+    }
+
+    ClickableText(
+        text = annotatedText,
+        style = TextStyle(
+            fontFamily = gilroyFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 14.sp,
+            color = Color.Black,
+            lineHeight = 16.8.sp,
+            letterSpacing = (-0.028).em
+        ),
+        onClick = { offset ->
+            annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                .firstOrNull()?.let { annotation ->
+                    uriHandler.openUri(annotation.item)
+                }
+        },
+        modifier = Modifier.padding(vertical = 16.dp)
+    )
+}
+
+@Composable
 fun ConfirmButton(
     isEnabled: Boolean,
     onClick: () -> Unit,
@@ -162,12 +203,11 @@ fun ConfirmButton(
     ) {
         Text(
             text = stringResource(id = R.string.continue_text),
-            fontSize = 14.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = com.bron24.bron24_android.screens.main.theme.gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
-            lineHeight = 16.8.sp,
-            letterSpacing = (-0.028).em
+            lineHeight = 32.sp
         )
     }
 }
