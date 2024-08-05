@@ -1,7 +1,7 @@
 package com.bron24.bron24_android.di
 
 import android.content.Context
-import com.bron24.bron24_android.data.PermissionChecker
+import com.bron24.bron24_android.data.local.PermissionChecker
 import com.bron24.bron24_android.data.local.preference.AppPreference
 import com.bron24.bron24_android.data.network.apiservices.OTPApiService
 import com.bron24.bron24_android.data.repository.AuthRepositoryImpl

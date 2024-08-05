@@ -2,11 +2,10 @@ package com.bron24.bron24_android.data.repository
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.activity.result.contract.ActivityResultContracts
 import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.repository.LocationRepository
-import com.bron24.bron24_android.data.PermissionChecker
+import com.bron24.bron24_android.data.local.PermissionChecker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.channels.awaitClose

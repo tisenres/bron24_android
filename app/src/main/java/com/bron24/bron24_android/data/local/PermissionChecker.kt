@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.data
+package com.bron24.bron24_android.data.local
 
 import android.content.Context
 import android.content.pm.PackageManager

@@ -36,15 +36,6 @@ fun HowItWorksScreen1() {
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.nearby_stadiums),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .padding(horizontal = 10.dp),
-            contentScale = ContentScale.FillWidth
-        )
         Text(
             text = stringResource(id = R.string.nearby_stadiums),
             style = TextStyle(
@@ -52,7 +43,7 @@ fun HowItWorksScreen1() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 color = Color(0xFF3C2E56),
-                lineHeight = 29.4.sp
+                lineHeight = 29.4.sp,
             ),
         )
         Text(
