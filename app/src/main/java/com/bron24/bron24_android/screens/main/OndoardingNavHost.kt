@@ -71,6 +71,9 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                             navController.navigate(Screen.LocationPermission.route) {
                                 popUpTo(Screen.OTPInput.route) { inclusive = true }
                             }
+                        },
+                        onBackClick = {
+
                         }
                     )
                 }

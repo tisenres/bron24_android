@@ -50,10 +50,10 @@ class AuthViewModel @Inject constructor(
     }
 
     fun requestOTP() {
-        viewModelScope.launch {
-            val response = model.requestOTP(_phoneNumber.value)
-            _otpRequestStatus.value = response.success
-        }
+//        viewModelScope.launch {
+//            val response = model.requestOTP(_phoneNumber.value)
+//            _otpRequestStatus.value = response.success
+//        }
     }
 
     fun verifyOTP() {

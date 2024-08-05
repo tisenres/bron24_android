@@ -34,4 +34,6 @@
     <string name="continue_text">Continue</string>
     <string name="terms_and_conditions">By clicking on the Continue button you accept our</string>
     <string name="terms_and_conditions_text"><![CDATA[Terms & Conditions\n]]></string>
+    <string name="enter_otp_code">Enter verification code sent on your phone</string>
+    <string name="otp_title">OTP</string>
 </resources>
