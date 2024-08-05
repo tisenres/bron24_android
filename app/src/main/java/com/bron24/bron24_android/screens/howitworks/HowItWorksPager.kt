@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.Screen
+import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,7 +67,7 @@ fun HowItWorksPager(
                     text = stringResource(id = R.string.skip),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
                         color = Color.Black,
                         lineHeight = 17.15.sp,
@@ -108,7 +109,7 @@ fun HowItWorksPager(
                     text = stringResource(id = R.string.next),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
                         color = Color(0xFF32B768),
                         lineHeight = 17.15.sp,

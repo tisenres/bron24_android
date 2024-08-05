@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun HowItWorksScreen2(onFinishClick: () -> Unit) {
@@ -31,7 +32,7 @@ fun HowItWorksScreen2(onFinishClick: () -> Unit) {
     ) {
         Image(
             painter = painterResource(id = R.drawable.select_stadium),
-            contentDescription = null,
+            contentDescription = "Nearby stadiums",
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
@@ -42,7 +43,7 @@ fun HowItWorksScreen2(onFinishClick: () -> Unit) {
             text = stringResource(id = R.string.select_stadium),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.ExtraBold,
+                fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 color = Color(0xFF3C2E56),
                 lineHeight = 29.4.sp

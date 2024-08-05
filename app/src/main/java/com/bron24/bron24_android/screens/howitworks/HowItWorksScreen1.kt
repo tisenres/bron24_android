@@ -12,8 +12,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,11 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
-
-val gilroyFontFamily = FontFamily(
-    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
-    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
-)
+import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun HowItWorksScreen1() {
@@ -36,6 +30,15 @@ fun HowItWorksScreen1() {
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.select_stadium),
+            contentDescription = "Select stadium",
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .padding(horizontal = 10.dp),
+            contentScale = ContentScale.FillWidth
+        )
         Text(
             text = stringResource(id = R.string.nearby_stadiums),
             style = TextStyle(

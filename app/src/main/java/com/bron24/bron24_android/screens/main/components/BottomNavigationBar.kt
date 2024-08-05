@@ -23,11 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.Screen
-
-val gilroyFontFamily = FontFamily(
-    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
-    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold)
-)
+import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {

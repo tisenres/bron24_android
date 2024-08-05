@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.howitworks.gilroyFontFamily
+import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
