@@ -149,10 +149,11 @@ fun CustomPhoneNumberField(
                     )
                     Spacer(modifier = Modifier.width(3.dp))
                     BasicTextField(
-                        value = value.removePrefix("+998"),
+                        value = formatPhoneNumber(value.removePrefix("+998")),
                         onValueChange = { newValue ->
-                            if (newValue.length <= 9) {
-                                val fullNumber = "+998$newValue"
+                            val digitsOnly = newValue.filter { it.isDigit() }
+                            if (digitsOnly.length <= 9) {
+                                val fullNumber = "+998$digitsOnly"
                                 onValueChange(fullNumber)
                                 authViewModel.updatePhoneNumber(fullNumber)
                             }
@@ -185,6 +186,15 @@ fun CustomPhoneNumberField(
     }
 }
 
+fun formatPhoneNumber(input: String): String {
+    val digitsOnly = input.filter { it.isDigit() }
+    return buildString {
+        digitsOnly.forEachIndexed { index, char ->
+            if (index == 2 || index == 5 || index == 7) append(' ')
+            append(char)
+        }
+    }
+}
 @Composable
 fun BottomSection(
     authViewModel: AuthViewModel,
