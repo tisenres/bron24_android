@@ -1,6 +1,9 @@
 package com.bron24.bron24_android.di
 
 import com.bron24.bron24_android.domain.usecases.onboarding.OnboardingUseCase
+import com.bron24.bron24_android.screens.auth.AuthModel
+import com.bron24.bron24_android.screens.auth.AuthViewModel
+import com.bron24.bron24_android.screens.auth.MockAuthViewModel
 import com.bron24.bron24_android.screens.cityselection.domain.usecases.GetAvailableCitiesUseCase
 import com.bron24.bron24_android.screens.cityselection.domain.usecases.UpdateSelectedCityUseCase
 import com.bron24.bron24_android.screens.cityselection.presentation.CityViewModel
@@ -81,5 +84,13 @@ object ViewModelModule {
         onboardingUseCase: OnboardingUseCase
     ): MainViewModel {
         return MainViewModel(onboardingUseCase)
+    }
+
+    @Provides
+    @ActivityScoped
+    fun provideAuthViewModel(
+        authModel: AuthModel
+    ): AuthViewModel {
+        return AuthViewModel(authModel)
     }
 }

@@ -42,7 +42,7 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun PhoneNumberInputScreen(
-    authViewModel: MockAuthViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel(),
     navController: NavController,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
@@ -91,7 +91,7 @@ fun CustomPhoneNumberField(
     value: String,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
-    authViewModel: MockAuthViewModel
+    authViewModel: AuthViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -195,7 +195,7 @@ fun CustomPhoneNumberField(
 
 @Composable
 fun BottomSection(
-    authViewModel: MockAuthViewModel,
+    authViewModel: AuthViewModel,
     isPhoneNumberValid: Boolean,
     navController: NavController,
     phoneNumber: String
@@ -207,7 +207,6 @@ fun BottomSection(
             .padding(bottom = 16.dp)
     ) {
         TermsAndConditionsText()
-        Spacer(modifier = Modifier.height(12.dp))
         ConfirmButton(
             isEnabled = isPhoneNumberValid,
             onClick = {
@@ -256,8 +255,10 @@ fun TermsAndConditionsText() {
                     uriHandler.openUri(annotation.item)
                 }
         },
+        modifier = Modifier.fillMaxWidth()
     )
 }
+
 
 @Composable
 fun ConfirmButton(
