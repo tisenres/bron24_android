@@ -3,12 +3,15 @@ package com.bron24.bron24_android.screens.auth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -56,14 +59,18 @@ fun OTPInputScreen(
                 .height(24.dp),
             verticalAlignment = Alignment.CenterVertically // Center align children vertically
         ) {
-            IconButton(onClick = onBackClick) {
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier.size(24.dp)
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_arrow_back),
                     contentDescription = "Back",
+                    modifier = Modifier.size(22.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f)) // Spacer to push the text to the center
+            Spacer(modifier = Modifier.width(16.dp)) // Optional: Adjust spacing between icon and text
 
             Text(
                 text = stringResource(id = R.string.otp_title),
@@ -73,12 +80,13 @@ fun OTPInputScreen(
                     fontSize = 18.sp,
                     color = Color.Black,
                     lineHeight = 22.05.sp,
-                    letterSpacing = (-0.028).em
+                    letterSpacing = (-0.028).em,
+                    textAlign = TextAlign.Center
                 ),
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.CenterVertically)
             )
-
-            Spacer(modifier = Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(37.dp))
@@ -113,7 +121,8 @@ fun OTPInputScreen(
                         }
                     }
                 }
-            }
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
         Spacer(modifier = Modifier.height(56.dp))
@@ -146,7 +155,8 @@ fun OTPInputScreen(
 @Composable
 fun OTPTextField(
     otp: String,
-    onOtpChange: (String) -> Unit
+    onOtpChange: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     BasicTextField(
         value = otp,
@@ -155,7 +165,7 @@ fun OTPTextField(
         decorationBox = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(15.dp),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 repeat(4) { index ->
@@ -167,12 +177,24 @@ fun OTPTextField(
                         modifier = Modifier
                             .height(53.dp)
                             .aspectRatio(1f)
-                            .background(Color.LightGray.copy(alpha = 0.3f)),
+                            .background(Color(0xFFF6F6F6))
+                            .clip(
+                                RoundedCornerShape(
+                                    corner = CornerSize(5.dp)
+                                )
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = char,
-                            style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            style = TextStyle(
+                                fontFamily = gilroyFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = Color(0xFF8F92A4),
+                                lineHeight = 17.15.sp,
+                                letterSpacing = (-0.028).em
+                            ),
                         )
                     }
                 }
