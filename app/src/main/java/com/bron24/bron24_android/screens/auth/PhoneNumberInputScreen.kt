@@ -19,10 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,23 +27,22 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.MainViewModel
 import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun PhoneNumberInputScreen(
-    authViewModel: AuthViewModel = hiltViewModel(),
+    authViewModel: MockAuthViewModel = hiltViewModel(),
     navController: NavController,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
@@ -95,7 +91,7 @@ fun CustomPhoneNumberField(
     value: String,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
-    authViewModel: AuthViewModel
+    authViewModel: MockAuthViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -197,40 +193,9 @@ fun CustomPhoneNumberField(
     }
 }
 
-class PhoneNumberVisualTransformation : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText {
-        val trimmed = if (text.text.length >= 9) text.text.substring(0..8) else text.text
-        var output = ""
-        for (i in trimmed.indices) {
-            output += trimmed[i]
-            if (i == 1 || i == 4 || i == 6) output += " "
-        }
-
-        val phoneNumberOffsetTranslator = object : OffsetMapping {
-            override fun originalToTransformed(offset: Int): Int {
-                if (offset <= 1) return offset
-                if (offset <= 4) return offset + 1
-                if (offset <= 6) return offset + 2
-                if (offset <= 9) return offset + 3
-                return 12
-            }
-
-            override fun transformedToOriginal(offset: Int): Int {
-                if (offset <= 2) return offset
-                if (offset <= 6) return offset - 1
-                if (offset <= 9) return offset - 2
-                if (offset <= 12) return offset - 3
-                return 9
-            }
-        }
-
-        return TransformedText(AnnotatedString(output), phoneNumberOffsetTranslator)
-    }
-}
-
 @Composable
 fun BottomSection(
-    authViewModel: AuthViewModel,
+    authViewModel: MockAuthViewModel,
     isPhoneNumberValid: Boolean,
     navController: NavController,
     phoneNumber: String
@@ -327,4 +292,5 @@ fun ConfirmButton(
 @Preview(showBackground = true)
 @Composable
 private fun PhoneNumberInputScreenPreview() {
+    PhoneNumberInputScreen(navController = rememberNavController())
 }

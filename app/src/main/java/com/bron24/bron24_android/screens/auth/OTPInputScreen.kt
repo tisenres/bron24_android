@@ -3,7 +3,6 @@ package com.bron24.bron24_android.screens.auth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,9 +11,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -25,6 +28,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,9 +43,13 @@ fun OTPInputScreen(
     var otp by remember { mutableStateOf("") }
     val otpVerifyStatus by authViewModel.otpVerifyStatus.collectAsState()
     val scope = rememberCoroutineScope()
-    var resendCounter by remember { mutableStateOf(90) }
+    var resendCounter by remember { mutableIntStateOf(90) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
         while (resendCounter > 0) {
             delay(1000)
             resendCounter--
@@ -51,13 +59,13 @@ fun OTPInputScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White)
             .padding(20.dp)
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(24.dp),
-            verticalAlignment = Alignment.CenterVertically // Center align children vertically
         ) {
             IconButton(
                 onClick = onBackClick,
@@ -84,15 +92,16 @@ fun OTPInputScreen(
                     textAlign = TextAlign.Center
                 ),
                 modifier = Modifier
-                    .weight(1f)
-                    .align(Alignment.CenterVertically)
+                    .align(Alignment.Center)
             )
         }
 
         Spacer(modifier = Modifier.height(37.dp))
 
         Text(
-            text = stringResource(id = R.string.enter_otp_code) + "\n+998 " + phoneNumber,
+            text = stringResource(id = R.string.enter_otp_code) + "\n" + PhoneNumberVisualTransformation().filter(
+                AnnotatedString(phoneNumber)
+            ).text,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -122,22 +131,41 @@ fun OTPInputScreen(
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth() // This ensures the OTPTextField takes full width
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
         )
 
         Spacer(modifier = Modifier.height(56.dp))
 
         if (resendCounter > 0) {
-            Text(
-                text = "Resend code again after ${resendCounter / 60}:${
-                    String.format(
-                        "%02d",
-                        resendCounter % 60
-                    )
-                }",
-                color = Color.Gray,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(17.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_refresh),
+                    contentDescription = stringResource(id = R.string.refresh)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = stringResource(
+                        id = R.string.resend_code,
+                        resendCounter / 60,
+                        String.format("%02d", resendCounter % 60)
+                    ),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp,
+                        color = Color(0xFFB5DAC4),
+                        lineHeight = 16.8.sp,
+                        letterSpacing = (-0.028).em
+                    ),
+                )
+            }
         } else {
             TextButton(
                 onClick = {
@@ -146,7 +174,17 @@ fun OTPInputScreen(
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Text("Resend code", color = Color.Green)
+                Text(
+                    text = stringResource(id = R.string.resend_code_button),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp,
+                        color = Color(0xFFB5DAC4),
+                        lineHeight = 16.8.sp,
+                        letterSpacing = (-0.028).em
+                    ),
+                )
             }
         }
     }
@@ -178,11 +216,7 @@ fun OTPTextField(
                             .height(53.dp)
                             .aspectRatio(1f)
                             .background(Color(0xFFF6F6F6))
-                            .clip(
-                                RoundedCornerShape(
-                                    corner = CornerSize(5.dp)
-                                )
-                            ),
+                            .clip(RoundedCornerShape(5.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -208,7 +242,7 @@ fun OTPTextField(
 fun OTPInputScreenPreview() {
     OTPInputScreen(
         authViewModel = hiltViewModel(),
-        phoneNumber = "94 018 67 22",
+        phoneNumber = "998900000000",
         onOTPVerified = {},
         onBackClick = {}
     )

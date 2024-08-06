@@ -20,6 +20,9 @@ class MockAuthViewModel : ViewModel() {
     private val _otpVerifyStatus = MutableStateFlow(false)
     val otpVerifyStatus: StateFlow<Boolean> get() = _otpVerifyStatus
 
+    private val _isPhoneNumberValid = MutableStateFlow(false)
+    val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
+
     fun updatePhoneNumber(phone: String) {
         _phoneNumber.value = phone
     }
