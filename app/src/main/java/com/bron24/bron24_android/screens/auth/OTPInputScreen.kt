@@ -84,7 +84,7 @@ fun OTPInputScreen(
         Spacer(modifier = Modifier.height(37.dp))
 
         Text(
-            text = stringResource(id = R.string.enter_otp_code),
+            text = stringResource(id = R.string.enter_otp_code) + "\n+998 " + phoneNumber,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -94,13 +94,6 @@ fun OTPInputScreen(
                 letterSpacing = (-0.028).em
             ),
             modifier = Modifier.align(Alignment.Start)
-        )
-
-        Text(
-            text = phoneNumber,
-            style = TextStyle(fontSize = 16.sp),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(40.dp))
