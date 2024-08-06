@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -10,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OTPInputScreen(
-    authViewModel: MockAuthViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel(),
     phoneNumber: String,
     onOTPVerified: () -> Unit,
     onBackClick: () -> Unit
@@ -69,16 +69,16 @@ fun OTPInputScreen(
         ) {
             IconButton(
                 onClick = onBackClick,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(16.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_arrow_back),
                     contentDescription = "Back",
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp)) // Optional: Adjust spacing between icon and text
+            Spacer(modifier = Modifier.width(16.dp))
 
             Text(
                 text = stringResource(id = R.string.otp_title),
@@ -92,7 +92,7 @@ fun OTPInputScreen(
                     textAlign = TextAlign.Center
                 ),
                 modifier = Modifier
-                    .align(Alignment.Center)
+                    .align(Alignment.Center),
             )
         }
 
@@ -216,7 +216,11 @@ fun OTPTextField(
                             .height(53.dp)
                             .aspectRatio(1f)
                             .background(Color(0xFFF6F6F6))
-                            .clip(RoundedCornerShape(5.dp)),
+                            .border(
+                                width = 1.dp,
+                                color = Color(0xFFF6F6F6),
+                                shape = RoundedCornerShape(5.dp)
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(

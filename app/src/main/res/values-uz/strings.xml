@@ -34,10 +34,10 @@
     <string name="continue_text">Davom etish</string>
     <string name="terms_and_conditions">«Davom etish» tugmasini bosish orqali siz bizning</string>
     <string name="terms_and_conditions_text"><![CDATA[Shartlar va qoidalar\n]]></string>
-    <string name="enter_otp_code">Telefoningizga yuborilgan tasdiqlash kodini kiriting</string>
+    <string name="enter_otp_code">Telefoningizga yuborilgan kodni kiriting</string>
     <string name="otp_title">OTP</string>
     <string name="refresh">Refresh</string>
-    <string name="resend_code">Resend code again after %d:%02d</string>
+    <string name="resend_code">Resend code again after </string>
     <string name="resend_code_button">Resend code</string>
 
 </resources>

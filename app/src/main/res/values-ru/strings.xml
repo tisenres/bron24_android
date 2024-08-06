@@ -34,9 +34,9 @@
     <string name="continue_text">Продолжить</string>
     <string name="terms_and_conditions">Нажимая «Продолжить», вы соглашаетесь с нашими</string>
     <string name="terms_and_conditions_text"><![CDATA[Условиями использования\n]]></string>
-    <string name="enter_otp_code">Введите код подтверждения, отправленный на ваш телефон</string>
+    <string name="enter_otp_code">Введите код, отправленный на ваш телефон</string>
     <string name="otp_title">OTP</string>
     <string name="refresh">Refresh</string>
-    <string name="resend_code">Resend code again after %d:%02d</string>
+    <string name="resend_code">Resend code again after </string>
     <string name="resend_code_button">Resend code</string>
 </resources>
