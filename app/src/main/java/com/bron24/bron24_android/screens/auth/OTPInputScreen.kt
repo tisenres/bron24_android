@@ -28,7 +28,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OTPInputScreen(
-    authViewModel: AuthViewModel = hiltViewModel(),
+    authViewModel: MockAuthViewModel = hiltViewModel(),
+    phoneNumber: String,
     onOTPVerified: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -47,12 +48,13 @@ fun OTPInputScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(20.dp)
     ) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(24.dp)
-            .padding(horizontal = 20.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(24.dp),
+            verticalAlignment = Alignment.CenterVertically // Center align children vertically
         ) {
             IconButton(onClick = onBackClick) {
                 Image(
@@ -61,21 +63,25 @@ fun OTPInputScreen(
                 )
             }
 
+            Spacer(modifier = Modifier.weight(1f)) // Spacer to push the text to the center
+
             Text(
                 text = stringResource(id = R.string.otp_title),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
                     color = Color.Black,
-                    lineHeight = 16.8.sp,
+                    lineHeight = 22.05.sp,
                     letterSpacing = (-0.028).em
                 ),
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
+
+            Spacer(modifier = Modifier.weight(1f))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(37.dp))
 
         Text(
             text = stringResource(id = R.string.enter_otp_code),
@@ -87,13 +93,11 @@ fun OTPInputScreen(
                 lineHeight = 16.8.sp,
                 letterSpacing = (-0.028).em
             ),
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.Start)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         Text(
-            text = "Enter verification code sent on your phone",
+            text = phoneNumber,
             style = TextStyle(fontSize = 16.sp),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -119,11 +123,16 @@ fun OTPInputScreen(
             }
         )
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(56.dp))
 
         if (resendCounter > 0) {
             Text(
-                text = "Resend code again after ${resendCounter / 60}:${String.format("%02d", resendCounter % 60)}",
+                text = "Resend code again after ${resendCounter / 60}:${
+                    String.format(
+                        "%02d",
+                        resendCounter % 60
+                    )
+                }",
                 color = Color.Gray,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
@@ -151,7 +160,11 @@ fun OTPTextField(
         onValueChange = onOtpChange,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         decorationBox = {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 repeat(4) { index ->
                     val char = when {
                         index >= otp.length -> ""
@@ -159,7 +172,7 @@ fun OTPTextField(
                     }
                     Box(
                         modifier = Modifier
-                            .weight(1f)
+                            .height(53.dp)
                             .aspectRatio(1f)
                             .background(Color.LightGray.copy(alpha = 0.3f)),
                         contentAlignment = Alignment.Center
@@ -180,6 +193,7 @@ fun OTPTextField(
 fun OTPInputScreenPreview() {
     OTPInputScreen(
         authViewModel = hiltViewModel(),
+        phoneNumber = "94 018 67 22",
         onOTPVerified = {},
         onBackClick = {}
     )
