@@ -10,12 +10,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class   MainViewModel @Inject constructor(
     private val onboardingUseCase: OnboardingUseCase
 ) : ViewModel() {
 
     private val _isOnboardingCompleted = MutableStateFlow(false)
     val isOnboardingCompleted: StateFlow<Boolean> = _isOnboardingCompleted
+
+    private val _phoneNumber = MutableStateFlow("")
+    val phoneNumber: StateFlow<String> = _phoneNumber
 
     init {
         viewModelScope.launch {
@@ -23,6 +26,10 @@ class MainViewModel @Inject constructor(
                 _isOnboardingCompleted.value = completed
             }
         }
+    }
+
+    fun updatePhoneNumber(phone: String) {
+        _phoneNumber.value = phone
     }
 
     fun setOnboardingCompleted() {

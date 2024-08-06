@@ -164,9 +164,9 @@ fun OTPTextField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         decorationBox = {
             Row(
-                horizontalArrangement = Arrangement.Center, // Centers the boxes horizontally
+                horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally),
                 modifier = modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 repeat(4) { index ->
                     val char = when {
