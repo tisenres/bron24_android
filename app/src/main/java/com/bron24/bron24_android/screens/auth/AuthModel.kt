@@ -10,11 +10,11 @@ class AuthModel @Inject constructor(
     private val isTokenExpiredUseCase: IsTokenExpiredUseCase,
     private val clearTokenUseCase: ClearTokenUseCase
 ) {
-    suspend fun requestOTP(phoneNumber: String): OTPResponse {
+    suspend fun requestOTP(phoneNumber: Int): OTPResponse {
         return requestOTPUseCase.execute(phoneNumber)
     }
 
-    suspend fun verifyOTP(phoneNumber: String, otp: String): OTPResponse {
+    suspend fun verifyOTP(phoneNumber: Int, otp: Int): OTPResponse {
         return verifyAndStoreOTPUseCase.execute(phoneNumber, otp)
     }
 

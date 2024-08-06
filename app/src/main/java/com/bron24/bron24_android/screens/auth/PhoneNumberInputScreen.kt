@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.helper.extension.toUzbekPhoneNumberInt
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.MainViewModel
 import com.bron24.bron24_android.screens.main.Screen
@@ -211,7 +212,12 @@ fun BottomSection(
             isEnabled = isPhoneNumberValid,
             onClick = {
                 authViewModel.requestOTP()
-                navController.navigate(Screen.OTPInput.route.replace("{phoneNumber}", phoneNumber))
+                navController.navigate(
+                    Screen.OTPInput.route.replace(
+                        "{phoneNumber}",
+                        phoneNumber
+                    )
+                )
             }
         )
     }

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,6 +29,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
+import com.bron24.bron24_android.helper.extension.toUzbekPhoneNumberInt
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
@@ -99,9 +102,9 @@ fun OTPInputScreen(
         Spacer(modifier = Modifier.height(37.dp))
 
         Text(
-            text = stringResource(id = R.string.enter_otp_code) + "\n" + PhoneNumberVisualTransformation().filter(
-                AnnotatedString(phoneNumber)
-            ).text,
+            text = stringResource(id = R.string.enter_otp_code) +
+                    "\n" +
+                    phoneNumber.formatWithSpansPhoneNumber(),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -120,7 +123,7 @@ fun OTPInputScreen(
             onOtpChange = { newOtp ->
                 if (newOtp.length <= 4) {
                     otp = newOtp
-                    authViewModel.updateOTP(newOtp)
+                    authViewModel.updateOTP(newOtp.toInt())
                     if (newOtp.length == 4) {
                         scope.launch {
                             authViewModel.verifyOTP()
@@ -196,14 +199,23 @@ fun OTPTextField(
     onOtpChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     BasicTextField(
         value = otp,
         onValueChange = onOtpChange,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        decorationBox = {
+        decorationBox = { innerTextField ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally),
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester)
+                    .onGloballyPositioned {
+                        focusRequester.requestFocus()
+                        keyboardController?.show()
+                    },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 repeat(4) { index ->

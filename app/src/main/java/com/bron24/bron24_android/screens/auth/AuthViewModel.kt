@@ -1,7 +1,9 @@
 package com.bron24.bron24_android.screens.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.helper.extension.toUzbekPhoneNumberInt
 import com.bron24.bron24_android.screens.auth.AuthModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,8 +19,8 @@ class AuthViewModel @Inject constructor(
     private val _phoneNumber = MutableStateFlow("")
     val phoneNumber: StateFlow<String> get() = _phoneNumber
 
-    private val _otp = MutableStateFlow("")
-    val otp: StateFlow<String> get() = _otp
+    private val _otp = MutableStateFlow(0)
+    val otp: StateFlow<Int> get() = _otp
 
     private val _token = MutableStateFlow("")
     val token: StateFlow<String> get() = _token
@@ -35,7 +37,7 @@ class AuthViewModel @Inject constructor(
     private val _isPhoneNumberValid = MutableStateFlow(false)
     val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
 
-    fun updateOTP(code: String) {
+    fun updateOTP(code: Int) {
         _otp.value = code
     }
 
@@ -58,7 +60,7 @@ class AuthViewModel @Inject constructor(
 
     fun verifyOTP() {
         viewModelScope.launch {
-            val response = model.verifyOTP(_phoneNumber.value, _otp.value)
+            val response = model.verifyOTP(_phoneNumber.value.toUzbekPhoneNumberInt(), _otp.value)
             if (response.success) {
                 _token.value = response.token ?: ""
                 _otpVerifyStatus.value = true

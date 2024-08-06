@@ -8,7 +8,7 @@ import javax.inject.Inject
 class RequestOTPUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend fun execute(phoneNumber: String): OTPResponse {
+    suspend fun execute(phoneNumber: Int): OTPResponse {
         return authRepository.requestOTP(OTPRequest(phoneNumber))
     }
 }

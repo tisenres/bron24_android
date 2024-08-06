@@ -7,7 +7,7 @@ class VerifyAndStoreOTPUseCase @Inject constructor(
     private val verifyOTPUseCase: VerifyOTPUseCase,
     private val saveTokenUseCase: SaveTokenUseCase
 ) {
-    suspend fun execute(phoneNumber: String, otp: String): OTPResponse {
+    suspend fun execute(phoneNumber: Int, otp: Int): OTPResponse {
         val response = verifyOTPUseCase.execute(phoneNumber, otp)
         if (response.success && response.token != null) {
             val expiryTime = System.currentTimeMillis() + 90L * 24 * 60 * 60 * 1000
