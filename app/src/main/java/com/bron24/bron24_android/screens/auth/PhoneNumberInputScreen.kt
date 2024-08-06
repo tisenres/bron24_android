@@ -19,12 +19,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -149,7 +153,7 @@ fun CustomPhoneNumberField(
                     )
                     Spacer(modifier = Modifier.width(3.dp))
                     BasicTextField(
-                        value = formatPhoneNumber(value.removePrefix("+998")),
+                        value = value.removePrefix("+998"),
                         onValueChange = { newValue ->
                             val digitsOnly = newValue.filter { it.isDigit() }
                             if (digitsOnly.length <= 9) {
@@ -171,6 +175,7 @@ fun CustomPhoneNumberField(
                             lineHeight = 16.8.sp,
                             letterSpacing = (-0.028).em
                         ),
+                        visualTransformation = PhoneNumberVisualTransformation(),
                         decorationBox = { innerTextField ->
                             Box(modifier = Modifier.fillMaxWidth()) {
                                 innerTextField()
@@ -183,6 +188,37 @@ fun CustomPhoneNumberField(
                 }
             }
         }
+    }
+}
+
+class PhoneNumberVisualTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val trimmed = if (text.text.length >= 9) text.text.substring(0..8) else text.text
+        var output = ""
+        for (i in trimmed.indices) {
+            output += trimmed[i]
+            if (i == 1 || i == 4 || i == 6) output += " "
+        }
+
+        val phoneNumberOffsetTranslator = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                if (offset <= 1) return offset
+                if (offset <= 4) return offset + 1
+                if (offset <= 6) return offset + 2
+                if (offset <= 9) return offset + 3
+                return 12
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                if (offset <= 2) return offset
+                if (offset <= 6) return offset - 1
+                if (offset <= 9) return offset - 2
+                if (offset <= 12) return offset - 3
+                return 9
+            }
+        }
+
+        return TransformedText(AnnotatedString(output), phoneNumberOffsetTranslator)
     }
 }
 
@@ -278,16 +314,6 @@ fun ConfirmButton(
             lineHeight = 32.sp,
             letterSpacing = (-0.028).em
         )
-    }
-}
-
-fun formatPhoneNumber(input: String): String {
-    val digitsOnly = input.filter { it.isDigit() }
-    return buildString {
-        digitsOnly.forEachIndexed { index, char ->
-            if (index == 2 || index == 5 || index == 7) append(' ')
-            append(char)
-        }
     }
 }
 
