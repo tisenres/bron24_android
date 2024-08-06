@@ -7,8 +7,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.bron24.bron24_android.screens.auth.OTPInputScreen
 import com.bron24.bron24_android.screens.auth.PhoneNumberInputScreen
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
@@ -57,13 +59,17 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                 AnimatedScreenTransition {
                     PhoneNumberInputScreen(
                         authViewModel = hiltViewModel(),
-                        onContinueClick = {
-                            navController.navigate(Screen.OTPInput.route)
-                        }
+                        navController
                     )
                 }
             }
-            composable(Screen.OTPInput.route) {
+            composable(
+                route = Screen.OTPInput.route,
+                arguments = listOf(
+                    navArgument("phoneNumber") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
                 AnimatedScreenTransition {
                     OTPInputScreen(
                         authViewModel = hiltViewModel(),
@@ -73,8 +79,9 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                             }
                         },
                         onBackClick = {
-
-                        }
+                            navController.popBackStack()
+                        },
+                        phoneNumber = phoneNumber
                     )
                 }
             }

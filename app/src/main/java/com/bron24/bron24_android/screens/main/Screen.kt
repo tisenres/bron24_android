@@ -4,7 +4,7 @@ sealed class Screen(val route: String) {
     object LanguageSelection : Screen("languageSelection")
     object HowItWorksPager : Screen("howItWorksPager")
     object PhoneNumberInput : Screen("phone_number_input")
-    object OTPInput : Screen("otp_input")
+    object OTPInput : Screen("otp_input/{phoneNumber}")
     object LocationPermission : Screen("locationPermission")
     object Main : Screen("main")
     object HomePage : Screen("homePage")

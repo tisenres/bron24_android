@@ -36,13 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun PhoneNumberInputScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
-    onContinueClick: () -> Unit = {}
+    navController: NavController
 ) {
     var phoneNumber by remember { mutableStateOf("+998") }
     val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
@@ -68,7 +70,7 @@ fun PhoneNumberInputScreen(
             authViewModel = authViewModel
         )
         Spacer(modifier = Modifier.weight(1f))
-        BottomSection(authViewModel, onContinueClick, isPhoneNumberValid)
+        BottomSection(authViewModel, isPhoneNumberValid, navController, phoneNumber)
     }
 }
 
@@ -225,8 +227,9 @@ class PhoneNumberVisualTransformation : VisualTransformation {
 @Composable
 fun BottomSection(
     authViewModel: AuthViewModel,
-    onContinueClick: () -> Unit,
-    isPhoneNumberValid: Boolean
+    isPhoneNumberValid: Boolean,
+    navController: NavController,
+    phoneNumber: String
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -240,7 +243,7 @@ fun BottomSection(
             isEnabled = isPhoneNumberValid,
             onClick = {
                 authViewModel.requestOTP()
-                onContinueClick()
+                navController.navigate(Screen.OTPInput.route.replace("{phoneNumber}", phoneNumber))
             }
         )
     }
@@ -320,8 +323,4 @@ fun ConfirmButton(
 @Preview(showBackground = true)
 @Composable
 private fun PhoneNumberInputScreenPreview() {
-    PhoneNumberInputScreen(
-        authViewModel = hiltViewModel(),
-        onContinueClick = {}
-    )
 }

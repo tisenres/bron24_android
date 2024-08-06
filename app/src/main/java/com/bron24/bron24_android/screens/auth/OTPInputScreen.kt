@@ -122,7 +122,7 @@ fun OTPInputScreen(
                     }
                 }
             },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.fillMaxWidth() // This ensures the OTPTextField takes full width
         )
 
         Spacer(modifier = Modifier.height(56.dp))
@@ -164,7 +164,7 @@ fun OTPTextField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         decorationBox = {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalArrangement = Arrangement.Center, // Centers the boxes horizontally
                 modifier = modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
