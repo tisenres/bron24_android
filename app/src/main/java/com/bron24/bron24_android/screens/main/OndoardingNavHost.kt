@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.auth.OTPInputScreen
 import com.bron24.bron24_android.screens.auth.PhoneNumberInputScreen
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewModel = hiltViewModel()) {
     val coroutineScope = rememberCoroutineScope()
     val isOnboardingCompleted by mainViewModel.isOnboardingCompleted.collectAsState()
+    val authViewModel: AuthViewModel = hiltViewModel()
 
     Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(
@@ -55,12 +57,11 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                     )
                 }
             }
-            composable(Screen.PhoneNumberInput.route) {
+            composable(Screen.PhoneNumberInput.route) { navBackStackEntry ->
                 AnimatedScreenTransition {
                     PhoneNumberInputScreen(
-                        authViewModel = hiltViewModel(),
+                        authViewModel = authViewModel,
                         navController = navController,
-                        mainViewModel = mainViewModel
                     )
                 }
             }
@@ -69,11 +70,11 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                 arguments = listOf(
                     navArgument("phoneNumber") { type = NavType.StringType }
                 )
-            ) { backStackEntry ->
-                val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
+            ) { navBackStackEntry ->
+                val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
                 AnimatedScreenTransition {
                     OTPInputScreen(
-                        authViewModel = hiltViewModel(),
+                        authViewModel = authViewModel,
                         onOTPVerified = {
                             navController.navigate(Screen.LocationPermission.route) {
                                 popUpTo(Screen.OTPInput.route) { inclusive = true }

@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OTPInputScreen(
-    authViewModel: AuthViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel,
     phoneNumber: String,
     onOTPVerified: () -> Unit,
     onBackClick: () -> Unit

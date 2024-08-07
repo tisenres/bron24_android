@@ -17,8 +17,8 @@ class MainViewModel @Inject constructor(
     private val _isOnboardingCompleted = MutableStateFlow(false)
     val isOnboardingCompleted: StateFlow<Boolean> = _isOnboardingCompleted
 
-    private val _phoneNumber = MutableStateFlow("")
-    val phoneNumber: StateFlow<String> = _phoneNumber
+//    private val _phoneNumber = MutableStateFlow("")
+//    val phoneNumber: StateFlow<String> = _phoneNumber
 
     init {
         viewModelScope.launch {
@@ -28,9 +28,9 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updatePhoneNumber(phone: String) {
-        _phoneNumber.value = phone
-    }
+//    fun updatePhoneNumber(phone: String) {
+//        _phoneNumber.value = phone
+//    }
 
     fun setOnboardingCompleted() {
         viewModelScope.launch {

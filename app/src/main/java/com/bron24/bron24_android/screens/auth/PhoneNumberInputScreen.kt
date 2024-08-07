@@ -28,22 +28,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
-import com.bron24.bron24_android.screens.main.MainViewModel
 import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun PhoneNumberInputScreen(
-    authViewModel: AuthViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel,
     navController: NavController,
-    mainViewModel: MainViewModel = hiltViewModel()
 ) {
-    val phoneNumber by mainViewModel.phoneNumber.collectAsState()
+    val phoneNumber by authViewModel.phoneNumber.collectAsState()
     val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
     val focusRequester = remember { FocusRequester() }
 
@@ -60,7 +56,7 @@ fun PhoneNumberInputScreen(
             value = phoneNumber,
             onValueChange = { newValue ->
                 if (newValue.startsWith("+998")) {
-                    mainViewModel.updatePhoneNumber(newValue)
+                    authViewModel.updatePhoneNumber(newValue)
                 }
             },
             focusRequester = focusRequester,
@@ -295,5 +291,4 @@ fun ConfirmButton(
 @Preview(showBackground = true)
 @Composable
 private fun PhoneNumberInputScreenPreview() {
-    PhoneNumberInputScreen(navController = rememberNavController())
 }

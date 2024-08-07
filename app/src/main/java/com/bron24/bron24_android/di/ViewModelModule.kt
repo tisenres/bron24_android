@@ -85,11 +85,4 @@ object ViewModelModule {
         return MainViewModel(onboardingUseCase)
     }
 
-    @Provides
-    @ActivityScoped
-    fun provideAuthViewModel(
-        authModel: AuthModel
-    ): AuthViewModel {
-        return AuthViewModel(authModel)
-    }
 }
