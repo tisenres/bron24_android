@@ -61,6 +61,7 @@ fun LoadingPlaceholder() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(bottom = 20.dp)
     ) {
         Box(
             modifier = Modifier
