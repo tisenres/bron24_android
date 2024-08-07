@@ -84,7 +84,7 @@ fun VenueDetailsContent(details: VenueDetails?) {
         Spacer(modifier = Modifier.height(16.dp))
         InfrastructureSection(details)
         Spacer(modifier = Modifier.height(16.dp))
-        MapSection(details)
+        MapSection()
         Spacer(modifier = Modifier.height(16.dp))
         PricingSection()
     }
@@ -215,7 +215,7 @@ fun AddressAndPhoneSection() {
                 modifier = Modifier.size(20.dp)
             )
             Text(
-                text = "Mustaqillik maydoni, Chilanzar, Tashkent, Uzbekis",
+                text = "Mustaqillik maydoni, Chilanzar, Tashkent, Uzbekistan",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -272,15 +272,18 @@ fun AddressAndPhoneSection() {
 @Composable
 fun RatingSection() {
     Row {
-        repeat(5) {
+        repeat(5) { index ->
             Icon(
                 painter = painterResource(id = R.drawable.ic_star),
                 contentDescription = "Star",
                 tint = Color(0xffffb800),
                 modifier = Modifier
                     .size(16.dp)
+
             )
-            Spacer(modifier = Modifier.width(4.dp))
+            if (index < 4) {
+                Spacer(modifier = Modifier.width(4.dp))
+            }
         }
         Spacer(modifier = Modifier.width(7.dp))
         Text(
@@ -353,7 +356,7 @@ fun InfrastructureSection(details: VenueDetails?) {
 }
 
 @Composable
-fun MapSection(details: VenueDetails?) {
+fun MapSection() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -366,31 +369,99 @@ fun MapSection(details: VenueDetails?) {
             contentDescription = "Map",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .clip(RoundedCornerShape(10.dp)),
+                .height(109.dp)
+                .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)),
             contentScale = ContentScale.Crop
         )
 
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
+        ) {
             Text(
-                text = details?.address?.addressName ?: "Bunyodkor street, 18",
+                text = "Bunyodkor street, 18",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = Color(0xFF3C2E56),
-                    lineHeight = 19.2.sp
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    lineHeight = 17.15.sp
                 ),
             )
-            Text(
-                text = "8.9 km from you, 4th bus stop (Afrosiyob)",
-                style = TextStyle(fontSize = 12.sp, color = Color(0xff949494))
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Take a route",
-                style = TextStyle(fontSize = 12.sp, color = Color(0xff0067ff))
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_location_on_24_red),
+                    contentDescription = "Location",
+                    tint = Color(0xff949494),
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = "8.9 km from you",
+                    style = TextStyle(
+                        fontFamily = interFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 12.sp,
+                        color = Color(0xFFB7B3B3),
+                        lineHeight = 18.sp,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_location_on_24_red),
+                    contentDescription = "Location",
+                    tint = Color(0xff949494),
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = "4th bus stop (Afrosiyob)",
+                    style = TextStyle(
+                        fontFamily = interFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 12.sp,
+                        color = Color(0xFFB7B3B3),
+                        lineHeight = 18.sp,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "8.9 km from you4th bus stop (Afrosiyob)",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 12.sp,
+                        color = Color(0xFFB7B3B3),
+                        lineHeight = 18.sp,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_location_on_24_red),
+                    contentDescription = "Location",
+                    tint = Color(0xff949494),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
     }
 }
