@@ -49,7 +49,7 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                     HowItWorksPager(
                         onNavigateToAuthScreens = {
                             coroutineScope.launch {
-                                navController.navigate(Screen.PhoneNumberInput.route) {
+                                navController.navigate(Screen.LocationPermission.route) {
                                     popUpTo(Screen.HowItWorksPager.route) { inclusive = true }
                                 }
                             }
@@ -57,36 +57,36 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                     )
                 }
             }
-            composable(Screen.PhoneNumberInput.route) { navBackStackEntry ->
-                AnimatedScreenTransition {
-                    PhoneNumberInputScreen(
-                        authViewModel = authViewModel,
-                        navController = navController,
-                    )
-                }
-            }
-            composable(
-                route = Screen.OTPInput.route,
-                arguments = listOf(
-                    navArgument("phoneNumber") { type = NavType.StringType }
-                )
-            ) { navBackStackEntry ->
-                val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
-                AnimatedScreenTransition {
-                    OTPInputScreen(
-                        authViewModel = authViewModel,
-                        onOTPVerified = {
-                            navController.navigate(Screen.LocationPermission.route) {
-                                popUpTo(Screen.OTPInput.route) { inclusive = true }
-                            }
-                        },
-                        onBackClick = {
-                            navController.popBackStack()
-                        },
-                        phoneNumber = phoneNumber
-                    )
-                }
-            }
+//            composable(Screen.PhoneNumberInput.route) { navBackStackEntry ->
+//                AnimatedScreenTransition {
+//                    PhoneNumberInputScreen(
+//                        authViewModel = authViewModel,
+//                        navController = navController,
+//                    )
+//                }
+//            }
+//            composable(
+//                route = Screen.OTPInput.route,
+//                arguments = listOf(
+//                    navArgument("phoneNumber") { type = NavType.StringType }
+//                )
+//            ) { navBackStackEntry ->
+//                val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
+//                AnimatedScreenTransition {
+//                    OTPInputScreen(
+//                        authViewModel = authViewModel,
+//                        onOTPVerified = {
+//                            navController.navigate(Screen.LocationPermission.route) {
+//                                popUpTo(Screen.OTPInput.route) { inclusive = true }
+//                            }
+//                        },
+//                        onBackClick = {
+//                            navController.popBackStack()
+//                        },
+//                        phoneNumber = phoneNumber
+//                    )
+//                }
+//            }
             composable(Screen.LocationPermission.route) {
                 AnimatedScreenTransition {
                     LocationRequestScreen(
