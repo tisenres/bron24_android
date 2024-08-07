@@ -33,7 +33,6 @@ class VenueListingViewModel @Inject constructor(
             val venueList = getVenuesUseCase.execute()
             _venues.value = venueList
             _isLoading.value = false
-            Log.d("IMAGES_LIST", venueList.first().imageUrls.toString())
         }
     }
 }

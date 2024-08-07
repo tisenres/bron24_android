@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bron24_android"
-        tools:targetApi="tiramisu">
+        tools:targetApi="tiramisu"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".screens.main.MainActivity"
             android:exported="true"

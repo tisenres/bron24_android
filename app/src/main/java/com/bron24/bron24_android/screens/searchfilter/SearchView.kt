@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.filter
+package com.bron24.bron24_android.screens.searchfilter
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

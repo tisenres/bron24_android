@@ -27,7 +27,8 @@ object NetworkModule {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000/") // This maps to the host machine's localhost
+//            .baseUrl("http://10.0.2.2:8000/") // This maps to the host machine's localhost
+            .baseUrl("https://cuddly-becoming-loon.ngrok-free.app/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
