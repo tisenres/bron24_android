@@ -81,11 +81,10 @@ fun VenueDetailsContent(details: VenueDetails?) {
         VenueImageSection()
         Spacer(modifier = Modifier.height(15.dp))
         HeaderSection()
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(27.dp))
         InfrastructureSection(details)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         MapSection()
-        Spacer(modifier = Modifier.height(16.dp))
         PricingSection()
     }
 }
