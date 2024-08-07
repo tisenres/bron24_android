@@ -1,10 +1,12 @@
 package com.bron24.bron24_android.data.network.mappers
 
+import com.bron24.bron24_android.data.network.dto.auth.OTPCodeResponse
 import com.bron24.bron24_android.data.network.dto.auth.OTPRequest
-import com.bron24.bron24_android.data.network.dto.auth.OTPResponse
-import com.bron24.bron24_android.data.network.dto.auth.toRequestErrorList
+import com.bron24.bron24_android.data.network.dto.auth.PhoneNumberResponse
+import com.bron24.bron24_android.domain.entity.auth.OTPCodeResponseEntity
 import com.bron24.bron24_android.domain.entity.auth.OTPRequestEntity
-import com.bron24.bron24_android.domain.entity.auth.OTPResponseEntity
+import com.bron24.bron24_android.domain.entity.auth.PhoneNumberResponseEntity
+import com.bron24.bron24_android.domain.entity.enums.OTPStatusCode
 
 fun OTPRequestEntity.toNetworkModel(): OTPRequest {
     return OTPRequest(
@@ -13,15 +15,14 @@ fun OTPRequestEntity.toNetworkModel(): OTPRequest {
     )
 }
 
-fun OTPResponse.toDomainEntity(): OTPResponseEntity {
-    val requestErrorList = this.toRequestErrorList()
-    val messageId = requestErrorList.firstOrNull()?.requestError?.serviceException?.messageId ?: "UNKNOWN"
-    val text = requestErrorList.firstOrNull()?.requestError?.serviceException?.text ?: "Unknown error"
+fun PhoneNumberResponse.toDomainEntity(): PhoneNumberResponseEntity {
+    return PhoneNumberResponseEntity(
+        status = if (success.firstOrNull() == "success") OTPStatusCode.SUCCESS else OTPStatusCode.ERROR,
+    )
+}
 
-    return OTPResponseEntity(
-        status = messageId,
-        access = null, // Map appropriately if you have this field in your response
-        refresh = null, // Map appropriately if you have this field in your response
-        success = text != "Invalid login details" // Assuming success is based on error text
+fun OTPCodeResponse.toDomainEntity(): OTPCodeResponseEntity {
+    return OTPCodeResponseEntity(
+        status = if (status == "success") OTPStatusCode.SUCCESS else OTPStatusCode.ERROR,
     )
 }

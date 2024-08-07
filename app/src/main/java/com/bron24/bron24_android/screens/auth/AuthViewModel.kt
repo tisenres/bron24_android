@@ -3,6 +3,7 @@ package com.bron24.bron24_android.screens.auth
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.domain.entity.enums.OTPStatusCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +55,7 @@ class AuthViewModel @Inject constructor(
             val response = model.requestOTP(
                 _phoneNumber.value.replace("+", "")
             )
-            _otpRequestStatus.value = response.success == true
+            _otpRequestStatus.value = response.status == OTPStatusCode.SUCCESS
         }
     }
 
@@ -64,8 +65,8 @@ class AuthViewModel @Inject constructor(
                 _phoneNumber.value.replace("+", ""),
                 _otp.value
             )
-            if (response.success == true) {
-                _token.value = response.access ?: ""
+            if (response.status == OTPStatusCode.SUCCESS) {
+//                _token.value = response.status ?: ""
                 _otpVerifyStatus.value = true
                 _isTokenExpired.value = false
             } else {

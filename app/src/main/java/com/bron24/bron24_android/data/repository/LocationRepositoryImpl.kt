@@ -32,7 +32,7 @@ class LocationRepositoryImpl @Inject constructor(
 
     @SuppressLint("MissingPermission")
     override fun getCurrentLocation(): Flow<Location> = callbackFlow {
-        val locationCallback = fusedLocationClient.lastLocation
+        fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
                     trySend(Location(location.latitude, location.longitude)).isSuccess

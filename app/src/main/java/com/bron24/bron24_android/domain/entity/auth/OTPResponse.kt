@@ -1,8 +1,0 @@
-package com.bron24.bron24_android.domain.entity.auth
-
-data class OTPResponseEntity(
-    val status: String,
-    val access: String? = null,
-    val refresh: String? = null,
-    val success: Boolean? = null
-)
