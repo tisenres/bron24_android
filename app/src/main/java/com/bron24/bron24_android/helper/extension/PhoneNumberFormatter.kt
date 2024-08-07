@@ -1,8 +1,8 @@
 package com.bron24.bron24_android.helper.extension
 
-fun String.toUzbekPhoneNumberInt(): Int {
-    return this.replace("+", "").filter { it.isDigit() }.toInt()
-}
+//fun String.toUzbekPhoneNumberInt(): Int {
+//    return this.replace("+", "").toInt()
+//}
 
 fun String.formatWithSpansPhoneNumber(): String {
     val countryCode = "+998"

@@ -1,6 +1,6 @@
-package com.bron24.bron24_android.domain.entity.auth
+package com.bron24.bron24_android.data.network.dto.auth
 
-data class OTPResponseEntity(
+data class OTPResponse(
     val status: String,
     val access: String? = null,
     val refresh: String? = null,

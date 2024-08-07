@@ -1,10 +1,7 @@
 package com.bron24.bron24_android.screens.auth
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.helper.extension.toUzbekPhoneNumberInt
-import com.bron24.bron24_android.screens.auth.AuthModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,17 +49,22 @@ class AuthViewModel @Inject constructor(
     }
 
     fun requestOTP() {
-//        viewModelScope.launch {
-//            val response = model.requestOTP(_phoneNumber.value)
-//            _otpRequestStatus.value = response.success
-//        }
+        viewModelScope.launch {
+            val response = model.requestOTP(
+                _phoneNumber.value.replace("+", "")
+            )
+            _otpRequestStatus.value = response.success == true
+        }
     }
 
     fun verifyOTP() {
         viewModelScope.launch {
-            val response = model.verifyOTP(_phoneNumber.value.toUzbekPhoneNumberInt(), _otp.value)
-            if (response.success) {
-                _token.value = response.token ?: ""
+            val response = model.verifyOTP(
+                _phoneNumber.value.replace("+", ""),
+                _otp.value
+            )
+            if (response.success == true) {
+                _token.value = response.access ?: ""
                 _otpVerifyStatus.value = true
                 _isTokenExpired.value = false
             } else {

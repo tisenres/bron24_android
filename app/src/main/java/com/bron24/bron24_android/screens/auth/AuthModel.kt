@@ -1,6 +1,6 @@
 package com.bron24.bron24_android.screens.auth
 
-import com.bron24.bron24_android.domain.entity.auth.OTPResponse
+import com.bron24.bron24_android.domain.entity.auth.OTPResponseEntity
 import com.bron24.bron24_android.domain.usecases.auth.*
 import javax.inject.Inject
 
@@ -10,11 +10,11 @@ class AuthModel @Inject constructor(
     private val isTokenExpiredUseCase: IsTokenExpiredUseCase,
     private val clearTokenUseCase: ClearTokenUseCase
 ) {
-    suspend fun requestOTP(phoneNumber: Int): OTPResponse {
+    suspend fun requestOTP(phoneNumber: String): OTPResponseEntity {
         return requestOTPUseCase.execute(phoneNumber)
     }
 
-    suspend fun verifyOTP(phoneNumber: Int, otp: Int): OTPResponse {
+    suspend fun verifyOTP(phoneNumber: String, otp: Int): OTPResponseEntity {
         return verifyAndStoreOTPUseCase.execute(phoneNumber, otp)
     }
 
