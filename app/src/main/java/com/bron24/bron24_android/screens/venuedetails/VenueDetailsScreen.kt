@@ -23,8 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.tooling.preview.Preview
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.City
@@ -47,11 +47,8 @@ fun VenueDetailsScreen(
     val sheetState = rememberBottomSheetState(
         initialValue = SheetValue.PartiallyExpanded,
         defineValues = {
-            // Bottom sheet height is 100 dp.
             SheetValue.Collapsed at height(100.dp)
-            // Bottom sheet offset is 60%, meaning it takes 40% of the screen.
             SheetValue.PartiallyExpanded at offset(percent = 60)
-            // Bottom sheet height is equal to its content height.
             SheetValue.Expanded at contentHeight
         }
     )
@@ -61,12 +58,8 @@ fun VenueDetailsScreen(
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
-        sheetContent = {
-            VenueDetailsContent(details = venueDetails)
-        },
-        content = {
-            // Screen content can be added here if needed
-        }
+        sheetContent = { VenueDetailsContent(details = venueDetails) },
+        content = { /* Screen content can be added here if needed */ }
     )
 }
 
@@ -85,6 +78,7 @@ fun VenueDetailsContent(details: VenueDetails?) {
         InfrastructureSection(details)
         Spacer(modifier = Modifier.height(15.dp))
         MapSection()
+        Spacer(modifier = Modifier.height(15.dp))
         PricingSection()
     }
 }
@@ -116,21 +110,35 @@ fun VenueImageSection() {
             painter = painterResource(R.drawable.football_field),
             contentDescription = "Venue Image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+            modifier = Modifier.fillMaxSize()
         )
+        ImageOverlay()
+    }
+}
 
-        Row(
+@Composable
+fun ImageOverlay() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 11.dp, start = 24.dp, end = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top
+    ) {
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Back",
+            tint = Color.Black,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 11.dp, start = 24.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
-        ) {
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color.White)
+                .padding(10.dp)
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
+                imageVector = Icons.Default.Share,
+                contentDescription = "Share",
                 tint = Color.Black,
                 modifier = Modifier
                     .size(40.dp)
@@ -138,48 +146,36 @@ fun VenueImageSection() {
                     .background(Color.White)
                     .padding(10.dp)
             )
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Share,
-                    contentDescription = "Share",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                        .padding(10.dp)
-                )
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Favorite",
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                        .padding(10.dp)
-                )
-            }
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Favorite",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .padding(10.dp)
+            )
         }
+    }
+    BottomIndicators()
+}
 
-        Row(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 11.5.dp),
-            horizontalArrangement = Arrangement.spacedBy(3.dp)
-        ) {
-            repeat(4) { index ->
-                Box(
-                    modifier = Modifier
-                        .width(28.dp)
-                        .height(1.5.dp)
-                        .clip(RoundedCornerShape(5.dp))
-                        .background(if (index == 0) Color.White else Color(0xFFB7B3B3))
-                )
-            }
+@Composable
+fun BottomIndicators() {
+    Row(
+        modifier = Modifier
+            .padding(bottom = 11.5.dp),
+        horizontalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        repeat(4) { index ->
+            Box(
+                modifier = Modifier
+                    .width(28.dp)
+                    .height(1.5.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(if (index == 0) Color.White else Color(0xFFB7B3B3))
+            )
         }
     }
 }
@@ -203,68 +199,76 @@ fun TitleSection() {
 @Composable
 fun AddressAndPhoneSection() {
     Column {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_location_on_24_red),
-                contentDescription = "Location",
-                tint = Color(0xff949494),
-                modifier = Modifier.size(20.dp)
-            )
-            Text(
-                text = "Mustaqillik maydoni, Chilanzar, Tashkent, Uzbekistan",
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp,
-                    color = Color(0xFF949494),
-                    lineHeight = 18.sp,
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = "Copy",
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp,
-                    color = Color(0xFF0067FF),
-                    lineHeight = 18.sp,
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.padding(start = 5.dp)
-            )
-        }
-
+        AddressRow()
         Spacer(modifier = Modifier.height(4.dp))
+        PhoneRow()
+    }
+}
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_local_phone_24),
-                contentDescription = "Phone",
-                tint = Color(0xff949494),
-                modifier = Modifier.size(20.dp)
+@Composable
+fun AddressRow() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_location_on_24_red),
+            contentDescription = "Location",
+            tint = Color(0xff949494),
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = "Mustaqillik maydoni, Chilanzar, Tashkent, Uzbekistan",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                color = Color(0xFF949494),
+                lineHeight = 18.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = "Copy",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                color = Color(0xFF0067FF),
+                lineHeight = 18.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.padding(start = 5.dp)
+        )
+    }
+}
+
+@Composable
+fun PhoneRow() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_local_phone_24),
+            contentDescription = "Phone",
+            tint = Color(0xff949494),
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = "+998 77 806 0278",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                color = Color(0xFF949494),
+                lineHeight = 18.sp,
             )
-            Text(
-                text = "+998 77 806 0278",
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp,
-                    color = Color(0xFF949494),
-                    lineHeight = 18.sp,
-                )
-            )
-        }
+        )
     }
 }
 
@@ -276,9 +280,7 @@ fun RatingSection() {
                 painter = painterResource(id = R.drawable.ic_star),
                 contentDescription = "Star",
                 tint = Color(0xffffb800),
-                modifier = Modifier
-                    .size(16.dp)
-
+                modifier = Modifier.size(16.dp)
             )
             if (index < 4) {
                 Spacer(modifier = Modifier.width(4.dp))
@@ -307,7 +309,6 @@ fun RatingSection() {
             )
         )
         Spacer(modifier = Modifier.width(7.dp))
-
         Text(
             text = "See all review",
             style = TextStyle(
@@ -343,14 +344,15 @@ fun InfrastructureSection(details: VenueDetails?) {
         )
 
         // Infrastructure items
-//        FlowRow(
-//            mainAxisSpacing = 8.dp,
-//            crossAxisSpacing = 8.dp
-//        ) {
-//            details?.infrastructure?.items?.forEach { item ->
-//                InfrastructureItem(item, R.drawable.ic_dollar)
-//            }
-//        }
+        // Uncomment and populate the flow row when data is available
+        // FlowRow(
+        //     mainAxisSpacing = 8.dp,
+        //     crossAxisSpacing = 8.dp
+        // ) {
+        //     details?.infrastructure?.items?.forEach { item ->
+        //         InfrastructureItem(item, R.drawable.ic_dollar)
+        //     }
+        // }
     }
 }
 
@@ -361,7 +363,6 @@ fun MapSection() {
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
-
     ) {
         Image(
             painter = painterResource(id = R.drawable.football_field),
@@ -372,96 +373,57 @@ fun MapSection() {
                 .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)),
             contentScale = ContentScale.Crop
         )
+        MapDetails()
+    }
+}
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp),
-        ) {
-            Text(
-                text = "Bunyodkor street, 18",
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    lineHeight = 17.15.sp
-                ),
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_location_on_24_red),
-                    contentDescription = "Location",
-                    tint = Color(0xff949494),
-                    modifier = Modifier.size(20.dp)
-                )
-                Text(
-                    text = "8.9 km from you",
-                    style = TextStyle(
-                        fontFamily = interFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 12.sp,
-                        color = Color(0xFFB7B3B3),
-                        lineHeight = 18.sp,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_location_on_24_red),
-                    contentDescription = "Location",
-                    tint = Color(0xff949494),
-                    modifier = Modifier.size(20.dp)
-                )
-                Text(
-                    text = "4th bus stop (Afrosiyob)",
-                    style = TextStyle(
-                        fontFamily = interFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 12.sp,
-                        color = Color(0xFFB7B3B3),
-                        lineHeight = 18.sp,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-            }
+@Composable
+fun MapDetails() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp),
+    ) {
+        Text(
+            text = "Bunyodkor street, 18",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = Color.Black,
+                lineHeight = 17.15.sp
+            ),
+        )
+        DistanceInfo(icon = R.drawable.baseline_navigation_24, text = "8.9 km from you")
+        DistanceInfo(icon = R.drawable.ic_metro, text = "4th bus stop (Afrosiyob)")
+    }
+}
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "8.9 km from you4th bus stop (Afrosiyob)",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 12.sp,
-                        color = Color(0xFFB7B3B3),
-                        lineHeight = 18.sp,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_location_on_24_red),
-                    contentDescription = "Location",
-                    tint = Color(0xff949494),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
+@Composable
+fun DistanceInfo(icon: Int, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = "Location",
+            tint = Color(0xff949494),
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = text,
+            style = TextStyle(
+                fontFamily = interFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                color = Color(0xFFB7B3B3),
+                lineHeight = 18.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
@@ -545,10 +507,7 @@ private fun VenueDetailsPreview() {
                 district = "SASASAS",
                 closestMetroStation = "Novza"
             ),
-            city = City(
-                id = 5,
-                "Tashkent"
-            ),
+            city = City(id = 5, cityName = "Tashkent"),
             infrastructure = Infrastructure(
                 id = 9,
                 lockerRoom = true,
