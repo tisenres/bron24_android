@@ -1,9 +1,8 @@
 package com.bron24.bron24_android.di
 
 import android.content.Context
-import com.bron24.bron24_android.data.local.PermissionChecker
 import com.bron24.bron24_android.data.local.preference.AppPreference
-import com.bron24.bron24_android.data.network.apiservices.OTPApiService
+import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.repository.AuthRepositoryImpl
 import com.bron24.bron24_android.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
@@ -12,6 +11,7 @@ import com.bron24.bron24_android.domain.usecases.auth.*
 import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
 import com.bron24.bron24_android.domain.repository.*
+import com.bron24.bron24_android.helper.util.PermissionChecker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,26 +81,6 @@ object UseCasesModule {
         return SaveTokenUseCase(tokenRepository)
     }
 
-    @Provides
-    @Singleton
-    fun provideIsTokenExpiredUseCase(tokenRepository: TokenRepository): IsTokenExpiredUseCase {
-        return IsTokenExpiredUseCase(tokenRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideClearTokenUseCase(tokenRepository: TokenRepository): ClearTokenUseCase {
-        return ClearTokenUseCase(tokenRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideVerifyAndStoreOTPUseCase(
-        verifyOTPUseCase: VerifyOTPUseCase,
-        saveTokenUseCase: SaveTokenUseCase
-    ): VerifyAndStoreOTPUseCase {
-        return VerifyAndStoreOTPUseCase(verifyOTPUseCase, saveTokenUseCase)
-    }
 
     // Repositories - Start
 
@@ -115,10 +95,9 @@ object UseCasesModule {
     @Provides
     @Singleton
     fun provideAuthRepository(
-        otpService: OTPApiService,
-        tokenRepository: TokenRepository
+        otpService: AuthApiService,
     ): AuthRepository {
-        return AuthRepositoryImpl(otpService, tokenRepository)
+        return AuthRepositoryImpl(otpService)
     }
 
     @Provides

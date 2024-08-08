@@ -1,7 +1,8 @@
 package com.bron24.bron24_android.di
 
-import com.bron24.bron24_android.data.network.apiservices.OTPApiService
+import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
+import com.bron24.bron24_android.data.network.interceptors.AuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,10 +28,17 @@ object NetworkModule {
             .build()
 
         return Retrofit.Builder()
-//            .baseUrl("http://10.0.2.2:8000/") // This maps to the host machine's localhost
             .baseUrl("https://cuddly-becoming-loon.ngrok-free.app/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
             .build()
     }
 
@@ -42,7 +50,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOTPApiService(retrofit: Retrofit): OTPApiService {
-        return retrofit.create(OTPApiService::class.java)
+    fun provideOTPApiService(retrofit: Retrofit): AuthApiService {
+        return retrofit.create(AuthApiService::class.java)
     }
 }

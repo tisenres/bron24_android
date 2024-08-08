@@ -7,8 +7,10 @@ private const val IS_ONBOARDING_COMPLETED = "is_onboarding_completed"
 private const val SELECTED_LANGUAGE = "selected_language"
 private const val TOKEN_KEY = "auth_token"
 private const val TOKEN_EXPIRY_KEY = "auth_token_expiry"
+private const val REFRESH_TOKEN_KEY = "refresh_token"
+private const val REFRESH_TOKEN_EXPIRY_KEY = "refresh_token_expiry"
 
-class AppPreference(private val context: Context) {
+class AppPreference(context: Context) {
 
     private val preferences: SharedPreferences =
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -29,21 +31,37 @@ class AppPreference(private val context: Context) {
         preferences.edit().putBoolean(IS_ONBOARDING_COMPLETED, completed).apply()
     }
 
-    fun saveToken(token: String, expiry: Long) {
-        preferences.edit().putString(TOKEN_KEY, token).apply()
-        preferences.edit().putLong(TOKEN_EXPIRY_KEY, expiry).apply()
+    fun saveTokens(accessToken: String, refreshToken: String, accessTokenExpiry: Long, refreshTokenExpiry: Long) {
+        preferences.edit()
+            .putString(TOKEN_KEY, accessToken)
+            .putString(REFRESH_TOKEN_KEY, refreshToken)
+            .putLong(TOKEN_EXPIRY_KEY, accessTokenExpiry)
+            .putLong(REFRESH_TOKEN_EXPIRY_KEY, refreshTokenExpiry)
+            .apply()
     }
 
-    fun getToken(): String? {
+    fun getAccessToken(): String? {
         return preferences.getString(TOKEN_KEY, null)
     }
 
-    fun getTokenExpiry(): Long {
+    fun getRefreshToken(): String? {
+        return preferences.getString(REFRESH_TOKEN_KEY, null)
+    }
+
+    fun getAccessTokenExpiry(): Long {
         return preferences.getLong(TOKEN_EXPIRY_KEY, 0)
     }
 
-    fun clearToken() {
-        preferences.edit().remove(TOKEN_KEY).apply()
-        preferences.edit().remove(TOKEN_EXPIRY_KEY).apply()
+    fun getRefreshTokenExpiry(): Long {
+        return preferences.getLong(REFRESH_TOKEN_EXPIRY_KEY, 0)
+    }
+
+    fun clearTokens() {
+        preferences.edit()
+            .remove(TOKEN_KEY)
+            .remove(REFRESH_TOKEN_KEY)
+            .remove(TOKEN_EXPIRY_KEY)
+            .remove(REFRESH_TOKEN_EXPIRY_KEY)
+            .apply()
     }
 }

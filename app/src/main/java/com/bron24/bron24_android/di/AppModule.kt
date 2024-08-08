@@ -6,9 +6,9 @@ import com.bron24.bron24_android.screens.cityselection.data.CityRepositoryImpl
 import com.bron24.bron24_android.screens.cityselection.domain.repository.CityRepository
 import com.bron24.bron24_android.screens.cityselection.domain.usecases.GetAvailableCitiesUseCase
 import com.bron24.bron24_android.screens.cityselection.domain.usecases.UpdateSelectedCityUseCase
-import com.bron24.bron24_android.data.local.PermissionChecker
 import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
 import com.bron24.bron24_android.helper.util.LocaleManager
+import com.bron24.bron24_android.helper.util.PermissionChecker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
