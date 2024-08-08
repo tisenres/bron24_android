@@ -5,6 +5,7 @@ sealed class Screen(val route: String) {
     object HowItWorksPager : Screen("howItWorksPager")
     object PhoneNumberInput : Screen("phone_number_input")
     object OTPInput : Screen("otp_input/{phoneNumber}")
+    object UserDataInput : Screen("userInput")
     object LocationPermission : Screen("locationPermission")
     object Main : Screen("main")
     object HomePage : Screen("homePage")

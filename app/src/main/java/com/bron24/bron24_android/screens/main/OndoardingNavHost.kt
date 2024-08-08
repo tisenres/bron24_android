@@ -11,9 +11,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.auth.OTPInputScreen
 import com.bron24.bron24_android.screens.auth.PhoneNumberInputScreen
+import com.bron24.bron24_android.screens.auth.UserDataInputScreen
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
 import com.bron24.bron24_android.screens.language.LanguageSelectionScreen
 import com.bron24.bron24_android.screens.location.LocationRequestScreen
@@ -49,7 +51,7 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                     HowItWorksPager(
                         onNavigateToAuthScreens = {
                             coroutineScope.launch {
-                                navController.navigate(Screen.LocationPermission.route) {
+                                navController.navigate(Screen.PhoneNumberInput.route) {
                                     popUpTo(Screen.HowItWorksPager.route) { inclusive = true }
                                 }
                             }
@@ -57,36 +59,47 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                     )
                 }
             }
-//            composable(Screen.PhoneNumberInput.route) { navBackStackEntry ->
-//                AnimatedScreenTransition {
-//                    PhoneNumberInputScreen(
-//                        authViewModel = authViewModel,
-//                        navController = navController,
-//                    )
-//                }
-//            }
-//            composable(
-//                route = Screen.OTPInput.route,
-//                arguments = listOf(
-//                    navArgument("phoneNumber") { type = NavType.StringType }
-//                )
-//            ) { navBackStackEntry ->
-//                val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
-//                AnimatedScreenTransition {
-//                    OTPInputScreen(
-//                        authViewModel = authViewModel,
-//                        onOTPVerified = {
-//                            navController.navigate(Screen.LocationPermission.route) {
-//                                popUpTo(Screen.OTPInput.route) { inclusive = true }
-//                            }
-//                        },
-//                        onBackClick = {
-//                            navController.popBackStack()
-//                        },
-//                        phoneNumber = phoneNumber
-//                    )
-//                }
-//            }
+            composable(Screen.PhoneNumberInput.route) { navBackStackEntry ->
+                AnimatedScreenTransition {
+                    PhoneNumberInputScreen(
+                        authViewModel = authViewModel,
+                        navController = navController,
+                    )
+                }
+            }
+            composable(
+                route = Screen.OTPInput.route,
+                arguments = listOf(
+                    navArgument("phoneNumber") { type = NavType.StringType }
+                )
+            ) { navBackStackEntry ->
+                val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
+                AnimatedScreenTransition {
+                    OTPInputScreen(
+                        authViewModel = authViewModel,
+                        onOTPVerified = {
+                            navController.navigate(Screen.UserDataInput.route) {
+                                popUpTo(Screen.OTPInput.route) { inclusive = true }
+                            }
+                        },
+                        onBackClick = {
+                            navController.popBackStack()
+                        },
+                        phoneNumber = phoneNumber
+                    )
+                }
+            }
+            composable(Screen.UserDataInput.route) { navBackStackEntry ->
+                AnimatedScreenTransition {
+                    UserDataInputScreen(
+                        authViewModel = authViewModel,
+                        navController = navController,
+                        onBackClick = {
+                            navController.popBackStack()
+                        },
+                    )
+                }
+            }
             composable(Screen.LocationPermission.route) {
                 AnimatedScreenTransition {
                     LocationRequestScreen(
