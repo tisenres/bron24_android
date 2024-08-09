@@ -1,9 +1,11 @@
 package com.bron24.bron24_android.di
 
+import com.bron24.bron24_android.domain.usecases.auth.AuthenticateFlowUseCase
 import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
 import com.bron24.bron24_android.domain.usecases.venue.*
 import com.bron24.bron24_android.helper.util.LocaleManager
+import com.bron24.bron24_android.screens.auth.AuthModel
 import com.bron24.bron24_android.screens.language.LanguageModel
 import com.bron24.bron24_android.screens.location.LocationModel
 import com.bron24.bron24_android.screens.map.VenueMapModel
@@ -64,6 +66,16 @@ object ModelModule {
     ): VenueDetailsModel {
         return VenueDetailsModel(
             getVenueDetailsUseCase
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthModel(
+        authenticateFlowUseCase: AuthenticateFlowUseCase,
+    ): AuthModel {
+        return AuthModel(
+            authenticateFlowUseCase
         )
     }
 }

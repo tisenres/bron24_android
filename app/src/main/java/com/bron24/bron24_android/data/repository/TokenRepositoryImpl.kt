@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.repository
 
+import android.util.Log
 import com.bron24.bron24_android.data.local.preference.AppPreference
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import javax.inject.Inject
@@ -35,10 +36,12 @@ class TokenRepositoryImpl @Inject constructor(
     }
 
     override fun getAccessToken(): String? {
+        Log.d("SDHJSJDHHSJHDHJDS", "access$cachedRefreshToken")
         return cachedAccessToken
     }
 
     override fun getRefreshToken(): String? {
+        Log.d("SDHJSJDHHSJHDHJDS", "refresh$cachedRefreshToken")
         return cachedRefreshToken
     }
 

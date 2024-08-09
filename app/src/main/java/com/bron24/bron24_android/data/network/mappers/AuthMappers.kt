@@ -35,7 +35,7 @@ fun User.toNetworkModel(): UserDto {
     return UserDto(
         phoneNumber = phoneNumber,
         firstName = firstName,
-        secondName = lastName
+        lastName = lastName
     )
 }
 
