@@ -31,8 +31,7 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 @Composable
 fun UserDataInputScreen(
     authViewModel: AuthViewModel,
-    navController: NavController,
-    onBackClick: () -> Unit
+    onSignUpVerified: () -> Unit,
 ) {
     val authState by authViewModel.authState.collectAsState()
     var firstName by remember { mutableStateOf("") }
@@ -44,7 +43,7 @@ fun UserDataInputScreen(
             .background(Color.White)
             .padding(horizontal = 20.dp)
     ) {
-        TopBar(onBackClick = onBackClick)
+        TopBar()
 
         Spacer(modifier = Modifier.height(37.dp))
 
@@ -102,7 +101,7 @@ fun UserDataInputScreen(
         }
         is AuthState.Authenticated -> {
             // Navigate to the next screen when authentication is successful
-            navController.navigate(Screen.LocationPermission.route)
+            onSignUpVerified()
         }
         is AuthState.Error -> {
             // Show error message if there was an error
@@ -121,23 +120,12 @@ fun UserDataInputScreen(
 }
 
 @Composable
-fun TopBar(onBackClick: () -> Unit) {
+fun TopBar() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(24.dp)
     ) {
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier.align(Alignment.CenterStart)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_arrow_back),  // Assuming there's an arrow back icon
-                contentDescription = "Back",
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
         Text(
             text = stringResource(id = R.string.register),
             style = TextStyle(

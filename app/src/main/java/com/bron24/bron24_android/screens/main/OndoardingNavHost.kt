@@ -93,10 +93,9 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                 AnimatedScreenTransition {
                     UserDataInputScreen(
                         authViewModel = authViewModel,
-                        navController = navController,
-                        onBackClick = {
-                            navController.popBackStack()
-                        },
+                        onSignUpVerified = {
+                            navController.navigate(Screen.LocationPermission.route)
+                        }
                     )
                 }
             }

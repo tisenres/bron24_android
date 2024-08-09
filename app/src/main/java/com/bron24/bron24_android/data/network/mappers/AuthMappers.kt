@@ -27,7 +27,7 @@ fun PhoneNumberResponseDto.toDomainEntity(): PhoneNumberResponse {
 
 fun OTPCodeResponseDto.toDomainEntity(): OTPCodeResponse {
     return OTPCodeResponse(
-        status = if (status == "success") OTPStatusCode.SUCCESS else OTPStatusCode.ERROR,
+        status = if (status == "Successfully verified!") OTPStatusCode.SUCCESS else OTPStatusCode.ERROR,
     )
 }
 
