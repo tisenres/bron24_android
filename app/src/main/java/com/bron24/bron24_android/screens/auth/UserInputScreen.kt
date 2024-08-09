@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
 import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
@@ -36,7 +35,6 @@ fun UserDataInputScreen(
     onBackClick: () -> Unit
 ) {
     val authState by authViewModel.authState.collectAsState()
-    val phoneNumber by authViewModel.phoneNumber.collectAsState()
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
 
@@ -44,16 +42,14 @@ fun UserDataInputScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(20.dp)
+            .padding(horizontal = 20.dp)
     ) {
         TopBar(onBackClick = onBackClick)
 
         Spacer(modifier = Modifier.height(37.dp))
 
         Text(
-            text = stringResource(id = R.string.enter_personal_data) +
-                    "\n" +
-                    phoneNumber.formatWithSpansPhoneNumber(),
+            text = stringResource(id = R.string.enter_personal_data),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -69,30 +65,31 @@ fun UserDataInputScreen(
 
         UserDataField(
             fieldName = firstName,
-            placeholder = "First Name",
+            placeholder = stringResource(id = R.string.first_name),
             icon = R.drawable.ic_person,
             onValueChange = { newValue -> firstName = newValue },
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         UserDataField(
             fieldName = lastName,
-            placeholder = "Last Name",
+            placeholder = stringResource(id = R.string.last_name),
             icon = R.drawable.ic_person,
             onValueChange = { newValue -> lastName = newValue },
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
-        ConfirmButton(
+        ConfirmButtonUser(
             isEnabled = firstName.isNotEmpty() && lastName.isNotEmpty(),
             onClick = {
                 authViewModel.authenticateUser(
                     firstName = firstName,
                     lastName = lastName
                 )
-            }
+            },
+            modifier = Modifier.padding(bottom = 16.dp)
         )
     }
 
@@ -132,16 +129,14 @@ fun TopBar(onBackClick: () -> Unit) {
     ) {
         IconButton(
             onClick = onBackClick,
-            modifier = Modifier.size(16.dp)
+            modifier = Modifier.align(Alignment.CenterStart)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
+                painter = painterResource(id = R.drawable.ic_arrow_back),  // Assuming there's an arrow back icon
                 contentDescription = "Back",
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(24.dp)
             )
         }
-
-        Spacer(modifier = Modifier.width(16.dp))
 
         Text(
             text = stringResource(id = R.string.register),
@@ -221,9 +216,38 @@ fun UserDataField(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 4.dp)
             )
         }
+    }
+}
+
+@Composable
+fun ConfirmButtonUser(
+    isEnabled: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        enabled = isEnabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isEnabled) Color(0xFFD9EAD3) else Color(0xFFE4E4E4),
+            contentColor = Color.White
+        ),
+        shape = RoundedCornerShape(10.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(47.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.continue_text),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            fontFamily = gilroyFontFamily,
+            color = if (isEnabled) Color.White else Color.Gray,
+            lineHeight = 32.sp,
+            letterSpacing = (-0.028).em
+        )
     }
 }
 
