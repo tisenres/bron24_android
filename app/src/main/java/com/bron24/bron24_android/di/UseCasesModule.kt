@@ -75,12 +75,6 @@ object UseCasesModule {
         return VerifyOTPUseCase(authRepository)
     }
 
-    @Provides
-    @Singleton
-    fun provideSaveTokenUseCase(tokenRepository: TokenRepository): SaveTokenUseCase {
-        return SaveTokenUseCase(tokenRepository)
-    }
-
 
     // Repositories - Start
 

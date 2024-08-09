@@ -1,13 +1,15 @@
 package com.bron24.bron24_android.screens.auth
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.domain.entity.auth.AuthResponse
 import com.bron24.bron24_android.domain.entity.enums.OTPStatusCode
+import com.bron24.bron24_android.domain.entity.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,23 +17,14 @@ class AuthViewModel @Inject constructor(
     private val model: AuthModel
 ) : ViewModel() {
 
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
+    val authState: StateFlow<AuthState> get() = _authState
+
     private val _phoneNumber = MutableStateFlow("")
     val phoneNumber: StateFlow<String> get() = _phoneNumber
 
     private val _otp = MutableStateFlow(0)
     val otp: StateFlow<Int> get() = _otp
-
-    private val _token = MutableStateFlow("")
-    val token: StateFlow<String> get() = _token
-
-    private val _otpRequestStatus = MutableStateFlow(false)
-    val otpRequestStatus: StateFlow<Boolean> get() = _otpRequestStatus
-
-    private val _otpVerifyStatus = MutableStateFlow(false)
-    val otpVerifyStatus: StateFlow<Boolean> get() = _otpVerifyStatus
-
-    private val _isTokenExpired = MutableStateFlow(false)
-    val isTokenExpired: StateFlow<Boolean> get() = _isTokenExpired
 
     private val _isPhoneNumberValid = MutableStateFlow(false)
     val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
@@ -52,36 +45,46 @@ class AuthViewModel @Inject constructor(
 
     fun requestOTP() {
         viewModelScope.launch {
-            val response = model.requestOTP(
-                _phoneNumber.value.replace("+", "")
-            )
-            _otpRequestStatus.value = response.status == OTPStatusCode.SUCCESS
+            _authState.value = AuthState.Loading
+            try {
+                val response = model.requestOTP(
+                    _phoneNumber.value.replace("+", "")
+                )
+                _authState.value = AuthState.OTPRequested(response.status == OTPStatusCode.SUCCESS)
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
+            }
         }
     }
 
     fun verifyOTP() {
         viewModelScope.launch {
-            val response = model.verifyOTP(
-                _phoneNumber.value.replace("+", ""),
-                _otp.value
-            )
-            if (response.status == OTPStatusCode.SUCCESS) {
-//                _token.value = response.status ?: ""
-                _otpVerifyStatus.value = true
-                _isTokenExpired.value = false
-            } else {
-                _otpVerifyStatus.value = false
+            _authState.value = AuthState.Loading
+            try {
+                val response = model.verifyOTP(
+                    _phoneNumber.value.replace("+", ""),
+                    _otp.value
+                )
+                _authState.value = AuthState.OTPVerified(response.status == OTPStatusCode.SUCCESS)
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
             }
         }
     }
 
-    fun checkTokenValidity() {
-        _isTokenExpired.value = model.isTokenExpired()
-    }
-
-    fun logout() {
+    fun authenticateUser(firstName: String, lastName: String) {
         viewModelScope.launch {
-            model.clearToken()
+            _authState.value = AuthState.Loading
+            try {
+                val response = model.authUser(
+                    _phoneNumber.value,
+                    firstName,
+                    lastName
+                )
+                _authState.value = AuthState.Authenticated(response)
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error(e.message ?: "Authentication failed")
+            }
         }
     }
 }

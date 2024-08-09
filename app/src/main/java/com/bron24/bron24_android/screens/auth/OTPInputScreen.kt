@@ -41,7 +41,7 @@ fun OTPInputScreen(
     onBackClick: () -> Unit
 ) {
     var otp by remember { mutableStateOf("") }
-    val otpVerifyStatus by authViewModel.otpVerifyStatus.collectAsState()
+    val authState by authViewModel.authState.collectAsState()
     val scope = rememberCoroutineScope()
     var resendCounter by remember { mutableIntStateOf(90) }
     val focusRequester = remember { FocusRequester() }
@@ -124,9 +124,6 @@ fun OTPInputScreen(
                     if (newOtp.length == 4) {
                         scope.launch {
                             authViewModel.verifyOTP()
-                            if (otpVerifyStatus) {
-                                onOTPVerified()
-                            }
                         }
                     }
                 }
@@ -186,6 +183,48 @@ fun OTPInputScreen(
                     ),
                 )
             }
+        }
+    }
+
+    when (authState) {
+        is AuthState.Loading -> {
+            // Show loading indicator
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+
+        is AuthState.OTPVerified -> {
+            if ((authState as AuthState.OTPVerified).success) {
+                // Trigger onOTPVerified callback if OTP verification is successful
+                onOTPVerified()
+            } else {
+                // Show an error message or handle failure
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "OTP verification failed",
+                        color = Color.Red,
+
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+        }
+
+        is AuthState.Error -> {
+            // Display an error message
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    text = (authState as AuthState.Error).message,
+                    color = Color.Red,
+
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+
+        else -> {
+            // Handle other states if necessary
         }
     }
 }

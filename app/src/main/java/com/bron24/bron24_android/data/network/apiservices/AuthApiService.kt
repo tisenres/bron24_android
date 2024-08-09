@@ -1,9 +1,9 @@
 package com.bron24.bron24_android.data.network.apiservices
 
+import OTPCodeResponseDto
+import PhoneNumberResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.AuthResponseDto
-import com.bron24.bron24_android.data.network.dto.auth.OTPCodeResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.OTPRequestDto
-import com.bron24.bron24_android.data.network.dto.auth.PhoneNumberResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.UserDto
 import retrofit2.http.Body
 import retrofit2.http.POST

@@ -9,12 +9,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -24,12 +20,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
-import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
@@ -39,8 +35,10 @@ fun UserDataInputScreen(
     navController: NavController,
     onBackClick: () -> Unit
 ) {
+    val authState by authViewModel.authState.collectAsState()
     val phoneNumber by authViewModel.phoneNumber.collectAsState()
-    val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -66,40 +64,62 @@ fun UserDataInputScreen(
             ),
             modifier = Modifier.align(Alignment.Start)
         )
-        
+
         Spacer(modifier = Modifier.height(11.dp))
 
         UserDataField(
-            fieldName = phoneNumber,
-            placeholder = "Name",
-            icon = R.drawable.ic_person, // Replace with your user icon resource
-            onValueChange = { newValue ->
-//                authViewModel.onPhoneNumberChange(newValue)
-            },
-            focusRequester = FocusRequester(),
-            authViewModel = authViewModel
+            fieldName = firstName,
+            placeholder = "First Name",
+            icon = R.drawable.ic_person,
+            onValueChange = { newValue -> firstName = newValue },
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         UserDataField(
-            fieldName = phoneNumber,
-            placeholder = "Name",
-            icon = R.drawable.ic_person, // Replace with your user icon resource
-            onValueChange = { newValue ->
-//                authViewModel.onPhoneNumberChange(newValue)
-            },
-            focusRequester = FocusRequester(),
-            authViewModel = authViewModel
+            fieldName = lastName,
+            placeholder = "Last Name",
+            icon = R.drawable.ic_person,
+            onValueChange = { newValue -> lastName = newValue },
         )
 
+        Spacer(modifier = Modifier.height(20.dp))
+
         ConfirmButton(
-            isEnabled = isPhoneNumberValid,
+            isEnabled = firstName.isNotEmpty() && lastName.isNotEmpty(),
             onClick = {
-                authViewModel.requestOTP()
-                navController.navigate(Screen.LocationPermission.route)
+                authViewModel.authenticateUser(
+                    firstName = firstName,
+                    lastName = lastName
+                )
             }
         )
+    }
+
+    when (authState) {
+        is AuthState.Loading -> {
+            // Show loading indicator
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+        is AuthState.Authenticated -> {
+            // Navigate to the next screen when authentication is successful
+            navController.navigate(Screen.LocationPermission.route)
+        }
+        is AuthState.Error -> {
+            // Show error message if there was an error
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(
+                    text = (authState as AuthState.Error).message,
+                    color = Color.Red,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+        else -> {
+            // Handle other states if necessary
+        }
     }
 }
 
@@ -145,16 +165,7 @@ fun UserDataField(
     placeholder: String,
     icon: Int,
     onValueChange: (String) -> Unit,
-    focusRequester: FocusRequester,
-    authViewModel: AuthViewModel
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
-    }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -216,9 +227,8 @@ fun UserDataField(
     }
 }
 
-
 @Preview
 @Composable
-private fun PhoneNumberInputScreenPreview() {
+private fun UserDataInputScreenPreview() {
     // Add preview content here
 }

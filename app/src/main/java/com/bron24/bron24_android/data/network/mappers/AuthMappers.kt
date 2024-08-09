@@ -1,9 +1,9 @@
 package com.bron24.bron24_android.data.network.mappers
 
+import OTPCodeResponseDto
+import PhoneNumberResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.AuthResponseDto
-import com.bron24.bron24_android.data.network.dto.auth.OTPCodeResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.OTPRequestDto
-import com.bron24.bron24_android.data.network.dto.auth.PhoneNumberResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.UserDto
 import com.bron24.bron24_android.domain.entity.auth.AuthResponse
 import com.bron24.bron24_android.domain.entity.auth.OTPCodeResponse
@@ -21,7 +21,7 @@ fun OTPRequest.toNetworkModel(): OTPRequestDto {
 
 fun PhoneNumberResponseDto.toDomainEntity(): PhoneNumberResponse {
     return PhoneNumberResponse(
-        status = if (success.firstOrNull() == "success") OTPStatusCode.SUCCESS else OTPStatusCode.ERROR,
+        status = if (result == "success") OTPStatusCode.SUCCESS else OTPStatusCode.ERROR,
     )
 }
 
@@ -35,7 +35,7 @@ fun User.toNetworkModel(): UserDto {
     return UserDto(
         phoneNumber = phoneNumber,
         firstName = firstName,
-        secondName = secondName
+        secondName = lastName
     )
 }
 

@@ -19,17 +19,22 @@ class AuthInterceptor @Inject constructor(
         if (accessToken == null || tokenRepository.isAccessTokenExpired()) {
             synchronized(this) {
                 runBlocking {
-                    val newTokens = refreshToken?.let {
-                        authRepository.refreshAccessToken(it)
-                    }
-                    if (newTokens != null) {
-                        tokenRepository.saveTokens(
-                            newTokens.accessToken,
-                            newTokens.refreshToken,
-                            System.currentTimeMillis() + newTokens.accessExpiresAt * 1000,
-                            System.currentTimeMillis() + newTokens.refreshExpiresAt * 1000
-                        )
-                        accessToken = newTokens.accessToken
+                    try {
+                        val newTokens = refreshToken?.let {
+                            authRepository.refreshAccessToken(it)
+                        }
+                        if (newTokens != null) {
+                            tokenRepository.saveTokens(
+                                newTokens.accessToken,
+                                newTokens.refreshToken,
+                                System.currentTimeMillis() + newTokens.accessExpiresAt * 1000,
+                                System.currentTimeMillis() + newTokens.refreshExpiresAt * 1000
+                            )
+                            accessToken = newTokens.accessToken
+                        }
+                    } catch (e: Exception) {
+                        // Log the error and possibly trigger a logout or error state in the app
+                        // e.g., log.error("Failed to refresh token", e)
                     }
                 }
             }

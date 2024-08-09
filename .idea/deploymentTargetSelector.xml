@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-08-07T16:31:32.412233Z">
+        <DropdownSelection timestamp="2024-08-09T08:51:38.570697Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/Users/tisenres/.android/avd/Pixel_4_API_34.avd" />
@@ -12,9 +12,6 @@
           </Target>
         </DropdownSelection>
         <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="SimpleComposablePreview">
-        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="PreviewSearchView">
         <option name="selectionMode" value="DROPDOWN" />
@@ -27,6 +24,17 @@
       </SelectionState>
       <SelectionState runConfigName="VenueDetailsPreview">
         <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="UserDataInputScreenPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2024-08-09T08:50:54.991490Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/tisenres/.android/avd/Pixel_4_API_34.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
     </selectionStates>
   </component>

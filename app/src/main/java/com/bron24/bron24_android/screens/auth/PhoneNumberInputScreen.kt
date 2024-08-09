@@ -39,6 +39,7 @@ fun PhoneNumberInputScreen(
     authViewModel: AuthViewModel,
     navController: NavController,
 ) {
+    val authState by authViewModel.authState.collectAsState()
     val phoneNumber by authViewModel.phoneNumber.collectAsState()
     val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
     val focusRequester = remember { FocusRequester() }
@@ -64,6 +65,48 @@ fun PhoneNumberInputScreen(
         )
         Spacer(modifier = Modifier.weight(1f))
         BottomSection(authViewModel, isPhoneNumberValid, navController, phoneNumber)
+    }
+
+    // Handle different states
+    when (authState) {
+        is AuthState.Loading -> {
+            // Show loading indicator
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+
+        is AuthState.OTPRequested -> {
+            if ((authState as AuthState.OTPRequested).success) {
+                // Navigate to the OTP input screen if the OTP request was successful
+                navController.navigate(Screen.OTPInput.route.replace("{phoneNumber}", phoneNumber))
+            } else {
+                // Show an error message or handle failure
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "Failed to request OTP",
+                        color = Color.Red,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+        }
+
+        is AuthState.Error -> {
+            // Display an error message
+            Box(modifier = Modifier.fillMaxSize()) {
+
+                Text(
+                    text = (authState as AuthState.Error).message,
+                    color = Color.Red,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+
+        else -> {
+            // Handle other states if necessary
+        }
     }
 }
 
@@ -204,12 +247,6 @@ fun BottomSection(
             isEnabled = isPhoneNumberValid,
             onClick = {
                 authViewModel.requestOTP()
-                navController.navigate(
-                    Screen.OTPInput.route.replace(
-                        "{phoneNumber}",
-                        phoneNumber
-                    )
-                )
             }
         )
     }
