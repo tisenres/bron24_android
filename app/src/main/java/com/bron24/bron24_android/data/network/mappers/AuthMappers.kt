@@ -22,10 +22,12 @@ fun OTPRequest.toNetworkModel(): OTPRequestDto {
 
 fun PhoneNumberResponseDto.toDomainEntity(): PhoneNumberResponse {
     return PhoneNumberResponse(
-        status = if (result == "success") {
+        result = if (result == "success") {
             PhoneNumberResponseStatusCode.SUCCESS
-        } else {
+        } else if (result == "many requests") {
             PhoneNumberResponseStatusCode.MANY_REQUESTS
+        } else {
+            PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER
         }
     )
 }
