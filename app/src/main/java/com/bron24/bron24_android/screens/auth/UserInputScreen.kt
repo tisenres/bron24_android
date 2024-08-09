@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.auth
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,17 +19,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.main.Screen
+import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun UserDataInputScreen(
-    authViewModel: AuthViewModel,
+//    authViewModel: AuthViewModel,
+    authViewModel: MockAuthViewModel,
     onSignUpVerified: () -> Unit,
 ) {
     val authState by authViewModel.authState.collectAsState()
@@ -41,7 +41,7 @@ fun UserDataInputScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 20.dp)
+            .padding(20.dp)
     ) {
         TopBar()
 
@@ -65,7 +65,7 @@ fun UserDataInputScreen(
         UserDataField(
             fieldName = firstName,
             placeholder = stringResource(id = R.string.first_name),
-            icon = R.drawable.ic_person,
+            icon = R.drawable.ic_empty_user,
             onValueChange = { newValue -> firstName = newValue },
         )
 
@@ -74,7 +74,7 @@ fun UserDataInputScreen(
         UserDataField(
             fieldName = lastName,
             placeholder = stringResource(id = R.string.last_name),
-            icon = R.drawable.ic_person,
+            icon = R.drawable.ic_empty_user,
             onValueChange = { newValue -> lastName = newValue },
         )
 
@@ -88,10 +88,11 @@ fun UserDataInputScreen(
                     lastName = lastName
                 )
             },
-            modifier = Modifier.padding(bottom = 16.dp)
+            snackbarHostState = snackbarHostState,
+            authViewModel = authViewModel,
+            onSignUpVerified = onSignUpVerified
         )
     }
-
     when (authState) {
         is AuthState.Loading -> {
             // Show loading indicator
@@ -99,10 +100,12 @@ fun UserDataInputScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
+
         is AuthState.Authenticated -> {
             // Navigate to the next screen when authentication is successful
             onSignUpVerified()
         }
+
         is AuthState.Error -> {
             // Show error message if there was an error
             Box(modifier = Modifier.fillMaxSize()) {
@@ -113,6 +116,7 @@ fun UserDataInputScreen(
                 )
             }
         }
+
         else -> {
             // Handle other states if necessary
         }
@@ -152,9 +156,11 @@ fun UserDataField(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .height(58.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(Color(0xFFF6F6F6))
-            .padding(10.dp)
+            .padding(10.dp),
+        contentAlignment = Alignment.Center
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -164,7 +170,7 @@ fun UserDataField(
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = "User Icon",
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(22.dp),
                 tint = Color(0xFFB8BDCA)
             )
 
@@ -213,15 +219,23 @@ fun UserDataField(
 fun ConfirmButtonUser(
     isEnabled: Boolean,
     onClick: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    authViewModel: MockAuthViewModel,
+    onSignUpVerified: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val authState by authViewModel.authState.collectAsState()
+    val phoneNumber by authViewModel.phoneNumber.collectAsState()
+
     Button(
-        onClick = onClick,
-        enabled = isEnabled,
+        onClick = {
+            onClick()
+        },
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isEnabled) Color(0xFFD9EAD3) else Color(0xFFE4E4E4),
-            contentColor = Color.White
+            contentColor = Color.White,
+            containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4)
         ),
+        enabled = isEnabled,
         shape = RoundedCornerShape(10.dp),
         modifier = modifier
             .fillMaxWidth()
@@ -237,10 +251,41 @@ fun ConfirmButtonUser(
             letterSpacing = (-0.028).em
         )
     }
+
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.OTPRequested -> {
+                val status = (authState as AuthState.OTPRequested).status
+                if (status == PhoneNumberResponseStatusCode.SUCCESS) {
+                    onSignUpVerified()
+                } else if (status == PhoneNumberResponseStatusCode.MANY_REQUESTS) {
+                    onSignUpVerified()
+                } else {
+                    snackbarHostState.showSnackbar(
+                        message = "Failed to request OTP. Please try again later.",
+                        actionLabel = "OK"
+                    )
+                }
+            }
+
+            is AuthState.Error -> {
+                snackbarHostState.showSnackbar(
+                    message = "Error: " + (authState as AuthState.Error).message,
+                    actionLabel = "OK"
+                )
+            }
+
+            else -> {
+                // Handle other states if necessary
+            }
+        }
+    }
 }
 
 @Preview
 @Composable
 private fun UserDataInputScreenPreview() {
-    // Add preview content here
+    UserDataInputScreen(authViewModel = hiltViewModel()) {
+
+    }
 }
