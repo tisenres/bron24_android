@@ -49,7 +49,6 @@ class AuthViewModel @Inject constructor(
                 val response = model.requestOTP(
                     _phoneNumber.value.replace("+", "")
                 )
-                Log.d("SDSDWESDSDSCC", response.status.name)
                 _authState.value = AuthState.OTPRequested(response.status)
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")

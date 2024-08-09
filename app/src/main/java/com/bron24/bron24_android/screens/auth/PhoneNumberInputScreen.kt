@@ -24,6 +24,7 @@ import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -133,6 +134,14 @@ fun CustomPhoneNumberField(
     authViewModel: AuthViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(text = value.removePrefix("+998"))) }
+
+    LaunchedEffect(value) {
+        textFieldValue = textFieldValue.copy(
+            text = value.removePrefix("+998"),
+            selection = TextRange(value.length)  // Ensure the cursor is at the end
+        )
+    }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -194,11 +203,12 @@ fun CustomPhoneNumberField(
                     )
                     Spacer(modifier = Modifier.width(3.dp))
                     BasicTextField(
-                        value = value.removePrefix("+998"),
+                        value = textFieldValue,
                         onValueChange = { newValue ->
-                            val digitsOnly = newValue.filter { it.isDigit() }
+                            val digitsOnly = newValue.text.filter { it.isDigit() }
                             if (digitsOnly.length <= 9) {
                                 val fullNumber = "+998$digitsOnly"
+                                textFieldValue = newValue.copy(text = digitsOnly, selection = TextRange(digitsOnly.length))
                                 onValueChange(fullNumber)
                                 authViewModel.updatePhoneNumber(fullNumber)
                             }
@@ -313,7 +323,7 @@ fun ConfirmButton(
 
             is AuthState.Error -> {
                 snackbarHostState.showSnackbar(
-                    message = "Network error. Check your Internet connection.",
+                    message = "Error: " + (authState as AuthState.Error).message,
                     actionLabel = "OK"
                 )
             }

@@ -216,7 +216,7 @@ fun OTPInputScreen(
                 is AuthState.Error -> {
                     // Display an error message using a Snackbar
                     snackbarHostState.showSnackbar(
-                        message = (authState as AuthState.Error).message,
+                        message = "Error: " + (authState as AuthState.Error).message,
                         actionLabel = "OK"
                     )
                 }
