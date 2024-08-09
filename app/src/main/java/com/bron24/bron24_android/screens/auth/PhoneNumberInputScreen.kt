@@ -28,16 +28,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
-import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun PhoneNumberInputScreen(
     authViewModel: AuthViewModel,
-    navController: NavController,
+    onNavigateToOTPScreen: (String) -> Unit
 ) {
     val authState by authViewModel.authState.collectAsState()
     val phoneNumber by authViewModel.phoneNumber.collectAsState()
@@ -64,22 +62,15 @@ fun PhoneNumberInputScreen(
             authViewModel = authViewModel
         )
         Spacer(modifier = Modifier.weight(1f))
-        BottomSection(authViewModel, isPhoneNumberValid, navController, phoneNumber)
+        BottomSection(authViewModel, isPhoneNumberValid, phoneNumber)
     }
 
     // Handle different states
     when (authState) {
-        is AuthState.Loading -> {
-            // Show loading indicator
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        }
-
         is AuthState.OTPRequested -> {
             if ((authState as AuthState.OTPRequested).success) {
                 // Navigate to the OTP input screen if the OTP request was successful
-                navController.navigate(Screen.OTPInput.route.replace("{phoneNumber}", phoneNumber))
+                onNavigateToOTPScreen(phoneNumber)
             } else {
                 // Show an error message or handle failure
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -233,7 +224,6 @@ fun CustomPhoneNumberField(
 fun BottomSection(
     authViewModel: AuthViewModel,
     isPhoneNumberValid: Boolean,
-    navController: NavController,
     phoneNumber: String
 ) {
     Column(

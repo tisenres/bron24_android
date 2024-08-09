@@ -18,6 +18,6 @@ interface AuthApiService {
     @POST("api/v1/auth/signup/")
     suspend fun authenticateUser(@Body user: UserDto): AuthResponseDto
 
-    @POST("api/v1/auth/refresh_token/")
+    @POST("api/v1/auth/token/refresh/")
     suspend fun refreshAccessToken(@Body refreshToken: String): AuthResponseDto
 }

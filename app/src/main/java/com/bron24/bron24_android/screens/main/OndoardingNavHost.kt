@@ -22,7 +22,10 @@ import com.bron24.bron24_android.screens.location.LocationRequestScreen
 import kotlinx.coroutines.launch
 
 @Composable
-fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewModel = hiltViewModel()) {
+fun OndoardingNavHost(
+    navController: NavHostController,
+    mainViewModel: MainViewModel = hiltViewModel()
+) {
     val coroutineScope = rememberCoroutineScope()
     val isOnboardingCompleted by mainViewModel.isOnboardingCompleted.collectAsState()
     val authViewModel: AuthViewModel = hiltViewModel()
@@ -63,12 +66,14 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                 AnimatedScreenTransition {
                     PhoneNumberInputScreen(
                         authViewModel = authViewModel,
-                        navController = navController,
+                        onNavigateToOTPScreen = { phoneNumber ->
+                            navController.navigate("${Screen.OTPInput.route}/$phoneNumber")
+                        }
                     )
                 }
             }
             composable(
-                route = Screen.OTPInput.route,
+                route = "${Screen.OTPInput.route}/{phoneNumber}",
                 arguments = listOf(
                     navArgument("phoneNumber") { type = NavType.StringType }
                 )
@@ -83,6 +88,7 @@ fun OndoardingNavHost(navController: NavHostController, mainViewModel: MainViewM
                             }
                         },
                         onBackClick = {
+                            authViewModel.clearState()
                             navController.popBackStack()
                         },
                         phoneNumber = phoneNumber

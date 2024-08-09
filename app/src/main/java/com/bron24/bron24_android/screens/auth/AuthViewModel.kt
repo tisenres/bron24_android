@@ -2,14 +2,12 @@ package com.bron24.bron24_android.screens.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.domain.entity.auth.AuthResponse
-import com.bron24.bron24_android.domain.entity.enums.OTPStatusCode
-import com.bron24.bron24_android.domain.entity.user.User
+import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
+import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,7 +48,7 @@ class AuthViewModel @Inject constructor(
                 val response = model.requestOTP(
                     _phoneNumber.value.replace("+", "")
                 )
-                _authState.value = AuthState.OTPRequested(response.status == OTPStatusCode.SUCCESS)
+                _authState.value = AuthState.OTPRequested(response.status == PhoneNumberResponseStatusCode.SUCCESS)
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
             }
@@ -65,7 +63,7 @@ class AuthViewModel @Inject constructor(
                     _phoneNumber.value.replace("+", ""),
                     _otp.value
                 )
-                _authState.value = AuthState.OTPVerified(response.status == OTPStatusCode.SUCCESS)
+                _authState.value = AuthState.OTPVerified(response.status == OTPStatusCode.CORRECT_OTP)
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
             }
@@ -86,5 +84,10 @@ class AuthViewModel @Inject constructor(
                 _authState.value = AuthState.Error(e.message ?: "Authentication failed")
             }
         }
+    }
+
+    fun clearState() {
+        _authState.value = AuthState.Idle
+        _otp.value = 0
     }
 }

@@ -9,7 +9,8 @@ import com.bron24.bron24_android.domain.entity.auth.AuthResponse
 import com.bron24.bron24_android.domain.entity.auth.OTPCodeResponse
 import com.bron24.bron24_android.domain.entity.auth.OTPRequest
 import com.bron24.bron24_android.domain.entity.auth.PhoneNumberResponse
-import com.bron24.bron24_android.domain.entity.enums.OTPStatusCode
+import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
+import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.domain.entity.user.User
 
 fun OTPRequest.toNetworkModel(): OTPRequestDto {
@@ -21,13 +22,21 @@ fun OTPRequest.toNetworkModel(): OTPRequestDto {
 
 fun PhoneNumberResponseDto.toDomainEntity(): PhoneNumberResponse {
     return PhoneNumberResponse(
-        status = if (result == "success") OTPStatusCode.SUCCESS else OTPStatusCode.ERROR,
+        status = if (result == "success") {
+            PhoneNumberResponseStatusCode.SUCCESS
+        } else {
+            PhoneNumberResponseStatusCode.MANY_REQUESTS
+        }
     )
 }
 
 fun OTPCodeResponseDto.toDomainEntity(): OTPCodeResponse {
     return OTPCodeResponse(
-        status = if (status == "Successfully verified!") OTPStatusCode.SUCCESS else OTPStatusCode.ERROR,
+        status = if (status == "success") {
+            OTPStatusCode.CORRECT_OTP
+        } else {
+            OTPStatusCode.INCORRECT_OTP
+        }
     )
 }
 
