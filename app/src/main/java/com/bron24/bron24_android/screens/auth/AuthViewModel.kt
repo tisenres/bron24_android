@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
@@ -48,7 +49,8 @@ class AuthViewModel @Inject constructor(
                 val response = model.requestOTP(
                     _phoneNumber.value.replace("+", "")
                 )
-                _authState.value = AuthState.OTPRequested(response.status == PhoneNumberResponseStatusCode.SUCCESS)
+                Log.d("SDSDWESDSDSCC", response.status.name)
+                _authState.value = AuthState.OTPRequested(response.status)
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
             }
@@ -63,7 +65,7 @@ class AuthViewModel @Inject constructor(
                     _phoneNumber.value.replace("+", ""),
                     _otp.value
                 )
-                _authState.value = AuthState.OTPVerified(response.status == OTPStatusCode.CORRECT_OTP)
+                _authState.value = AuthState.OTPVerified(response.status)
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
             }

@@ -5,5 +5,5 @@ data class PhoneNumberResponseDto(
 )
 
 data class OTPCodeResponseDto(
-    @SerializedName("result") val status: String
+    @SerializedName("status") val status: String
 )

@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.auth
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
@@ -41,63 +43,73 @@ fun PhoneNumberInputScreen(
     val phoneNumber by authViewModel.phoneNumber.collectAsState()
     val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
     val focusRequester = remember { FocusRequester() }
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(horizontal = 20.dp)
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        Logo()
-        Spacer(modifier = Modifier.height(24.dp))
-        CustomPhoneNumberField(
-            value = phoneNumber,
-            onValueChange = { newValue ->
-                if (newValue.startsWith("+998")) {
-                    authViewModel.updatePhoneNumber(newValue)
-                }
-            },
-            focusRequester = focusRequester,
-            authViewModel = authViewModel
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        BottomSection(authViewModel, isPhoneNumberValid, phoneNumber)
-    }
-
-    // Handle different states
-    when (authState) {
-        is AuthState.OTPRequested -> {
-            if ((authState as AuthState.OTPRequested).success) {
-                // Navigate to the OTP input screen if the OTP request was successful
-                onNavigateToOTPScreen(phoneNumber)
-            } else {
-                // Show an error message or handle failure
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        text = "Failed to request OTP",
-                        color = Color.Red,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(horizontal = 20.dp)
+                .padding(paddingValues)
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
+            Logo()
+            Spacer(modifier = Modifier.height(24.dp))
+            CustomPhoneNumberField(
+                value = phoneNumber,
+                onValueChange = { newValue ->
+                    if (newValue.startsWith("+998")) {
+                        authViewModel.updatePhoneNumber(newValue)
+                    }
+                },
+                focusRequester = focusRequester,
+                authViewModel = authViewModel
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            BottomSection(
+                authViewModel,
+                isPhoneNumberValid,
+                onNavigateToOTPScreen,
+                snackbarHostState
+            )
         }
 
-        is AuthState.Error -> {
-            // Display an error message
-            Box(modifier = Modifier.fillMaxSize()) {
-
-                Text(
-                    text = (authState as AuthState.Error).message,
-                    color = Color.Red,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-        }
-
-        else -> {
-            // Handle other states if necessary
-        }
+//        LaunchedEffect(authState) {
+//            when (authState) {
+//                is AuthState.OTPRequested -> {
+//                    val status = (authState as AuthState.OTPRequested).status
+//                    if (status == PhoneNumberResponseStatusCode.SUCCESS) {
+//                        // Navigate to the OTP input screen if the OTP request was successful
+//                        onNavigateToOTPScreen(phoneNumber)
+//                    } else if (status == PhoneNumberResponseStatusCode.MANY_REQUESTS) {
+//                        // Directly navigate to the OTP screen on MANY_REQUESTS error
+//                        onNavigateToOTPScreen(phoneNumber)
+//                    } else {
+//                        // Show an error Snackbar if OTP request failed
+//                        snackbarHostState.showSnackbar(
+//                            message = "Failed to request OTP. Please try again later.",
+//                            actionLabel = "OK"
+//                        )
+//                    }
+//                }
+//
+//                is AuthState.Error -> {
+//                    // Display an error message using a Snackbar
+////                    Log.d("HTTP_LOG", (AuthState as AuthState.Error).message)
+//                    snackbarHostState.showSnackbar(
+//                        message = "Network error. Check your connection.",
+//                        actionLabel = "OK"
+//                    )
+//                }
+//
+//                else -> {
+//                    // Handle other states if necessary
+//                }
+//            }
+//        }
     }
 }
 
@@ -224,7 +236,8 @@ fun CustomPhoneNumberField(
 fun BottomSection(
     authViewModel: AuthViewModel,
     isPhoneNumberValid: Boolean,
-    phoneNumber: String
+    onNavigateToOTPScreen: (String) -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -237,10 +250,81 @@ fun BottomSection(
             isEnabled = isPhoneNumberValid,
             onClick = {
                 authViewModel.requestOTP()
-            }
+            },
+            snackbarHostState = snackbarHostState,
+            authViewModel = authViewModel,
+            onNavigateToOTPScreen = onNavigateToOTPScreen
         )
     }
 }
+
+@Composable
+fun ConfirmButton(
+    isEnabled: Boolean,
+    onClick: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    authViewModel: AuthViewModel,
+    onNavigateToOTPScreen: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val authState by authViewModel.authState.collectAsState()
+    val phoneNumber by authViewModel.phoneNumber.collectAsState()
+
+    Button(
+        onClick = {
+            onClick()
+        },
+        colors = ButtonDefaults.buttonColors(
+            contentColor = Color.White,
+            containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4)
+        ),
+        enabled = isEnabled,
+        shape = RoundedCornerShape(10.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(47.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.continue_text),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            fontFamily = gilroyFontFamily,
+            color = if (isEnabled) Color.White else Color.Gray,
+            lineHeight = 32.sp,
+            letterSpacing = (-0.028).em
+        )
+    }
+
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.OTPRequested -> {
+                val status = (authState as AuthState.OTPRequested).status
+                if (status == PhoneNumberResponseStatusCode.SUCCESS) {
+                    onNavigateToOTPScreen(phoneNumber)
+                } else if (status == PhoneNumberResponseStatusCode.MANY_REQUESTS) {
+                    onNavigateToOTPScreen(phoneNumber)
+                } else {
+                    snackbarHostState.showSnackbar(
+                        message = "Failed to request OTP. Please try again later.",
+                        actionLabel = "OK"
+                    )
+                }
+            }
+
+            is AuthState.Error -> {
+                snackbarHostState.showSnackbar(
+                    message = "Network error. Check your Internet connection.",
+                    actionLabel = "OK"
+                )
+            }
+
+            else -> {
+                // Handle other states if necessary
+            }
+        }
+    }
+}
+
 
 @Composable
 fun TermsAndConditionsText() {
@@ -282,37 +366,6 @@ fun TermsAndConditionsText() {
         },
         modifier = Modifier.fillMaxWidth()
     )
-}
-
-
-@Composable
-fun ConfirmButton(
-    isEnabled: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            contentColor = Color.White,
-            containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4)
-        ),
-        enabled = isEnabled,
-        shape = RoundedCornerShape(10.dp),
-        modifier = modifier
-            .fillMaxWidth()
-            .height(47.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.continue_text),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
-            fontFamily = gilroyFontFamily,
-            color = if (isEnabled) Color.White else Color.Gray,
-            lineHeight = 32.sp,
-            letterSpacing = (-0.028).em
-        )
-    }
 }
 
 @Preview(showBackground = true)
