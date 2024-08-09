@@ -33,4 +33,14 @@ class MockAuthViewModel : ViewModel() {
     fun clearState() {
         _authState.value = AuthState.Idle
     }
+
+    fun updateOTP(toInt: Int) {
+
+
+    }
+
+    fun verifyOTP() {
+
+
+    }
 }

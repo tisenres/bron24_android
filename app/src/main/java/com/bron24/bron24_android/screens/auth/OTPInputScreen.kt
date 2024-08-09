@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -26,17 +27,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
-import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
+//import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun OTPInputScreen(
-    authViewModel: AuthViewModel,
+    authViewModel: MockAuthViewModel,
     phoneNumber: String,
     onOTPVerified: () -> Unit,
     onBackClick: () -> Unit
@@ -75,25 +75,23 @@ fun OTPInputScreen(
             ) {
                 IconButton(
                     onClick = onBackClick,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(24.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_arrow_back),
                         contentDescription = "Back",
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(24.dp)
                     )
                 }
-
-                Spacer(modifier = Modifier.width(16.dp))
 
                 Text(
                     text = stringResource(id = R.string.otp_title),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        fontSize = 22.sp,
                         color = Color.Black,
-                        lineHeight = 22.05.sp,
+                        lineHeight = 24.sp,
                         letterSpacing = (-0.028).em,
                         textAlign = TextAlign.Center
                     ),
@@ -106,7 +104,8 @@ fun OTPInputScreen(
             Text(
                 text = stringResource(id = R.string.enter_otp_code) +
                         "\n" +
-                        phoneNumber.formatWithSpansPhoneNumber(),
+                        phoneNumber,
+//                        phoneNumber.formatWithSpansPhoneNumber(),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -261,14 +260,10 @@ fun OTPTextField(
                     }
                     Box(
                         modifier = Modifier
+                            .clip(RoundedCornerShape(5.dp))
                             .height(53.dp)
                             .aspectRatio(1f)
-                            .background(Color(0xFFF6F6F6))
-                            .border(
-                                width = 1.dp,
-                                color = Color(0xFFF6F6F6),
-                                shape = RoundedCornerShape(5.dp)
-                            ),
+                            .background(Color(0xFFF6F6F6)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -293,8 +288,8 @@ fun OTPTextField(
 @Composable
 fun OTPInputScreenPreview() {
     OTPInputScreen(
-        authViewModel = hiltViewModel(),
-        phoneNumber = "998900000000",
+        authViewModel = MockAuthViewModel(),
+        phoneNumber = "+998 94 018 67 22",
         onOTPVerified = {},
         onBackClick = {}
     )

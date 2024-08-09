@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.main
 
+import UserDataInputScreen
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.MaterialTheme
@@ -11,12 +12,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.auth.MockAuthViewModel
 import com.bron24.bron24_android.screens.auth.OTPInputScreen
 import com.bron24.bron24_android.screens.auth.PhoneNumberInputScreen
-import com.bron24.bron24_android.screens.auth.UserDataInputScreen
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
 import com.bron24.bron24_android.screens.language.LanguageSelectionScreen
 import com.bron24.bron24_android.screens.location.LocationRequestScreen
@@ -82,7 +81,7 @@ fun OndoardingNavHost(
                 val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
                 AnimatedScreenTransition {
                     OTPInputScreen(
-                        authViewModel = authViewModel,
+                        authViewModel = MockAuthViewModel(),
                         onOTPVerified = {
                             navController.navigate(Screen.UserDataInput.route) {
                                 popUpTo(Screen.OTPInput.route) { inclusive = true }
@@ -99,7 +98,7 @@ fun OndoardingNavHost(
             composable(Screen.UserDataInput.route) { navBackStackEntry ->
                 AnimatedScreenTransition {
                     UserDataInputScreen(
-                        authViewModel = MockAuthViewModel(),
+                        authViewModel = hiltViewModel(),
                         onSignUpVerified = {
                             navController.navigate(Screen.LocationPermission.route)
                         }

@@ -1,5 +1,3 @@
-package com.bron24.bron24_android.screens.auth
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -19,80 +18,86 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
+import com.bron24.bron24_android.screens.auth.AuthState
+import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun UserDataInputScreen(
-//    authViewModel: AuthViewModel,
-    authViewModel: MockAuthViewModel,
+    authViewModel: AuthViewModel,
     onSignUpVerified: () -> Unit,
 ) {
     val authState by authViewModel.authState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(20.dp)
-    ) {
-        TopBar()
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(horizontal = 20.dp)
+                .padding(paddingValues)
+        ) {
+            TopBar()
 
-        Spacer(modifier = Modifier.height(37.dp))
+            Spacer(modifier = Modifier.height(37.dp))
 
-        Text(
-            text = stringResource(id = R.string.enter_personal_data),
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                color = Color.Black,
-                lineHeight = 16.8.sp,
-                letterSpacing = (-0.028).em
-            ),
-            modifier = Modifier.align(Alignment.Start)
-        )
+            Text(
+                text = stringResource(id = R.string.enter_personal_data),
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    lineHeight = 16.8.sp,
+                    letterSpacing = (-0.028).em
+                ),
+                modifier = Modifier.align(Alignment.Start)
+            )
 
-        Spacer(modifier = Modifier.height(11.dp))
+            Spacer(modifier = Modifier.height(11.dp))
 
-        UserDataField(
-            fieldName = firstName,
-            placeholder = stringResource(id = R.string.first_name),
-            icon = R.drawable.ic_empty_user,
-            onValueChange = { newValue -> firstName = newValue },
-        )
+            UserDataField(
+                fieldName = firstName,
+                placeholder = stringResource(id = R.string.first_name),
+                icon = R.drawable.ic_empty_user,
+                onValueChange = { newValue -> firstName = newValue },
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        UserDataField(
-            fieldName = lastName,
-            placeholder = stringResource(id = R.string.last_name),
-            icon = R.drawable.ic_empty_user,
-            onValueChange = { newValue -> lastName = newValue },
-        )
+            UserDataField(
+                fieldName = lastName,
+                placeholder = stringResource(id = R.string.last_name),
+                icon = R.drawable.ic_empty_user,
+                onValueChange = { newValue -> lastName = newValue },
+            )
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        ConfirmButtonUser(
-            isEnabled = firstName.isNotEmpty() && lastName.isNotEmpty(),
-            onClick = {
-                authViewModel.authenticateUser(
-                    firstName = firstName,
-                    lastName = lastName
-                )
-            },
-            snackbarHostState = snackbarHostState,
-            authViewModel = authViewModel,
-            onSignUpVerified = onSignUpVerified
-        )
+            ConfirmButtonUser(
+                isEnabled = firstName.isNotEmpty() && lastName.isNotEmpty(),
+                onClick = {
+                    authViewModel.authenticateUser(
+                        firstName = firstName,
+                        lastName = lastName
+                    )
+                },
+                snackbarHostState = snackbarHostState,
+                authViewModel = authViewModel,
+                onSignUpVerified = onSignUpVerified
+            )
+        }
     }
+
     when (authState) {
         is AuthState.Loading -> {
             // Show loading indicator
@@ -128,16 +133,16 @@ fun TopBar() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(24.dp)
+            .padding(20.dp)
     ) {
         Text(
             text = stringResource(id = R.string.register),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
+                fontSize = 22.sp,
                 color = Color.Black,
-                lineHeight = 22.05.sp,
+                lineHeight = 24.sp,
                 letterSpacing = (-0.028).em,
                 textAlign = TextAlign.Center
             ),
@@ -220,12 +225,11 @@ fun ConfirmButtonUser(
     isEnabled: Boolean,
     onClick: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    authViewModel: MockAuthViewModel,
+    authViewModel: AuthViewModel,
     onSignUpVerified: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val authState by authViewModel.authState.collectAsState()
-    val phoneNumber by authViewModel.phoneNumber.collectAsState()
 
     Button(
         onClick = {
@@ -239,6 +243,7 @@ fun ConfirmButtonUser(
         shape = RoundedCornerShape(10.dp),
         modifier = modifier
             .fillMaxWidth()
+            .padding(bottom = 20.dp)
             .height(47.dp)
     ) {
         Text(
@@ -254,18 +259,8 @@ fun ConfirmButtonUser(
 
     LaunchedEffect(authState) {
         when (authState) {
-            is AuthState.OTPRequested -> {
-                val status = (authState as AuthState.OTPRequested).status
-                if (status == PhoneNumberResponseStatusCode.SUCCESS) {
-                    onSignUpVerified()
-                } else if (status == PhoneNumberResponseStatusCode.MANY_REQUESTS) {
-                    onSignUpVerified()
-                } else {
-                    snackbarHostState.showSnackbar(
-                        message = "Failed to request OTP. Please try again later.",
-                        actionLabel = "OK"
-                    )
-                }
+            is AuthState.Authenticated -> {
+                onSignUpVerified()
             }
 
             is AuthState.Error -> {

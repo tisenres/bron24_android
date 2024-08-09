@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.auth
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
