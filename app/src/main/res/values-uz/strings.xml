@@ -39,5 +39,9 @@
     <string name="refresh">Refresh</string>
     <string name="resend_code">Resend code again after </string>
     <string name="resend_code_button">Resend code</string>
+    <string name="register">Register</string>
+    <string name="enter_personal_data">Enter your personal data</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
 
 </resources>

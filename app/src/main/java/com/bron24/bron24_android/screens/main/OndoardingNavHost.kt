@@ -81,7 +81,7 @@ fun OndoardingNavHost(
                 val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
                 AnimatedScreenTransition {
                     OTPInputScreen(
-                        authViewModel = MockAuthViewModel(),
+                        authViewModel = authViewModel,
                         onOTPVerified = {
                             navController.navigate(Screen.UserDataInput.route) {
                                 popUpTo(Screen.OTPInput.route) { inclusive = true }
@@ -98,7 +98,7 @@ fun OndoardingNavHost(
             composable(Screen.UserDataInput.route) { navBackStackEntry ->
                 AnimatedScreenTransition {
                     UserDataInputScreen(
-                        authViewModel = hiltViewModel(),
+                        authViewModel = authViewModel,
                         onSignUpVerified = {
                             navController.navigate(Screen.LocationPermission.route)
                         }

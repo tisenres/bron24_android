@@ -2,7 +2,6 @@ package com.bron24.bron24_android.screens.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -27,16 +26,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
-//import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun OTPInputScreen(
-    authViewModel: MockAuthViewModel,
+    authViewModel: AuthViewModel,
     phoneNumber: String,
     onOTPVerified: () -> Unit,
     onBackClick: () -> Unit
@@ -44,7 +43,7 @@ fun OTPInputScreen(
     var otp by remember { mutableStateOf("") }
     val authState by authViewModel.authState.collectAsState()
     val scope = rememberCoroutineScope()
-    var resendCounter by remember { mutableIntStateOf(90) }
+    var resendCounter by remember { mutableIntStateOf(90) } // 1 minute 30 seconds
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -105,7 +104,6 @@ fun OTPInputScreen(
                 text = stringResource(id = R.string.enter_otp_code) +
                         "\n" +
                         phoneNumber,
-//                        phoneNumber.formatWithSpansPhoneNumber(),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -170,7 +168,7 @@ fun OTPInputScreen(
             } else {
                 TextButton(
                     onClick = {
-                        // TODO Implement resend code logic here
+                        authViewModel.verifyOTP()
                         resendCounter = 90
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -181,7 +179,7 @@ fun OTPInputScreen(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.Normal,
                             fontSize = 14.sp,
-                            color = Color(0xFFB5DAC4),
+                            color = Color(0xFF32B768),
                             lineHeight = 16.8.sp,
                             letterSpacing = (-0.028).em
                         ),
@@ -288,7 +286,7 @@ fun OTPTextField(
 @Composable
 fun OTPInputScreenPreview() {
     OTPInputScreen(
-        authViewModel = MockAuthViewModel(),
+        authViewModel = hiltViewModel(),
         phoneNumber = "+998 94 018 67 22",
         onOTPVerified = {},
         onBackClick = {}
