@@ -122,11 +122,17 @@ fun OTPInputScreen(
                 onOtpChange = { newOtp ->
                     if (newOtp.length <= 4) {
                         otp = newOtp
-                        authViewModel.updateOTP(newOtp.toInt())
-                        if (newOtp.length == 4) {
-                            scope.launch {
-                                authViewModel.verifyOTP()
+                        val otpValue = newOtp.toIntOrNull()
+                        if (otpValue != null) {
+                            authViewModel.updateOTP(otpValue)
+                            if (newOtp.length == 4) {
+                                scope.launch {
+                                    authViewModel.verifyOTP()
+                                }
                             }
+                        } else {
+                            // Handle the case where otp is empty or invalid
+                            authViewModel.updateOTP(0)
                         }
                     }
                 },
