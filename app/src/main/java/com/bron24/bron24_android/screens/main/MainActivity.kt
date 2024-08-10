@@ -12,6 +12,7 @@ import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.helper.util.LocaleManager
+import com.bron24.bron24_android.screens.map.GoogleMapScreen
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -31,8 +32,9 @@ class MainActivity : ComponentActivity() {
 
             CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
                 Bron24_androidTheme {
-                    val mainViewModel: MainViewModel = hiltViewModel()
-                    OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
+                    GoogleMapScreen()
+//                    val mainViewModel: MainViewModel = hiltViewModel()
+//                    OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
                 }
             }
         }

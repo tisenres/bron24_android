@@ -1,105 +1,100 @@
 package com.bron24.bron24_android.screens.map
 
-import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
+import com.bron24.bron24_android.R
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ModalBottomSheet
+import com.bron24.bron24_android.domain.entity.user.Location
+import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
+import com.google.maps.android.compose.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GoogleMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
+fun GoogleMapScreen(
+    viewModel: VenueMapViewModel = hiltViewModel(),
+    venueDetailsViewModel: VenueDetailsViewModel = hiltViewModel()
+) {
     val venues by viewModel.venues.collectAsState()
     val currentLocation by viewModel.currentLocation.collectAsState()
-    val context = LocalContext.current
 
-    var selectedVenue by remember { mutableStateOf<String?>(null) }
+    var selectedVenueId by remember { mutableStateOf<Int?>(null) }
+    val bottomSheetState = rememberModalBottomSheetState()
 
-    BottomSheetScaffold(
-        sheetContent = {
-            selectedVenue?.let {
-                Text(text = it)
-            }
-        },
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            val mapView = rememberMapViewWithLifecycle(context)
-            AndroidView(factory = { mapView }) { mapView ->
-                mapView.getMapAsync { googleMap ->
-                    googleMap.uiSettings.isZoomControlsEnabled = true
+    Box(modifier = Modifier.fillMaxSize()) {
+        GoogleMapView(
+            currentLocation = currentLocation,
+            venues = venues,
+            onMarkerClick = { clickedVenueId -> selectedVenueId = clickedVenueId }
+        )
 
-                    currentLocation?.let {
-                        val currentLatLng = LatLng(it.latitude, it.longitude)
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 13.0f))
-                        addCurrentLocationMarker(googleMap, currentLatLng, context)
-                    }
-
-                    googleMap.clear()
-                    venues.forEach { venue ->
-                        val venueLatLng = LatLng(venue.latitude.toDouble(), venue.longitude.toDouble())
-                        addVenueMarker(googleMap, venueLatLng, venue.venueName) { selectedVenue = it }
-                    }
-                }
+        selectedVenueId?.let { venueId ->
+            ModalBottomSheet(
+                onDismissRequest = { selectedVenueId = null },
+                sheetState = bottomSheetState
+            ) {
+                VenueDetailsScreen(
+                    viewModel = venueDetailsViewModel,
+                    venueId = venueId,
+                    onDismiss = { selectedVenueId = null }
+                )
             }
         }
     }
 }
 
 @Composable
-fun rememberMapViewWithLifecycle(context: Context): MapView {
-    val mapView = remember { MapView(context) }
-
-    DisposableEffect(Unit) {
-        mapView.onCreate(null)
-        mapView.onStart()
-        onDispose {
-            mapView.onStop()
-            mapView.onDestroy()
-        }
-    }
-    return mapView
-}
-
-fun addCurrentLocationMarker(googleMap: GoogleMap, location: LatLng, context: Context) {
-    googleMap.addMarker(
-        MarkerOptions()
-            .position(location)
-            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-    )
-}
-
-fun addVenueMarker(
-    googleMap: GoogleMap,
-    location: LatLng,
-    venueName: String,
-    onMarkerClick: (String) -> Unit
+fun GoogleMapView(
+    currentLocation: Location?,
+    venues: List<VenueCoordinates>,
+    onMarkerClick: (Int) -> Unit
 ) {
-    val marker = googleMap.addMarker(
-        MarkerOptions()
-            .position(location)
-            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-            .title(venueName)
-    )
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(
+            LatLng(currentLocation?.latitude ?: 0.0, currentLocation?.longitude ?: 0.0),
+            13f
+        )
+    }
 
-    googleMap.setOnMarkerClickListener { clickedMarker ->
-        if (clickedMarker == marker) {
-            onMarkerClick(venueName)
-            true
-        } else {
-            false
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(isMyLocationEnabled = true)
+    ) {
+        currentLocation?.let { location ->
+            CustomMarker(
+                position = LatLng(location.latitude, location.longitude),
+                title = "Current Location",
+                iconResourceId = R.drawable.baseline_location_on_24_red
+            )
+        }
+
+        venues.forEach { venue ->
+            CustomMarker(
+                position = LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
+                title = venue.venueName,
+                iconResourceId = R.drawable.baseline_location_on_24_green,
+                onMarkerClick = { onMarkerClick(9) }
+            )
         }
     }
+}
+
+@Composable
+fun CustomMarker(
+    position: LatLng,
+    title: String,
+    iconResourceId: Int,
+    onMarkerClick: () -> Unit = {}
+) {
+
 }
