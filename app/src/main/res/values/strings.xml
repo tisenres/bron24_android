@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bron24</string>
+    <string name="select_language">Select Language</string>
+    <string name="uz_language">O‘zbek</string>
+    <string name="ru_language">Russian</string>
+    <string name="en_language">English</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="location_request_title">Use Location</string>
+    <string name="location_request_description">We use your location to find fields near you</string>
+    <string name="allow_button">Allow</string>
+    <string name="deny_button">Not now</string>
+    <string name="select_city">Select city</string>
+    <string name="nearby_stadiums">Nearby stadiums</string>
+    <string name="nearby_stadiums_desc">You don\'t have to go far to find or call a good stadium, we have provided all the stadiums that is near you</string>
+    <string name="select_stadium">Just select a stadium</string>
+    <string name="select_stadium_desc">Choose the stadium you like the most, choose the time and date of the game and you just Bron it :)</string>
+    <string name="hello">Hello</string>
+    <string name="football_field">Football field</string>
+    <string name="free_time">Free time</string>
+    <string name="som_per_hour">soʻm / hour</string>
+    <string name="km">km</string>
+    <string name="slots">slots</string>
+    <string name="football_fields">Football fields</string>
+    <string name="search_stadium">Search your stadium</string>
+    <string name="special_offers">For you</string>
+    <string name="see_all">See all</string>
+    <string name="home">Home</string>
+    <string name="nearby">Nearby</string>
+    <string name="profile">Profile</string>
+    <string name="orders">Orders</string>
+    <string name="phone_number">Phone number</string>
+    <string name="continue_text">Continue</string>
+    <string name="terms_and_conditions">By clicking on the «Continue» you accept our</string>
+    <string name="terms_and_conditions_text"><![CDATA[Terms & Conditions\n]]></string>
+    <string name="enter_otp_code">Enter verification code sent on your phone</string>
+    <string name="otp_title">OTP</string>
+    <string name="refresh">Refresh</string>
+    <string name="resend_code">Resend code again after </string>
+    <string name="resend_code_button">Resend code</string>
+    <string name="register">Register</string>
+    <string name="enter_personal_data">Enter your personal data</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+</resources>

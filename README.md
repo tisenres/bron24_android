@@ -1,4 +1,4 @@
-# bron24_android_private
+# Android
 
 
 
@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.com/tisenres/bron24_android_private.git
+git remote add origin https://gitlab.com/bron24/androidteam/android.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.com/tisenres/bron24_android_private/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.com/bron24/androidteam/android/-/settings/integrations)
 
 ## Collaborate with your team
 

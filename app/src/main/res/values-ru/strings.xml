@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bron24</string>
+    <string name="select_language">Выберите язык</string>
+    <string name="uz_language">O‘zbek</string>
+    <string name="ru_language">Russian</string>
+    <string name="en_language">English</string>
+    <string name="next">Далее</string>
+    <string name="skip">Пропустить</string>
+    <string name="location_request_title">Использование местоположения</string>
+    <string name="location_request_description">Мы используем местоположение, чтобы найти ближайшие для вас площадки</string>
+    <string name="allow_button">Разрешить</string>
+    <string name="deny_button">Не сейчас</string>
+    <string name="select_city">Выберите город</string>
+    <string name="nearby_stadiums">Стадионы рядом</string>
+    <string name="nearby_stadiums_desc">Не тратьте время на поиски! Все лучшие стадионы уже рядом с вами – выбирайте и звоните!</string>
+    <string name="select_stadium">Выберите стадион</string>
+    <string name="select_stadium_desc">Найдите идеальный стадион, выберите удобное время и дату игры и забронируйте его всего за несколько кликов!</string>
+    <string name="hello">Привет</string>
+    <string name="football_field">Футбольное поле</string>
+    <string name="free_time">Свободно</string>
+    <string name="som_per_hour">сум / час</string>
+    <string name="km">км</string>
+    <string name="slots">мест</string>
+    <string name="football_fields">Футбольные стадионы</string>
+    <string name="search_stadium">Поиск стадиона</string>
+    <string name="special_offers">Для вас</string>
+    <string name="see_all">Подробнее</string>
+    <string name="home">Главная</string>
+    <string name="nearby">Рядом</string>
+    <string name="profile">Профиль</string>
+    <string name="orders">Заказы</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="continue_text">Продолжить</string>
+    <string name="terms_and_conditions">Нажимая «Продолжить», вы соглашаетесь с нашими</string>
+    <string name="terms_and_conditions_text"><![CDATA[Условиями использования\n]]></string>
+    <string name="enter_otp_code">Введите код, отправленный на ваш телефон</string>
+    <string name="otp_title">OTP</string>
+    <string name="refresh">Refresh</string>
+    <string name="resend_code">Resend code again after </string>
+    <string name="resend_code_button">Resend code</string>
+    <string name="register">Register</string>
+    <string name="enter_personal_data">Enter your personal data</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+</resources>
