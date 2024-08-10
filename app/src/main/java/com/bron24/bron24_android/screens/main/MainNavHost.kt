@@ -15,7 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.screens.main.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.home.HomePage
-import com.bron24.bron24_android.screens.map.YandexMapScreen
+import com.bron24.bron24_android.screens.map.GoogleMapScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 
@@ -77,7 +77,7 @@ fun ProfilePage() {
 
 @Composable
 fun MapPage() {
-    YandexMapScreen()
+    GoogleMapScreen()
 }
 
 @Composable

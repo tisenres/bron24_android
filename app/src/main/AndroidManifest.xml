@@ -35,6 +35,10 @@
         <meta-data
             android:name="com.yandex.maps.apikey"
             android:value="3c062e82-1411-437c-9157-f7e96556b098"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBPZTDwkpVBEJ-JUnz1d4r2BNPQCpiKKPA" />
     </application>
 
     <queries>
