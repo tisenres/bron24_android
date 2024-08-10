@@ -37,30 +37,32 @@ import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
 import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
 import io.morfly.compose.bottomsheet.material3.rememberBottomSheetScaffoldState
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
     onDismiss: () -> Unit
 ) {
-    val sheetState = rememberBottomSheetState(
-        initialValue = SheetValue.PartiallyExpanded,
-        defineValues = {
-            SheetValue.Collapsed at height(100.dp)
-            SheetValue.PartiallyExpanded at offset(percent = 60)
-            SheetValue.Expanded at contentHeight
-        }
-    )
-
     val venueDetails = viewModel.venueDetails.collectAsState().value
-    val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
+    VenueDetailsContent(details = venueDetails)
+//    val sheetState = rememberBottomSheetState(
+//        initialValue = SheetValue.PartiallyExpanded,
+//        defineValues = {
+//            SheetValue.Collapsed at height(100.dp)
+//            SheetValue.PartiallyExpanded at offset(percent = 60)
+//            SheetValue.Expanded at contentHeight
+//        }
+//    )
 
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetContent = { VenueDetailsContent(details = venueDetails) },
-        content = { /* Screen content can be added here if needed */ }
-    )
+//    val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
+//    val venueDetails = viewModel.venueDetails.collectAsState().value
+
+//
+//    BottomSheetScaffold(
+//        scaffoldState = scaffoldState,
+//        sheetContent = { VenueDetailsContent(details = venueDetails) },
+//        content = { /* Screen content can be added here if needed */ }
+//    )
 }
 
 @Composable
