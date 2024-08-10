@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
                 Bron24_androidTheme {
                     val mainViewModel: MainViewModel = hiltViewModel()
-                    OndoardingNavHost(navController = navController, mainViewModel = mainViewModel)
+                    OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
                 }
             }
         }

@@ -12,8 +12,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.bron24.bron24_android.domain.entity.enums.OnboardingScreen
 import com.bron24.bron24_android.screens.auth.AuthViewModel
-import com.bron24.bron24_android.screens.auth.MockAuthViewModel
 import com.bron24.bron24_android.screens.auth.OTPInputScreen
 import com.bron24.bron24_android.screens.auth.PhoneNumberInputScreen
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
@@ -22,18 +22,18 @@ import com.bron24.bron24_android.screens.location.LocationRequestScreen
 import kotlinx.coroutines.launch
 
 @Composable
-fun OndoardingNavHost(
+fun OnboardingNavHost(
     navController: NavHostController,
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val isOnboardingCompleted by mainViewModel.isOnboardingCompleted.collectAsState()
+    val onboardingScreens by mainViewModel.onboardingScreensToShow.collectAsState()
     val authViewModel: AuthViewModel = hiltViewModel()
 
     Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(
             navController = navController,
-            startDestination = if (isOnboardingCompleted) Screen.Main.route else Screen.LanguageSelection.route
+            startDestination = if (onboardingScreens.isEmpty()) Screen.Main.route else onboardingScreens.first().route
         ) {
             composable(Screen.LanguageSelection.route) {
                 AnimatedScreenTransition {
@@ -41,6 +41,7 @@ fun OndoardingNavHost(
                         viewModel = hiltViewModel(),
                         onNavigateToHowItWorksRequest = {
                             coroutineScope.launch {
+                                mainViewModel.setOnboardingCompleted(OnboardingScreen.LANGUAGE)
                                 navController.navigate(Screen.HowItWorksPager.route) {
                                     popUpTo(Screen.LanguageSelection.route) { inclusive = true }
                                 }
@@ -54,6 +55,7 @@ fun OndoardingNavHost(
                     HowItWorksPager(
                         onNavigateToAuthScreens = {
                             coroutineScope.launch {
+                                mainViewModel.setOnboardingCompleted(OnboardingScreen.HOWITWORKS)
                                 navController.navigate(Screen.PhoneNumberInput.route) {
                                     popUpTo(Screen.HowItWorksPager.route) { inclusive = true }
                                 }
@@ -62,7 +64,7 @@ fun OndoardingNavHost(
                     )
                 }
             }
-            composable(Screen.PhoneNumberInput.route) { navBackStackEntry ->
+            composable(Screen.PhoneNumberInput.route) {
                 AnimatedScreenTransition {
                     PhoneNumberInputScreen(
                         authViewModel = authViewModel,
@@ -107,10 +109,13 @@ fun OndoardingNavHost(
             }
             composable(Screen.LocationPermission.route) {
                 AnimatedScreenTransition {
+                    // 2 situations: user can navigate to UserDataInputScreen or not
+                    // So let's set ondoarding status for auth when navigation to Location screen exactly
+                    mainViewModel.setOnboardingCompleted(OnboardingScreen.AUTHENTICATION)
                     LocationRequestScreen(
                         onAllowClick = {
                             coroutineScope.launch {
-                                mainViewModel.setOnboardingCompleted()
+                                mainViewModel.setOnboardingCompleted(OnboardingScreen.LOCATION)
                                 navController.navigate(Screen.Main.route) {
                                     popUpTo(Screen.LocationPermission.route) { inclusive = true }
                                 }
@@ -118,7 +123,7 @@ fun OndoardingNavHost(
                         },
                         onDenyClick = {
                             coroutineScope.launch {
-                                mainViewModel.setOnboardingCompleted()
+                                mainViewModel.setOnboardingCompleted(OnboardingScreen.LOCATION)
                                 navController.navigate(Screen.Main.route) {
                                     popUpTo(Screen.LocationPermission.route) { inclusive = true }
                                 }

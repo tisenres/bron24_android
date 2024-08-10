@@ -3,7 +3,7 @@ package com.bron24.bron24_android.data.local.preference
 import android.content.Context
 import android.content.SharedPreferences
 
-private const val IS_ONBOARDING_COMPLETED = "is_onboarding_completed"
+//private const val IS_ONBOARDING_COMPLETED = "is_onboarding_completed"
 private const val SELECTED_LANGUAGE = "selected_language"
 private const val TOKEN_KEY = "auth_token"
 private const val TOKEN_EXPIRY_KEY = "auth_token_expiry"
@@ -23,12 +23,12 @@ class AppPreference(context: Context) {
         preferences.edit().putString(SELECTED_LANGUAGE, languageCode).apply()
     }
 
-    fun isOnboardingCompleted(): Boolean {
-        return preferences.getBoolean(IS_ONBOARDING_COMPLETED, false)
+    fun isOnboardingCompleted(screenName: String): Boolean {
+        return preferences.getBoolean(screenName, false)
     }
 
-    fun setOnboardingCompleted(completed: Boolean) {
-        preferences.edit().putBoolean(IS_ONBOARDING_COMPLETED, completed).apply()
+    fun setOnboardingCompleted(screenName: String, completed: Boolean) {
+        preferences.edit().putBoolean(screenName, completed).apply()
     }
 
     fun saveTokens(accessToken: String, refreshToken: String, accessTokenExpiry: Long, refreshTokenExpiry: Long) {
