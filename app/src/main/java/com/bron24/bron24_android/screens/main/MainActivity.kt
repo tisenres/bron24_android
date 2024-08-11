@@ -10,7 +10,6 @@ import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
 import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.helper.util.LocaleManager
 import com.bron24.bron24_android.screens.map.GoogleMapScreen
 import javax.inject.Inject

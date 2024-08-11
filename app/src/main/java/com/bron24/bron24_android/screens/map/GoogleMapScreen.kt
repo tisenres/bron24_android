@@ -16,14 +16,14 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.*
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
-import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ModalBottomSheet
 import androidx.core.content.res.ResourcesCompat
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
+import com.bron24.bron24_android.screens.venuedetails.SmallVenueDetailsScreen
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import com.google.maps.android.compose.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,12 +88,13 @@ fun GoogleMapScreen(
         selectedVenueId?.let { venueId ->
             ModalBottomSheet(
                 onDismissRequest = { selectedVenueId = null },
-                sheetState = bottomSheetState
+                sheetState = bottomSheetState,
+                dragHandle = {} // This removes the drag handle
             ) {
-                VenueDetailsScreen(
-                    viewModel = venueDetailsViewModel,
-                    venueId = venueId,
-                    onDismiss = { selectedVenueId = null }
+                SmallVenueDetailsScreen(
+//                    viewModel = venueDetailsViewModel,
+//                    venueId = venueId,
+//                    onDismiss = { selectedVenueId = null }
                 )
             }
         }
@@ -123,7 +124,7 @@ fun GoogleMapView(
             CustomMarker(
                 position = LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
                 title = venue.venueName,
-                iconResourceId = R.drawable.baseline_location_pin_24,
+                iconResourceId = R.drawable.baseline_location_on_24_red,
                 onMarkerClick = { onMarkerClick(9) } // Assuming venue.id is the identifier
             )
         }

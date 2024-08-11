@@ -34,9 +34,6 @@ import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import io.morfly.compose.bottomsheet.material3.rememberBottomSheetState
-import io.morfly.compose.bottomsheet.material3.BottomSheetScaffold
-import io.morfly.compose.bottomsheet.material3.rememberBottomSheetScaffoldState
 
 @Composable
 fun VenueDetailsScreen(
@@ -107,7 +104,7 @@ fun VenueImageSection() {
         modifier = Modifier
             .height(206.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
+//            .clip(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
     ) {
         Image(
             painter = painterResource(R.drawable.football_field),
