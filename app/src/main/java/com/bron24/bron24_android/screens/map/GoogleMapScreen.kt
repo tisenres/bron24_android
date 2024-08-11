@@ -70,25 +70,41 @@ fun GoogleMapView(
     venues: List<VenueCoordinates>,
     onMarkerClick: (Int) -> Unit
 ) {
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(
-            LatLng(currentLocation?.latitude ?: 0.0, currentLocation?.longitude ?: 0.0),
-            13f
-        )
-    }
+    val cameraPositionState = rememberCameraPositionState()
+    var selectedVenueId by remember { mutableStateOf<Int?>(null) }
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         properties = MapProperties(isMyLocationEnabled = true)
     ) {
-
         venues.forEach { venue ->
+            val isSelected = selectedVenueId == 9
+
             CustomMarker(
                 position = LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
                 title = venue.venueName,
-                iconResourceId = R.drawable.baseline_location_on_24_red,
-                onMarkerClick = { onMarkerClick(9) }
+                iconResourceId = if (isSelected) R.drawable.baseline_location_on_24_green else R.drawable.baseline_location_on_24_red,
+                scaleFactor = if (isSelected) 2.0f else 1.0f,
+                onMarkerClick = {
+                    selectedVenueId = 9
+                    onMarkerClick(9)
+                    // Center the camera on the selected marker
+                    cameraPositionState.position = CameraPosition.fromLatLngZoom(
+                        LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
+                        15f
+                    )
+                }
+            )
+        }
+    }
+
+    // Update the camera position when the current location changes
+    LaunchedEffect(currentLocation) {
+        if (currentLocation != null) {
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(
+                LatLng(currentLocation.latitude, currentLocation.longitude),
+                13f
             )
         }
     }
@@ -137,14 +153,15 @@ fun CustomMarker(
     position: LatLng,
     title: String,
     iconResourceId: Int,
+    scaleFactor: Float = 1.0f,
     onMarkerClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
-    val bitmapDescriptor = remember(iconResourceId) {
+    val bitmapDescriptor = remember(iconResourceId, scaleFactor) {
         val drawable = ResourcesCompat.getDrawable(context.resources, iconResourceId, null)
         drawable?.let {
-            getBitmapFromDrawable(it)
+            getBitmapFromDrawable(it, scaleFactor)
         }?.let {
             BitmapDescriptorFactory.fromBitmap(it)
         }
