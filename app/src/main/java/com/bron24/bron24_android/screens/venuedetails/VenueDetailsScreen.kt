@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -396,22 +397,38 @@ fun MapDetails() {
                 lineHeight = 17.15.sp
             ),
         )
-        DistanceInfo(icon = R.drawable.baseline_navigation_24, text = "8.9 km from you")
-        DistanceInfo(icon = R.drawable.ic_metro, text = "4th bus stop (Afrosiyob)")
+        DistanceInfo(
+            icon = R.drawable.baseline_navigation_24,
+            text = "8.9 km from you",
+            tintColor = Color(0xFFD9D9D9),
+            rotationDegrees = -44.72f
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        DistanceInfo(
+            icon = R.drawable.ic_metro,
+            text = "4th bus stop (Afrosiyob)",
+            tintColor = Color(0xFFD43535),
+            rotationDegrees = 0f
+        )
     }
 }
 
 @Composable
-fun DistanceInfo(icon: Int, text: String) {
+fun DistanceInfo(icon: Int,
+                 text: String,
+                 tintColor: Color,
+                 rotationDegrees: Float) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Icon(
             painter = painterResource(id = icon),
             contentDescription = "Location",
-            tint = Color(0xff949494),
-            modifier = Modifier.size(20.dp)
+            tint = tintColor,
+            modifier = Modifier
+                .size(22.dp)
+                .rotate(rotationDegrees)
         )
         Text(
             text = text,

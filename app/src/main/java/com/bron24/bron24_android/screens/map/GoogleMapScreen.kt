@@ -2,6 +2,9 @@ package com.bron24.bron24_android.screens.map
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -18,7 +21,7 @@ import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.ui.res.painterResource
+import androidx.core.content.res.ResourcesCompat
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.google.maps.android.compose.*
@@ -115,19 +118,12 @@ fun GoogleMapView(
         cameraPositionState = cameraPositionState,
         properties = MapProperties(isMyLocationEnabled = true)
     ) {
-        currentLocation?.let { location ->
-            CustomMarker(
-                position = LatLng(location.latitude, location.longitude),
-                title = "Current Location",
-                iconResourceId = R.drawable.baseline_location_on_24_red
-            )
-        }
 
         venues.forEach { venue ->
             CustomMarker(
                 position = LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
                 title = venue.venueName,
-                iconResourceId = R.drawable.baseline_location_on_24_green,
+                iconResourceId = R.drawable.baseline_location_pin_24,
                 onMarkerClick = { onMarkerClick(9) } // Assuming venue.id is the identifier
             )
         }
@@ -141,16 +137,36 @@ fun CustomMarker(
     iconResourceId: Int,
     onMarkerClick: () -> Unit = {}
 ) {
-//    val icon = BitmapDescriptorFactory.fromResource(iconResourceId)
+    val context = LocalContext.current
+
+    val bitmapDescriptor = remember(iconResourceId) {
+        val drawable = ResourcesCompat.getDrawable(context.resources, iconResourceId, null)
+        drawable?.let {
+            getBitmapFromDrawable(it)
+        }?.let {
+            BitmapDescriptorFactory.fromBitmap(it)
+        }
+    }
 
     Marker(
         position = position,
         title = title,
-//        icon = icon,
+        icon = bitmapDescriptor,  // Set the custom icon here
         onClick = {
             onMarkerClick()
             true
         }
-    ) {
-    }
+    )
+}
+
+fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
+    // Calculate the scaled width and height
+    val width = (drawable.intrinsicWidth * scaleFactor).toInt()
+    val height = (drawable.intrinsicHeight * scaleFactor).toInt()
+
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
 }
