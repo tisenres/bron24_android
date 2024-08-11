@@ -9,6 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,6 +20,8 @@ import com.bron24.bron24_android.R
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
@@ -26,7 +29,6 @@ import com.bron24.bron24_android.screens.venuedetails.SmallVenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import com.google.maps.android.compose.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoogleMapScreen(
     viewModel: VenueMapViewModel = hiltViewModel(),
@@ -36,47 +38,9 @@ fun GoogleMapScreen(
     val venues by viewModel.venues.collectAsState()
     val currentLocation by viewModel.currentLocation.collectAsState()
     var selectedVenueId by remember { mutableStateOf<Int?>(null) }
-    val bottomSheetState = rememberModalBottomSheetState()
 
-    // Create a launcher to request permissions
-    val requestPermissionsLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
-        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
-
-        if (coarseLocationGranted || fineLocationGranted) {
-            // Permissions granted, proceed to get the location
-            viewModel.updateCurrentLocation()
-        } else {
-            // Handle the case where permissions are denied
-            // Show an appropriate message to the user or disable certain features
-        }
-    }
-
-    // Check if the permissions are already granted
-    LaunchedEffect(Unit) {
-        val coarseLocationPermission = ContextCompat.checkSelfPermission(
-            context, Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-        val fineLocationPermission = ContextCompat.checkSelfPermission(
-            context, Manifest.permission.ACCESS_FINE_LOCATION
-        )
-
-        if (coarseLocationPermission != PackageManager.PERMISSION_GRANTED ||
-            fineLocationPermission != PackageManager.PERMISSION_GRANTED) {
-            // Request permissions
-            requestPermissionsLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            )
-        } else {
-            // Permissions already granted, proceed to get the location
-            viewModel.updateCurrentLocation()
-        }
-    }
+    // Request location permissions and get the current location
+    RequestLocationPermissionsAndFetchLocation(viewModel)
 
     Box(modifier = Modifier.fillMaxSize()) {
         GoogleMapView(
@@ -86,15 +50,14 @@ fun GoogleMapScreen(
         )
 
         selectedVenueId?.let { venueId ->
-            ModalBottomSheet(
-                onDismissRequest = { selectedVenueId = null },
-                sheetState = bottomSheetState,
-                dragHandle = {} // This removes the drag handle
+            // Overlay the venue details at the bottom
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 27.dp, start = 16.dp, end = 16.dp)
             ) {
                 SmallVenueDetailsScreen(
-//                    viewModel = venueDetailsViewModel,
-//                    venueId = venueId,
-//                    onDismiss = { selectedVenueId = null }
+                    // Pass the necessary parameters here
                 )
             }
         }
@@ -125,8 +88,46 @@ fun GoogleMapView(
                 position = LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
                 title = venue.venueName,
                 iconResourceId = R.drawable.baseline_location_on_24_red,
-                onMarkerClick = { onMarkerClick(9) } // Assuming venue.id is the identifier
+                onMarkerClick = { onMarkerClick(9) }
             )
+        }
+    }
+}
+
+@Composable
+fun RequestLocationPermissionsAndFetchLocation(viewModel: VenueMapViewModel) {
+    val context = LocalContext.current
+
+    // Create a launcher to request permissions
+    val requestPermissionsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+
+        if (coarseLocationGranted || fineLocationGranted) {
+            viewModel.updateCurrentLocation()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val coarseLocationPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        val fineLocationPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+        if (coarseLocationPermission != PackageManager.PERMISSION_GRANTED ||
+            fineLocationPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionsLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            )
+        } else {
+            viewModel.updateCurrentLocation()
         }
     }
 }

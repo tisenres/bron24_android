@@ -121,7 +121,7 @@ fun ImageOverlay() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 11.dp, start = 24.dp, end = 16.dp),
+            .padding(top = 10.dp, start = 24.dp, end = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {

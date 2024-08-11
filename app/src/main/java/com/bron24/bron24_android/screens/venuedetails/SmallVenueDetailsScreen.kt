@@ -5,34 +5,24 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.tooling.preview.Preview
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.venue.Address
-import com.bron24.bron24_android.domain.entity.venue.City
-import com.bron24.bron24_android.domain.entity.venue.Infrastructure
-import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 
@@ -57,9 +47,9 @@ fun SmallDetailsContent() {
             .clip(RoundedCornerShape(10.dp))
     ) {
         SmallImageSection()
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         SmallHeaderSection()
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         SmallPricingSection()
     }
 }
@@ -72,9 +62,9 @@ fun SmallHeaderSection() {
             .padding(horizontal = 16.dp)
     ) {
         SmallTitleSection()
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         VenueMapObjectAddressAndPhoneSection()
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         SmallRatingSection()
     }
 }
@@ -90,19 +80,26 @@ fun SmallImageSection() {
             painter = painterResource(R.drawable.football_field),
             contentDescription = "Venue Image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        Icon(
-            imageVector = Icons.Default.Favorite,
-            contentDescription = "Favorite",
-            tint = Color.Black,
             modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Color.White)
-                .padding(10.dp)
-                .align(Alignment.TopEnd)
+                .fillMaxSize()
         )
+        Box(
+            modifier = Modifier
+                .padding(top = 10.dp, end = 10.dp)
+                .align(Alignment.TopEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Favorite",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .padding(10.dp)
+
+            )
+        }
     }
 }
 
@@ -135,13 +132,13 @@ fun VenueMapObjectAddressAndPhoneSection() {
 fun SmallAddressRow() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_location_on_24_red),
             contentDescription = "Location",
             tint = Color(0xff949494),
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(18.dp)
         )
         Text(
             text = "Mustaqillik maydoni, Chilanzar, Tashkent, Uzbekistan",
@@ -193,7 +190,7 @@ fun SmallRatingSection() {
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
+                fontSize = 14.sp,
                 color = Color(0xFF32B768),
                 lineHeight = 18.sp,
             )
@@ -204,7 +201,7 @@ fun SmallRatingSection() {
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
+                fontSize = 14.sp,
                 color = Color(0xFF949494),
                 lineHeight = 18.sp,
             )
@@ -216,13 +213,13 @@ fun SmallRatingSection() {
 fun SmallPhoneRow() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_local_phone_24),
             contentDescription = "Phone",
             tint = Color(0xff949494),
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(18.dp)
         )
         Text(
             text = "+998 77 806 0278",
