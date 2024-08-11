@@ -27,6 +27,7 @@ import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.screens.venuedetails.SmallVenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.maps.android.compose.*
 
 @Composable
@@ -85,16 +86,24 @@ fun GoogleMapView(
                 position = LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
                 title = venue.venueName,
                 iconResourceId = if (isSelected) R.drawable.baseline_location_on_24_green else R.drawable.baseline_location_on_24_red,
-                scaleFactor = if (isSelected) 2.0f else 1.0f,
+                scaleFactor = if (isSelected) 1.5f else 1.0f,
                 onMarkerClick = {
                     selectedVenueId = 9
                     onMarkerClick(9)
-                    // Center the camera on the selected marker
-                    cameraPositionState.position = CameraPosition.fromLatLngZoom(
-                        LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
-                        15f
-                    )
                 }
+            )
+        }
+    }
+
+    // Smoothly animate camera to the selected marker
+    LaunchedEffect(selectedVenueId) {
+        val selectedVenue = venues.find { 9 == selectedVenueId }
+        selectedVenue?.let { venue ->
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
+                    15f
+                )
             )
         }
     }
