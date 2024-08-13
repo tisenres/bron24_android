@@ -39,8 +39,8 @@ fun AdsSection(modifier: Modifier = Modifier) {
                 style = TextStyle(
                     fontFamily = interFontFamily,
                     fontWeight = FontWeight(600),
-                    fontSize = 24.sp,
-                    lineHeight = 30.sp,
+                    fontSize = 20.sp,
+                    lineHeight = 24.sp,
                     color = Color.Black
                 )
             )
@@ -49,8 +49,8 @@ fun AdsSection(modifier: Modifier = Modifier) {
                 style = TextStyle(
                     fontFamily = interFontFamily,
                     fontWeight = FontWeight(600),
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
+                    fontSize = 12.sp,
+                    lineHeight = 15.sp,
                     color = Color(0xFF32B768)
                 )
             )

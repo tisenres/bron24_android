@@ -54,8 +54,8 @@ fun BottomNavigationBar(navController: NavController) {
         CustomBottomBarItem(
             iconRes = R.drawable.ic_wallet,
             label = stringResource(id = R.string.orders),
-            isSelected = currentRoute == Screen.CartPage.route,
-            onClick = { navController.navigate(Screen.CartPage.route) }
+            isSelected = currentRoute == Screen.OrdersPage.route,
+            onClick = { navController.navigate(Screen.OrdersPage.route) }
         )
         CustomBottomBarItem(
             iconRes = R.drawable.ic_person,

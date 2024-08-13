@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.compose.rememberNavController
@@ -31,9 +32,9 @@ class MainActivity : ComponentActivity() {
 
             CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
                 Bron24_androidTheme {
-                    GoogleMapScreen()
-//                    val mainViewModel: MainViewModel = hiltViewModel()
-//                    OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
+//                    GoogleMapScreen()
+                    val mainViewModel: MainViewModel = hiltViewModel()
+                    OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
                 }
             }
         }

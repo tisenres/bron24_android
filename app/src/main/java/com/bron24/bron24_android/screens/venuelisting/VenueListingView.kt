@@ -48,8 +48,8 @@ fun VenueListingView(
                 style = TextStyle(
                     fontFamily = interFontFamily,
                     fontWeight = FontWeight(600),
-                    fontSize = 24.sp,
-                    lineHeight = 30.sp,
+                    fontSize = 20.sp,
+                    lineHeight = 24.sp,
                     color = Color.Black
                 ),
                 modifier = Modifier
