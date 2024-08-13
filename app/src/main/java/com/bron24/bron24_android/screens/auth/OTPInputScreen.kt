@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +50,7 @@ fun OTPInputScreen(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -75,12 +78,14 @@ fun OTPInputScreen(
             ) {
                 IconButton(
                     onClick = onBackClick,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier
+                        .size(24.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_arrow_back),
                         contentDescription = "Back",
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier
+                            .size(24.dp)
                     )
                 }
 
@@ -199,9 +204,7 @@ fun OTPInputScreen(
             when (authState) {
                 is AuthState.Loading -> {
                     // Show loading indicator
-                    snackbarHostState.showSnackbar(
-                        message = "Verifying OTP...",
-                    )
+                    Toast.makeText( context,"Verifying OTP...", Toast.LENGTH_SHORT).show()
                 }
 
                 is AuthState.OTPVerified -> {
@@ -210,19 +213,13 @@ fun OTPInputScreen(
                         onOTPVerified()
                     } else {
                         // Show a Snackbar for incorrect OTP
-                        snackbarHostState.showSnackbar(
-                            message = "Incorrect OTP. Please try again.",
-                            actionLabel = "OK"
-                        )
+                        Toast.makeText( context,"Incorrect OTP. Please try again.", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 is AuthState.Error -> {
                     // Display an error message using a Snackbar
-                    snackbarHostState.showSnackbar(
-                        message = "Error: " + (authState as AuthState.Error).message,
-                        actionLabel = "OK"
-                    )
+                    Toast.makeText(context, "Error: " + (authState as AuthState.Error).message, Toast.LENGTH_SHORT).show()
                 }
 
                 else -> {

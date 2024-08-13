@@ -1,7 +1,8 @@
 package com.bron24.bron24_android.data.network.mappers
 
-import OTPCodeResponseDto
-import PhoneNumberResponseDto
+import android.util.Log
+import com.bron24.bron24_android.data.network.dto.auth.OTPCodeResponseDto
+import com.bron24.bron24_android.data.network.dto.auth.PhoneNumberResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.AuthResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.OTPRequestDto
 import com.bron24.bron24_android.data.network.dto.auth.UserDto
@@ -22,22 +23,20 @@ fun OTPRequest.toNetworkModel(): OTPRequestDto {
 
 fun PhoneNumberResponseDto.toDomainEntity(): PhoneNumberResponse {
     return PhoneNumberResponse(
-        result = if (result == "success") {
-            PhoneNumberResponseStatusCode.SUCCESS
-        } else if (result == "many requests") {
-            PhoneNumberResponseStatusCode.MANY_REQUESTS
-        } else {
-            PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER
+        result = when (result) {
+            "success" -> PhoneNumberResponseStatusCode.SUCCESS
+            "many requests" -> PhoneNumberResponseStatusCode.MANY_REQUESTS
+            else -> PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER
         }
     )
 }
 
 fun OTPCodeResponseDto.toDomainEntity(): OTPCodeResponse {
+    Log.d("SDSDDWEWEWE", "SUKA")
     return OTPCodeResponse(
-        status = if (status == "success") {
-            OTPStatusCode.CORRECT_OTP
-        } else {
-            OTPStatusCode.INCORRECT_OTP
+        status = when (status) {
+            "success" -> OTPStatusCode.CORRECT_OTP
+            else -> OTPStatusCode.INCORRECT_OTP
         }
     )
 }

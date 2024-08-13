@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -207,7 +208,10 @@ fun CustomPhoneNumberField(
                             val digitsOnly = newValue.text.filter { it.isDigit() }
                             if (digitsOnly.length <= 9) {
                                 val fullNumber = "+998$digitsOnly"
-                                textFieldValue = newValue.copy(text = digitsOnly, selection = TextRange(digitsOnly.length))
+                                textFieldValue = newValue.copy(
+                                    text = digitsOnly,
+                                    selection = TextRange(digitsOnly.length)
+                                )
                                 onValueChange(fullNumber)
                                 authViewModel.updatePhoneNumber(fullNumber)
                             }
@@ -278,6 +282,7 @@ fun ConfirmButton(
 ) {
     val authState by authViewModel.authState.collectAsState()
     val phoneNumber by authViewModel.phoneNumber.collectAsState()
+    val context = LocalContext.current
 
     Button(
         onClick = {
@@ -306,25 +311,37 @@ fun ConfirmButton(
 
     LaunchedEffect(authState) {
         when (authState) {
+            is AuthState.Loading -> {
+                // Show loading indicator
+                Toast.makeText(context, "Verifying phone number....", Toast.LENGTH_SHORT).show()
+            }
+
             is AuthState.OTPRequested -> {
                 val status = (authState as AuthState.OTPRequested).status
-                if (status == PhoneNumberResponseStatusCode.SUCCESS) {
-                    onNavigateToOTPScreen(phoneNumber)
-                } else if (status == PhoneNumberResponseStatusCode.MANY_REQUESTS) {
-                    onNavigateToOTPScreen(phoneNumber)
-                } else {
-                    snackbarHostState.showSnackbar(
-                        message = "Failed to request OTP. Please try again later.",
-                        actionLabel = "OK"
-                    )
+                when (status) {
+                    PhoneNumberResponseStatusCode.SUCCESS -> {
+                        // Navigate to the OTP input screen if the OTP request was successful
+                        onNavigateToOTPScreen(phoneNumber)
+                    }
+
+                    PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
+                        onNavigateToOTPScreen(phoneNumber)
+                    }
+
+                    else -> Toast.makeText(
+                        context,
+                        "Failed to request OTP. Please try again later.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             is AuthState.Error -> {
-                snackbarHostState.showSnackbar(
-                    message = "Error: " + (authState as AuthState.Error).message,
-                    actionLabel = "OK"
-                )
+                Toast.makeText(
+                    context,
+                    "Error: " + (authState as AuthState.Error).message,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
             else -> {
