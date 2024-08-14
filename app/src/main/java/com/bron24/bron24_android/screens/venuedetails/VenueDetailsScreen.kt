@@ -504,8 +504,7 @@ fun PricingSection(modifier: Modifier = Modifier) {
     ) {
         HorizontalDivider(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
+                .fillMaxWidth(),
             thickness = 0.5.dp,
             color = Color(0xFFD4D4D4)
         )
