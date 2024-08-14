@@ -73,8 +73,6 @@ fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
             Spacer(modifier = Modifier.height(27.dp))
             InfrastructureSection(details)
             Spacer(modifier = Modifier.height(15.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(15.dp))
             DescriptionSection(details)
             Spacer(modifier = Modifier.height(15.dp))
             MapSection(details)
@@ -275,7 +273,60 @@ fun AddressAndPhoneSection(details: VenueDetails?) {
     Column {
         AddressRow(details)
         Spacer(modifier = Modifier.height(4.dp))
-        PhoneRow(details)
+        AvailableSlots(details)
+        Spacer(modifier = Modifier.height(4.dp))
+        DistanceRow(details)
+//        PhoneRow(details)
+    }
+}
+
+@Composable
+fun AvailableSlots(details: VenueDetails?) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_event_available_24),
+            contentDescription = "Slots",
+            tint = Color(0xff949494),
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = "12 available slots",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                color = Color(0xFF949494),
+                lineHeight = 18.sp,
+            )
+        )
+    }
+}
+
+@Composable
+fun DistanceRow(details: VenueDetails?) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.mingcute_navigation_fill),
+            contentDescription = "Distance",
+            tint = Color(0xff949494),
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = "2.3 km from you",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                color = Color(0xFF949494),
+                lineHeight = 18.sp,
+            )
+        )
     }
 }
 
@@ -636,6 +687,7 @@ fun InfrastructureItem(text: String, iconRes: Int) {
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            .requiredWidth(70.dp)
             .clip(RoundedCornerShape(10.dp))
             .border(
                 BorderStroke(
