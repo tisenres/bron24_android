@@ -1,6 +1,11 @@
 package com.bron24.bron24_android.screens.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -26,21 +31,15 @@ fun HomePage(navController: NavController) {
     // Увеличиваем порог для активации анимации
     val scrollThreshold = 500f
 
-    // Анимация высоты SearchView
-    val searchViewHeight by animateDpAsState(
-        targetValue = if (isSearchVisible) searchViewMaxHeight else 0.dp,
-        animationSpec = tween(durationMillis = 700), label = ""
-    )
-
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemScrollOffset + listState.firstVisibleItemIndex * listState.layoutInfo.viewportEndOffset }
             .collect { offset ->
                 val delta = offset - previousScrollOffset
 
-                if (delta > scrollThreshold) { // Скролл вниз, уменьшаем высоту SearchView
+                if (delta > scrollThreshold && totalOffset > -maxOffset) { // Скролл вниз, уменьшаем высоту SearchView
                     totalOffset = (totalOffset - delta).coerceIn(-maxOffset, 0f)
                     isSearchVisible = false
-                } else if (delta < -scrollThreshold && listState.firstVisibleItemIndex == 0) { // Скролл вверх, восстанавливаем высоту SearchView
+                } else if (delta < -scrollThreshold && listState.firstVisibleItemIndex == 0 && totalOffset < 0f) { // Скролл вверх, восстанавливаем высоту SearchView
                     totalOffset = (totalOffset - delta).coerceIn(-maxOffset, 0f)
                     isSearchVisible = true
                 }
@@ -55,17 +54,16 @@ fun HomePage(navController: NavController) {
             .background(Color.White)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            // Используем анимацию высоты, чтобы другие элементы занимали место SearchView
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(searchViewHeight)
+            // Плавное исчезновение/появление SearchView без белого фона
+            AnimatedVisibility(
+                visible = isSearchVisible,
+                enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(300)),
+                exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(animationSpec = tween(300))
             ) {
-                if (isSearchVisible) {
-                    SearchView(modifier = Modifier.fillMaxWidth())
-                }
+                SearchView(modifier = Modifier.fillMaxWidth())
             }
 
             VenueListingView(
