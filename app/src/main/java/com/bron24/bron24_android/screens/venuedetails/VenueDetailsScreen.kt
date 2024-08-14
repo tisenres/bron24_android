@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -43,43 +44,36 @@ fun VenueDetailsScreen(
 ) {
     val venueDetails = viewModel.venueDetails.collectAsState().value
     VenueDetailsContent(details = venueDetails)
-//    val sheetState = rememberBottomSheetState(
-//        initialValue = SheetValue.PartiallyExpanded,
-//        defineValues = {
-//            SheetValue.Collapsed at height(100.dp)
-//            SheetValue.PartiallyExpanded at offset(percent = 60)
-//            SheetValue.Expanded at contentHeight
-//        }
-//    )
-
-//    val scaffoldState = rememberBottomSheetScaffoldState(sheetState)
-//    val venueDetails = viewModel.venueDetails.collectAsState().value
-
-//
-//    BottomSheetScaffold(
-//        scaffoldState = scaffoldState,
-//        sheetContent = { VenueDetailsContent(details = venueDetails) },
-//        content = { /* Screen content can be added here if needed */ }
-//    )
 }
 
 @Composable
 fun VenueDetailsContent(details: VenueDetails?) {
-    Column(
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .background(Color.White)
-            .verticalScroll(rememberScrollState())
     ) {
-        VenueImageSection()
-        Spacer(modifier = Modifier.height(15.dp))
-        HeaderSection()
-        Spacer(modifier = Modifier.height(27.dp))
-        InfrastructureSection(details)
-        Spacer(modifier = Modifier.height(15.dp))
-        MapSection()
-        Spacer(modifier = Modifier.height(15.dp))
-        PricingSection()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 80.dp) // Add padding to prevent content from being hidden behind the pricing section
+        ) {
+            VenueImageSection()
+            Spacer(modifier = Modifier.height(15.dp))
+            HeaderSection()
+            Spacer(modifier = Modifier.height(27.dp))
+            InfrastructureSection(details)
+            Spacer(modifier = Modifier.height(15.dp))
+            MapSection()
+            Spacer(modifier = Modifier.height(15.dp))
+        }
+
+        PricingSection(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .background(Color.White)
+        )
     }
 }
 
@@ -104,7 +98,6 @@ fun VenueImageSection() {
         modifier = Modifier
             .height(206.dp)
             .fillMaxWidth()
-//            .clip(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
     ) {
         Image(
             painter = painterResource(R.drawable.football_field),
@@ -121,7 +114,7 @@ fun ImageOverlay() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp, start = 24.dp, end = 10.dp),
+            .padding(top = 10.dp, start = 10.dp, end = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
@@ -323,6 +316,7 @@ fun RatingSection() {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InfrastructureSection(details: VenueDetails?) {
     Column(
@@ -343,16 +337,28 @@ fun InfrastructureSection(details: VenueDetails?) {
             overflow = TextOverflow.Ellipsis,
         )
 
-        // Infrastructure items
-        // Uncomment and populate the flow row when data is available
-        // FlowRow(
-        //     mainAxisSpacing = 8.dp,
-        //     crossAxisSpacing = 8.dp
-        // ) {
-        //     details?.infrastructure?.items?.forEach { item ->
-        //         InfrastructureItem(item, R.drawable.ic_dollar)
-        //     }
-        // }
+        Spacer(modifier = Modifier.height(15.dp))
+
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            details?.infrastructure?.let { infrastructure ->
+                if (infrastructure.lockerRoom) {
+                    InfrastructureItem("Locker Room", R.drawable.solar_hanger_bold)
+                }
+                if (infrastructure.stands.isNotBlank()) {
+                    InfrastructureItem("Stands", R.drawable.baseline_chair_24)
+                }
+                if (infrastructure.shower) {
+                    InfrastructureItem("Shower", R.drawable.baseline_shower_24)
+                }
+                if (infrastructure.parking) {
+                    InfrastructureItem("Parking", R.drawable.baseline_local_parking_24)
+                }
+            }
+        }
     }
 }
 
@@ -382,7 +388,6 @@ fun MapDetails() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp),
     ) {
         Text(
             text = "Bunyodkor street, 18",
@@ -391,21 +396,20 @@ fun MapDetails() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 color = Color.Black,
-                lineHeight = 17.15.sp
+                lineHeight = 18.sp
             ),
         )
+        Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
-            icon = R.drawable.baseline_navigation_24,
+            icon = R.drawable.mingcute_navigation_fill,
             text = "8.9 km from you",
             tintColor = Color(0xFFD9D9D9),
-            rotationDegrees = -44.72f
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.ic_metro,
             text = "4th bus stop (Afrosiyob)",
             tintColor = Color(0xFFD43535),
-            rotationDegrees = 0f
         )
     }
 }
@@ -413,24 +417,22 @@ fun MapDetails() {
 @Composable
 fun DistanceInfo(icon: Int,
                  text: String,
-                 tintColor: Color,
-                 rotationDegrees: Float) {
+                 tintColor: Color) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Icon(
             painter = painterResource(id = icon),
             contentDescription = "Location",
             tint = tintColor,
             modifier = Modifier
-                .size(22.dp)
-                .rotate(rotationDegrees)
+                .size(20.dp)
         )
         Text(
             text = text,
             style = TextStyle(
-                fontFamily = interFontFamily,
+                fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
                 color = Color(0xFFB7B3B3),
@@ -444,10 +446,11 @@ fun DistanceInfo(icon: Int,
 }
 
 @Composable
-fun PricingSection() {
+fun PricingSection(modifier: Modifier = Modifier) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
+            .height(70.dp)
             .padding(horizontal = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -494,7 +497,8 @@ fun InfrastructureItem(text: String, iconRes: Int) {
             .width(80.dp)
             .padding(8.dp)
             .clip(RoundedCornerShape(10.dp))
-            .border(BorderStroke(1.dp, Color(0xffb8bdca)), RoundedCornerShape(10.dp))
+            .border(BorderStroke(0.5.dp, Color(0xFFB8BDCA)), RoundedCornerShape(
+                10.dp))
             .padding(8.dp)
     ) {
         Image(
@@ -505,7 +509,13 @@ fun InfrastructureItem(text: String, iconRes: Int) {
         )
         Text(
             text = text,
-            style = TextStyle(fontSize = 14.sp, color = Color.Black),
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = Color.Black,
+                lineHeight = 21.sp,
+            ),
             textAlign = TextAlign.Center
         )
     }
@@ -526,9 +536,9 @@ private fun VenueDetailsPreview() {
             city = City(id = 5, cityName = "Tashkent"),
             infrastructure = Infrastructure(
                 id = 9,
-                lockerRoom = true,
+                lockerRoom = false,
                 stands = "FDFDFGD",
-                shower = true,
+                shower = false,
                 parking = true
             ),
             venueOwner = VenueOwner(
