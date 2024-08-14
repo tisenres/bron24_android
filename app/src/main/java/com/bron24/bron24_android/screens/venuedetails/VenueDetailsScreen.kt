@@ -276,7 +276,6 @@ fun AddressAndPhoneSection(details: VenueDetails?) {
         AvailableSlots(details)
         Spacer(modifier = Modifier.height(4.dp))
         DistanceRow(details)
-//        PhoneRow(details)
     }
 }
 
@@ -300,7 +299,9 @@ fun AvailableSlots(details: VenueDetails?) {
                 fontSize = 12.sp,
                 color = Color(0xFF949494),
                 lineHeight = 18.sp,
-            )
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -325,7 +326,9 @@ fun DistanceRow(details: VenueDetails?) {
                 fontSize = 12.sp,
                 color = Color(0xFF949494),
                 lineHeight = 18.sp,
-            )
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -687,7 +690,7 @@ fun InfrastructureItem(text: String, iconRes: Int) {
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .widthIn(min = 70.dp)
+            .widthIn(min = 70.dp, max = 120.dp)
             .clip(RoundedCornerShape(10.dp))
             .border(
                 BorderStroke(
@@ -711,7 +714,9 @@ fun InfrastructureItem(text: String, iconRes: Int) {
                 color = Color.Black,
                 lineHeight = 21.sp,
             ),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
