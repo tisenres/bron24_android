@@ -122,9 +122,9 @@ fun AdsSection(modifier: Modifier = Modifier) {
 fun OfferImage(page: Int) {
     val imageRes = when (page) {
         0 -> R.drawable.offer_image_1
-        1 -> R.drawable.joxon_pic
-        2 -> R.drawable.football_field
-        else -> R.drawable.select_stadium
+        1 -> R.drawable.soccer_player_field_with_ball
+        2 -> R.drawable.view_soccer_ball
+        else -> R.drawable.close_up_onkids_with_football_ball
     }
     Image(
         painter = painterResource(id = imageRes),

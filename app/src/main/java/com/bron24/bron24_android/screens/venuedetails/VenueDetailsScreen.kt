@@ -483,7 +483,7 @@ fun InfrastructureSection(details: VenueDetails?) {
             details?.let {
                 InfrastructureItem(
                     it.peopleCapacity.toString() + " players",
-                    R.drawable.baseline_people_alt_24
+                    R.drawable.game_icons_soccer_kick
                 )
             }
             details?.infrastructure?.let { infrastructure ->
