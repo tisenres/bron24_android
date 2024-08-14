@@ -73,7 +73,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp)
+                .height(150.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { _, dragAmount ->
