@@ -62,6 +62,10 @@ fun VenueDetailsContent(details: VenueDetails?) {
             Spacer(modifier = Modifier.height(27.dp))
             InfrastructureSection(details)
             Spacer(modifier = Modifier.height(15.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(15.dp))
+            DescriptionSection(details)
+            Spacer(modifier = Modifier.height(15.dp))
             MapSection()
             Spacer(modifier = Modifier.height(15.dp))
         }
@@ -71,6 +75,45 @@ fun VenueDetailsContent(details: VenueDetails?) {
                 .align(Alignment.BottomCenter)
                 .background(Color.White)
         )
+    }
+}
+
+@Composable
+fun DescriptionSection(details: VenueDetails?) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+    ) {
+        Text(
+            text = "Additional info",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 20.sp,
+                color = Color(0xFF3C2E56),
+                lineHeight = 25.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+
+        details?.description?.let {
+            Text(
+                text = it,
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    color = Color.Gray,
+                    lineHeight = 22.sp,
+                    textAlign = TextAlign.Justify
+                ),
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
@@ -346,9 +389,9 @@ fun InfrastructureSection(details: VenueDetails?) {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 color = Color(0xFF3C2E56),
-                lineHeight = 29.4.sp,
+                lineHeight = 25.sp,
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -364,9 +407,12 @@ fun InfrastructureSection(details: VenueDetails?) {
             details?.let {
                 InfrastructureItem(it.venueType, R.drawable.baseline_stadium_24)
             }
+            details?.let {
+                InfrastructureItem(it.peopleCapacity.toString() + " players", R.drawable.baseline_people_alt_24)
+            }
             details?.infrastructure?.let { infrastructure ->
                 if (infrastructure.lockerRoom) {
-                    InfrastructureItem("Locker Room", R.drawable.solar_hanger_bold)
+                    InfrastructureItem("Locker Room", R.drawable.mingcute_coathanger_fill)
                 }
                 if (infrastructure.stands.isNotBlank()) {
                     InfrastructureItem("Stands", R.drawable.baseline_chair_24)
@@ -382,7 +428,10 @@ fun InfrastructureSection(details: VenueDetails?) {
                 InfrastructureItem(it.venueSurface, R.drawable.baseline_grass_24)
             }
             details?.let {
-                InfrastructureItem("${it.workingHoursFrom} - ${it.workingHoursTill}", R.drawable.baseline_access_time_filled_24)
+                InfrastructureItem(
+                    "${it.workingHoursFrom} - ${it.workingHoursTill}",
+                    R.drawable.baseline_access_time_filled_24
+                )
             }
         }
     }
@@ -623,10 +672,10 @@ private fun VenueDetailsPreview() {
             venueName = "Bunyodkor kompleksi",
             venueType = "Stadium",
             venueSurface = "Grass",
-            peopleCapacity = 20000,
+            peopleCapacity = 12,
             sportType = "Football",
             pricePerHour = "100sum/hour",
-            description = "A large stadium in Tashkent",
+            description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
             workingHoursFrom = "9:00",
             workingHoursTill = "23:00",
             contact1 = "+998 77 806 0278",
