@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.venuelisting
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
@@ -24,20 +25,12 @@ import com.bron24.bron24_android.screens.adssection.AdsSection
 @Composable
 fun VenueListingView(
     navController: NavController,
+    listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier,
-    viewModel: VenueListingViewModel = hiltViewModel(),
-    onScrollDelta: (Float) -> Unit
+    viewModel: VenueListingViewModel = hiltViewModel()
 ) {
     val venues by viewModel.venues.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemScrollOffset + listState.firstVisibleItemIndex * listState.layoutInfo.viewportEndOffset }
-            .collect { scrollDelta ->
-                onScrollDelta(scrollDelta.toFloat())
-            }
-    }
 
     LazyColumn(
         state = listState,
@@ -77,9 +70,10 @@ fun VenueListingView(
     }
 }
 
+
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueListingView() {
     val navController = rememberNavController()
-    VenueListingView(navController = navController, onScrollDelta = {})
+    VenueListingView(navController = navController)
 }

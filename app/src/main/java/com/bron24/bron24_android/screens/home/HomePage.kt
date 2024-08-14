@@ -11,19 +11,45 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bron24.bron24_android.screens.searchfilter.SearchView
 import com.bron24.bron24_android.screens.venuelisting.VenueListingView
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 fun HomePage(navController: NavController) {
+    val listState = rememberLazyListState()
     var isSearchVisible by remember { mutableStateOf(true) }
+    var totalOffset by remember { mutableFloatStateOf(0f) }
     var previousScrollOffset by remember { mutableFloatStateOf(0f) }
-    var accumulatedScroll by remember { mutableFloatStateOf(0f) }
 
-    // Определяем высоту search bar с анимацией
-    val searchViewHeight by animateDpAsState(
-        targetValue = if (isSearchVisible) 150.dp else 0.dp, // Замените 90.dp на фактическую высоту SearchView
-        animationSpec = tween(durationMillis = 300),
-        label = "SearchViewHeight"
+    val searchViewHeight = 90.dp // Высота SearchView
+    val maxOffset = with(LocalDensity.current) { searchViewHeight.toPx() }
+
+    // Увеличиваем порог для активации анимации
+    val scrollThreshold = 150f
+
+    // Анимация смещения SearchView
+    val animatedOffset by animateFloatAsState(
+        targetValue = totalOffset.coerceIn(-maxOffset, 0f),
+        animationSpec = tween(durationMillis = 300), label = ""
     )
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemScrollOffset + listState.firstVisibleItemIndex * listState.layoutInfo.viewportEndOffset }
+            .collect { offset ->
+                val delta = offset - previousScrollOffset
+
+                if (delta > scrollThreshold) { // Скролл вниз, SearchView смещается вверх
+                    totalOffset = (totalOffset - delta).coerceIn(-maxOffset, 0f)
+                } else if (delta < -scrollThreshold && listState.firstVisibleItemIndex == 0) { // Скролл вверх, SearchView возвращается
+                    totalOffset = (totalOffset - delta).coerceIn(-maxOffset, 0f)
+                }
+
+                // Проверяем видимость SearchView
+                isSearchVisible = totalOffset > -maxOffset
+
+                previousScrollOffset = offset.toFloat()
+            }
+    }
 
     Box(
         modifier = Modifier
@@ -33,38 +59,20 @@ fun HomePage(navController: NavController) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Изменяем высоту SearchView, чтобы при скрытии другие элементы занимали её место
-            Box(
+            // Убираем белый фон и оставляем только SearchView
+            SearchView(
                 modifier = Modifier
-                    .height(searchViewHeight)
                     .fillMaxWidth()
-            ) {
-                if (isSearchVisible) {
-                    SearchView(modifier = Modifier.fillMaxWidth())
-                }
-            }
+                    .offset(y = animatedOffset.dp)
+            )
 
             VenueListingView(
                 navController = navController,
-                onScrollDelta = { delta ->
-                    accumulatedScroll += delta - previousScrollOffset
-
-                    // Условие для появления/исчезновения search view
-                    if (accumulatedScroll > 100) {
-                        isSearchVisible = false
-                        accumulatedScroll = 0f
-                    } else if (accumulatedScroll < -100) {
-                        isSearchVisible = true
-                        accumulatedScroll = 0f
-                    }
-
-                    previousScrollOffset = delta
-                }
+                listState = listState
             )
         }
     }
 }
-
 
 @Composable
 @Preview(showBackground = true)
