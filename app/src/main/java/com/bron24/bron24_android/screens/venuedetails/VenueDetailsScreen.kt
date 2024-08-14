@@ -2,6 +2,8 @@ package com.bron24.bron24_android.screens.venuedetails
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -92,82 +94,104 @@ fun HeaderSection() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VenueImageSection() {
+    val images = listOf(
+        R.drawable.football_field,
+        R.drawable.joxon_pic, // Add more image resources here
+        R.drawable.ronaldo,
+        R.drawable.ic_metro
+    )
+    val pagerState = rememberPagerState(pageCount = { images.size })
+
     Box(
         modifier = Modifier
             .height(206.dp)
             .fillMaxWidth()
     ) {
-        Image(
-            painter = painterResource(R.drawable.football_field),
-            contentDescription = "Venue Image",
-            contentScale = ContentScale.Crop,
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier.fillMaxSize()
-        )
-        ImageOverlay()
-    }
-}
-
-@Composable
-fun ImageOverlay() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp, start = 10.dp, end = 10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top
-    ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = "Back",
-            tint = Color.Black,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Color.White)
-                .padding(10.dp)
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(
-                imageVector = Icons.Default.Share,
-                contentDescription = "Share",
-                tint = Color.Black,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(10.dp)
-            )
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "Favorite",
-                tint = Color.Black,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(10.dp)
+        ) { page ->
+            Image(
+                painter = painterResource(images[page]),
+                contentDescription = "Venue Image $page",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
         }
+        ImageOverlay(pagerState.currentPage, images.size)
     }
-    BottomIndicators()
 }
 
 @Composable
-fun BottomIndicators() {
+fun ImageOverlay(currentPage: Int, totalPages: Int) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .padding(10.dp)
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "Share",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color.White)
+                        .padding(10.dp)
+                )
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Favorite",
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color.White)
+                        .padding(10.dp)
+                )
+            }
+        }
+        BottomIndicators(
+            currentPage = currentPage,
+            totalPages = totalPages,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 11.5.dp)
+        )
+    }
+}
+
+@Composable
+fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Modifier) {
     Row(
-        modifier = Modifier
-            .padding(bottom = 11.5.dp),
-        horizontalArrangement = Arrangement.spacedBy(3.dp)
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center
     ) {
-        repeat(4) { index ->
+        repeat(totalPages) { index ->
             Box(
                 modifier = Modifier
-                    .width(28.dp)
                     .height(1.5.dp)
+                    .padding(end = 3.dp)
                     .clip(RoundedCornerShape(5.dp))
-                    .background(if (index == 0) Color.White else Color(0xFFB7B3B3))
+                    .width(28.dp)
+                    .background(if (index == currentPage) Color.White else Color(0xFFB7B3B3))
             )
         }
     }
@@ -303,7 +327,7 @@ fun RatingSection() {
         )
         Spacer(modifier = Modifier.width(7.dp))
         Text(
-            text = "See all review",
+            text = "See all reviews",
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
@@ -341,8 +365,8 @@ fun InfrastructureSection(details: VenueDetails?) {
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             details?.infrastructure?.let { infrastructure ->
                 if (infrastructure.lockerRoom) {
@@ -415,9 +439,11 @@ fun MapDetails() {
 }
 
 @Composable
-fun DistanceInfo(icon: Int,
-                 text: String,
-                 tintColor: Color) {
+fun DistanceInfo(
+    icon: Int,
+    text: String,
+    tintColor: Color
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -494,11 +520,12 @@ fun InfrastructureItem(text: String, iconRes: Int) {
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .width(80.dp)
-            .padding(8.dp)
             .clip(RoundedCornerShape(10.dp))
-            .border(BorderStroke(0.5.dp, Color(0xFFB8BDCA)), RoundedCornerShape(
-                10.dp))
+            .border(
+                BorderStroke(0.5.dp, Color(0xFFB8BDCA)), RoundedCornerShape(
+                    10.dp
+                )
+            )
             .padding(8.dp)
     ) {
         Image(
@@ -536,9 +563,9 @@ private fun VenueDetailsPreview() {
             city = City(id = 5, cityName = "Tashkent"),
             infrastructure = Infrastructure(
                 id = 9,
-                lockerRoom = false,
+                lockerRoom = true,
                 stands = "FDFDFGD",
-                shower = false,
+                shower = true,
                 parking = true
             ),
             venueOwner = VenueOwner(
