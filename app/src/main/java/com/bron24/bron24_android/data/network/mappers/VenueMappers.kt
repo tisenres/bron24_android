@@ -75,7 +75,7 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         address = address.toDomainModel(),
         city = city.toDomainModel(),
         infrastructure = infrastructure.toDomainModel(),
-        venueOwner = venueOwner.toDomainModel(),
+        venueOwner = venueOwner?.toDomainModel(),
         venueName = venueName,
         venueType = venueType,
         venueSurface = venueSurface,

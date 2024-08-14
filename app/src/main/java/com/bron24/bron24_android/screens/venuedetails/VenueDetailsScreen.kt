@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,9 +41,18 @@ fun VenueDetailsScreen(
     venueId: Int,
     onBackClick: () -> Unit
 ) {
+    // Fetch the venue details when the screen is composed
+    LaunchedEffect(key1 = venueId) {
+        viewModel.fetchVenueDetails(venueId)
+    }
+
+    // Collect the venue details from the ViewModel
     val venueDetails = viewModel.venueDetails.collectAsState().value
-    VenueDetailsContent(details = venueDetails, onBackClick)
+
+    // Pass the fetched details to the content composable
+    VenueDetailsContent(details = venueDetails, onBackClick = onBackClick)
 }
+
 
 @Composable
 fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
@@ -58,7 +69,7 @@ fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
         ) {
             VenueImageSection(onBackClick)
             Spacer(modifier = Modifier.height(15.dp))
-            HeaderSection()
+            HeaderSection(details)
             Spacer(modifier = Modifier.height(27.dp))
             InfrastructureSection(details)
             Spacer(modifier = Modifier.height(15.dp))
@@ -66,11 +77,12 @@ fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
             Spacer(modifier = Modifier.height(15.dp))
             DescriptionSection(details)
             Spacer(modifier = Modifier.height(15.dp))
-            MapSection()
+            MapSection(details)
             Spacer(modifier = Modifier.height(15.dp))
         }
 
         PricingSection(
+            details,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .background(Color.White)
@@ -99,36 +111,34 @@ fun DescriptionSection(details: VenueDetails?) {
         )
         Spacer(modifier = Modifier.height(15.dp))
 
-        details?.description?.let {
-            Text(
-                text = it,
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    color = Color.Gray,
-                    lineHeight = 22.sp,
-                    textAlign = TextAlign.Justify
-                ),
-                maxLines = 5,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        Text(
+            text = details?.description ?: "",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                color = Color.Gray,
+                lineHeight = 22.sp,
+                textAlign = TextAlign.Justify
+            ),
+            maxLines = 5,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
 @Composable
-fun HeaderSection() {
+fun HeaderSection(details: VenueDetails?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
     ) {
-        TitleSection()
+        TitleSection(details)
         Spacer(modifier = Modifier.height(14.dp))
-        AddressAndPhoneSection()
+        AddressAndPhoneSection(details)
         Spacer(modifier = Modifier.height(14.dp))
-        RatingSection()
+        RatingSection(details)
     }
 }
 
@@ -245,9 +255,9 @@ fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Mod
 }
 
 @Composable
-fun TitleSection() {
+fun TitleSection(details: VenueDetails?) {
     Text(
-        text = "Bunyodkor kompleksi",
+        text = details?.venueName ?: "Unknown field",
         style = TextStyle(
             fontFamily = gilroyFontFamily,
             fontWeight = FontWeight.ExtraBold,
@@ -261,16 +271,16 @@ fun TitleSection() {
 }
 
 @Composable
-fun AddressAndPhoneSection() {
+fun AddressAndPhoneSection(details: VenueDetails?) {
     Column {
-        AddressRow()
+        AddressRow(details)
         Spacer(modifier = Modifier.height(4.dp))
-        PhoneRow()
+        PhoneRow(details)
     }
 }
 
 @Composable
-fun AddressRow() {
+fun AddressRow(details: VenueDetails?) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -282,7 +292,7 @@ fun AddressRow() {
             modifier = Modifier.size(20.dp)
         )
         Text(
-            text = "Mustaqillik maydoni, Chilanzar, Tashkent, Uzbekistan",
+            text = details?.address?.addressName ?: "",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -310,7 +320,7 @@ fun AddressRow() {
 }
 
 @Composable
-fun PhoneRow() {
+fun PhoneRow(details: VenueDetails?) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -322,7 +332,7 @@ fun PhoneRow() {
             modifier = Modifier.size(20.dp)
         )
         Text(
-            text = "+998 77 806 0278",
+            text = details?.venueOwner?.contact1 ?: "",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -335,7 +345,7 @@ fun PhoneRow() {
 }
 
 @Composable
-fun RatingSection() {
+fun RatingSection(details: VenueDetails?) {
     Row {
         repeat(5) { index ->
             Icon(
@@ -417,7 +427,10 @@ fun InfrastructureSection(details: VenueDetails?) {
                 InfrastructureItem(it.venueType, R.drawable.baseline_stadium_24)
             }
             details?.let {
-                InfrastructureItem(it.peopleCapacity.toString() + " players", R.drawable.baseline_people_alt_24)
+                InfrastructureItem(
+                    it.peopleCapacity.toString() + " players",
+                    R.drawable.baseline_people_alt_24
+                )
             }
             details?.infrastructure?.let { infrastructure ->
                 if (infrastructure.lockerRoom) {
@@ -447,7 +460,7 @@ fun InfrastructureSection(details: VenueDetails?) {
 }
 
 @Composable
-fun MapSection() {
+fun MapSection(details: VenueDetails?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -463,7 +476,7 @@ fun MapSection() {
                 .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)),
             contentScale = ContentScale.Crop
         )
-        MapDetails()
+        MapDetails(details)
         HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -504,10 +517,10 @@ fun MapSection() {
 }
 
 @Composable
-fun MapDetails() {
+fun MapDetails(details: VenueDetails?) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "Bunyodkor street, 18",
+            text = details?.address?.addressName ?: "Unknown address",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Bold,
@@ -525,7 +538,7 @@ fun MapDetails() {
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.ic_metro,
-            text = "4th bus stop (Afrosiyob)",
+            text = details?.address?.closestMetroStation ?: "Unknown metro statio",
             tintColor = Color(0xFFD43535),
         )
     }
@@ -564,7 +577,7 @@ fun DistanceInfo(
 }
 
 @Composable
-fun PricingSection(modifier: Modifier = Modifier) {
+fun PricingSection(details: VenueDetails?, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -584,7 +597,7 @@ fun PricingSection(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "100 sum/hour",
+                text = details?.pricePerHour + " " + stringResource(id = R.string.som_per_hour),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.ExtraBold,

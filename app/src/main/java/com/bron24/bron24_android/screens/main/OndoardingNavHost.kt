@@ -152,8 +152,8 @@ fun AnimatedScreenTransition(content: @Composable () -> Unit) {
 
     AnimatedVisibility(
         visible = visible,
-        enter = fadeIn(animationSpec = tween(700)),
-        exit = fadeOut(animationSpec = tween(700))
+        enter = fadeIn(animationSpec = tween(400)),
+        exit = fadeOut(animationSpec = tween(400))
     ) {
         content()
     }
