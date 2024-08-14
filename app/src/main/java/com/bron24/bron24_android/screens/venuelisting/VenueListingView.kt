@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.venuelisting
 
-import AdsSection
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.screens.adssection.AdsSection
 
 @Composable
 fun VenueListingView(

@@ -1,3 +1,7 @@
+package com.bron24.bron24_android.screens.adssection
+
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -57,8 +61,8 @@ fun AdsSection(modifier: Modifier = Modifier) {
                 style = TextStyle(
                     fontFamily = interFontFamily,
                     fontWeight = FontWeight(600),
-                    fontSize = 12.sp,
-                    lineHeight = 15.sp,
+                    fontSize = 14.sp,
+                    lineHeight = 19.sp,
                     color = Color(0xFF32B768)
                 )
             )
@@ -81,25 +85,32 @@ fun AdsSection(modifier: Modifier = Modifier) {
                     }
                 }
         ) {
-            OfferImage(currentPage)
+            Crossfade(targetState = currentPage, label = "") { page ->
+                OfferImage(page)
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
             repeat(imagesCount) { index ->
+                val indicatorWidth = animateDpAsState(
+                    targetValue = if (currentPage == index) 20.dp else 10.dp, label = ""
+                )
+
                 Box(
                     modifier = Modifier
-                        .size(10.dp)
+                        .height(10.dp)
+                        .width(indicatorWidth.value)
+                        .clip(CircleShape)
                         .background(
                             color = if (currentPage == index) Color(0xFF32B768) else Color(
                                 0xFFD9D9D9
-                            ),
-                            shape = CircleShape
+                            )
                         )
                 )
             }
