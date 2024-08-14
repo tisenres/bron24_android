@@ -11,30 +11,25 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.venue.Address
-import com.bron24.bron24_android.domain.entity.venue.City
-import com.bron24.bron24_android.domain.entity.venue.Infrastructure
-import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.domain.entity.venue.VenueOwner
+import com.bron24.bron24_android.domain.entity.venue.*
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 
@@ -59,7 +54,7 @@ fun VenueDetailsContent(details: VenueDetails?) {
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = 80.dp) // Add padding to prevent content from being hidden behind the pricing section
+                .padding(bottom = 80.dp)
         ) {
             VenueImageSection()
             Spacer(modifier = Modifier.height(15.dp))
@@ -99,7 +94,7 @@ fun HeaderSection() {
 fun VenueImageSection() {
     val images = listOf(
         R.drawable.football_field,
-        R.drawable.joxon_pic, // Add more image resources here
+        R.drawable.joxon_pic,
         R.drawable.ronaldo,
         R.drawable.ic_metro
     )
@@ -255,10 +250,8 @@ fun AddressRow() {
                 fontSize = 12.sp,
                 color = Color(0xFF0067FF),
                 lineHeight = 18.sp,
+                textDecoration = TextDecoration.Underline,
             ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textDecoration = TextDecoration.Underline,
             modifier = Modifier.padding(start = 5.dp)
         )
     }
@@ -404,20 +397,48 @@ fun MapSection() {
             contentScale = ContentScale.Crop
         )
         MapDetails()
-        Spacer(
+        HorizontalDivider(
             modifier = Modifier
-                .background(Color(0xFFD4D4D4))
-                .height(8.dp)
+                .fillMaxWidth(),
+            thickness = 0.5.dp,
+            color = Color(0xFFD4D4D4)
         )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Take a route",
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color(0xFF3C2E56),
+                    lineHeight = 18.sp
+                ),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .size(24.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    contentDescription = "Back",
+                    modifier = Modifier
+                        .size(14.dp)
+                )
+            }
+        }
+
     }
 }
 
 @Composable
 fun MapDetails() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "Bunyodkor street, 18",
             style = TextStyle(
@@ -457,8 +478,7 @@ fun DistanceInfo(
             painter = painterResource(id = icon),
             contentDescription = "Location",
             tint = tintColor,
-            modifier = Modifier
-                .size(20.dp)
+            modifier = Modifier.size(20.dp)
         )
         Text(
             text = text,
@@ -478,43 +498,55 @@ fun DistanceInfo(
 
 @Composable
 fun PricingSection(modifier: Modifier = Modifier) {
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .padding(horizontal = 24.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "100 sum/hour",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 18.sp,
-                color = Color(0xFF3C2E56),
-                lineHeight = 22.05.sp
-            ),
-        )
-        Button(
-            onClick = { /* Order action */ },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
-            shape = RoundedCornerShape(10.dp),
+        HorizontalDivider(
             modifier = Modifier
-                .height(47.dp)
-                .width(157.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+            thickness = 0.5.dp,
+            color = Color(0xFFD4D4D4)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp)
+                .padding(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Order",
+                text = "100 sum/hour",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    color = Color.White,
-                    lineHeight = 16.8.sp,
-                    letterSpacing = (-0.028).em
-                )
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 18.sp,
+                    color = Color(0xFF3C2E56),
+                    lineHeight = 22.05.sp
+                ),
             )
+            Button(
+                onClick = { /* Order action */ },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .height(47.dp)
+                    .width(157.dp)
+            ) {
+                Text(
+                    text = "Order",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp,
+                        color = Color.White,
+                        lineHeight = 16.8.sp,
+                        letterSpacing = (-0.028).em
+                    )
+                )
+            }
         }
     }
 }
@@ -527,9 +559,9 @@ fun InfrastructureItem(text: String, iconRes: Int) {
         modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
             .border(
-                BorderStroke(0.5.dp, Color(0xFFB8BDCA)), RoundedCornerShape(
-                    10.dp
-                )
+                BorderStroke(
+                    0.5.dp, Color(0xFFB8BDCA)
+                ), RoundedCornerShape(10.dp)
             )
             .padding(8.dp)
     ) {

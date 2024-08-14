@@ -77,7 +77,7 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
                     viewModel = viewModel,
                     venueId = venueId,
                     onDismiss = {
-                        navController.popBackStack() // Navigate back when dismissed
+                        navController.popBackStack()
                     }
                 )
             }

@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
 
             CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
                 Bron24_androidTheme {
-//                    GoogleMapScreen()
                     val mainViewModel: MainViewModel = hiltViewModel()
                     OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
                 }
