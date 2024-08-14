@@ -18,5 +18,6 @@ data class VenueDetails(
     val contact1: String,
     val contact2: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    var imageUrls: List<String>?
 )

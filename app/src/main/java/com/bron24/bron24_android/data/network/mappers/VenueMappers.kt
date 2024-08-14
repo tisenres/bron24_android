@@ -88,7 +88,8 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         contact1 = contact1,
         contact2 = contact2,
         createdAt = createdAt,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        imageUrls = emptyList()
     )
 }
 

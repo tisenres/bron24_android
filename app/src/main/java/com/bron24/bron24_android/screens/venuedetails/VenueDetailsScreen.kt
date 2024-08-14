@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.venuedetails
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -30,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.*
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -56,34 +59,22 @@ fun VenueDetailsScreen(
 
 @Composable
 fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 80.dp)
+    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 80.dp),
+            verticalArrangement = Arrangement.spacedBy(27.dp)
         ) {
-            VenueImageSection(onBackClick)
-            Spacer(modifier = Modifier.height(15.dp))
-            HeaderSection(details)
-            Spacer(modifier = Modifier.height(27.dp))
-            InfrastructureSection(details)
-            Spacer(modifier = Modifier.height(27.dp))
-            DescriptionSection(details)
-            Spacer(modifier = Modifier.height(27.dp))
-            MapSection(details)
-            Spacer(modifier = Modifier.height(10.dp))
+            item { VenueImageSection(details?.imageUrls ?: emptyList(), onBackClick) }
+            item { HeaderSection(details) }
+            item { InfrastructureSection(details) }
+            item { DescriptionSection(details) }
+            item { MapSection(details) }
         }
 
         PricingSection(
             details,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .background(Color.White)
+            modifier = Modifier.align(Alignment.BottomCenter).background(Color.White)
         )
     }
 }
@@ -142,14 +133,8 @@ fun HeaderSection(details: VenueDetails?) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun VenueImageSection(onBackClick: () -> Unit) {
-    val images = listOf(
-        R.drawable.football_field,
-        R.drawable.soccer_player_field_with_ball,
-        R.drawable.view_soccer_ball,
-        R.drawable.close_up_onkids_with_football_ball
-    )
-    val pagerState = rememberPagerState(pageCount = { images.size })
+fun VenueImageSection(imageUrls: List<String>, onBackClick: () -> Unit) {
+    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
 
     Box(
         modifier = Modifier
@@ -161,13 +146,13 @@ fun VenueImageSection(onBackClick: () -> Unit) {
             modifier = Modifier.fillMaxSize()
         ) { page ->
             Image(
-                painter = painterResource(images[page]),
+                painter = rememberAsyncImagePainter(imageUrls[page]),
                 contentDescription = "Venue Image $page",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
         }
-        ImageOverlay(pagerState.currentPage, images.size, onBackClick)
+        ImageOverlay(pagerState.currentPage, imageUrls.size, onBackClick)
     }
 }
 
@@ -760,7 +745,8 @@ private fun VenueDetailsPreview() {
             contact1 = "+998 77 806 0278",
             contact2 = "+998 77 806 0288",
             createdAt = "2021-01-01",
-            updatedAt = "2023-01-01"
+            updatedAt = "2023-01-01",
+            imageUrls = emptyList()
         ),
         {}
     )
