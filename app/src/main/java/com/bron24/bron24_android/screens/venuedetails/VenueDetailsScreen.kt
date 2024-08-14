@@ -145,9 +145,9 @@ fun HeaderSection(details: VenueDetails?) {
 fun VenueImageSection(onBackClick: () -> Unit) {
     val images = listOf(
         R.drawable.football_field,
-        R.drawable.joxon_pic,
-        R.drawable.ronaldo,
-        R.drawable.ic_metro
+        R.drawable.soccer_player_field_with_ball,
+        R.drawable.view_soccer_ball,
+        R.drawable.close_up_onkids_with_football_ball
     )
     val pagerState = rememberPagerState(pageCount = { images.size })
 

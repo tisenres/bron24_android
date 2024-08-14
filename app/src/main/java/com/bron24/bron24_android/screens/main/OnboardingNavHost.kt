@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.main
 
 import UserDataInputScreen
 import androidx.compose.animation.*
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,27 +36,31 @@ fun OnboardingNavHost(
             navController = navController,
             startDestination = if (onboardingScreens.isEmpty()) Screen.Main.route else onboardingScreens.first().route,
             enterTransition = {
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start,
-                    tween(700)
+                fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 300, easing = LinearEasing
+                    )
                 )
             },
             exitTransition = {
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Start,
-                    tween(700)
+                fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 300, easing = LinearEasing
+                    )
                 )
             },
             popEnterTransition = {
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End,
-                    tween(700)
+                fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 300, easing = LinearEasing
+                    )
                 )
             },
             popExitTransition = {
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End,
-                    tween(700)
+                fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 300, easing = LinearEasing
+                    )
                 )
             }
         ) {
