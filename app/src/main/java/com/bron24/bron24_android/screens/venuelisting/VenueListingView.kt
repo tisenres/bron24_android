@@ -3,10 +3,9 @@ package com.bron24.bron24_android.screens.venuelisting
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -26,14 +25,24 @@ import com.bron24.bron24_android.screens.adssection.AdsSection
 fun VenueListingView(
     navController: NavController,
     modifier: Modifier = Modifier,
-    viewModel: VenueListingViewModel = hiltViewModel()
+    viewModel: VenueListingViewModel = hiltViewModel(),
+    onScrollDelta: (Float) -> Unit
 ) {
     val venues by viewModel.venues.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.firstVisibleItemScrollOffset + listState.firstVisibleItemIndex * listState.layoutInfo.viewportEndOffset }
+            .collect { scrollDelta ->
+                onScrollDelta(scrollDelta.toFloat())
+            }
+    }
 
     LazyColumn(
+        state = listState,
         contentPadding = PaddingValues(horizontal = 25.dp),
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) {
         item {
             Spacer(modifier = Modifier.height(16.dp))
@@ -50,10 +59,8 @@ fun VenueListingView(
                     lineHeight = 24.sp,
                     color = Color.Black
                 ),
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
-
             Spacer(modifier = Modifier.height(16.dp))
         }
 
@@ -74,5 +81,5 @@ fun VenueListingView(
 @Preview(showBackground = true)
 fun PreviewVenueListingView() {
     val navController = rememberNavController()
-    VenueListingView(navController = navController)
+    VenueListingView(navController = navController, onScrollDelta = {})
 }
