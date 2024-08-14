@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,15 +36,9 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
         modifier = Modifier
             .fillMaxWidth()
             .background(Color(0xFFF4FEF4).copy(alpha = 0.47f), RoundedCornerShape(10.dp))
-            .let {
-                if (isLoading) {
-                    it.shimmer()
-                } else {
-                    it.clickable {
-                        navController.navigate(Screen.VenueDetails.route.replace("{venueId}", venue?.venueId.toString()))
-                    }
-                }
-            }
+            .then(Modifier.clickable {
+                navController.navigate(Screen.VenueDetails.route.replace("{venueId}", venue?.venueId.toString()))
+            })
     ) {
         if (isLoading) {
             LoadingPlaceholder()
@@ -58,60 +53,53 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
 
 @Composable
 fun LoadingPlaceholder() {
-    Column(
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp)
+            .height(200.dp)
+            .background(Color(0xFFF4FEF4).copy(alpha = 0.47f), RoundedCornerShape(10.dp))
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(162.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .height(20.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .height(20.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
-        )
+        CircularProgressIndicator(color = Color.Gray)
     }
 }
+
+//@Composable
+//fun LoadingPlaceholder() {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(bottom = 20.dp)
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(162.dp)
+//                .clip(RoundedCornerShape(10.dp))
+//                .background(Color.Gray.copy(alpha = 0.47f))
+//        )
+//
+//        Spacer(modifier = Modifier.height(8.dp))
+//
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(20.dp)
+//                .clip(RoundedCornerShape(4.dp))
+//                .background(Color.Gray.copy(alpha = 0.47f))
+//        )
+//
+//        Spacer(modifier = Modifier.height(4.dp))
+//
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth(0.6f)
+//                .height(20.dp)
+//                .clip(RoundedCornerShape(4.dp))
+//                .background(Color.Gray.copy(alpha = 0.47f))
+//        )
+//    }
+//}
 
 @Composable
 fun VenueImageSection(venue: Venue) {
@@ -131,7 +119,7 @@ fun VenueImageSection(venue: Venue) {
         )
         Image(
             painter = painterResource(id = R.drawable.baseline_favorite_24),
-            contentDescription = "Overlay Image",
+            contentDescription = "Favorite Icon",
             modifier = Modifier
                 .padding(top = 10.dp, end = 10.dp)
                 .size(21.dp)

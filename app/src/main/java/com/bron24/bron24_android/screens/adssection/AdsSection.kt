@@ -29,11 +29,10 @@ import kotlinx.coroutines.delay
 @Composable
 fun AdsSection(modifier: Modifier = Modifier) {
     var currentPage by remember { mutableIntStateOf(0) }
-    val imagesCount = 4 // Update this with the actual number of images
-    val autoScrollInterval = 10000L // 10 seconds in milliseconds
+    val imagesCount = 4
+    val autoScrollInterval = 10000L
 
-    // Automatically switch images every 10 seconds
-    LaunchedEffect(key1 = currentPage) {
+    LaunchedEffect(Unit) {
         while (true) {
             delay(autoScrollInterval)
             currentPage = (currentPage + 1) % imagesCount
@@ -41,79 +40,87 @@ fun AdsSection(modifier: Modifier = Modifier) {
     }
 
     Column(modifier = modifier) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.special_offers),
-                style = TextStyle(
-                    fontFamily = interFontFamily,
-                    fontWeight = FontWeight(600),
-                    fontSize = 20.sp,
-                    lineHeight = 24.sp,
-                    color = Color.Black
-                )
-            )
-            Text(
-                text = stringResource(id = R.string.see_all),
-                style = TextStyle(
-                    fontFamily = interFontFamily,
-                    fontWeight = FontWeight(600),
-                    fontSize = 14.sp,
-                    lineHeight = 19.sp,
-                    color = Color(0xFF32B768)
-                )
-            )
+        HeaderSection()
+        ImageCarousel(currentPage, imagesCount) { dragAmount ->
+            currentPage = if (dragAmount > 0) {
+                (currentPage - 1).coerceAtLeast(0)
+            } else {
+                (currentPage + 1) % imagesCount
+            }
         }
+        Indicators(currentPage, imagesCount)
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
+@Composable
+fun HeaderSection() {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = stringResource(id = R.string.special_offers),
+            style = TextStyle(
+                fontFamily = interFontFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 20.sp,
+                color = Color.Black
+            )
+        )
+        Text(
+            text = stringResource(id = R.string.see_all),
+            style = TextStyle(
+                fontFamily = interFontFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                color = Color(0xFF32B768)
+            )
+        )
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+}
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(155.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .pointerInput(Unit) {
-                    detectHorizontalDragGestures { _, dragAmount ->
-                        currentPage = if (dragAmount > 0) {
-                            (currentPage - 1).coerceAtLeast(0)
-                        } else {
-                            (currentPage + 1) % imagesCount
-                        }
-                    }
+@Composable
+fun ImageCarousel(currentPage: Int, imagesCount: Int, onSwipe: (Float) -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(155.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures { _, dragAmount ->
+                    onSwipe(dragAmount)
                 }
-        ) {
-            Crossfade(targetState = currentPage, label = "") { page ->
-                OfferImage(page)
             }
+    ) {
+        Crossfade(targetState = currentPage) { page ->
+            OfferImage(page)
         }
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            repeat(imagesCount) { index ->
-                val indicatorWidth = animateDpAsState(
-                    targetValue = if (currentPage == index) 20.dp else 10.dp, label = ""
-                )
-
-                Box(
-                    modifier = Modifier
-                        .height(10.dp)
-                        .width(indicatorWidth.value)
-                        .clip(CircleShape)
-                        .background(
-                            color = if (currentPage == index) Color(0xFF32B768) else Color(
-                                0xFFD9D9D9
-                            )
-                        )
-                )
-            }
+@Composable
+fun Indicators(currentPage: Int, imagesCount: Int) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        repeat(imagesCount) { index ->
+            val indicatorWidth by animateDpAsState(
+                targetValue = if (currentPage == index) 20.dp else 10.dp
+            )
+            Box(
+                modifier = Modifier
+                    .height(10.dp)
+                    .width(indicatorWidth)
+                    .clip(CircleShape)
+                    .background(
+                        color = if (currentPage == index) Color(0xFF32B768) else Color(0xFFD9D9D9)
+                    )
+            )
         }
     }
 }
@@ -121,14 +128,14 @@ fun AdsSection(modifier: Modifier = Modifier) {
 @Composable
 fun OfferImage(page: Int) {
     val imageRes = when (page) {
-        0 -> R.drawable.offer_image_1
-        1 -> R.drawable.soccer_player_field_with_ball
-        2 -> R.drawable.view_soccer_ball
-        else -> R.drawable.close_up_onkids_with_football_ball
+        0 -> R.drawable.ic_metro
+        1 -> R.drawable.ic_metro
+        2 -> R.drawable.ic_metro
+        else -> R.drawable.ic_metro
     }
     Image(
         painter = painterResource(id = imageRes),
-        contentDescription = "offer_image",
+        contentDescription = "Offer Image",
         modifier = Modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(10.dp)),

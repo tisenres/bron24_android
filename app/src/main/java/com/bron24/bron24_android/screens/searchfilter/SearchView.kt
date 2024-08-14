@@ -30,74 +30,24 @@ fun SearchView(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(150.dp)
             .background(
                 color = Color(0xFF32B768),
                 shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
             )
-            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp),
+            .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ProfileRow()
-//        Spacer(modifier = Modifier.height(20.dp))
         SearchRow()
     }
 }
-
-//@Composable
-//fun ProfileRow() {
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(start = 25.dp, top = 20.dp)
-//    ) {
-//        Row(verticalAlignment = Alignment.CenterVertically) {
-//            Image(
-//                painter = painterResource(id = R.drawable.joxon_pic),
-//                contentDescription = "profile_image",
-//                modifier = Modifier
-//                    .size(50.dp)
-//                    .clip(CircleShape)
-//            )
-//            Spacer(modifier = Modifier.width(15.dp))
-//            Column {
-//                Text(
-//                    text = stringResource(id = R.string.hello) + ", Joxongir!",
-//                    style = TextStyle(
-//                        fontFamily = interFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 18.sp,
-//                        color = Color.White,
-//                        lineHeight = 19.sp,
-//                        letterSpacing = (-0.028).em
-//                    )
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//                Text(
-//                    text = "Toshkent viloyati",
-//                    style = TextStyle(
-//                        fontFamily = interFontFamily,
-//                        fontWeight = FontWeight.Normal,
-//                        fontSize = 14.sp,
-//                        color = Color.White,
-//                        lineHeight = 16.sp,
-//                        letterSpacing = (-0.028).em
-//                    )
-//                )
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun ProfileRow() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
@@ -109,19 +59,17 @@ fun ProfileRow() {
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(15.dp))
-            Column {
-                Text(
-                    text = stringResource(id = R.string.hello) + ", Joxongir!",
-                    style = TextStyle(
-                        fontFamily = interFontFamily,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp,
-                        color = Color.White,
-                        lineHeight = 22.sp,
-                        letterSpacing = (-0.028).em
-                    )
+            Text(
+                text = stringResource(id = R.string.hello) + ", Joxongir!",
+                style = TextStyle(
+                    fontFamily = interFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp,
+                    color = Color.White,
+                    lineHeight = 22.sp,
+                    letterSpacing = (-0.028).em
                 )
-            }
+            )
         }
     }
 }
@@ -131,13 +79,10 @@ fun SearchRow() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp, bottom = 10.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
             modifier = Modifier
                 .weight(1f)
                 .background(
@@ -145,7 +90,7 @@ fun SearchRow() {
                     shape = RoundedCornerShape(5.dp)
                 )
                 .height(40.dp)
-                .padding(horizontal = 10.dp, vertical = 10.dp)
+                .padding(horizontal = 10.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_search_green),

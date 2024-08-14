@@ -37,26 +37,23 @@ fun VenueListingView(
         contentPadding = PaddingValues(horizontal = 25.dp),
         modifier = modifier.fillMaxSize()
     ) {
+        item { AdsSection(modifier = Modifier.padding(vertical = 16.dp)) }
         item {
-            Spacer(modifier = Modifier.height(16.dp))
-            AdsSection(modifier = Modifier)
-        }
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = stringResource(id = R.string.football_fields),
                 style = TextStyle(
                     fontFamily = interFontFamily,
-                    fontWeight = FontWeight(600),
+                    fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp,
                     lineHeight = 24.sp,
                     color = Color.Black
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-
         if (isLoading) {
             items(5) {
                 VenueCard(isLoading = true, navController = navController)
@@ -69,7 +66,6 @@ fun VenueListingView(
         }
     }
 }
-
 
 @Composable
 @Preview(showBackground = true)
