@@ -404,6 +404,11 @@ fun MapSection() {
             contentScale = ContentScale.Crop
         )
         MapDetails()
+        Spacer(
+            modifier = Modifier
+                .background(Color(0xFFD4D4D4))
+                .height(8.dp)
+        )
     }
 }
 
