@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.screens.main.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.home.HomePage
+import com.bron24.bron24_android.screens.main.components.SplashScreen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.map.GoogleMapScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
@@ -140,7 +141,6 @@ fun MainNavHost(
             onDestinationChanged(Screen.VenueDetails.route)
             val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
             val viewModel: VenueDetailsViewModel = hiltViewModel()
-//            AnimatedScreenTransition {
             VenueDetailsScreen(
                 viewModel = viewModel,
                 venueId = venueId,
@@ -148,7 +148,6 @@ fun MainNavHost(
                     navController.popBackStack()
                 },
             )
-//            }
         }
     }
 }
