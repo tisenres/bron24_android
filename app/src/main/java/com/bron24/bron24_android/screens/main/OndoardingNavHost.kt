@@ -33,10 +33,14 @@ fun OnboardingNavHost(
     Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(
             navController = navController,
-            startDestination = if (onboardingScreens.isEmpty()) Screen.Main.route else onboardingScreens.first().route
+            startDestination = if (onboardingScreens.isEmpty()) Screen.Main.route else onboardingScreens.first().route,
+            enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700)) },
+            exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(700)) },
+            popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) },
+            popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(700)) }
         ) {
             composable(Screen.LanguageSelection.route) {
-                AnimatedScreenTransition {
+//                AnimatedScreenTransition {
                     LanguageSelectionScreen(
                         viewModel = hiltViewModel(),
                         onNavigateToHowItWorksRequest = {
@@ -48,10 +52,10 @@ fun OnboardingNavHost(
                             }
                         }
                     )
-                }
+//                }
             }
             composable(Screen.HowItWorksPager.route) {
-                AnimatedScreenTransition {
+//                AnimatedScreenTransition {
                     HowItWorksPager(
                         onNavigateToAuthScreens = {
                             coroutineScope.launch {
@@ -62,17 +66,17 @@ fun OnboardingNavHost(
                             }
                         }
                     )
-                }
+//                }
             }
             composable(Screen.PhoneNumberInput.route) {
-                AnimatedScreenTransition {
+//                AnimatedScreenTransition {
                     PhoneNumberInputScreen(
                         authViewModel = authViewModel,
                         onNavigateToOTPScreen = { phoneNumber ->
                             navController.navigate("${Screen.OTPInput.route}/$phoneNumber")
                         }
                     )
-                }
+//                }
             }
             composable(
                 route = "${Screen.OTPInput.route}/{phoneNumber}",
@@ -81,7 +85,7 @@ fun OnboardingNavHost(
                 )
             ) { navBackStackEntry ->
                 val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
-                AnimatedScreenTransition {
+//                AnimatedScreenTransition {
                     OTPInputScreen(
                         authViewModel = authViewModel,
                         onOTPVerified = {
@@ -95,20 +99,20 @@ fun OnboardingNavHost(
                         },
                         phoneNumber = phoneNumber
                     )
-                }
+//                }
             }
             composable(Screen.UserDataInput.route) { navBackStackEntry ->
-                AnimatedScreenTransition {
+//                AnimatedScreenTransition {
                     UserDataInputScreen(
                         authViewModel = authViewModel,
                         onSignUpVerified = {
                             navController.navigate(Screen.LocationPermission.route)
                         }
                     )
-                }
+//                }
             }
             composable(Screen.LocationPermission.route) {
-                AnimatedScreenTransition {
+//                AnimatedScreenTransition {
                     // 2 situations: user can navigate to UserDataInputScreen or not
                     // So let's set ondoarding status for auth when navigation to Location screen exactly
                     mainViewModel.setOnboardingCompleted(OnboardingScreen.AUTHENTICATION)
@@ -131,12 +135,12 @@ fun OnboardingNavHost(
                         },
                         viewModel = hiltViewModel()
                     )
-                }
+//                }
             }
             composable(Screen.Main.route) {
-                AnimatedScreenTransition {
+//                AnimatedScreenTransition {
                     MainAppScaffold()
-                }
+//                }
             }
         }
     }

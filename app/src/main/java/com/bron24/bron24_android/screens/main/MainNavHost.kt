@@ -1,5 +1,12 @@
 package com.bron24.bron24_android.screens.main
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.navigation.compose.composable
@@ -60,94 +67,88 @@ fun MainNavHost(
     NavHost(
         navController = navController,
         startDestination = Screen.HomePage.route,
-        modifier = modifier
+        modifier = modifier,
+        enterTransition = {
+            fadeIn(
+                animationSpec = tween(
+                    durationMillis = 300, easing = LinearEasing
+                )
+            )
+        },
+        exitTransition = {
+            fadeOut(
+                animationSpec = tween(
+                    durationMillis = 300, easing = LinearEasing
+                )
+            )
+        },
+        popEnterTransition = {
+            fadeIn(
+                animationSpec = tween(
+                    durationMillis = 300, easing = LinearEasing
+                )
+            )
+        },
+        popExitTransition = {
+            fadeOut(
+                animationSpec = tween(
+                    durationMillis = 300, easing = LinearEasing
+                )
+            )
+        }
     ) {
         composable(Screen.HomePage.route) {
             onDestinationChanged(Screen.HomePage.route)
-            AnimatedScreenTransition {
-                HomePage(navController)
-            }
+            HomePage(navController)
         }
         composable(Screen.MapPage.route) {
             onDestinationChanged(Screen.MapPage.route)
-            AnimatedScreenTransition {
-                MapPage()
-            }
+            MapPage()
         }
         composable(Screen.OrdersPage.route) {
             onDestinationChanged(Screen.OrdersPage.route)
-            AnimatedScreenTransition {
-                OrdersPage()
-            }
+            OrdersPage()
         }
         composable(Screen.ProfilePage.route) {
             onDestinationChanged(Screen.ProfilePage.route)
-            AnimatedScreenTransition {
-                ProfilePage()
-            }
+            ProfilePage()
         }
         composable(
             route = Screen.VenueDetails.route,
             arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(300, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(300, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }
         ) { backStackEntry ->
             onDestinationChanged(Screen.VenueDetails.route)
             val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
             val viewModel: VenueDetailsViewModel = hiltViewModel()
-            AnimatedScreenTransition {
-                VenueDetailsScreen(
-                    viewModel = viewModel,
-                    venueId = venueId,
-                    onBackClick = {
-                        navController.popBackStack()
-                    },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun MainNavHost(navController: NavHostController, modifier: Modifier) {
-    NavHost(
-        navController = navController,
-        startDestination = Screen.HomePage.route,
-        modifier = modifier
-    ) {
-        composable(Screen.HomePage.route) {
-            AnimatedScreenTransition {
-                HomePage(navController)
-            }
-        }
-        composable(Screen.MapPage.route) {
-            AnimatedScreenTransition {
-                MapPage()
-            }
-        }
-        composable(Screen.OrdersPage.route) {
-            AnimatedScreenTransition {
-                OrdersPage()
-            }
-        }
-        composable(Screen.ProfilePage.route) {
-            AnimatedScreenTransition {
-                ProfilePage()
-            }
-        }
-        composable(
-            route = Screen.VenueDetails.route,
-            arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
-        ) { backStackEntry ->
-            val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
-            val viewModel: VenueDetailsViewModel = hiltViewModel()
-            AnimatedScreenTransition {
-                VenueDetailsScreen(
-                    viewModel = viewModel,
-                    venueId = venueId,
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
-                )
-            }
+//            AnimatedScreenTransition {
+            VenueDetailsScreen(
+                viewModel = viewModel,
+                venueId = venueId,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+            )
+//            }
         }
     }
 }
