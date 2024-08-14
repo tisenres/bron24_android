@@ -342,7 +342,7 @@ fun InfrastructureSection(details: VenueDetails?) {
             .padding(horizontal = 24.dp)
     ) {
         Text(
-            text = "Infrastructure",
+            text = "Facilities",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -361,6 +361,9 @@ fun InfrastructureSection(details: VenueDetails?) {
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            details?.let {
+                InfrastructureItem(it.venueType, R.drawable.baseline_stadium_24)
+            }
             details?.infrastructure?.let { infrastructure ->
                 if (infrastructure.lockerRoom) {
                     InfrastructureItem("Locker Room", R.drawable.solar_hanger_bold)
@@ -374,6 +377,12 @@ fun InfrastructureSection(details: VenueDetails?) {
                 if (infrastructure.parking) {
                     InfrastructureItem("Parking", R.drawable.baseline_local_parking_24)
                 }
+            }
+            details?.let {
+                InfrastructureItem(it.venueSurface, R.drawable.baseline_grass_24)
+            }
+            details?.let {
+                InfrastructureItem("${it.workingHoursFrom} - ${it.workingHoursTill}", R.drawable.baseline_access_time_filled_24)
             }
         }
     }
