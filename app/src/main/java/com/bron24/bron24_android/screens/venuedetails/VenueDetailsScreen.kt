@@ -37,14 +37,14 @@ import com.bron24.bron24_android.screens.main.theme.interFontFamily
 fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
-    onDismiss: () -> Unit
+    onBackClick: () -> Unit
 ) {
     val venueDetails = viewModel.venueDetails.collectAsState().value
-    VenueDetailsContent(details = venueDetails)
+    VenueDetailsContent(details = venueDetails, onBackClick)
 }
 
 @Composable
-fun VenueDetailsContent(details: VenueDetails?) {
+fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +56,7 @@ fun VenueDetailsContent(details: VenueDetails?) {
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 80.dp)
         ) {
-            VenueImageSection()
+            VenueImageSection(onBackClick)
             Spacer(modifier = Modifier.height(15.dp))
             HeaderSection()
             Spacer(modifier = Modifier.height(27.dp))
@@ -134,7 +134,7 @@ fun HeaderSection() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun VenueImageSection() {
+fun VenueImageSection(onBackClick: () -> Unit) {
     val images = listOf(
         R.drawable.football_field,
         R.drawable.joxon_pic,
@@ -159,12 +159,16 @@ fun VenueImageSection() {
                 modifier = Modifier.fillMaxSize()
             )
         }
-        ImageOverlay(pagerState.currentPage, images.size)
+        ImageOverlay(pagerState.currentPage, images.size, onBackClick)
     }
 }
 
 @Composable
-fun ImageOverlay(currentPage: Int, totalPages: Int) {
+fun ImageOverlay(
+    currentPage: Int,
+    totalPages: Int,
+    onBackClick: () -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -173,16 +177,21 @@ fun ImageOverlay(currentPage: Int, totalPages: Int) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                tint = Color.Black,
+            IconButton(
+                onClick = onBackClick,
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
                     .background(Color.White)
                     .padding(10.dp)
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black,
+                    modifier = Modifier
+                )
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Icon(
                     imageVector = Icons.Default.Share,
@@ -682,6 +691,7 @@ private fun VenueDetailsPreview() {
             contact2 = "+998 77 806 0288",
             createdAt = "2021-01-01",
             updatedAt = "2023-01-01"
-        )
+        ),
+        {}
     )
 }

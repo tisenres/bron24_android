@@ -6,6 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,10 +32,77 @@ import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 fun MainAppScaffold() {
     val nestedNavController = rememberNavController()
 
+    val shouldShowBottomBar = remember { mutableStateOf(true) }
+
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController = nestedNavController) }
+        bottomBar = {
+            if (shouldShowBottomBar.value) {
+                BottomNavigationBar(navController = nestedNavController)
+            }
+        }
     ) { paddingValues ->
-        MainNavHost(navController = nestedNavController, modifier = Modifier.padding(paddingValues))
+        MainNavHost(
+            navController = nestedNavController,
+            modifier = Modifier.padding(paddingValues),
+            onDestinationChanged = { destination ->
+                shouldShowBottomBar.value = destination != Screen.VenueDetails.route
+            }
+        )
+    }
+}
+
+@Composable
+fun MainNavHost(
+    navController: NavHostController,
+    modifier: Modifier,
+    onDestinationChanged: (String) -> Unit
+) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.HomePage.route,
+        modifier = modifier
+    ) {
+        composable(Screen.HomePage.route) {
+            onDestinationChanged(Screen.HomePage.route)
+            AnimatedScreenTransition {
+                HomePage(navController)
+            }
+        }
+        composable(Screen.MapPage.route) {
+            onDestinationChanged(Screen.MapPage.route)
+            AnimatedScreenTransition {
+                MapPage()
+            }
+        }
+        composable(Screen.OrdersPage.route) {
+            onDestinationChanged(Screen.OrdersPage.route)
+            AnimatedScreenTransition {
+                OrdersPage()
+            }
+        }
+        composable(Screen.ProfilePage.route) {
+            onDestinationChanged(Screen.ProfilePage.route)
+            AnimatedScreenTransition {
+                ProfilePage()
+            }
+        }
+        composable(
+            route = Screen.VenueDetails.route,
+            arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            onDestinationChanged(Screen.VenueDetails.route)
+            val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
+            val viewModel: VenueDetailsViewModel = hiltViewModel()
+            AnimatedScreenTransition {
+                VenueDetailsScreen(
+                    viewModel = viewModel,
+                    venueId = venueId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+        }
     }
 }
 
@@ -67,8 +136,6 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
         composable(
             route = Screen.VenueDetails.route,
             arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
-//            enterTransition = { slideInVertically(initialOffsetY = { it }) },
-//            exitTransition = { slideOutVertically(targetOffsetY = { it }) }
         ) { backStackEntry ->
             val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
             val viewModel: VenueDetailsViewModel = hiltViewModel()
@@ -76,12 +143,11 @@ fun MainNavHost(navController: NavHostController, modifier: Modifier) {
                 VenueDetailsScreen(
                     viewModel = viewModel,
                     venueId = venueId,
-                    onDismiss = {
+                    onBackClick = {
                         navController.popBackStack()
                     }
                 )
             }
-
         }
     }
 }
