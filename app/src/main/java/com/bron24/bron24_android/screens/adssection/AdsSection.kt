@@ -1,5 +1,3 @@
-package com.bron24.bron24_android.screens.adssection
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -18,15 +16,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import kotlinx.coroutines.delay
 
 @Composable
 fun AdsSection(modifier: Modifier = Modifier) {
-    var currentPage by remember { mutableStateOf(0) }
+    var currentPage by remember { mutableIntStateOf(0) }
+    val imagesCount = 4 // Update this with the actual number of images
+    val autoScrollInterval = 10000L // 10 seconds in milliseconds
+
+    // Automatically switch images every 10 seconds
+    LaunchedEffect(key1 = currentPage) {
+        while (true) {
+            delay(autoScrollInterval)
+            currentPage = (currentPage + 1) % imagesCount
+        }
+    }
 
     Column(modifier = modifier) {
         Row(
@@ -68,7 +76,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
                         if (dragAmount > 0) {
                             currentPage = (currentPage - 1).coerceAtLeast(0)
                         } else {
-                            currentPage = (currentPage + 1).coerceAtMost(2)
+                            currentPage = (currentPage + 1) % imagesCount
                         }
                     }
                 }
@@ -83,7 +91,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            repeat(4) { index ->
+            repeat(imagesCount) { index ->
                 Box(
                     modifier = Modifier
                         .size(10.dp)
@@ -93,7 +101,6 @@ fun AdsSection(modifier: Modifier = Modifier) {
                             ),
                             shape = CircleShape
                         )
-                        .padding(horizontal = 10.dp)
                 )
             }
         }
@@ -104,9 +111,9 @@ fun AdsSection(modifier: Modifier = Modifier) {
 fun OfferImage(page: Int) {
     val imageRes = when (page) {
         0 -> R.drawable.offer_image_1
-        1 -> R.drawable.offer_image_1
-        2 -> R.drawable.offer_image_1
-        else -> R.drawable.offer_image_1
+        1 -> R.drawable.joxon_pic
+        2 -> R.drawable.football_field
+        else -> R.drawable.select_stadium
     }
     Image(
         painter = painterResource(id = imageRes),
@@ -116,10 +123,4 @@ fun OfferImage(page: Int) {
             .clip(RoundedCornerShape(10.dp)),
         contentScale = ContentScale.Crop
     )
-}
-
-@Composable
-@Preview(showBackground = true)
-fun PreviewAdsSection() {
-    AdsSection()
 }

@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.venuelisting
 
+import AdsSection
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,10 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.adssection.AdsSection
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.venuelisting.VenueCard
-import com.bron24.bron24_android.screens.venuelisting.VenueListingViewModel
 
 @Composable
 fun VenueListingView(
@@ -39,7 +37,7 @@ fun VenueListingView(
     ) {
         item {
             Spacer(modifier = Modifier.height(16.dp))
-            AdsSection()
+            AdsSection(modifier = Modifier)
         }
         item {
             Spacer(modifier = Modifier.height(16.dp))
