@@ -11,19 +11,18 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bron24.bron24_android.screens.searchfilter.SearchView
 import com.bron24.bron24_android.screens.venuelisting.VenueListingView
-import androidx.compose.animation.animateContentSize
 
 @Composable
 fun HomePage(navController: NavController) {
     var isSearchVisible by remember { mutableStateOf(true) }
     var previousScrollOffset by remember { mutableFloatStateOf(0f) }
-    var accumulatedScroll by remember { mutableFloatStateOf(0f) } // New state to accumulate scrolls
+    var accumulatedScroll by remember { mutableFloatStateOf(0f) }
 
-    // Анимация с offset для search bar
-    val offsetY by animateDpAsState(
-        targetValue = if (isSearchVisible) 0.dp else (-150).dp,
+    // Определяем высоту search bar с анимацией
+    val searchViewHeight by animateDpAsState(
+        targetValue = if (isSearchVisible) 150.dp else 0.dp, // Замените 90.dp на фактическую высоту SearchView
         animationSpec = tween(durationMillis = 300),
-        label = "SearchViewOffset"
+        label = "SearchViewHeight"
     )
 
     Box(
@@ -34,13 +33,16 @@ fun HomePage(navController: NavController) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Используем animateContentSize для плавной анимации изменения размеров
-            SearchView(
+            // Изменяем высоту SearchView, чтобы при скрытии другие элементы занимали её место
+            Box(
                 modifier = Modifier
-                    .offset(y = offsetY)
+                    .height(searchViewHeight)
                     .fillMaxWidth()
-                    .animateContentSize(animationSpec = tween(300))
-            )
+            ) {
+                if (isSearchVisible) {
+                    SearchView(modifier = Modifier.fillMaxWidth())
+                }
+            }
 
             VenueListingView(
                 navController = navController,
@@ -48,10 +50,10 @@ fun HomePage(navController: NavController) {
                     accumulatedScroll += delta - previousScrollOffset
 
                     // Условие для появления/исчезновения search view
-                    if (accumulatedScroll > 50) {
+                    if (accumulatedScroll > 100) {
                         isSearchVisible = false
                         accumulatedScroll = 0f
-                    } else if (accumulatedScroll < -50) {
+                    } else if (accumulatedScroll < -100) {
                         isSearchVisible = true
                         accumulatedScroll = 0f
                     }
@@ -62,6 +64,7 @@ fun HomePage(navController: NavController) {
         }
     }
 }
+
 
 @Composable
 @Preview(showBackground = true)
