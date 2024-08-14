@@ -72,11 +72,11 @@ fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
             HeaderSection(details)
             Spacer(modifier = Modifier.height(27.dp))
             InfrastructureSection(details)
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(27.dp))
             DescriptionSection(details)
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(27.dp))
             MapSection(details)
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(10.dp))
         }
 
         PricingSection(
@@ -687,7 +687,7 @@ fun InfrastructureItem(text: String, iconRes: Int) {
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .requiredWidth(70.dp)
+            .widthIn(min = 70.dp)
             .clip(RoundedCornerShape(10.dp))
             .border(
                 BorderStroke(
@@ -744,11 +744,11 @@ private fun VenueDetailsPreview() {
                 contact2 = "232323"
             ),
             venueName = "Bunyodkor kompleksi",
-            venueType = "Stadium",
+            venueType = "out",
             venueSurface = "Grass",
             peopleCapacity = 12,
             sportType = "Football",
-            pricePerHour = "100sum/hour",
+            pricePerHour = "100",
             description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
             workingHoursFrom = "9:00",
             workingHoursTill = "23:00",
