@@ -13,7 +13,7 @@ class AuthenticateUserUseCase @Inject constructor(
     suspend fun execute(user: User): AuthResponse {
         val response = authRepository.authenticateUser(user)
         if (response.accessToken.isNotBlank() && response.refreshToken.isNotBlank()) {
-            tokenRepository.saveTokens(response.accessToken, response.refreshToken, response.accessExpiresAt, response.refreshExpiresAt)
+            tokenRepository.saveTokens(response.accessToken, response.refreshToken)
         }
         return response
     }

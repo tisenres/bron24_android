@@ -50,16 +50,8 @@ fun User.toNetworkModel(): UserDto {
 }
 
 fun AuthResponseDto.toDomainEntity(): AuthResponse {
-    val accessExpiresAt = calculateExpirationTime(60) // 1 hour
-    val refreshExpiresAt = calculateExpirationTime(90 * 24 * 60) // 90 days
     return AuthResponse(
         accessToken = this.accessToken,
         refreshToken = this.refreshToken,
-        accessExpiresAt = accessExpiresAt,
-        refreshExpiresAt = refreshExpiresAt
     )
-}
-
-private fun calculateExpirationTime(minutes: Long): Long {
-    return System.currentTimeMillis() + minutes * 60 * 1000
 }

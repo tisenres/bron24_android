@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.data.repository
 
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
+import com.bron24.bron24_android.data.network.dto.auth.RefreshTokenDto
 import com.bron24.bron24_android.data.network.mappers.toDomainEntity
 import com.bron24.bron24_android.data.network.mappers.toNetworkModel
 import com.bron24.bron24_android.domain.entity.auth.AuthResponse
@@ -57,7 +58,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun refreshAccessToken(refreshToken: String): AuthResponse {
         return try {
-            val networkResponse = authApiService.refreshAccessToken(refreshToken)
+            val networkResponse = authApiService.refreshAccessToken(RefreshTokenDto(refreshToken))
             networkResponse.toDomainEntity()
         } catch (e: HttpException) {
             handleHttpExceptionAuth(e)
@@ -84,8 +85,6 @@ class AuthRepositoryImpl @Inject constructor(
         return AuthResponse(
             accessToken = "",
             refreshToken = "",
-            accessExpiresAt = 0L,
-            refreshExpiresAt = 0L
         )
     }
 }

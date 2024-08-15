@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.repository
 
+import android.util.Log
 import com.bron24.bron24_android.data.network.mappers.toDomainModel
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.domain.entity.venue.Venue
@@ -12,6 +13,7 @@ class VenueRepositoryImpl @Inject constructor(
     private val apiService: VenueApiService
 ) : VenueRepository {
     override suspend fun getVenues(): List<Venue> {
+        Log.d("SDGHSHGDGHDGHHDG", "loading venues from Repo....")
         return apiService.getVenues().map { it.toDomainModel() }
     }
 

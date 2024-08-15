@@ -21,8 +21,6 @@ class MockAuthViewModel : ViewModel() {
                 response = AuthResponse(
                     accessToken = "mockAccessToken",
                     refreshToken = "mockRefreshToken",
-                    accessExpiresAt = System.currentTimeMillis() + 3600 * 1000,
-                    refreshExpiresAt = System.currentTimeMillis() + 90 * 24 * 3600 * 1000
                 )
             )
         } else {

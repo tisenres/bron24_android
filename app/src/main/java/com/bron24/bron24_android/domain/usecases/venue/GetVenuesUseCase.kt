@@ -11,10 +11,11 @@ class GetVenuesUseCase @Inject constructor(
     suspend fun execute(): List<Venue> {
         val venues = repository.getVenues()
         val venuesWithPictures = venues.map { venue ->
+            Log.d("SDGHSHGDGHDGHHDG", "loading venues.........")
             val pictures = repository.getVenuePictures(venue.venueId)
             venue.copy(imageUrls = pictures)
         }
-        Log.d("SDSDWEFDF", venuesWithPictures.toString())
+        Log.d("SDGHSHGDGHDGHHDG", "Venues from use case $venuesWithPictures")
         return venuesWithPictures
     }
 }
