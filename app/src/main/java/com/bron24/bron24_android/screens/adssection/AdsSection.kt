@@ -36,7 +36,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
         R.drawable.view_soccer_ball
     )
     val pagerState = rememberPagerState(pageCount = { images.size })
-    val autoScrollInterval = 10000L // 10 seconds in milliseconds
+    val autoScrollInterval = 3000L // 10 seconds in milliseconds
 
     // Automatically switch images every 10 seconds
     LaunchedEffect(key1 = pagerState.currentPage) {
@@ -84,24 +84,31 @@ fun AdsSection(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AdsImageSection(images: List<Int>, pagerState: PagerState) {
-    Box(
+    Column(
         modifier = Modifier
-            .height(155.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .height(180.dp)
             .fillMaxWidth()
     ) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { page ->
-            OfferImage(imageRes = images[page])
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                OfferImage(imageRes = images[page])
+            }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         BottomIndicators(
             currentPage = pagerState.currentPage,
             totalPages = images.size,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 8.dp)
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
     }
 }
@@ -115,11 +122,14 @@ fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Mod
         repeat(totalPages) { index ->
             Box(
                 modifier = Modifier
-                    .size(8.dp)
-                    .padding(horizontal = 4.dp)
-                    .clip(CircleShape)
+                    .padding(end = 6.dp)
+                    .clip(if (currentPage == index) RoundedCornerShape(10.dp) else CircleShape)
                     .background(
                         color = if (currentPage == index) Color(0xFF32B768) else Color(0xFFD9D9D9)
+                    )
+                    .size(
+                        width = if (currentPage == index) 20.dp else 10.dp,
+                        height = 10.dp
                     )
             )
         }
