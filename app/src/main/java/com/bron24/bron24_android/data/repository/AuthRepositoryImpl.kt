@@ -1,6 +1,8 @@
 package com.bron24.bron24_android.data.repository
 
+import android.util.Log
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
+import com.bron24.bron24_android.data.network.dto.auth.AuthResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.RefreshTokenDto
 import com.bron24.bron24_android.data.network.mappers.toDomainEntity
 import com.bron24.bron24_android.data.network.mappers.toNetworkModel
@@ -12,12 +14,14 @@ import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.repository.AuthRepository
+import com.bron24.bron24_android.domain.repository.TokenRepository
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val authApiService: AuthApiService
+    private val authApiService: AuthApiService,
+    private val tokenRepository: TokenRepository
 ) : AuthRepository {
 
     override suspend fun requestOTP(otpRequest: OTPRequest): PhoneNumberResponse {
@@ -56,15 +60,6 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshAccessToken(refreshToken: String): AuthResponse {
-        return try {
-            val networkResponse = authApiService.refreshAccessToken(RefreshTokenDto(refreshToken))
-            networkResponse.toDomainEntity()
-        } catch (e: HttpException) {
-            handleHttpExceptionAuth(e)
-        }
-    }
-
     private fun handleHttpExceptionPhone(e: HttpException): PhoneNumberResponse {
         return when (e.code()) {
             429 -> PhoneNumberResponse(PhoneNumberResponseStatusCode.MANY_REQUESTS)
@@ -86,5 +81,27 @@ class AuthRepositoryImpl @Inject constructor(
             accessToken = "",
             refreshToken = "",
         )
+    }
+
+    private suspend fun refreshAccessToken(refreshToken: String): AuthResponseDto? {
+        return try {
+            // Make the refresh token request WITHOUT the Authorization header
+            val refreshTokenDto = RefreshTokenDto(refreshToken)
+            authApiService.refreshAccessToken(refreshTokenDto)
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Failed to refresh token", e)
+            null
+        }
+    }
+
+    override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
+        val newTokens = refreshAccessToken(refreshToken)
+        return if (newTokens != null && newTokens.accessToken.isNotEmpty()) {
+            tokenRepository.saveTokens(newTokens.accessToken, newTokens.refreshToken)
+            true
+        } else {
+            tokenRepository.clearTokens()
+            false
+        }
     }
 }

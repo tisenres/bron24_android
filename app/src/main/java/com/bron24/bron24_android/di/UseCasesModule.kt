@@ -90,8 +90,9 @@ object UseCasesModule {
     @Singleton
     fun provideAuthRepository(
         otpService: AuthApiService,
+        tokenRepository: TokenRepository
     ): AuthRepository {
-        return AuthRepositoryImpl(otpService)
+        return AuthRepositoryImpl(otpService, tokenRepository)
     }
 
     @Provides

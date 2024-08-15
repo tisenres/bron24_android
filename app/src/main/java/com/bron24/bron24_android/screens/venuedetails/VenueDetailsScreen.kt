@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.venuedetails
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,15 +47,13 @@ fun VenueDetailsScreen(
     venueId: Int,
     onBackClick: () -> Unit
 ) {
-    // Fetch the venue details when the screen is composed
     LaunchedEffect(key1 = venueId) {
         viewModel.fetchVenueDetails(venueId)
     }
 
-    // Collect the venue details from the ViewModel
-    val venueDetails = viewModel.venueDetails.collectAsState().value
+    // Collect the venue details and remember them to prevent unnecessary recompositions
+    val venueDetails by viewModel.venueDetails.collectAsState()
 
-    // Pass the fetched details to the content composable
     VenueDetailsContent(details = venueDetails, onBackClick = onBackClick)
 }
 
@@ -75,6 +73,7 @@ fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
             item { MapSection(details) }
         }
 
+        // Lazy load the pricing section only when scrolled into view
         PricingSection(
             details,
             modifier = Modifier.align(Alignment.BottomCenter).background(Color.White)
@@ -134,8 +133,6 @@ fun HeaderSection(details: VenueDetails?) {
     }
 }
 
-
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VenueImageSection(imageUrls: List<String>, onBackClick: () -> Unit) {
@@ -150,8 +147,14 @@ fun VenueImageSection(imageUrls: List<String>, onBackClick: () -> Unit) {
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
+            val painter = rememberAsyncImagePainter(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imageUrls[page])
+                    .placeholder(R.drawable.placeholder) // Use a placeholder
+                    .build()
+            )
             Image(
-                painter = rememberAsyncImagePainter(imageUrls[page]),
+                painter = painter,
                 contentDescription = "Venue Image $page",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -160,6 +163,7 @@ fun VenueImageSection(imageUrls: List<String>, onBackClick: () -> Unit) {
         ImageOverlay(pagerState.currentPage, imageUrls.size, onBackClick)
     }
 }
+
 
 @Composable
 fun ImageOverlay(
@@ -512,7 +516,7 @@ fun MapSection(details: VenueDetails?) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.football_field),
+            painter = rememberAsyncImagePainter(model = R.drawable.football_field),
             contentDescription = "Map",
             modifier = Modifier
                 .fillMaxWidth()

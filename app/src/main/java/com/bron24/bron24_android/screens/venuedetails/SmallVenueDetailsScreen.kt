@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
@@ -77,7 +78,7 @@ fun SmallImageSection() {
             .fillMaxWidth()
     ) {
         Image(
-            painter = painterResource(R.drawable.football_field),
+            painter = rememberAsyncImagePainter(model = R.drawable.football_field),
             contentDescription = "Venue Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -175,7 +176,7 @@ fun SmallRatingSection() {
     Row {
         repeat(5) { index ->
             Icon(
-                painter = painterResource(id = R.drawable.ic_star),
+                painter = rememberAsyncImagePainter(model = R.drawable.ic_star),
                 contentDescription = "Star",
                 tint = Color(0xffffb800),
                 modifier = Modifier.size(16.dp)

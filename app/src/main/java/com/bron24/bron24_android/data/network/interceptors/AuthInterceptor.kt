@@ -22,8 +22,9 @@ class AuthInterceptor @Inject constructor(
 
         Log.d("AuthInterceptor", "RefreshToken: $refreshToken, AccessToken: $accessToken")
 
+        // Add Authorization header if accessToken is available
         val initialRequest = addAuthHeader(originalRequest, accessToken)
-        var response = chain.proceed(initialRequest)
+        val response = chain.proceed(initialRequest)
 
         if ((response.code == 401 || response.code == 404) && !refreshToken.isNullOrEmpty()) {
             response.close()
@@ -34,21 +35,15 @@ class AuthInterceptor @Inject constructor(
                     return chain.proceed(addAuthHeader(originalRequest, currentAccessToken))
                 }
 
-                val newTokens = runBlocking {
-                    try {
-                        authRepository.get().refreshAccessToken(refreshToken)
-                    } catch (e: Exception) {
-                        Log.e("AuthInterceptor", "Token refresh failed", e)
-                        null
-                    }
+                val refreshedSuccessfully = runBlocking {
+                    authRepository.get().refreshAndSaveTokens(refreshToken)
                 }
 
-                if (newTokens != null && newTokens.accessToken.isNotEmpty()) {
-                    tokenRepository.saveTokens(newTokens.accessToken, newTokens.refreshToken)
-                    return chain.proceed(addAuthHeader(originalRequest, newTokens.accessToken))
+                if (refreshedSuccessfully) {
+                    val newAccessToken = tokenRepository.getAccessToken()
+                    return chain.proceed(addAuthHeader(originalRequest, newAccessToken))
                 } else {
                     Log.e("AuthInterceptor", "Failed to refresh token")
-                    tokenRepository.clearTokens()
                     return response
                 }
             }

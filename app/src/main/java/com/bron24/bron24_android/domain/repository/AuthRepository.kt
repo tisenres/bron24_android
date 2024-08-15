@@ -10,5 +10,6 @@ interface AuthRepository {
     suspend fun requestOTP(otpRequest: OTPRequest): PhoneNumberResponse
     suspend fun verifyOTP(otpRequest: OTPRequest): OTPCodeResponse
     suspend fun authenticateUser(user: User): AuthResponse
-    suspend fun refreshAccessToken(refreshToken: String): AuthResponse
+    suspend fun refreshAndSaveTokens(refreshToken: String): Boolean
+//    suspend fun refreshAccessToken(refreshToken: String): AuthResponse
 }
