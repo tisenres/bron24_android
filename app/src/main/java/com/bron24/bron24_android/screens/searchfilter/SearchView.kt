@@ -101,7 +101,7 @@ fun ProfileRow() {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(id = R.drawable.view_soccer_ball_field_grass),
+                painter = painterResource(id = R.drawable.ball_pic),
                 contentDescription = "profile_image",
                 modifier = Modifier
                     .size(50.dp)

@@ -1,11 +1,12 @@
 package com.bron24.bron24_android.screens.adssection
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -14,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,17 +26,24 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AdsSection(modifier: Modifier = Modifier) {
-    var currentPage by remember { mutableIntStateOf(0) }
-    val imagesCount = 4 // Update this with the actual number of images
+    val images = listOf(
+        R.drawable.offer_image_1,
+        R.drawable.view_soccer_ball,
+        R.drawable.offer_image_1,
+        R.drawable.view_soccer_ball
+    )
+    val pagerState = rememberPagerState(pageCount = { images.size })
     val autoScrollInterval = 10000L // 10 seconds in milliseconds
 
     // Automatically switch images every 10 seconds
-    LaunchedEffect(key1 = currentPage) {
+    LaunchedEffect(key1 = pagerState.currentPage) {
         while (true) {
             delay(autoScrollInterval)
-            currentPage = (currentPage + 1) % imagesCount
+            val nextPage = (pagerState.currentPage + 1) % images.size
+            pagerState.animateScrollToPage(nextPage)
         }
     }
 
@@ -70,62 +77,57 @@ fun AdsSection(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(155.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .pointerInput(Unit) {
-                    detectHorizontalDragGestures { _, dragAmount ->
-                        currentPage = if (dragAmount > 0) {
-                            (currentPage - 1).coerceAtLeast(0)
-                        } else {
-                            (currentPage + 1) % imagesCount
-                        }
-                    }
-                }
-        ) {
-            Crossfade(targetState = currentPage, label = "") { page ->
-                OfferImage(page)
-            }
+        AdsImageSection(images, pagerState)
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun AdsImageSection(images: List<Int>, pagerState: PagerState) {
+    Box(
+        modifier = Modifier
+            .height(155.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .fillMaxWidth()
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            OfferImage(imageRes = images[page])
         }
+        BottomIndicators(
+            currentPage = pagerState.currentPage,
+            totalPages = images.size,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 8.dp)
+        )
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            repeat(imagesCount) { index ->
-                val indicatorWidth = animateDpAsState(
-                    targetValue = if (currentPage == index) 20.dp else 10.dp, label = ""
-                )
-
-                Box(
-                    modifier = Modifier
-                        .height(10.dp)
-                        .width(indicatorWidth.value)
-                        .clip(CircleShape)
-                        .background(
-                            color = if (currentPage == index) Color(0xFF32B768) else Color(
-                                0xFFD9D9D9
-                            )
-                        )
-                )
-            }
+@Composable
+fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        repeat(totalPages) { index ->
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .padding(horizontal = 4.dp)
+                    .clip(CircleShape)
+                    .background(
+                        color = if (currentPage == index) Color(0xFF32B768) else Color(0xFFD9D9D9)
+                    )
+            )
         }
     }
 }
 
 @Composable
-fun OfferImage(page: Int) {
-    val imageRes = when (page) {
-        0 -> R.drawable.offer_image_1
-        1 -> R.drawable.soccer_player_field_with_ball
-        2 -> R.drawable.view_soccer_ball
-        else -> R.drawable.close_up_onkids_with_football_ball
-    }
+fun OfferImage(imageRes: Int) {
     Image(
         painter = painterResource(id = imageRes),
         contentDescription = "offer_image",
