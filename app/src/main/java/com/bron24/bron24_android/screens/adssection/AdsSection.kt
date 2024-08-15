@@ -36,7 +36,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
         R.drawable.view_soccer_ball
     )
     val pagerState = rememberPagerState(pageCount = { images.size })
-    val autoScrollInterval = 3000L // 10 seconds in milliseconds
+    val autoScrollInterval = 10000L // 10 seconds in milliseconds
 
     // Automatically switch images every 10 seconds
     LaunchedEffect(key1 = pagerState.currentPage) {
