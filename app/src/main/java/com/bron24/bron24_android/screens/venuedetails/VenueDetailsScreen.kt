@@ -54,13 +54,32 @@ fun VenueDetailsScreen(
     // Collect the venue details and remember them to prevent unnecessary recompositions
     val venueDetails by viewModel.venueDetails.collectAsState()
 
-    VenueDetailsContent(details = venueDetails, onBackClick = onBackClick)
+    if (venueDetails == null) {
+        // Show progress bar while loading
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+            CircularProgressIndicator(
+                color = Color(0xFF32B768),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    } else {
+        // Show the content once the data is loaded
+        VenueDetailsContent(details = venueDetails, onBackClick = onBackClick)
+    }
 }
 
 
 @Composable
 fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp),
@@ -76,7 +95,9 @@ fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
         // Lazy load the pricing section only when scrolled into view
         PricingSection(
             details,
-            modifier = Modifier.align(Alignment.BottomCenter).background(Color.White)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .background(Color.White)
         )
     }
 }
@@ -150,7 +171,7 @@ fun VenueImageSection(imageUrls: List<String>, onBackClick: () -> Unit) {
             val painter = rememberAsyncImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imageUrls[page])
-                    .placeholder(R.drawable.placeholder) // Use a placeholder
+                    .placeholder(R.drawable.placeholder)
                     .build()
             )
             Image(

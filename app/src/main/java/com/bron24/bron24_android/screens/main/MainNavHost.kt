@@ -123,7 +123,7 @@ fun MainNavHost(
                         300, easing = LinearEasing
                     )
                 ) + slideIntoContainer(
-                    animationSpec = tween(300, easing = EaseIn),
+                    animationSpec = tween(100, easing = EaseIn),
                     towards = AnimatedContentTransitionScope.SlideDirection.Start
                 )
             },
@@ -133,7 +133,7 @@ fun MainNavHost(
                         300, easing = LinearEasing
                     )
                 ) + slideOutOfContainer(
-                    animationSpec = tween(300, easing = EaseOut),
+                    animationSpec = tween(100, easing = EaseOut),
                     towards = AnimatedContentTransitionScope.SlideDirection.End
                 )
             }
