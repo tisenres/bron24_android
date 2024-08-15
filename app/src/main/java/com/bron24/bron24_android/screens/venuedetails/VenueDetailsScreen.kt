@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
@@ -54,8 +54,10 @@ fun VenueDetailsScreen(
     // Collect the venue details and remember them to prevent unnecessary recompositions
     val venueDetails by viewModel.venueDetails.collectAsState()
 
-    if (venueDetails == null) {
-        // Show progress bar while loading
+    // Use derivedStateOf to minimize recompositions for static content
+    val isLoading = derivedStateOf { venueDetails == null }
+
+    if (isLoading.value) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -67,11 +69,9 @@ fun VenueDetailsScreen(
             )
         }
     } else {
-        // Show the content once the data is loaded
         VenueDetailsContent(details = venueDetails, onBackClick = onBackClick)
     }
 }
-
 
 @Composable
 fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
@@ -85,6 +85,7 @@ fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
             contentPadding = PaddingValues(bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(27.dp)
         ) {
+            // Lazy load each section to ensure efficient scrolling
             item { VenueImageSection(details?.imageUrls ?: emptyList(), onBackClick) }
             item { HeaderSection(details) }
             item { InfrastructureSection(details) }
@@ -92,7 +93,7 @@ fun VenueDetailsContent(details: VenueDetails?, onBackClick: () -> Unit) {
             item { MapSection(details) }
         }
 
-        // Lazy load the pricing section only when scrolled into view
+        // Lazy load the pricing section
         PricingSection(
             details,
             modifier = Modifier
@@ -184,7 +185,6 @@ fun VenueImageSection(imageUrls: List<String>, onBackClick: () -> Unit) {
         ImageOverlay(pagerState.currentPage, imageUrls.size, onBackClick)
     }
 }
-
 
 @Composable
 fun ImageOverlay(
