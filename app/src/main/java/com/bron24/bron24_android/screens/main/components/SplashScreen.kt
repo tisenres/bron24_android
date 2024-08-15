@@ -16,7 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun SplashScreen(onTimeout: () -> Unit) {
+fun SplashScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -31,15 +31,10 @@ fun SplashScreen(onTimeout: () -> Unit) {
         )
     }
 
-    // Using LaunchedEffect to create a delay before navigating to the next screen
-    LaunchedEffect(Unit) {
-        delay(2000) // 2 seconds delay
-        onTimeout()
-    }
 }
 
 @Preview
 @Composable
 fun PreviewSplashScreen() {
-    SplashScreen(onTimeout = {})
+    SplashScreen()
 }
