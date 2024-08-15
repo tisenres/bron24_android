@@ -16,12 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import kotlinx.coroutines.delay
@@ -138,8 +141,11 @@ fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Mod
 
 @Composable
 fun OfferImage(imageRes: Int) {
-    Image(
-        painter = painterResource(id = imageRes),
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageRes)
+            .crossfade(true)
+            .build(),
         contentDescription = "offer_image",
         modifier = Modifier
             .fillMaxSize()
