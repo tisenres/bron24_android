@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,57 +40,9 @@ fun SearchView(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ProfileRow()
-//        Spacer(modifier = Modifier.height(20.dp))
         SearchRow()
     }
 }
-
-//@Composable
-//fun ProfileRow() {
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(start = 25.dp, top = 20.dp)
-//    ) {
-//        Row(verticalAlignment = Alignment.CenterVertically) {
-//            Image(
-//                painter = painterResource(id = R.drawable.joxon_pic),
-//                contentDescription = "profile_image",
-//                modifier = Modifier
-//                    .size(50.dp)
-//                    .clip(CircleShape)
-//            )
-//            Spacer(modifier = Modifier.width(15.dp))
-//            Column {
-//                Text(
-//                    text = stringResource(id = R.string.hello) + ", Joxongir!",
-//                    style = TextStyle(
-//                        fontFamily = interFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 18.sp,
-//                        color = Color.White,
-//                        lineHeight = 19.sp,
-//                        letterSpacing = (-0.028).em
-//                    )
-//                )
-//                Spacer(modifier = Modifier.height(4.dp))
-//                Text(
-//                    text = "Toshkent viloyati",
-//                    style = TextStyle(
-//                        fontFamily = interFontFamily,
-//                        fontWeight = FontWeight.Normal,
-//                        fontSize = 14.sp,
-//                        color = Color.White,
-//                        lineHeight = 16.sp,
-//                        letterSpacing = (-0.028).em
-//                    )
-//                )
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun ProfileRow() {
@@ -111,7 +64,7 @@ fun ProfileRow() {
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 Text(
-                    text = stringResource(id = R.string.hello) + ", Joxongir!",
+                    text = stringResource(id = R.string.hello) + ", John!",
                     style = TextStyle(
                         fontFamily = interFontFamily,
                         fontWeight = FontWeight.SemiBold,
@@ -175,7 +128,7 @@ fun SearchRow() {
             Image(
                 painter = painterResource(id = R.drawable.ic_filter),
                 contentDescription = "filter_icon",
-                colorFilter = ColorFilter.tint(Color(0xFF32B768)),
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color(0xFF32B768)),
                 modifier = Modifier.size(18.dp)
             )
         }

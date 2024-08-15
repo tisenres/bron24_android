@@ -15,40 +15,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AdsSection(modifier: Modifier = Modifier) {
-    val images = listOf(
-        R.drawable.offer_image_1,
-        R.drawable.view_soccer_ball,
-        R.drawable.offer_image_1,
-        R.drawable.view_soccer_ball
-    )
-    val pagerState = rememberPagerState(pageCount = { images.size })
-    val autoScrollInterval = 10000L // 10 seconds in milliseconds
-
-    // Automatically switch images every 10 seconds
-    LaunchedEffect(key1 = pagerState.currentPage) {
-        while (true) {
-            delay(autoScrollInterval)
-            val nextPage = (pagerState.currentPage + 1) % images.size
-            pagerState.animateScrollToPage(nextPage)
-        }
+    val images = remember {
+        listOf(
+            R.drawable.offer_image_1,
+            R.drawable.view_soccer_ball,
+            R.drawable.offer_image_1,
+            R.drawable.view_soccer_ball
+        )
     }
+    val pagerState = rememberPagerState(pageCount = { images.size })
 
     Column(modifier = modifier) {
         Row(
@@ -58,9 +43,9 @@ fun AdsSection(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = stringResource(id = R.string.special_offers),
-                style = TextStyle(
+                style = androidx.compose.ui.text.TextStyle(
                     fontFamily = interFontFamily,
-                    fontWeight = FontWeight(600),
+                    fontWeight = androidx.compose.ui.text.font.FontWeight(600),
                     fontSize = 20.sp,
                     lineHeight = 24.sp,
                     color = Color.Black
@@ -68,9 +53,9 @@ fun AdsSection(modifier: Modifier = Modifier) {
             )
             Text(
                 text = stringResource(id = R.string.see_all),
-                style = TextStyle(
+                style = androidx.compose.ui.text.TextStyle(
                     fontFamily = interFontFamily,
-                    fontWeight = FontWeight(600),
+                    fontWeight = androidx.compose.ui.text.font.FontWeight(600),
                     fontSize = 14.sp,
                     lineHeight = 19.sp,
                     color = Color(0xFF32B768)
@@ -142,14 +127,11 @@ fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Mod
 @Composable
 fun OfferImage(imageRes: Int) {
     AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(imageRes)
-            .crossfade(true)
-            .build(),
+        model = imageRes,
         contentDescription = "offer_image",
         modifier = Modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(10.dp)),
-        contentScale = ContentScale.Crop
+        contentScale = androidx.compose.ui.layout.ContentScale.Crop
     )
 }

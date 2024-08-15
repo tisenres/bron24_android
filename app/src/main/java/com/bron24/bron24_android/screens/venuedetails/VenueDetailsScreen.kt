@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.venuedetails
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -31,8 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.*
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -130,6 +133,8 @@ fun HeaderSection(details: VenueDetails?) {
         RatingSection(details)
     }
 }
+
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -490,7 +495,7 @@ fun InfrastructureSection(details: VenueDetails?) {
             }
             details?.let {
                 InfrastructureItem(
-                    "${it.workingHoursFrom} - ${it.workingHoursTill}",
+                    "${it.workingHoursFrom.drop(3)} - ${it.workingHoursTill.drop(3)}",
                     R.drawable.baseline_access_time_filled_24
                 )
             }
