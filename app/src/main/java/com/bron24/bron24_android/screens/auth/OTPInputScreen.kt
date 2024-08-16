@@ -73,6 +73,12 @@ fun OTPInputScreen(
             }
         }
 
+        // Ensure keyboard is shown and focus is requested as soon as the composable is launched
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+
         Scaffold { paddingValues ->
             Column(
                 modifier = Modifier
@@ -150,6 +156,7 @@ fun OTPInputScreen(
                             }
                         }
                     },
+                    focusRequester = focusRequester,
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester)
@@ -160,8 +167,7 @@ fun OTPInputScreen(
                 if (resendCounter > 0) {
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(17.dp),
+                            .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Image(
@@ -203,6 +209,7 @@ fun OTPInputScreen(
                                 lineHeight = 20.sp,
                                 letterSpacing = (-0.028).em
                             ),
+//                            modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     }
 
@@ -263,9 +270,9 @@ fun OTPInputScreen(
 fun OTPTextField(
     otp: String,
     onOtpChange: (String) -> Unit,
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier
 ) {
-    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(Unit) {

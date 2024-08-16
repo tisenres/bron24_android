@@ -112,7 +112,6 @@ fun PhoneNumberInputScreen(
                 BottomSection(
                     authViewModel,
                     isPhoneNumberValid,
-                    onNavigateToOTPScreen,
                 )
             }
 
@@ -265,7 +264,6 @@ fun CustomPhoneNumberField(
 fun BottomSection(
     authViewModel: AuthViewModel,
     isPhoneNumberValid: Boolean,
-    onNavigateToOTPScreen: (String) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -279,8 +277,6 @@ fun BottomSection(
             onClick = {
                 authViewModel.requestOTP()
             },
-            authViewModel = authViewModel,
-            onNavigateToOTPScreen = onNavigateToOTPScreen
         )
     }
 }
@@ -289,13 +285,8 @@ fun BottomSection(
 fun ConfirmButton(
     isEnabled: Boolean,
     onClick: () -> Unit,
-    authViewModel: AuthViewModel,
-    onNavigateToOTPScreen: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val authState by authViewModel.authState.collectAsState()
-    val phoneNumber by authViewModel.phoneNumber.collectAsState()
-    val context = LocalContext.current
 
     Button(
         onClick = {
