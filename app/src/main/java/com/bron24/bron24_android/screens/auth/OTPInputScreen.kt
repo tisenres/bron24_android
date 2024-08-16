@@ -73,18 +73,18 @@ fun OTPInputScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(24.dp),
+                        .height(26.dp),
                 ) {
                     IconButton(
                         onClick = onBackClick,
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(26.dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_arrow_back),
                             contentDescription = "Back",
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(26.dp)
                         )
                     }
 
@@ -112,9 +112,9 @@ fun OTPInputScreen(
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         color = Color.Black,
-                        lineHeight = 16.8.sp,
+                        lineHeight = 20.sp,
                         letterSpacing = (-0.028).em
                     ),
                     modifier = Modifier.align(Alignment.Start)
@@ -169,9 +169,9 @@ fun OTPInputScreen(
                             style = TextStyle(
                                 fontFamily = gilroyFontFamily,
                                 fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
-                                color = Color(0xFFB5DAC4),
-                                lineHeight = 16.8.sp,
+                                fontSize = 16.sp,
+                                color = Color.Red,
+                                lineHeight = 20.sp,
                                 letterSpacing = (-0.028).em
                             ),
                         )
@@ -189,9 +189,9 @@ fun OTPInputScreen(
                             style = TextStyle(
                                 fontFamily = gilroyFontFamily,
                                 fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
+                                fontSize = 16.sp,
                                 color = Color(0xFF32B768),
-                                lineHeight = 16.8.sp,
+                                lineHeight = 20.sp,
                                 letterSpacing = (-0.028).em
                             ),
                         )
@@ -273,9 +273,9 @@ fun OTPTextField(
                             style = TextStyle(
                                 fontFamily = gilroyFontFamily,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
+                                fontSize = 16.sp,
                                 color = Color(0xFF8F92A4),
-                                lineHeight = 17.15.sp,
+                                lineHeight = 20.sp,
                                 letterSpacing = (-0.028).em
                             ),
                         )
