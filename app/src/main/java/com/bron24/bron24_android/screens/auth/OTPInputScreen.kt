@@ -32,6 +32,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
+import com.bron24.bron24_android.screens.main.components.ToastManager
+import com.bron24.bron24_android.screens.main.components.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,186 +45,185 @@ fun OTPInputScreen(
     onOTPVerified: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    var otp by remember { mutableStateOf("") }
-    val authState by authViewModel.authState.collectAsState()
-    val scope = rememberCoroutineScope()
-    var resendCounter by remember { mutableIntStateOf(90) } // 1 minute 30 seconds
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
+    ToastManager { showToast ->
+        var otp by remember { mutableStateOf("") }
+        val authState by authViewModel.authState.collectAsState()
+        val scope = rememberCoroutineScope()
+        var resendCounter by remember { mutableIntStateOf(90) } // 1 minute 30 seconds
+        val focusRequester = remember { FocusRequester() }
+        val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
-        while (resendCounter > 0) {
-            delay(1000)
-            resendCounter--
-        }
-    }
-
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(20.dp)
-                .padding(paddingValues)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(24.dp),
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier
-                        .size(24.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_arrow_back),
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .size(24.dp)
-                    )
-                }
-
-                Text(
-                    text = stringResource(id = R.string.otp_title),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp,
-                        color = Color.Black,
-                        lineHeight = 24.sp,
-                        letterSpacing = (-0.028).em,
-                        textAlign = TextAlign.Center
-                    ),
-                    modifier = Modifier.align(Alignment.Center),
-                )
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+            while (resendCounter > 0) {
+                delay(1000)
+                resendCounter--
             }
+        }
 
-            Spacer(modifier = Modifier.height(37.dp))
-
-            Text(
-                text = stringResource(id = R.string.enter_otp_code) +
-                        "\n" +
-                        phoneNumber.formatWithSpansPhoneNumber(),
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    lineHeight = 16.8.sp,
-                    letterSpacing = (-0.028).em
-                ),
-                modifier = Modifier.align(Alignment.Start)
-            )
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            OTPTextField(
-                otp = otp,
-                onOtpChange = { newOtp ->
-                    if (newOtp.length <= 4) {
-                        otp = newOtp
-                        val otpValue = newOtp.toIntOrNull()
-                        if (otpValue != null) {
-                            authViewModel.updateOTP(otpValue)
-                            if (newOtp.length == 4) {
-                                scope.launch {
-                                    authViewModel.verifyOTP()
-                                }
-                            }
-                        } else {
-                            // Handle the case where otp is empty or invalid
-                            authViewModel.updateOTP(0)
-                        }
-                    }
-                },
+        Scaffold { paddingValues ->
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester)
-            )
-
-            Spacer(modifier = Modifier.height(56.dp))
-
-            if (resendCounter > 0) {
-                Row(
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(20.dp)
+                    .padding(paddingValues)
+            ) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(17.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .height(24.dp),
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_refresh),
-                        contentDescription = stringResource(id = R.string.refresh)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    IconButton(
+                        onClick = onBackClick,
+                        modifier = Modifier
+                            .size(24.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_arrow_back),
+                            contentDescription = "Back",
+                            modifier = Modifier
+                                .size(24.dp)
+                        )
+                    }
+
                     Text(
-                        text = stringResource(
-                            id = R.string.resend_code,
-                            resendCounter / 60,
-                            String.format("%02d", resendCounter % 60)
-                        ),
+                        text = stringResource(id = R.string.otp_title),
                         style = TextStyle(
                             fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp,
-                            color = Color(0xFFB5DAC4),
-                            lineHeight = 16.8.sp,
-                            letterSpacing = (-0.028).em
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 22.sp,
+                            color = Color.Black,
+                            lineHeight = 24.sp,
+                            letterSpacing = (-0.028).em,
+                            textAlign = TextAlign.Center
                         ),
+                        modifier = Modifier.align(Alignment.Center),
                     )
                 }
-            } else {
-                TextButton(
-                    onClick = {
-                        authViewModel.verifyOTP()
-                        resendCounter = 90
+
+                Spacer(modifier = Modifier.height(37.dp))
+
+                Text(
+                    text = stringResource(id = R.string.enter_otp_code) +
+                            "\n" +
+                            phoneNumber.formatWithSpansPhoneNumber(),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 14.sp,
+                        color = Color.Black,
+                        lineHeight = 16.8.sp,
+                        letterSpacing = (-0.028).em
+                    ),
+                    modifier = Modifier.align(Alignment.Start)
+                )
+
+                Spacer(modifier = Modifier.height(40.dp))
+
+                OTPTextField(
+                    otp = otp,
+                    onOtpChange = { newOtp ->
+                        if (newOtp.length <= 4) {
+                            otp = newOtp
+                            val otpValue = newOtp.toIntOrNull()
+                            if (otpValue != null) {
+                                authViewModel.updateOTP(otpValue)
+                                if (newOtp.length == 4) {
+                                    scope.launch {
+                                        authViewModel.verifyOTP()
+                                    }
+                                }
+                            } else {
+                                // Handle the case where otp is empty or invalid
+                                authViewModel.updateOTP(0)
+                            }
+                        }
                     },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.resend_code_button),
-                        style = TextStyle(
-                            fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp,
-                            color = Color(0xFF32B768),
-                            lineHeight = 16.8.sp,
-                            letterSpacing = (-0.028).em
-                        ),
-                    )
-                }
-            }
-        }
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
+                )
 
-        LaunchedEffect(authState) {
-            when (authState) {
-                is AuthState.Loading -> {
-                    // Show loading indicator
-                    Toast.makeText( context,"Verifying OTP...", Toast.LENGTH_SHORT).show()
-                }
+                Spacer(modifier = Modifier.height(56.dp))
 
-                is AuthState.OTPVerified -> {
-                    if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
-                        // Trigger onOTPVerified callback if OTP verification is successful
-                        onOTPVerified()
-                    } else {
-                        // Show a Toast for incorrect OTP
-                        Toast.makeText( context,"Incorrect OTP. Please try again.", Toast.LENGTH_SHORT).show()
+                if (resendCounter > 0) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(17.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_refresh),
+                            contentDescription = stringResource(id = R.string.refresh)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = stringResource(
+                                id = R.string.resend_code,
+                                resendCounter / 60,
+                                String.format("%02d", resendCounter % 60)
+                            ),
+                            style = TextStyle(
+                                fontFamily = gilroyFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 14.sp,
+                                color = Color(0xFFB5DAC4),
+                                lineHeight = 16.8.sp,
+                                letterSpacing = (-0.028).em
+                            ),
+                        )
+                    }
+                } else {
+                    TextButton(
+                        onClick = {
+                            authViewModel.verifyOTP()
+                            resendCounter = 90
+                        },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.resend_code_button),
+                            style = TextStyle(
+                                fontFamily = gilroyFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 14.sp,
+                                color = Color(0xFF32B768),
+                                lineHeight = 16.8.sp,
+                                letterSpacing = (-0.028).em
+                            ),
+                        )
                     }
                 }
+            }
 
-                is AuthState.Error -> {
-                    Toast.makeText(context, "Error: " + (authState as AuthState.Error).message, Toast.LENGTH_SHORT).show()
-                }
+            LaunchedEffect(authState) {
+                when (authState) {
+                    is AuthState.Loading -> {
+                        showToast("Verifying OTP...", ToastType.INFO)
+                    }
 
-                else -> {
-                    // Handle other states if necessary
+                    is AuthState.OTPVerified -> {
+                        if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
+                            showToast("OTP verified successfully", ToastType.INFO)
+                            onOTPVerified()
+                        } else {
+                            showToast("Incorrect OTP. Please try again.", ToastType.ERROR)
+                        }
+                    }
+
+                    is AuthState.Error -> {
+                        showToast(
+                            "Error: " + (authState as AuthState.Error).message,
+                            ToastType.ERROR
+                        )
+                    }
+
+                    else -> {
+                        // Handle other states if necessary
+                    }
                 }
             }
         }
