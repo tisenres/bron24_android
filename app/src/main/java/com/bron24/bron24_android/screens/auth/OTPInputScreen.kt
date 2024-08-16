@@ -1,13 +1,34 @@
 package com.bron24.bron24_android.screens.auth
 
-import android.widget.Toast
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -24,11 +44,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.core.content.ContextCompat
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
@@ -49,9 +68,11 @@ fun OTPInputScreen(
         var otp by remember { mutableStateOf("") }
         val authState by authViewModel.authState.collectAsState()
         val scope = rememberCoroutineScope()
-        var resendCounter by remember { mutableIntStateOf(90) } // 1 minute 30 seconds
+        var resendCounter by remember { mutableIntStateOf(90) }
         val focusRequester = remember { FocusRequester() }
         val keyboardController = LocalSoftwareKeyboardController.current
+        var isVerifying by remember { mutableStateOf(false) }
+        val context = LocalContext.current
 
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
@@ -131,12 +152,12 @@ fun OTPInputScreen(
                             if (otpValue != null) {
                                 authViewModel.updateOTP(otpValue)
                                 if (newOtp.length == 4) {
+                                    isVerifying = true
                                     scope.launch {
                                         authViewModel.verifyOTP()
                                     }
                                 }
                             } else {
-                                // Handle the case where otp is empty or invalid
                                 authViewModel.updateOTP(0)
                             }
                         }
@@ -196,33 +217,48 @@ fun OTPInputScreen(
                             ),
                         )
                     }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
+                    }
                 }
-            }
 
-            LaunchedEffect(authState) {
-                when (authState) {
-                    is AuthState.Loading -> {
-                        showToast("Verifying OTP...", ToastType.INFO)
-                    }
-
-                    is AuthState.OTPVerified -> {
-                        if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
-                            showToast("OTP verified successfully", ToastType.INFO)
-                            onOTPVerified()
-                        } else {
-                            showToast("Incorrect OTP. Please try again.", ToastType.ERROR)
+                LaunchedEffect(authState) {
+                    when (authState) {
+                        is AuthState.Loading -> {
+                            isVerifying = true
                         }
-                    }
 
-                    is AuthState.Error -> {
-                        showToast(
-                            "Error: " + (authState as AuthState.Error).message,
-                            ToastType.ERROR
-                        )
-                    }
+                        is AuthState.OTPVerified -> {
+                            isVerifying = false
+                            if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
+                                showToast("OTP verified successfully", ToastType.INFO)
+                                onOTPVerified()
+                            } else {
+                                showToast("Incorrect OTP. Please try again.", ToastType.ERROR)
+                                vibrate(context)
+                                otp = ""
+                                focusRequester.requestFocus()
+                                keyboardController?.show()
+                            }
+                        }
 
-                    else -> {
-                        // Handle other states if necessary
+                        is AuthState.Error -> {
+                            isVerifying = false
+                            showToast(
+                                "Error: " + (authState as AuthState.Error).message,
+                                ToastType.ERROR
+                            )
+                        }
+
+                        else -> {
+                            isVerifying = false
+                        }
                     }
                 }
             }
@@ -239,6 +275,11 @@ fun OTPTextField(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+
     BasicTextField(
         value = otp,
         onValueChange = onOtpChange,
@@ -248,11 +289,7 @@ fun OTPTextField(
                 horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally),
                 modifier = modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester)
-                    .onGloballyPositioned {
-                        focusRequester.requestFocus()
-                        keyboardController?.show()
-                    },
+                    .focusRequester(focusRequester),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 repeat(4) { index ->
@@ -286,13 +323,14 @@ fun OTPTextField(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun OTPInputScreenPreview() {
-    OTPInputScreen(
-        authViewModel = hiltViewModel(),
-        phoneNumber = "+998 94 018 67 22",
-        onOTPVerified = {},
-        onBackClick = {}
-    )
+fun vibrate(context: Context) {
+    val vibrator = ContextCompat.getSystemService(context, Vibrator::class.java)
+    vibrator?.let {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            it.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION")
+            it.vibrate(200)
+        }
+    }
 }
