@@ -29,7 +29,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,13 +64,12 @@ fun OTPInputScreen(
         var isVerifying by remember { mutableStateOf(false) }
 
         // Coroutine scope for handling the counter
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
-            keyboardController?.show()
-
-            while (resendCounter > 0) {
-                delay(1000)  // Wait for 1 second
-                resendCounter--
+        LaunchedEffect(resendCounter) {
+            if (resendCounter > 0) {
+                while (resendCounter > 0) {
+                    delay(1000)  // Wait for 1 second
+                    resendCounter--
+                }
             }
         }
 
@@ -173,7 +171,10 @@ fun OTPInputScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = stringResource(id = R.string.resend_code) +
-                                " " + resendCounter / 60 + ":" + resendCounter % 60,
+                                    " " + resendCounter / 60 + ":" + String.format(
+                                "%02d",
+                                resendCounter % 60
+                            ),
                             style = TextStyle(
                                 fontFamily = gilroyFontFamily,
                                 fontWeight = FontWeight.Normal,
