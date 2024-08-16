@@ -4,9 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -74,12 +71,13 @@ fun OTPInputScreen(
         var isVerifying by remember { mutableStateOf(false) }
         val context = LocalContext.current
 
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
-            keyboardController?.show()
-            while (resendCounter > 0) {
-                delay(1000)
-                resendCounter--
+        // LaunchedEffect with resendCounter as the key
+        LaunchedEffect(resendCounter) {
+            if (resendCounter > 0) {
+                while (resendCounter > 0) {
+                    delay(1000)
+                    resendCounter--
+                }
             }
         }
 
@@ -201,7 +199,7 @@ fun OTPInputScreen(
                     TextButton(
                         onClick = {
                             authViewModel.verifyOTP()
-                            resendCounter = 90
+                            resendCounter = 90 // Reset the counter
                         },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
@@ -218,13 +216,15 @@ fun OTPInputScreen(
                         )
                     }
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
+                    if (isVerifying) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
+                        }
                     }
                 }
 
