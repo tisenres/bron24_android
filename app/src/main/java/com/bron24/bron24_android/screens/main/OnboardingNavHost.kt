@@ -107,7 +107,12 @@ fun OnboardingNavHost(
                 val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
                 OTPInputScreen(
                     authViewModel = authViewModel,
-                    onOTPVerified = {
+                    onUserLogIn = {
+                        navController.navigate(Screen.LocationPermission.route) {
+                            popUpTo(Screen.OTPInput.route) { inclusive = true }
+                        }
+                    },
+                    onUserSignUp = {
                         navController.navigate(Screen.UserDataInput.route) {
                             popUpTo(Screen.OTPInput.route) { inclusive = true }
                         }

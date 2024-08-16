@@ -46,7 +46,7 @@ class AuthRepositoryImpl @Inject constructor(
             handleHttpExceptionOTP(e)
         } catch (e: IOException) {
             // Handle network errors or IO exceptions here
-            OTPCodeResponse(OTPStatusCode.NETWORK_ERROR)
+            OTPCodeResponse(OTPStatusCode.NETWORK_ERROR, false)
         }
     }
 
@@ -70,8 +70,8 @@ class AuthRepositoryImpl @Inject constructor(
 
     private fun handleHttpExceptionOTP(e: HttpException): OTPCodeResponse {
         return when (e.code()) {
-            400 -> OTPCodeResponse(OTPStatusCode.INCORRECT_OTP)
-            else -> OTPCodeResponse(OTPStatusCode.UNKNOWN_ERROR)
+            400 -> OTPCodeResponse(OTPStatusCode.INCORRECT_OTP, false)
+            else -> OTPCodeResponse(OTPStatusCode.UNKNOWN_ERROR, false)
         }
     }
 

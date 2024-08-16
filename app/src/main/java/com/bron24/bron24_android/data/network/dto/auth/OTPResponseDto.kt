@@ -7,5 +7,6 @@ data class PhoneNumberResponseDto(
 )
 
 data class OTPCodeResponseDto(
-    @SerializedName("status") val status: String
+    @SerializedName("status") val status: String,
+    @SerializedName("user_exists") val userExists: Boolean
 )

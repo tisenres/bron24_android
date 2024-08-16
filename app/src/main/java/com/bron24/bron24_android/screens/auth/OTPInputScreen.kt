@@ -1,9 +1,5 @@
 package com.bron24.bron24_android.screens.auth
 
-import android.content.Context
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +40,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
@@ -58,7 +53,8 @@ import kotlinx.coroutines.launch
 fun OTPInputScreen(
     authViewModel: AuthViewModel,
     phoneNumber: String,
-    onOTPVerified: () -> Unit,
+    onUserLogIn: () -> Unit,
+    onUserSignUp: () -> Unit,
     onBackClick: () -> Unit
 ) {
     ToastManager { showToast ->
@@ -237,7 +233,11 @@ fun OTPInputScreen(
                             isVerifying = false
                             if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
                                 showToast("OTP verified successfully", ToastType.INFO)
-                                onOTPVerified()
+                                if ((authState as AuthState.OTPVerified).userExists) {
+                                    onUserLogIn()
+                                } else {
+                                    onUserSignUp()
+                                }
                             } else {
                                 showToast("Incorrect OTP. Please try again.", ToastType.ERROR)
                                 otp = ""

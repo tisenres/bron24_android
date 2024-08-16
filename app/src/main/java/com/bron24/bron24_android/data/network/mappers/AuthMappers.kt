@@ -32,12 +32,12 @@ fun PhoneNumberResponseDto.toDomainEntity(): PhoneNumberResponse {
 }
 
 fun OTPCodeResponseDto.toDomainEntity(): OTPCodeResponse {
-    Log.d("SDSDDWEWEWE", "SUKA")
     return OTPCodeResponse(
         status = when (status) {
             "success" -> OTPStatusCode.CORRECT_OTP
             else -> OTPStatusCode.INCORRECT_OTP
-        }
+        },
+        userExists = userExists
     )
 }
 
