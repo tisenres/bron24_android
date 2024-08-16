@@ -101,7 +101,12 @@ fun UserDataInputScreen(
     when (authState) {
         is AuthState.Loading -> {
             // Show loading indicator
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .clip(RoundedCornerShape(10.dp))
+            ) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }

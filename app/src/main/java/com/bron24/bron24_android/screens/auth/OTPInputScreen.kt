@@ -35,7 +35,7 @@ import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-// Test
+
 @Composable
 fun OTPInputScreen(
     authViewModel: AuthViewModel,
@@ -212,13 +212,12 @@ fun OTPInputScreen(
                         // Trigger onOTPVerified callback if OTP verification is successful
                         onOTPVerified()
                     } else {
-                        // Show a Snackbar for incorrect OTP
+                        // Show a Toast for incorrect OTP
                         Toast.makeText( context,"Incorrect OTP. Please try again.", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 is AuthState.Error -> {
-                    // Display an error message using a Snackbar
                     Toast.makeText(context, "Error: " + (authState as AuthState.Error).message, Toast.LENGTH_SHORT).show()
                 }
 

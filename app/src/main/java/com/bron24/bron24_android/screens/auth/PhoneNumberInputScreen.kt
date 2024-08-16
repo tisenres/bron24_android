@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.auth
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -33,6 +32,8 @@ import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
+import com.bron24.bron24_android.screens.main.components.ToastManager
+import com.bron24.bron24_android.screens.main.components.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -40,77 +41,92 @@ fun PhoneNumberInputScreen(
     authViewModel: AuthViewModel,
     onNavigateToOTPScreen: (String) -> Unit
 ) {
-    val authState by authViewModel.authState.collectAsState()
-    val phoneNumber by authViewModel.phoneNumber.collectAsState()
-    val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
-    val focusRequester = remember { FocusRequester() }
-    val snackbarHostState = remember { SnackbarHostState() }
+    ToastManager { showToast ->
+        val authState by authViewModel.authState.collectAsState()
+        val phoneNumber by authViewModel.phoneNumber.collectAsState()
+        val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
+        val focusRequester = remember { FocusRequester() }
+        var isLoading by remember { mutableStateOf(false) }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(horizontal = 20.dp)
-                .padding(paddingValues)
-        ) {
-            Spacer(modifier = Modifier.height(24.dp))
-            Logo()
-            Spacer(modifier = Modifier.height(24.dp))
-            CustomPhoneNumberField(
-                value = phoneNumber,
-                onValueChange = { newValue ->
-                    if (newValue.startsWith("+998")) {
-                        authViewModel.updatePhoneNumber(newValue)
+        LaunchedEffect(authState) {
+            when (authState) {
+                is AuthState.Loading -> {
+                    isLoading = true
+                }
+
+                is AuthState.OTPRequested -> {
+                    isLoading = false
+                    val status = (authState as AuthState.OTPRequested).status
+                    when (status) {
+                        PhoneNumberResponseStatusCode.SUCCESS -> {
+                            onNavigateToOTPScreen(phoneNumber)
+                        }
+
+                        PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
+                            onNavigateToOTPScreen(phoneNumber)
+                        }
+
+                        else -> showToast(
+                            "Failed to request OTP. Please try again later.",
+                            ToastType.ERROR
+                        )
                     }
-                },
-                focusRequester = focusRequester,
-                authViewModel = authViewModel
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            BottomSection(
-                authViewModel,
-                isPhoneNumberValid,
-                onNavigateToOTPScreen,
-                snackbarHostState
-            )
+                }
+
+                is AuthState.Error -> {
+                    isLoading = false
+                    showToast(
+                        "Error: " + (authState as AuthState.Error).message,
+                        ToastType.ERROR
+                    )
+                }
+
+                else -> {
+                    isLoading = false
+                    // Handle other states if necessary
+                }
+            }
         }
 
-//        LaunchedEffect(authState) {
-//            when (authState) {
-//                is AuthState.OTPRequested -> {
-//                    val status = (authState as AuthState.OTPRequested).status
-//                    if (status == PhoneNumberResponseStatusCode.SUCCESS) {
-//                        // Navigate to the OTP input screen if the OTP request was successful
-//                        onNavigateToOTPScreen(phoneNumber)
-//                    } else if (status == PhoneNumberResponseStatusCode.MANY_REQUESTS) {
-//                        // Directly navigate to the OTP screen on MANY_REQUESTS error
-//                        onNavigateToOTPScreen(phoneNumber)
-//                    } else {
-//                        // Show an error Snackbar if OTP request failed
-//                        snackbarHostState.showSnackbar(
-//                            message = "Failed to request OTP. Please try again later.",
-//                            actionLabel = "OK"
-//                        )
-//                    }
-//                }
-//
-//                is AuthState.Error -> {
-//                    // Display an error message using a Snackbar
-////                    Log.d("HTTP_LOG", (AuthState as AuthState.Error).message)
-//                    snackbarHostState.showSnackbar(
-//                        message = "Network error. Check your connection.",
-//                        actionLabel = "OK"
-//                    )
-//                }
-//
-//                else -> {
-//                    // Handle other states if necessary
-//                }
-//            }
-//        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(horizontal = 20.dp)
+            ) {
+                Spacer(modifier = Modifier.height(36.dp))
+                Logo()
+                Spacer(modifier = Modifier.height(36.dp))
+                CustomPhoneNumberField(
+                    value = phoneNumber,
+                    onValueChange = { newValue ->
+                        if (newValue.startsWith("+998")) {
+                            authViewModel.updatePhoneNumber(newValue)
+                        }
+                    },
+                    focusRequester = focusRequester,
+                    authViewModel = authViewModel
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                BottomSection(
+                    authViewModel,
+                    isPhoneNumberValid,
+                    onNavigateToOTPScreen,
+                )
+            }
+
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
+                }
+            }
+        }
     }
 }
 
@@ -163,7 +179,7 @@ fun CustomPhoneNumberField(
             Icon(
                 painter = painterResource(id = R.drawable.baseline_person_outline_24),
                 contentDescription = "User Icon",
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(30.dp),
                 tint = Color(0xFFB8BDCA)
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -178,9 +194,9 @@ fun CustomPhoneNumberField(
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         color = Color(0xFFB8BDCA),
-                        lineHeight = 16.8.sp,
+                        lineHeight = 20.sp,
                         letterSpacing = (-0.028).em
                     ),
                     modifier = Modifier.align(Alignment.Start)
@@ -195,9 +211,9 @@ fun CustomPhoneNumberField(
                         style = TextStyle(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp,
+                            fontSize = 16.sp,
                             color = Color(0xFFB8BDCA),
-                            lineHeight = 16.8.sp,
+                            lineHeight = 20.sp,
                             letterSpacing = (-0.028).em
                         )
                     )
@@ -224,9 +240,9 @@ fun CustomPhoneNumberField(
                         textStyle = TextStyle(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp,
+                            fontSize = 16.sp,
                             color = Color.Black,
-                            lineHeight = 16.8.sp,
+                            lineHeight = 20.sp,
                             letterSpacing = (-0.028).em
                         ),
                         visualTransformation = PhoneNumberVisualTransformation(),
@@ -250,7 +266,6 @@ fun BottomSection(
     authViewModel: AuthViewModel,
     isPhoneNumberValid: Boolean,
     onNavigateToOTPScreen: (String) -> Unit,
-    snackbarHostState: SnackbarHostState
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -264,7 +279,6 @@ fun BottomSection(
             onClick = {
                 authViewModel.requestOTP()
             },
-            snackbarHostState = snackbarHostState,
             authViewModel = authViewModel,
             onNavigateToOTPScreen = onNavigateToOTPScreen
         )
@@ -275,7 +289,6 @@ fun BottomSection(
 fun ConfirmButton(
     isEnabled: Boolean,
     onClick: () -> Unit,
-    snackbarHostState: SnackbarHostState,
     authViewModel: AuthViewModel,
     onNavigateToOTPScreen: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -307,47 +320,6 @@ fun ConfirmButton(
             lineHeight = 32.sp,
             letterSpacing = (-0.028).em
         )
-    }
-
-    LaunchedEffect(authState) {
-        when (authState) {
-            is AuthState.Loading -> {
-                // Show loading indicator
-                Toast.makeText(context, "Verifying phone number....", Toast.LENGTH_SHORT).show()
-            }
-
-            is AuthState.OTPRequested -> {
-                val status = (authState as AuthState.OTPRequested).status
-                when (status) {
-                    PhoneNumberResponseStatusCode.SUCCESS -> {
-                        // Navigate to the OTP input screen if the OTP request was successful
-                        onNavigateToOTPScreen(phoneNumber)
-                    }
-
-                    PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
-                        onNavigateToOTPScreen(phoneNumber)
-                    }
-
-                    else -> Toast.makeText(
-                        context,
-                        "Failed to request OTP. Please try again later.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            is AuthState.Error -> {
-                Toast.makeText(
-                    context,
-                    "Error: " + (authState as AuthState.Error).message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-            else -> {
-                // Handle other states if necessary
-            }
-        }
     }
 }
 
@@ -397,4 +369,7 @@ fun TermsAndConditionsText() {
 @Preview(showBackground = true)
 @Composable
 private fun PhoneNumberInputScreenPreview() {
+//    PhoneNumberInputScreen(authViewModel = AuthViewModel()) {
+//
+//    }
 }

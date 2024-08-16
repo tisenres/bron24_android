@@ -9,8 +9,17 @@ import kotlinx.coroutines.flow.StateFlow
 
 class MockAuthViewModel : ViewModel() {
 
+
+
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> get() = _authState
+
+    private val _phoneNumber = MutableStateFlow("")
+    val phoneNumber: StateFlow<String> get() = _phoneNumber
+
+    private val _isPhoneNumberValid = MutableStateFlow(true)
+    val isPhoneNumberValid: StateFlow<Boolean> get() = _isPhoneNumberValid
+
 
     fun authenticateUser(firstName: String, lastName: String) {
         _authState.value = AuthState.Loading
@@ -38,6 +47,16 @@ class MockAuthViewModel : ViewModel() {
     }
 
     fun verifyOTP() {
+
+
+    }
+
+    fun updatePhoneNumber(newValue: String) {
+
+
+    }
+
+    fun requestOTP() {
 
 
     }
