@@ -47,7 +47,6 @@ import com.bron24.bron24_android.screens.main.components.ToastManager
 import com.bron24.bron24_android.screens.main.components.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun OTPInputScreen(
@@ -60,19 +59,19 @@ fun OTPInputScreen(
     ToastManager { showToast ->
         var otp by remember { mutableStateOf("") }
         val authState by authViewModel.authState.collectAsState()
-        val scope = rememberCoroutineScope()
-        var resendCounter by remember { mutableIntStateOf(90) }
+        var resendCounter by remember { mutableIntStateOf(10) }
         val focusRequester = remember { FocusRequester() }
         val keyboardController = LocalSoftwareKeyboardController.current
         var isVerifying by remember { mutableStateOf(false) }
 
-        // LaunchedEffect with resendCounter as the key
-        LaunchedEffect(resendCounter) {
-            if (resendCounter > 0) {
-                while (resendCounter > 0) {
-                    delay(1000)
-                    resendCounter--
-                }
+        // Coroutine scope for handling the counter
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+
+            while (resendCounter > 0) {
+                delay(1000)  // Wait for 1 second
+                resendCounter--
             }
         }
 
@@ -146,9 +145,7 @@ fun OTPInputScreen(
                                 authViewModel.updateOTP(otpValue)
                                 if (newOtp.length == 4) {
                                     isVerifying = true
-                                    scope.launch {
-                                        authViewModel.verifyOTP()
-                                    }
+                                    authViewModel.verifyOTP()
                                 }
                             } else {
                                 authViewModel.updateOTP(0)
@@ -175,16 +172,13 @@ fun OTPInputScreen(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = stringResource(
-                                id = R.string.resend_code,
-                                resendCounter / 60,
-                                String.format("%02d", resendCounter % 60)
-                            ),
+                            text = stringResource(id = R.string.resend_code) +
+                                " " + resendCounter / 60 + ":" + resendCounter % 60,
                             style = TextStyle(
                                 fontFamily = gilroyFontFamily,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 16.sp,
-                                color = Color.Red,
+                                color = Color(0xFFB5DAC4),
                                 lineHeight = 20.sp,
                                 letterSpacing = (-0.028).em
                             ),
@@ -193,7 +187,7 @@ fun OTPInputScreen(
                 } else {
                     TextButton(
                         onClick = {
-                            authViewModel.verifyOTP()
+                            authViewModel.requestOTP()
                             resendCounter = 90 // Reset the counter
                         },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
