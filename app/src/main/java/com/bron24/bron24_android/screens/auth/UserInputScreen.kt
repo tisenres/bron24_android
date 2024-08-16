@@ -25,6 +25,8 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.auth.AuthState
 import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.auth.MockAuthViewModel
+import com.bron24.bron24_android.screens.main.components.ToastManager
+import com.bron24.bron24_android.screens.main.components.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -32,9 +34,13 @@ fun UserDataInputScreen(
     authViewModel: AuthViewModel,
     onSignUpVerified: () -> Unit,
 ) {
-    val authState by authViewModel.authState.collectAsState()
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
+
+    ToastManager { showToast ->
+
+        val authState by authViewModel.authState.collectAsState()
+        var firstName by remember { mutableStateOf("") }
+        var lastName by remember { mutableStateOf("") }
+        var isLoading by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier
@@ -90,39 +96,42 @@ fun UserDataInputScreen(
                 authViewModel = authViewModel,
                 onSignUpVerified = onSignUpVerified
             )
-    }
+        }
 
-    when (authState) {
-        is AuthState.Loading -> {
-            // Show loading indicator
+        when (authState) {
+            is AuthState.Loading -> {
+                isLoading = true
+                // Show loading indicator
+            }
+
+            is AuthState.Authenticated -> {
+                isLoading = false
+                // Navigate to the next screen when authentication is successful
+                onSignUpVerified()
+            }
+
+            is AuthState.Error -> {
+                isLoading = false
+                showToast(
+                    "Error: " + (authState as AuthState.Error).message,
+                    ToastType.ERROR
+                )
+            }
+
+            else -> {
+                isLoading = false
+            }
+        }
+
+        if (isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
-                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
+                contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
             }
-        }
-
-        is AuthState.Authenticated -> {
-            // Navigate to the next screen when authentication is successful
-            onSignUpVerified()
-        }
-
-        is AuthState.Error -> {
-            // Show error message if there was an error
-            Box(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    text = (authState as AuthState.Error).message,
-                    color = Color.Red,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-        }
-
-        else -> {
-            // Handle other states if necessary
         }
     }
 }
@@ -217,7 +226,7 @@ fun UserDataField(
                     .fillMaxWidth()
                     .align(Alignment.CenterVertically),
 
-            )
+                )
         }
     }
 }

@@ -76,7 +76,7 @@ class AuthViewModel @Inject constructor(
             _authState.value = AuthState.Loading
             try {
                 val response = model.authUser(
-                    _phoneNumber.value,
+                    _phoneNumber.value.replace("+", ""),
                     firstName,
                     lastName
                 )

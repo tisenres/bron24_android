@@ -69,7 +69,6 @@ fun OTPInputScreen(
         val focusRequester = remember { FocusRequester() }
         val keyboardController = LocalSoftwareKeyboardController.current
         var isVerifying by remember { mutableStateOf(false) }
-        val context = LocalContext.current
 
         // LaunchedEffect with resendCounter as the key
         LaunchedEffect(resendCounter) {
@@ -241,7 +240,6 @@ fun OTPInputScreen(
                                 onOTPVerified()
                             } else {
                                 showToast("Incorrect OTP. Please try again.", ToastType.ERROR)
-                                vibrate(context)
                                 otp = ""
                                 focusRequester.requestFocus()
                                 keyboardController?.show()
@@ -321,16 +319,4 @@ fun OTPTextField(
             }
         }
     )
-}
-
-fun vibrate(context: Context) {
-    val vibrator = ContextCompat.getSystemService(context, Vibrator::class.java)
-    vibrator?.let {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            it.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            it.vibrate(200)
-        }
-    }
 }
