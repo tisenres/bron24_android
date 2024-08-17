@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.App.Starting" parent="Theme.Bron24_android">
+        <!-- Set the splash screen background color -->
+        <item name="android:windowSplashScreenBackground">@color/white</item>
+
+        <!-- Set the animated splash screen icon -->
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/logo_bron24</item>
+
+        <!-- Set the splash screen animation duration (optional) -->
+        <item name="android:windowSplashScreenAnimationDuration">300</item>
+
+        <!-- Customize the icon scaling (optional) -->
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/white</item>
+    </style>
+</resources>

@@ -9,6 +9,9 @@ class GetVenueDetailsUseCase @Inject constructor(
 ) {
 
     suspend fun execute(venueId: Int): VenueDetails {
-        return venueRepository.getVenueDetailsById(venueId)
+        val venue = venueRepository.getVenueDetailsById(venueId)
+        val pictures = venueRepository.getVenuePictures(venue.venueId)
+        venue.imageUrls = pictures
+        return venue
     }
 }

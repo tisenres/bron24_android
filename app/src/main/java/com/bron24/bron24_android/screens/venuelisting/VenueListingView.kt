@@ -2,11 +2,11 @@ package com.bron24.bron24_android.screens.venuelisting
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -19,27 +19,29 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.adssection.AdsSection
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.venuelisting.VenueCard
-import com.bron24.bron24_android.screens.venuelisting.VenueListingViewModel
+import com.bron24.bron24_android.screens.adssection.AdsSection
+import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun VenueListingView(
     navController: NavController,
+    listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier,
     viewModel: VenueListingViewModel = hiltViewModel()
 ) {
     val venues by viewModel.venues.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
+    // Use LazyColumn to optimize rendering of large lists
     LazyColumn(
+        state = listState,
         contentPadding = PaddingValues(horizontal = 25.dp),
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) {
         item {
             Spacer(modifier = Modifier.height(16.dp))
-            AdsSection()
+            AdsSection(modifier = Modifier)
         }
         item {
             Spacer(modifier = Modifier.height(16.dp))
@@ -48,14 +50,12 @@ fun VenueListingView(
                 style = TextStyle(
                     fontFamily = interFontFamily,
                     fontWeight = FontWeight(600),
-                    fontSize = 24.sp,
-                    lineHeight = 30.sp,
+                    fontSize = 20.sp,
+                    lineHeight = 24.sp,
                     color = Color.Black
                 ),
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
-
             Spacer(modifier = Modifier.height(16.dp))
         }
 
@@ -71,6 +71,7 @@ fun VenueListingView(
         }
     }
 }
+
 
 @Composable
 @Preview(showBackground = true)

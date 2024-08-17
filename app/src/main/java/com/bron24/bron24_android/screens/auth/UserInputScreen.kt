@@ -24,6 +24,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.auth.AuthState
 import com.bron24.bron24_android.screens.auth.AuthViewModel
+import com.bron24.bron24_android.screens.auth.MockAuthViewModel
+import com.bron24.bron24_android.screens.main.components.ToastManager
+import com.bron24.bron24_android.screens.main.components.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -31,39 +34,38 @@ fun UserDataInputScreen(
     authViewModel: AuthViewModel,
     onSignUpVerified: () -> Unit,
 ) {
-    val authState by authViewModel.authState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
+    ToastManager { showToast ->
+
+        val authState by authViewModel.authState.collectAsState()
+        var firstName by remember { mutableStateOf("") }
+        var lastName by remember { mutableStateOf("") }
+        var isLoading by remember { mutableStateOf(false) }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(horizontal = 20.dp)
-                .padding(paddingValues)
         ) {
             TopBar()
 
-            Spacer(modifier = Modifier.height(37.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             Text(
                 text = stringResource(id = R.string.enter_personal_data),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     color = Color.Black,
-                    lineHeight = 16.8.sp,
+                    lineHeight = 20.sp,
                     letterSpacing = (-0.028).em
                 ),
                 modifier = Modifier.align(Alignment.Start)
             )
 
-            Spacer(modifier = Modifier.height(11.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             UserDataField(
                 fieldName = firstName,
@@ -91,39 +93,45 @@ fun UserDataInputScreen(
                         lastName = lastName
                     )
                 },
-                snackbarHostState = snackbarHostState,
                 authViewModel = authViewModel,
                 onSignUpVerified = onSignUpVerified
             )
         }
-    }
 
-    when (authState) {
-        is AuthState.Loading -> {
-            // Show loading indicator
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        when (authState) {
+            is AuthState.Loading -> {
+                isLoading = true
+                // Show loading indicator
             }
-        }
 
-        is AuthState.Authenticated -> {
-            // Navigate to the next screen when authentication is successful
-            onSignUpVerified()
-        }
+            is AuthState.Authenticated -> {
+                isLoading = false
+                // Navigate to the next screen when authentication is successful
+                onSignUpVerified()
+            }
 
-        is AuthState.Error -> {
-            // Show error message if there was an error
-            Box(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    text = (authState as AuthState.Error).message,
-                    color = Color.Red,
-                    modifier = Modifier.align(Alignment.Center)
+            is AuthState.Error -> {
+                isLoading = false
+                showToast(
+                    "Error: " + (authState as AuthState.Error).message,
+                    ToastType.ERROR
                 )
             }
+
+            else -> {
+                isLoading = false
+            }
         }
 
-        else -> {
-            // Handle other states if necessary
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
+            }
         }
     }
 }
@@ -133,7 +141,7 @@ fun TopBar() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(30.dp)
     ) {
         Text(
             text = stringResource(id = R.string.register),
@@ -161,7 +169,7 @@ fun UserDataField(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(58.dp)
+            .height(60.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(Color(0xFFF6F6F6))
             .padding(10.dp),
@@ -175,7 +183,7 @@ fun UserDataField(
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = "User Icon",
-                modifier = Modifier.size(22.dp),
+                modifier = Modifier.size(26.dp),
                 tint = Color(0xFFB8BDCA)
             )
 
@@ -192,9 +200,9 @@ fun UserDataField(
                 textStyle = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     color = Color.Black,
-                    lineHeight = 16.8.sp,
+                    lineHeight = 20.sp,
                     letterSpacing = (-0.028).em
                 ),
                 decorationBox = { innerTextField ->
@@ -204,18 +212,21 @@ fun UserDataField(
                             style = TextStyle(
                                 fontFamily = gilroyFontFamily,
                                 fontWeight = FontWeight.Normal,
-                                fontSize = 14.sp,
+                                fontSize = 16.sp,
                                 color = Color(0xFFB8BDCA),
-                                lineHeight = 16.8.sp,
+                                lineHeight = 20.sp,
                                 letterSpacing = (-0.028).em
-                            )
+                            ),
+                            modifier = Modifier.align(Alignment.CenterVertically)
                         )
                     }
                     innerTextField()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-            )
+                    .align(Alignment.CenterVertically),
+
+                )
         }
     }
 }
@@ -224,7 +235,6 @@ fun UserDataField(
 fun ConfirmButtonUser(
     isEnabled: Boolean,
     onClick: () -> Unit,
-    snackbarHostState: SnackbarHostState,
     authViewModel: AuthViewModel,
     onSignUpVerified: () -> Unit,
     modifier: Modifier = Modifier
@@ -264,10 +274,7 @@ fun ConfirmButtonUser(
             }
 
             is AuthState.Error -> {
-                snackbarHostState.showSnackbar(
-                    message = "Error: " + (authState as AuthState.Error).message,
-                    actionLabel = "OK"
-                )
+
             }
 
             else -> {

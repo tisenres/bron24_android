@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.venuedetails
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails

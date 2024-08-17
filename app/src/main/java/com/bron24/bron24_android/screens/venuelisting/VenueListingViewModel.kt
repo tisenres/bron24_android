@@ -8,7 +8,6 @@ import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,6 +27,7 @@ class VenueListingViewModel @Inject constructor(
     }
 
     private fun fetchVenues() {
+        Log.d("SDGHSHGDGHDGHHDG", "Start fetching venues from VM")
         viewModelScope.launch {
             _isLoading.value = true
             val venueList = getVenuesUseCase.execute()

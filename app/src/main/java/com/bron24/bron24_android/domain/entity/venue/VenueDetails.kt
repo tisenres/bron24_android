@@ -5,7 +5,7 @@ data class VenueDetails(
     val address: Address,
     val city: City,
     val infrastructure: Infrastructure,
-    val venueOwner: VenueOwner,
+    val venueOwner: VenueOwner?,
     val venueName: String,
     val venueType: String,
     val venueSurface: String,
@@ -18,5 +18,6 @@ data class VenueDetails(
     val contact1: String,
     val contact2: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    var imageUrls: List<String>?
 )

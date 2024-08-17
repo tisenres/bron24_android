@@ -1,6 +1,8 @@
 package com.bron24.bron24_android.domain.repository
 
+import com.bron24.bron24_android.domain.entity.enums.OnboardingScreen
+
 interface PreferencesRepository {
-    fun isOnboardingCompleted(): Boolean
-    fun setOnboardingCompleted(completed: Boolean)
+    fun isOnboardingCompleted(screenName: OnboardingScreen): Boolean
+    fun setOnboardingCompleted(screen: OnboardingScreen, completed: Boolean)
 }

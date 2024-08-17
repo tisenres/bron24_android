@@ -75,7 +75,7 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         address = address.toDomainModel(),
         city = city.toDomainModel(),
         infrastructure = infrastructure.toDomainModel(),
-        venueOwner = venueOwner.toDomainModel(),
+        venueOwner = venueOwner?.toDomainModel(),
         venueName = venueName,
         venueType = venueType,
         venueSurface = venueSurface,
@@ -88,7 +88,8 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         contact1 = contact1,
         contact2 = contact2,
         createdAt = createdAt,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        imageUrls = emptyList()
     )
 }
 

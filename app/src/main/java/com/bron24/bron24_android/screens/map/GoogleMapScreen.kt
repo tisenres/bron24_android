@@ -1,105 +1,200 @@
 package com.bron24.bron24_android.screens.map
 
-import android.content.Context
+import android.Manifest
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.maps.model.*
+import com.bron24.bron24_android.R
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import androidx.core.content.res.ResourcesCompat
+import com.bron24.bron24_android.domain.entity.user.Location
+import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
+import com.bron24.bron24_android.screens.venuedetails.SmallVenueDetailsScreen
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.compose.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GoogleMapScreen(viewModel: VenueMapViewModel = hiltViewModel()) {
+fun GoogleMapScreen(
+    viewModel: VenueMapViewModel = hiltViewModel(),
+    venueDetailsViewModel: VenueDetailsViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
     val venues by viewModel.venues.collectAsState()
     val currentLocation by viewModel.currentLocation.collectAsState()
-    val context = LocalContext.current
+    var selectedVenueId by remember { mutableStateOf<Int?>(null) }
 
-    var selectedVenue by remember { mutableStateOf<String?>(null) }
+    // Request location permissions and get the current location
+    RequestLocationPermissionsAndFetchLocation(viewModel)
 
-    BottomSheetScaffold(
-        sheetContent = {
-            selectedVenue?.let {
-                Text(text = it)
-            }
-        },
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            val mapView = rememberMapViewWithLifecycle(context)
-            AndroidView(factory = { mapView }) { mapView ->
-                mapView.getMapAsync { googleMap ->
-                    googleMap.uiSettings.isZoomControlsEnabled = true
+    Box(modifier = Modifier.fillMaxSize()) {
+        GoogleMapView(
+            currentLocation = currentLocation,
+            venues = venues,
+            onMarkerClick = { clickedVenueId -> selectedVenueId = clickedVenueId }
+        )
 
-                    currentLocation?.let {
-                        val currentLatLng = LatLng(it.latitude, it.longitude)
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 13.0f))
-                        addCurrentLocationMarker(googleMap, currentLatLng, context)
-                    }
-
-                    googleMap.clear()
-                    venues.forEach { venue ->
-                        val venueLatLng = LatLng(venue.latitude.toDouble(), venue.longitude.toDouble())
-                        addVenueMarker(googleMap, venueLatLng, venue.venueName) { selectedVenue = it }
-                    }
-                }
+        selectedVenueId?.let { venueId ->
+            // Overlay the venue details at the bottom
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 27.dp, start = 16.dp, end = 16.dp)
+            ) {
+                SmallVenueDetailsScreen(
+                    // Pass the necessary parameters here
+                )
             }
         }
     }
 }
 
 @Composable
-fun rememberMapViewWithLifecycle(context: Context): MapView {
-    val mapView = remember { MapView(context) }
-
-    DisposableEffect(Unit) {
-        mapView.onCreate(null)
-        mapView.onStart()
-        onDispose {
-            mapView.onStop()
-            mapView.onDestroy()
-        }
-    }
-    return mapView
-}
-
-fun addCurrentLocationMarker(googleMap: GoogleMap, location: LatLng, context: Context) {
-    googleMap.addMarker(
-        MarkerOptions()
-            .position(location)
-            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-    )
-}
-
-fun addVenueMarker(
-    googleMap: GoogleMap,
-    location: LatLng,
-    venueName: String,
-    onMarkerClick: (String) -> Unit
+fun GoogleMapView(
+    currentLocation: Location?,
+    venues: List<VenueCoordinates>,
+    onMarkerClick: (Int) -> Unit
 ) {
-    val marker = googleMap.addMarker(
-        MarkerOptions()
-            .position(location)
-            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-            .title(venueName)
-    )
+    val cameraPositionState = rememberCameraPositionState()
+    var selectedVenueId by remember { mutableStateOf<Int?>(null) }
 
-    googleMap.setOnMarkerClickListener { clickedMarker ->
-        if (clickedMarker == marker) {
-            onMarkerClick(venueName)
-            true
-        } else {
-            false
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(isMyLocationEnabled = true)
+    ) {
+        venues.forEach { venue ->
+            val isSelected = selectedVenueId == 9
+
+            CustomMarker(
+                position = LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
+                title = venue.venueName,
+                iconResourceId = if (isSelected) R.drawable.baseline_location_on_24_green else R.drawable.baseline_location_on_24_red,
+                scaleFactor = if (isSelected) 1.5f else 1.0f,
+                onMarkerClick = {
+                    selectedVenueId = 9
+                    onMarkerClick(9)
+                }
+            )
         }
     }
+
+    // Smoothly animate camera to the selected marker
+    LaunchedEffect(selectedVenueId) {
+        val selectedVenue = venues.find { 9 == selectedVenueId }
+        selectedVenue?.let { venue ->
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(venue.latitude.toDouble(), venue.longitude.toDouble()),
+                    15f
+                )
+            )
+        }
+    }
+
+    // Update the camera position when the current location changes
+    LaunchedEffect(currentLocation) {
+        if (currentLocation != null) {
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(
+                LatLng(currentLocation.latitude, currentLocation.longitude),
+                13f
+            )
+        }
+    }
+}
+
+@Composable
+fun RequestLocationPermissionsAndFetchLocation(viewModel: VenueMapViewModel) {
+    val context = LocalContext.current
+
+    // Create a launcher to request permissions
+    val requestPermissionsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+
+        if (coarseLocationGranted || fineLocationGranted) {
+            viewModel.updateCurrentLocation()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val coarseLocationPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        val fineLocationPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+        if (coarseLocationPermission != PackageManager.PERMISSION_GRANTED ||
+            fineLocationPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionsLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            )
+        } else {
+            viewModel.updateCurrentLocation()
+        }
+    }
+}
+
+@Composable
+fun CustomMarker(
+    position: LatLng,
+    title: String,
+    iconResourceId: Int,
+    scaleFactor: Float = 1.0f,
+    onMarkerClick: () -> Unit = {}
+) {
+    val context = LocalContext.current
+
+    val bitmapDescriptor = remember(iconResourceId, scaleFactor) {
+        val drawable = ResourcesCompat.getDrawable(context.resources, iconResourceId, null)
+        drawable?.let {
+            getBitmapFromDrawable(it, scaleFactor)
+        }?.let {
+            BitmapDescriptorFactory.fromBitmap(it)
+        }
+    }
+
+    Marker(
+        position = position,
+        title = title,
+        icon = bitmapDescriptor,  // Set the custom icon here
+        onClick = {
+            onMarkerClick()
+            true
+        }
+    )
+}
+
+fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
+    // Calculate the scaled width and height
+    val width = (drawable.intrinsicWidth * scaleFactor).toInt()
+    val height = (drawable.intrinsicHeight * scaleFactor).toInt()
+
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
 }

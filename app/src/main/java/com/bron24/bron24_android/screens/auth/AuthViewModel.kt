@@ -64,7 +64,7 @@ class AuthViewModel @Inject constructor(
                     _phoneNumber.value.replace("+", ""),
                     _otp.value
                 )
-                _authState.value = AuthState.OTPVerified(response.status)
+                _authState.value = AuthState.OTPVerified(response.status, response.userExists)
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
             }
@@ -76,7 +76,7 @@ class AuthViewModel @Inject constructor(
             _authState.value = AuthState.Loading
             try {
                 val response = model.authUser(
-                    _phoneNumber.value,
+                    _phoneNumber.value.replace("+", ""),
                     firstName,
                     lastName
                 )

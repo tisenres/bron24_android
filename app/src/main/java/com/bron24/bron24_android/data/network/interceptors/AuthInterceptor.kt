@@ -4,6 +4,7 @@ import android.util.Log
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
@@ -11,43 +12,51 @@ import dagger.Lazy
 
 class AuthInterceptor @Inject constructor(
     private val tokenRepository: TokenRepository,
-    private val authRepository: Lazy<AuthRepository>  // Use Lazy to defer injection
+    private val authRepository: Lazy<AuthRepository>
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        var accessToken = tokenRepository.getAccessToken()
+        val originalRequest = chain.request()
+        val accessToken = tokenRepository.getAccessToken()
         val refreshToken = tokenRepository.getRefreshToken()
 
         Log.d("AuthInterceptor", "RefreshToken: $refreshToken, AccessToken: $accessToken")
 
-        if (accessToken == null || tokenRepository.isAccessTokenExpired()) {
+        // Add Authorization header if accessToken is available
+        val initialRequest = addAuthHeader(originalRequest, accessToken)
+        val response = chain.proceed(initialRequest)
+
+        if ((response.code == 401 || response.code == 404) && !refreshToken.isNullOrEmpty()) {
+            response.close()
+
             synchronized(this) {
-                runBlocking {
-                    try {
-                        refreshToken?.let {
-                            val newTokens = authRepository.get().refreshAccessToken(it)  // Lazy inject here
-                            tokenRepository.saveTokens(
-                                newTokens.accessToken,
-                                newTokens.refreshToken,
-                                System.currentTimeMillis() + newTokens.accessExpiresAt * 1000,
-                                System.currentTimeMillis() + newTokens.refreshExpiresAt * 1000
-                            )
-                            accessToken = newTokens.accessToken
-                        }
-                    } catch (e: Exception) {
-                        Log.e("com.bron24.bron24_android.data.network.interceptors.AuthInterceptor", "Token refresh failed", e)
-                        // Handle error, e.g., log out the user
-                    }
+                val currentAccessToken = tokenRepository.getAccessToken()
+                if (currentAccessToken != accessToken) {
+                    return chain.proceed(addAuthHeader(originalRequest, currentAccessToken))
+                }
+
+                val refreshedSuccessfully = runBlocking {
+                    authRepository.get().refreshAndSaveTokens(refreshToken)
+                }
+
+                if (refreshedSuccessfully) {
+                    val newAccessToken = tokenRepository.getAccessToken()
+                    return chain.proceed(addAuthHeader(originalRequest, newAccessToken))
+                } else {
+                    Log.e("AuthInterceptor", "Failed to refresh token")
+                    return response
                 }
             }
         }
 
-        val authenticatedRequest = accessToken?.let {
-            chain.request().newBuilder()
+        return response
+    }
+
+    private fun addAuthHeader(request: Request, token: String?): Request {
+        return token?.let {
+            request.newBuilder()
                 .header("Authorization", "Bearer $it")
                 .build()
-        } ?: chain.request()
-
-        return chain.proceed(authenticatedRequest)
+        } ?: request
     }
 }

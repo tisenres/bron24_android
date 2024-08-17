@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +32,13 @@ import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavController) {
+    // Only define navigation action if the venue is not null
+    val navigateToDetails: (() -> Unit)? = remember(venue) {
+        venue?.venueId?.let { id ->
+            { navController.navigate(Screen.VenueDetails.route.replace("{venueId}", id.toString())) }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,9 +47,9 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
                 if (isLoading) {
                     it.shimmer()
                 } else {
-                    it.clickable {
-                        navController.navigate(Screen.VenueDetails.route.replace("{venueId}", venue?.venueId.toString()))
-                    }
+                    navigateToDetails?.let { action ->
+                        it.clickable(onClick = action)
+                    } ?: it
                 }
             }
     ) {

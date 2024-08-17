@@ -1,17 +1,24 @@
 package com.bron24.bron24_android.screens.searchfilter
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -20,24 +27,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 
 @Composable
 fun SearchView(modifier: Modifier = Modifier) {
+
+    // Use remember to cache the SharedPreferences and avoid recomputing it
+    val preferences: SharedPreferences =
+        LocalContext.current.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(90.dp)
+            .height(150.dp)
             .background(
                 color = Color(0xFF32B768),
                 shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
-            ),
-        verticalArrangement = Arrangement.Center
+            )
+            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-//        ProfileRow()
-        SearchRow()
+        ProfileRow()
+        SearchRow(preferences)
     }
 }
 
@@ -48,38 +64,27 @@ fun ProfileRow() {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 25.dp, top = 20.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(id = R.drawable.joxon_pic),
+                painter = rememberAsyncImagePainter(model = R.drawable.ball_pic), // Optimized with Coil
                 contentDescription = "profile_image",
                 modifier = Modifier
                     .size(50.dp)
-                    .clip(CircleShape)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(15.dp))
             Column {
+                val helloText = stringResource(id = R.string.hello) + ", John!"
                 Text(
-                    text = stringResource(id = R.string.hello) + ", Joxongir!",
+                    text = helloText,
                     style = TextStyle(
                         fontFamily = interFontFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
                         color = Color.White,
-                        lineHeight = 19.sp,
-                        letterSpacing = (-0.028).em
-                    )
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Toshkent viloyati",
-                    style = TextStyle(
-                        fontFamily = interFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
-                        color = Color.White,
-                        lineHeight = 16.sp,
+                        lineHeight = 22.sp,
                         letterSpacing = (-0.028).em
                     )
                 )
@@ -89,13 +94,13 @@ fun ProfileRow() {
 }
 
 @Composable
-fun SearchRow() {
+fun SearchRow(preferences: SharedPreferences) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 10.dp, start = 17.dp, end = 17.dp, bottom = 10.dp)
+            .padding(top = 10.dp, bottom = 10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -109,14 +114,17 @@ fun SearchRow() {
                 .height(40.dp)
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
+            // Cache the image resource
             Image(
-                painter = painterResource(id = R.drawable.ic_search_green),
+                painter = rememberAsyncImagePainter(model = R.drawable.ic_search_green),
                 contentDescription = "search_icon",
                 modifier = Modifier.size(15.dp),
             )
             Spacer(modifier = Modifier.width(9.dp))
+            // Cache the string resource
+            val searchHint = stringResource(id = R.string.search_stadium)
             Text(
-                text = stringResource(id = R.string.search_stadium),
+                text = searchHint,
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -134,12 +142,28 @@ fun SearchRow() {
                 .background(color = Color.White),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_filter),
-                contentDescription = "filter_icon",
-                colorFilter = ColorFilter.tint(Color(0xFF32B768)),
-                modifier = Modifier.size(18.dp)
-            )
+            IconButton(
+                onClick = {
+                    // Fetch shared preferences data once
+                    val authToken = preferences.getString("auth_token", null)
+                    val refreshToken = preferences.getString("refresh_token", null)
+
+                    Log.d("SDHJSDJHHJDJHSDJH", "Access $authToken Refresh $refreshToken")
+
+                    preferences.edit().remove("auth_token").apply()
+
+                    Log.d("SDHJSDJHHJDJHSDJH", "Access $authToken Refresh $refreshToken")
+                },
+                modifier = Modifier.size(24.dp)
+            ) {
+                // Cache the image resource
+                Image(
+                    painter = painterResource(id = R.drawable.ic_filter),
+                    contentDescription = "filter_icon",
+                    colorFilter = ColorFilter.tint(Color(0xFF32B768)),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
         }
     }
 }

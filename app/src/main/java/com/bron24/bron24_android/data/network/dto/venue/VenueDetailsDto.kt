@@ -7,7 +7,7 @@ data class VenueDetailsDto(
     @SerializedName("address") val address: AddressDto,
     @SerializedName("city") val city: CityDto,
     @SerializedName("infrastructure") val infrastructure: InfrastructureDto,
-    @SerializedName("venue_owner") val venueOwner: VenueOwnerDto,
+    @SerializedName("venue_owner") val venueOwner: VenueOwnerDto?,
     @SerializedName("venue_name") val venueName: String,
     @SerializedName("venue_type") val venueType: String,
     @SerializedName("venue_surface") val venueSurface: String,
