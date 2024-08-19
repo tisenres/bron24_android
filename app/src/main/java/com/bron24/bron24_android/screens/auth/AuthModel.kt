@@ -22,6 +22,16 @@ class AuthModel @Inject constructor(
     suspend fun verifyOTP(phoneNumber: String, otp: Int): OTPCodeResponse {
         val response = verifyOTPUseCase.execute(phoneNumber, otp)
         userExists = response.userExists
+        if (userExists) {
+            authenticateUserUseCase.execute(
+                User(
+                    firstName = "",
+                    lastName = "",
+                    phoneNumber = phoneNumber,
+                ),
+                userExists
+            )
+        }
         return response
     }
 
