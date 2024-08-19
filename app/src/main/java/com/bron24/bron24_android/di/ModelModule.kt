@@ -1,6 +1,8 @@
 package com.bron24.bron24_android.di
 
-import com.bron24.bron24_android.domain.usecases.auth.AuthenticateFlowUseCase
+import com.bron24.bron24_android.domain.usecases.auth.AuthenticateUserUseCase
+import com.bron24.bron24_android.domain.usecases.auth.RequestOTPUseCase
+import com.bron24.bron24_android.domain.usecases.auth.VerifyOTPUseCase
 import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
 import com.bron24.bron24_android.domain.usecases.venue.*
@@ -72,10 +74,14 @@ object ModelModule {
     @Provides
     @Singleton
     fun provideAuthModel(
-        authenticateFlowUseCase: AuthenticateFlowUseCase,
+        requestOTPUseCase: RequestOTPUseCase,
+        verifyOTPUseCase: VerifyOTPUseCase,
+        authenticateUserUseCase: AuthenticateUserUseCase
     ): AuthModel {
         return AuthModel(
-            authenticateFlowUseCase
+            requestOTPUseCase,
+            verifyOTPUseCase,
+            authenticateUserUseCase
         )
     }
 }
