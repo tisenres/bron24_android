@@ -1,5 +1,10 @@
 package com.bron24.bron24_android.screens.venuedetails
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,10 +22,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -42,6 +51,8 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.*
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun VenueDetailsScreen(
@@ -489,70 +500,6 @@ fun RatingSection(details: VenueDetails?) {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun InfrastructureSection(details: VenueDetails?) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-    ) {
-        Text(
-            text = "Facilities",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 20.sp,
-                color = Color(0xFF3C2E56),
-                lineHeight = 25.sp,
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            details?.let {
-                InfrastructureItem(it.venueType, R.drawable.baseline_stadium_24)
-            }
-            details?.let {
-                InfrastructureItem(
-                    it.peopleCapacity.toString() + " players",
-                    R.drawable.game_icons_soccer_kick
-                )
-            }
-            details?.infrastructure?.let { infrastructure ->
-                if (infrastructure.lockerRoom) {
-                    InfrastructureItem("Locker Room", R.drawable.mingcute_coathanger_fill)
-                }
-                if (infrastructure.stands.isNotBlank()) {
-                    InfrastructureItem("Stands", R.drawable.baseline_chair_24)
-                }
-                if (infrastructure.shower) {
-                    InfrastructureItem("Shower", R.drawable.baseline_shower_24)
-                }
-                if (infrastructure.parking) {
-                    InfrastructureItem("Parking", R.drawable.baseline_local_parking_24)
-                }
-            }
-            details?.let {
-                InfrastructureItem(it.venueSurface, R.drawable.baseline_grass_24)
-            }
-            details?.let {
-                InfrastructureItem(
-                    "${it.workingHoursFrom.drop(3)} - ${it.workingHoursTill.drop(3)}",
-                    R.drawable.baseline_access_time_filled_24
-                )
-            }
-        }
-    }
-}
-
 @Composable
 fun MapSection(details: VenueDetails?) {
     Column(
@@ -724,8 +671,127 @@ fun PricingSection(details: VenueDetails?, modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun InfrastructureItem(text: String, iconRes: Int) {
+fun InfrastructureSection(details: VenueDetails?) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var selectedItem by remember { mutableStateOf<Pair<String, Int>?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+    ) {
+        Text(
+            text = "Facilities",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 20.sp,
+                color = Color(0xFF3C2E56),
+                lineHeight = 25.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        Spacer(modifier = Modifier.height(15.dp))
+
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            details?.let {
+                InfrastructureItem(it.venueType, R.drawable.baseline_stadium_24) { text, icon ->
+                    selectedItem = text to icon
+                    showBottomSheet = true
+                }
+                InfrastructureItem(
+                    "${it.peopleCapacity} players",
+                    R.drawable.game_icons_soccer_kick
+                ) { text, icon ->
+                    selectedItem = text to icon
+                    showBottomSheet = true
+                }
+                it.infrastructure?.let { infrastructure ->
+                    if (infrastructure.lockerRoom) {
+                        InfrastructureItem(
+                            "Locker Room",
+                            R.drawable.mingcute_coathanger_fill
+                        ) { text, icon ->
+                            selectedItem = text to icon
+                            showBottomSheet = true
+                        }
+                    }
+                    if (infrastructure.stands.isNotBlank()) {
+                        InfrastructureItem("Stands", R.drawable.baseline_chair_24) { text, icon ->
+                            selectedItem = text to icon
+                            showBottomSheet = true
+                        }
+                    }
+                    if (infrastructure.shower) {
+                        InfrastructureItem("Shower", R.drawable.baseline_shower_24) { text, icon ->
+                            selectedItem = text to icon
+                            showBottomSheet = true
+                        }
+                    }
+                    if (infrastructure.parking) {
+                        InfrastructureItem(
+                            "Parking",
+                            R.drawable.baseline_local_parking_24
+                        ) { text, icon ->
+                            selectedItem = text to icon
+                            showBottomSheet = true
+                        }
+                    }
+                }
+                InfrastructureItem(it.venueSurface, R.drawable.baseline_grass_24) { text, icon ->
+                    selectedItem = text to icon
+                    showBottomSheet = true
+                }
+                InfrastructureItem(
+                    "${it.workingHoursFrom.drop(3)} - ${it.workingHoursTill.drop(3)}",
+                    R.drawable.baseline_access_time_filled_24
+                ) { text, icon ->
+                    selectedItem = text to icon
+                    showBottomSheet = true
+                }
+            }
+        }
+    }
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState
+        ) {
+            InfrastructureItemDetails(selectedItem?.first, selectedItem?.second)
+        }
+    }
+}
+
+@Composable
+fun InfrastructureItem(text: String, iconRes: Int, onClick: (String, Int) -> Unit) {
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 1.1f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ), label = ""
+    )
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isPressed) Color(0xFF32B768) else Color.White,
+        animationSpec = tween(durationMillis = 300), label = ""
+    )
+    val textColor by animateColorAsState(
+        targetValue = if (isPressed) Color.White else Color.Black,
+        animationSpec = tween(durationMillis = 300), label = ""
+    )
+
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -733,11 +799,16 @@ fun InfrastructureItem(text: String, iconRes: Int) {
             .widthIn(min = 70.dp, max = 120.dp)
             .clip(RoundedCornerShape(10.dp))
             .border(
-                BorderStroke(
-                    0.5.dp, Color(0xFFB8BDCA)
-                ), RoundedCornerShape(10.dp)
+                BorderStroke(0.5.dp, Color(0xFFB8BDCA)),
+                RoundedCornerShape(10.dp)
             )
+            .background(backgroundColor)
+            .clickable {
+                isPressed = true
+                onClick(text, iconRes)
+            }
             .padding(8.dp)
+            .scale(scale)
     ) {
         Image(
             painter = painterResource(id = iconRes),
@@ -751,7 +822,7 @@ fun InfrastructureItem(text: String, iconRes: Int) {
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
-                color = Color.Black,
+                color = textColor,
                 lineHeight = 21.sp,
             ),
             textAlign = TextAlign.Center,
@@ -759,9 +830,74 @@ fun InfrastructureItem(text: String, iconRes: Int) {
             overflow = TextOverflow.Ellipsis,
         )
     }
+
+    LaunchedEffect(isPressed) {
+        if (isPressed) {
+            launch {
+                delay(100)
+                isPressed = false
+            }
+        }
+    }
 }
 
-@Preview(widthDp = 390, heightDp = 793)
+@Composable
+fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = 16.dp, bottom = 20.dp, end = 30.dp
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            iconRes?.let {
+                Image(
+                    painter = painterResource(id = it),
+                    contentDescription = text,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(36.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            text?.let {
+                Text(
+                    text = it,
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = Color.Black,
+                        lineHeight = 30.sp,
+                    ),
+                    textAlign = TextAlign.Start,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = "Additional information about $text goes here. This can include details about the facility, its features, or any other relevant information.",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                color = Color.Gray,
+                lineHeight = 24.sp,
+            ),
+            textAlign = TextAlign.Justify
+        )
+    }
+}
+
+@Preview(widthDp = 390, heightDp = 793, showBackground = true)
 @Composable
 private fun VenueDetailsPreview() {
     VenueDetailsContent(
@@ -804,5 +940,14 @@ private fun VenueDetailsPreview() {
             imageUrls = emptyList()
         ),
         {}
+    )
+}
+
+@Preview(widthDp = 390, heightDp = 793, showBackground = true)
+@Composable
+private fun InfrastructureItemDetailsPreview() {
+    InfrastructureItemDetails(
+        text = "lalalasdasasasasdfdfsdsdsdwewewewesdsdsd",
+        iconRes = R.drawable.baseline_grass_24
     )
 }
