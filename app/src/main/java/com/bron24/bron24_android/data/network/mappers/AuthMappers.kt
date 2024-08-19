@@ -62,7 +62,7 @@ fun User.toSignupNetworkModel(): SignupUserDto {
 
 fun AuthResponseDto.toDomainEntity(): AuthResponse {
     return AuthResponse(
-        accessToken = data.accessToken,
-        refreshToken = data.refreshToken,
+        accessToken = data?.accessToken ?: "",
+        refreshToken = data?.refreshToken ?: "",
     )
 }

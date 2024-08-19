@@ -17,6 +17,8 @@ import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseSta
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
+import com.bron24.bron24_android.screens.main.AuthEvent
+import com.bron24.bron24_android.screens.main.GlobalAuthEventBus
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -95,25 +97,36 @@ class AuthRepositoryImpl @Inject constructor(
         )
     }
 
-    private suspend fun refreshAccessToken(refreshToken: String): AuthResponseDto? {
+    override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
         return try {
-            // Make the refresh token request WITHOUT the Authorization header
             val refreshTokenDto = RefreshTokenDto(refreshToken)
-            authApiService.refreshAccessToken(refreshTokenDto)
+            val tokens = authApiService.refreshAccessToken(refreshTokenDto).toDomainEntity()
+
+            if (tokens.accessToken.isNotEmpty() && tokens.refreshToken.isNotEmpty()) {
+                tokenRepository.saveTokens(tokens.accessToken, tokens.refreshToken)
+                true
+            } else {
+                handleRefreshFailure()
+                false
+            }
+
+//            if (response.success && response.data != null) {
+//                tokenRepository.saveTokens(response.data.accessToken, response.data.refreshToken)
+//                true
+//            } else {
+//                handleRefreshFailure()
+//                false
+//            }
         } catch (e: Exception) {
             Log.e("AuthRepository", "Failed to refresh token", e)
-            null
+            handleRefreshFailure()
+            false
         }
     }
 
-    override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
-        val newTokens = refreshAccessToken(refreshToken)
-        return if (newTokens != null && newTokens.data.accessToken.isNotEmpty()) {
-            tokenRepository.saveTokens(newTokens.data.accessToken, newTokens.data.refreshToken)
-            true
-        } else {
-            tokenRepository.clearTokens()
-            false
-        }
+    private fun handleRefreshFailure() {
+        Log.e("AuthRepository", "handleRefreshFailure")
+        tokenRepository.clearTokens()
+        GlobalAuthEventBus.postEventBlocking(AuthEvent.TokenRefreshFailed)
     }
 }

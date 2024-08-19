@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class AuthResponseDto(
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
-    @SerializedName("data") val data: AuthDataDto
+    @SerializedName("data") val data: AuthDataDto?
 )
 
 data class AuthDataDto(
