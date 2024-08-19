@@ -5,7 +5,9 @@ import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.dto.auth.AuthResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.RefreshTokenDto
 import com.bron24.bron24_android.data.network.mappers.toDomainEntity
+import com.bron24.bron24_android.data.network.mappers.toLoginNetworkModel
 import com.bron24.bron24_android.data.network.mappers.toNetworkModel
+import com.bron24.bron24_android.data.network.mappers.toSignupNetworkModel
 import com.bron24.bron24_android.domain.entity.auth.AuthResponse
 import com.bron24.bron24_android.domain.entity.auth.OTPCodeResponse
 import com.bron24.bron24_android.domain.entity.auth.OTPRequest
@@ -50,10 +52,20 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun authenticateUser(user: User): AuthResponse {
+    override suspend fun signUpUser(user: User): AuthResponse {
         return try {
-            val networkRequest = user.toNetworkModel()
-            val networkResponse = authApiService.authenticateUser(networkRequest)
+            val networkRequest = user.toSignupNetworkModel()
+            val networkResponse = authApiService.signupUser(networkRequest)
+            networkResponse.toDomainEntity()
+        } catch (e: HttpException) {
+            handleHttpExceptionAuth(e)
+        }
+    }
+
+    override suspend fun loginUser(user: User): AuthResponse {
+        return try {
+            val networkRequest = user.toLoginNetworkModel()
+            val networkResponse = authApiService.loginUser(networkRequest)
             networkResponse.toDomainEntity()
         } catch (e: HttpException) {
             handleHttpExceptionAuth(e)
@@ -96,8 +108,8 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
         val newTokens = refreshAccessToken(refreshToken)
-        return if (newTokens != null && newTokens.accessToken.isNotEmpty()) {
-            tokenRepository.saveTokens(newTokens.accessToken, newTokens.refreshToken)
+        return if (newTokens != null && newTokens.data.accessToken.isNotEmpty()) {
+            tokenRepository.saveTokens(newTokens.data.accessToken, newTokens.data.refreshToken)
             true
         } else {
             tokenRepository.clearTokens()

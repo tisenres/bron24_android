@@ -1,11 +1,11 @@
 package com.bron24.bron24_android.data.network.mappers
 
-import android.util.Log
 import com.bron24.bron24_android.data.network.dto.auth.OTPCodeResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.PhoneNumberResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.AuthResponseDto
+import com.bron24.bron24_android.data.network.dto.auth.LoginUserDto
 import com.bron24.bron24_android.data.network.dto.auth.OTPRequestDto
-import com.bron24.bron24_android.data.network.dto.auth.UserDto
+import com.bron24.bron24_android.data.network.dto.auth.SignupUserDto
 import com.bron24.bron24_android.domain.entity.auth.AuthResponse
 import com.bron24.bron24_android.domain.entity.auth.OTPCodeResponse
 import com.bron24.bron24_android.domain.entity.auth.OTPRequest
@@ -16,33 +16,44 @@ import com.bron24.bron24_android.domain.entity.user.User
 
 fun OTPRequest.toNetworkModel(): OTPRequestDto {
     return OTPRequestDto(
-        phone_number = this.phoneNumber,
+        phoneNumber = this.phoneNumber,
         otp = this.otp
     )
 }
 
 fun PhoneNumberResponseDto.toDomainEntity(): PhoneNumberResponse {
     return PhoneNumberResponse(
-        result = when (result) {
-            "success" -> PhoneNumberResponseStatusCode.SUCCESS
-            "many requests" -> PhoneNumberResponseStatusCode.MANY_REQUESTS
-            else -> PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER
+        result = if (success) {
+            PhoneNumberResponseStatusCode.SUCCESS
+        } else {
+            when (message) {
+                "many requests" -> PhoneNumberResponseStatusCode.MANY_REQUESTS
+                "Incorrect phone number format" -> PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER
+                else -> PhoneNumberResponseStatusCode.NETWORK_ERROR
+            }
         }
     )
 }
 
 fun OTPCodeResponseDto.toDomainEntity(): OTPCodeResponse {
     return OTPCodeResponse(
-        status = when (status) {
-            "success" -> OTPStatusCode.CORRECT_OTP
-            else -> OTPStatusCode.INCORRECT_OTP
+        result = if (success) {
+            OTPStatusCode.CORRECT_OTP
+        } else {
+            OTPStatusCode.INCORRECT_OTP
         },
-        userExists = userExists
+        userExists = data.userExists
     )
 }
 
-fun User.toNetworkModel(): UserDto {
-    return UserDto(
+fun User.toLoginNetworkModel(): LoginUserDto {
+    return LoginUserDto(
+        phoneNumber = phoneNumber,
+    )
+}
+
+fun User.toSignupNetworkModel(): SignupUserDto {
+    return SignupUserDto(
         phoneNumber = phoneNumber,
         firstName = firstName,
         lastName = lastName
@@ -51,7 +62,7 @@ fun User.toNetworkModel(): UserDto {
 
 fun AuthResponseDto.toDomainEntity(): AuthResponse {
     return AuthResponse(
-        accessToken = this.accessToken,
-        refreshToken = this.refreshToken,
+        accessToken = data.accessToken,
+        refreshToken = data.refreshToken,
     )
 }
