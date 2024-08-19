@@ -5,12 +5,16 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -40,12 +44,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.*
-import com.bron24.bron24_android.screens.adssection.BottomIndicators
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import kotlinx.coroutines.delay
@@ -70,10 +74,8 @@ fun VenueDetailsScreen(
         VenueDetailsContent(
             details = venueDetails,
             onBackClick = onBackClick,
-            onShareClick = {},
             onFavoriteClick = {},
             onMapClick = {},
-            onCopyAddressClick = {},
             onTakeRouteClick = {},
             onOrderClick = {}
         )
@@ -94,27 +96,26 @@ fun LoadingScreen() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VenueDetailsContent(
     details: VenueDetails?,
     onBackClick: () -> Unit,
-    onShareClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     onMapClick: () -> Unit,
-    onCopyAddressClick: () -> Unit,
     onTakeRouteClick: () -> Unit,
     onOrderClick: () -> Unit
 ) {
-
+    val scrollState = rememberLazyListState()
+    val toolbarHeight = 56.dp
+    val toolbarOffsetHeightPx = remember { mutableFloatStateOf(0f) }
     val context = LocalContext.current
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
+    Box(modifier = Modifier.fillMaxSize()
+        .background(Color.White)) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            state = scrollState,
+            modifier = Modifier.fillMaxSize() ,
             contentPadding = PaddingValues(bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(27.dp)
         ) {
@@ -133,8 +134,58 @@ fun VenueDetailsContent(
             item { InfrastructureSection(details) }
             item { DescriptionSection(details) }
             item { MapSection(details, onTakeRouteClick) }
+            item { Spacer(modifier = Modifier.height(80.dp)) } // Add space for the pricing section
         }
 
+        // Collapsing Toolbar
+        val toolbarVisible by remember {
+            derivedStateOf {
+                scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
+            }
+        }
+
+        AnimatedVisibility(
+            visible = toolbarVisible,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(toolbarHeight)
+                .background(Color.White)
+                .zIndex(1f)
+        ) {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = details?.venueName ?: "Unknown field",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color(0xFF3C2E56),
+                            lineHeight = 22.sp,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.White,
+                    titleContentColor = Color(0xFF3C2E56),
+                    navigationIconContentColor = Color(0xFF3C2E56)
+                )
+            )
+        }
+
+        // Pricing Section
         PricingSection(
             details = details,
             onOrderClick = onOrderClick,
@@ -336,7 +387,7 @@ fun ClickableIconButton(
     IconButton(
         onClick = onClick,
         modifier = Modifier
-            .size(40.dp)
+            .size(36.dp)
             .clip(CircleShape)
             .background(Color.White)
     ) {
@@ -346,7 +397,6 @@ fun ClickableIconButton(
             tint = tint,
             modifier = Modifier
                 .size(24.dp)
-                .padding(4.dp)
         )
     }
 }
@@ -381,7 +431,6 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
             tint = if (isFavorite) Color.Red else Color.Black,
             modifier = Modifier
                 .size(24.dp)
-                .padding(4.dp)
                 .graphicsLayer(
                     scaleX = scale,
                     scaleY = scale
@@ -991,8 +1040,6 @@ private fun VenueDetailsPreview() {
         {},
         {},
         {},
-        {},
-        {}
     )
 }
 
