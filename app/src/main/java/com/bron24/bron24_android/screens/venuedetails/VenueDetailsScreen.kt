@@ -17,10 +17,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -55,7 +57,7 @@ fun VenueDetailsScreen(
     val venueDetails by viewModel.venueDetails.collectAsState()
 
     // Use derivedStateOf to minimize recompositions for static content
-    val isLoading = derivedStateOf { venueDetails == null }
+    val isLoading = remember { derivedStateOf { venueDetails == null } }
 
     if (isLoading.value) {
         Box(
@@ -269,18 +271,41 @@ fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Mod
 
 @Composable
 fun TitleSection(details: VenueDetails?) {
-    Text(
-        text = details?.venueName ?: "Unknown field",
-        style = TextStyle(
-            fontFamily = gilroyFontFamily,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 24.sp,
-            color = Color(0xFF3C2E56),
-            lineHeight = 29.4.sp,
-        ),
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = details?.venueName ?: "Unknown field",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 24.sp,
+                color = Color(0xFF3C2E56),
+                lineHeight = 29.4.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+
+        IconButton(
+            onClick = {},
+            modifier = Modifier
+                .size(44.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color(0xFFF6F6F6))
+        ) {
+            // Cache the image resource
+            Image(
+                painter = painterResource(id = R.drawable.ic_map_cute),
+                contentDescription = "map_icon",
+                colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
+                modifier = Modifier.padding(10.dp)
+            )
+        }
+    }
 }
 
 @Composable

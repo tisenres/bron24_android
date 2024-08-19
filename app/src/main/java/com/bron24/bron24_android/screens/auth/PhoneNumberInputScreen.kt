@@ -66,6 +66,13 @@ fun PhoneNumberInputScreen(
                             onNavigateToOTPScreen(phoneNumber)
                         }
 
+                        PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER -> {
+                            showToast(
+                                "Incorrect phone number. Please try again.",
+                                ToastType.ERROR
+                            )
+                        }
+
                         else -> showToast(
                             "Failed to request OTP. Please try again later.",
                             ToastType.ERROR

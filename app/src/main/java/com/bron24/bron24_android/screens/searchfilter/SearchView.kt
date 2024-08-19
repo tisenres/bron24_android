@@ -36,11 +36,6 @@ import com.bron24.bron24_android.screens.main.theme.interFontFamily
 @Composable
 fun SearchView(modifier: Modifier = Modifier) {
 
-    // Use remember to cache the SharedPreferences and avoid recomputing it
-    val preferences: SharedPreferences =
-        LocalContext.current.getSharedPreferences("settings", Context.MODE_PRIVATE)
-
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -53,7 +48,7 @@ fun SearchView(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ProfileRow()
-        SearchRow(preferences)
+        SearchRow()
     }
 }
 
@@ -94,7 +89,7 @@ fun ProfileRow() {
 }
 
 @Composable
-fun SearchRow(preferences: SharedPreferences) {
+fun SearchRow() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -143,17 +138,7 @@ fun SearchRow(preferences: SharedPreferences) {
             contentAlignment = Alignment.Center
         ) {
             IconButton(
-                onClick = {
-                    // Fetch shared preferences data once
-                    val authToken = preferences.getString("auth_token", null)
-                    val refreshToken = preferences.getString("refresh_token", null)
-
-                    Log.d("SDHJSDJHHJDJHSDJH", "Access $authToken Refresh $refreshToken")
-
-                    preferences.edit().remove("auth_token").apply()
-
-                    Log.d("SDHJSDJHHJDJHSDJH", "Access $authToken Refresh $refreshToken")
-                },
+                onClick = {},
                 modifier = Modifier.size(24.dp)
             ) {
                 // Cache the image resource

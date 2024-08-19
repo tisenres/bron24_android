@@ -1,14 +1,16 @@
 package com.bron24.bron24_android.screens.howitworks
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,17 +20,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HowItWorksPager(
     onNavigateToAuthScreens: () -> Unit
 ) {
-    val pagerState = rememberLazyListState()
+    val pagerState = rememberPagerState (pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -36,19 +37,16 @@ fun HowItWorksPager(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        LazyRow(
-            modifier = Modifier.weight(1f),
+        HorizontalPager(
             state = pagerState,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            itemsIndexed(listOf(0, 1)) { index, _ ->
-                Box(modifier = Modifier.fillParentMaxSize()) {
-                    when (index) {
-                        0 -> HowItWorksScreen1()
-                        1 -> HowItWorksScreen2(onFinishClick = {
-                            onNavigateToAuthScreens()
-                        })
-                    }
+            modifier = Modifier.weight(1f)
+        ) { page ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                when (page) {
+                    0 -> HowItWorksScreen1()
+                    1 -> HowItWorksScreen2(onFinishClick = {
+                        onNavigateToAuthScreens()
+                    })
                 }
             }
         }
@@ -77,29 +75,12 @@ fun HowItWorksPager(
                 )
             }
 
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                for (i in 0..1) {
-                    Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .padding(10.dp)
-                            .background(
-                                if (pagerState.firstVisibleItemIndex == i) Color(0xFF32B768) else Color(
-                                    0xFFD9D9D9
-                                ),
-                                shape = CircleShape
-                            )
-                    )
-                }
-            }
+            PagerIndicator(pagerState = pagerState)
 
             TextButton(onClick = {
-                if (pagerState.firstVisibleItemIndex == 0) {
+                if (pagerState.currentPage < 1) {
                     coroutineScope.launch {
-                        pagerState.animateScrollToItem(1)
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
                 } else {
                     onNavigateToAuthScreens()
@@ -119,15 +100,24 @@ fun HowItWorksPager(
                 )
             }
         }
+    }
+}
 
-        LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.isScrollInProgress }.collect { isScrolling ->
-                if (!isScrolling) {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToItem(pagerState.firstVisibleItemIndex)
-                    }
-                }
-            }
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PagerIndicator(pagerState: PagerState) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(2) { iteration ->
+            val color = if (pagerState.currentPage == iteration) Color(0xFF32B768) else Color(0xFFD9D9D9)
+            Box(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .size(10.dp)
+                    .background(color = color, shape = CircleShape)
+            )
         }
     }
 }
