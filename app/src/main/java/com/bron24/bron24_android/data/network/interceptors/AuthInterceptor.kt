@@ -3,12 +3,16 @@ package com.bron24.bron24_android.data.network.interceptors
 import android.util.Log
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
+import com.bron24.bron24_android.screens.main.AuthEvent
+import com.bron24.bron24_android.screens.main.GlobalAuthEventBus
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import dagger.Lazy
+import okhttp3.Protocol
+import okhttp3.ResponseBody.Companion.toResponseBody
 
 class AuthInterceptor @Inject constructor(
     private val tokenRepository: TokenRepository,

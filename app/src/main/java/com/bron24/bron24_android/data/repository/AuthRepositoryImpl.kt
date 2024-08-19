@@ -90,36 +90,34 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     private fun handleHttpExceptionAuth(e: HttpException): AuthResponse {
-        // Handle different HTTP errors and map them to AuthResponse
-        return AuthResponse(
-            accessToken = "",
-            refreshToken = "",
-        )
+        return when (e.code()) {
+            401 -> {
+                handleRefreshFailure()
+                AuthResponse("", "")
+            }
+            else -> {
+                handleRefreshFailure()
+                AuthResponse("", "")
+            }
+        }
     }
 
     override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
         return try {
             val refreshTokenDto = RefreshTokenDto(refreshToken)
+            Log.d("AuthRepository", "Start refreshing tokens....")
             val tokens = authApiService.refreshAccessToken(refreshTokenDto).toDomainEntity()
+            Log.d("AuthRepository", "Tokens refreshed.")
 
             if (tokens.accessToken.isNotEmpty() && tokens.refreshToken.isNotEmpty()) {
                 tokenRepository.saveTokens(tokens.accessToken, tokens.refreshToken)
                 true
             } else {
-                handleRefreshFailure()
                 false
             }
-
-//            if (response.success && response.data != null) {
-//                tokenRepository.saveTokens(response.data.accessToken, response.data.refreshToken)
-//                true
-//            } else {
-//                handleRefreshFailure()
-//                false
-//            }
-        } catch (e: Exception) {
-            Log.e("AuthRepository", "Failed to refresh token", e)
-            handleRefreshFailure()
+        } catch (e: HttpException) {
+            Log.d("AuthRepository", "Tokens refresh failed.")
+            handleHttpExceptionAuth(e)
             false
         }
     }

@@ -9,6 +9,6 @@ data class AuthResponseDto(
 )
 
 data class AuthDataDto(
-    @SerializedName("refresh") val refreshToken: String,
     @SerializedName("access") val accessToken: String,
+    @SerializedName("refresh") val refreshToken: String
 )
