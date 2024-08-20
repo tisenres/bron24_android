@@ -161,20 +161,3 @@ fun OnboardingNavHost(
         }
     }
 }
-
-@Composable
-fun AnimatedScreenTransition(content: @Composable () -> Unit) {
-    var visible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        visible = true
-    }
-
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(animationSpec = tween(400)),
-        exit = fadeOut(animationSpec = tween(400))
-    ) {
-        content()
-    }
-}

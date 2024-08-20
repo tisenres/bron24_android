@@ -22,7 +22,7 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
-fun HowItWorksScreen2(onFinishClick: () -> Unit) {
+fun HowItWorksScreen2() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,5 +70,5 @@ fun HowItWorksScreen2(onFinishClick: () -> Unit) {
 @Composable
 @Preview(showBackground = true)
 fun PreviewHowItWorks2() {
-    HowItWorksScreen2({})
+    HowItWorksScreen2()
 }

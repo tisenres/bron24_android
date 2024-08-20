@@ -44,9 +44,7 @@ fun HowItWorksPager(
             Box(modifier = Modifier.fillMaxSize()) {
                 when (page) {
                     0 -> HowItWorksScreen1()
-                    1 -> HowItWorksScreen2(onFinishClick = {
-                        onNavigateToAuthScreens()
-                    })
+                    1 -> HowItWorksScreen2()
                 }
             }
         }

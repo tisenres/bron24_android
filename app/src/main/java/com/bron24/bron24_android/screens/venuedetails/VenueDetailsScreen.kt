@@ -107,15 +107,17 @@ fun VenueDetailsContent(
     onOrderClick: () -> Unit
 ) {
     val scrollState = rememberLazyListState()
-    val toolbarHeight = 56.dp
-    val toolbarOffsetHeightPx = remember { mutableFloatStateOf(0f) }
+    val toolbarHeight = 64.dp
     val context = LocalContext.current
 
-    Box(modifier = Modifier.fillMaxSize()
-        .background(Color.White)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
         LazyColumn(
             state = scrollState,
-            modifier = Modifier.fillMaxSize() ,
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(27.dp)
         ) {
@@ -127,10 +129,17 @@ fun VenueDetailsContent(
                     onFavoriteClick = onFavoriteClick
                 )
             }
-            item { HeaderSection(
-                details,
-                onMapClick,
-                onCopyAddressClick = { copyAddressToClipboard(context, details?.address?.addressName) }) }
+            item {
+                HeaderSection(
+                    details,
+                    onMapClick,
+                    onCopyAddressClick = {
+                        copyAddressToClipboard(
+                            context,
+                            details?.address?.addressName
+                        )
+                    })
+            }
             item { InfrastructureSection(details) }
             item { DescriptionSection(details) }
             item { MapSection(details, onTakeRouteClick) }
@@ -165,6 +174,8 @@ fun VenueDetailsContent(
                             color = Color(0xFF3C2E56),
                             lineHeight = 22.sp,
                         ),
+                        modifier = Modifier
+                            .align(Alignment.Center),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -239,7 +250,7 @@ fun DescriptionSection(details: VenueDetails?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
         SectionTitle(text = "Additional info")
         Spacer(modifier = Modifier.height(15.dp))
@@ -280,7 +291,7 @@ fun HeaderSection(details: VenueDetails?, onMapClick: () -> Unit, onCopyAddressC
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
         TitleSection(details, onMapClick)
         Spacer(modifier = Modifier.height(14.dp))
@@ -396,7 +407,7 @@ fun ClickableIconButton(
             contentDescription = contentDescription,
             tint = tint,
             modifier = Modifier
-                .size(24.dp)
+                .padding(8.dp)
         )
     }
 }
@@ -421,7 +432,7 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
         },
         interactionSource = interactionSource,
         modifier = Modifier
-            .size(40.dp)
+            .size(36.dp)
             .clip(CircleShape)
             .background(Color.White)
     ) {
@@ -430,7 +441,7 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
             contentDescription = "Favorite",
             tint = if (isFavorite) Color.Red else Color.Black,
             modifier = Modifier
-                .size(24.dp)
+                .padding(8.dp)
                 .graphicsLayer(
                     scaleX = scale,
                     scaleY = scale
@@ -634,7 +645,7 @@ fun InfrastructureSection(details: VenueDetails?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
         SectionTitle(text = "Facilities")
         Spacer(modifier = Modifier.height(15.dp))
@@ -819,7 +830,7 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Image(
@@ -936,7 +947,7 @@ fun PricingSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(70.dp)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
