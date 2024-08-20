@@ -55,8 +55,8 @@ fun VenueCoordinatesDto.toDomainModel(): VenueCoordinates {
     return VenueCoordinates(
         venueId = venueId,
         venueName = venueName,
-        latitude = latitude,
-        longitude = longitude
+        latitude = latitude ?: "0.0",
+        longitude = longitude ?: "0.0"
     )
 }
 

@@ -45,10 +45,6 @@ fun YandexMapScreen(
     var currentCity by remember { mutableStateOf("") }
     var markerCount by remember { mutableStateOf(0) }
 
-    LaunchedEffect(Unit) {
-        delay(1000L)
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         YandexMapView(
             currentLocation = currentLocation,
@@ -137,9 +133,9 @@ fun YandexMapView(
 ) {
     val context = LocalContext.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
-    var clusterizedCollection by remember { mutableStateOf<ClusterizedPlacemarkCollection?>(null) }
     var selectedMarkerId by remember { mutableStateOf<Int?>(null) }
 
+    // Initialize MapKit and handle lifecycle
     DisposableEffect(Unit) {
         MapKitFactory.initialize(context)
         mapView?.onStart()
@@ -161,65 +157,39 @@ fun YandexMapView(
                         13f, 0f, 0f
                     )
                 )
-                clusterizedCollection =
-                    view.map.mapObjects.addClusterizedPlacemarkCollection { cluster ->
-                        cluster.appearance.setIcon(
-                            ImageProvider.fromResource(
-                                context,
-                                R.drawable.baseline_grass_24
-                            )
-                        )
-                        cluster.addClusterTapListener { cluster ->
-                            view.map.move(
-                                CameraPosition(
-                                    cluster.appearance.geometry,
-                                    view.map.cameraPosition.zoom + 1f,
-                                    0f,
-                                    0f
-                                ),
-                                Animation(Animation.Type.SMOOTH, 0.3f),
-                                null
-                            )
-                            true
-                        }
-                    }
             }
         },
         modifier = Modifier.fillMaxSize(),
         update = { view ->
             view.map.mapObjects.clear()
-            clusterizedCollection?.clear()
 
             venues.forEach { venue ->
                 val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                val placemark = clusterizedCollection?.addPlacemark(point)
-                placemark?.let { mark ->
-                    val markerIcon = if (venue.venueId == selectedMarkerId) {
-                        R.drawable.baseline_location_on_24_green
-                    } else {
-                        R.drawable.baseline_location_on_24_red
-                    }
-                    val drawable = ContextCompat.getDrawable(context, markerIcon)
-                    val bitmap = drawable?.let {
-                        getBitmapFromDrawable(
-                            it,
-                            if (venue.venueId == selectedMarkerId) 1.5f else 1.0f
-                        )
-                    }
-                    mark.setIcon(ImageProvider.fromBitmap(bitmap))
-                    mark.addTapListener { _, _ ->
-                        selectedMarkerId = venue.venueId
-                        onMarkerClick(venue.venueId)
-                        view.map.move(
-                            CameraPosition(point, view.map.cameraPosition.zoom, 0f, 0f),
-                            Animation(Animation.Type.SMOOTH, 0.3f),
-                            null
-                        )
-                        true
-                    }
+                val placemark = view.map.mapObjects.addPlacemark(point)
+                val markerIcon = if (venue.venueId == selectedMarkerId) {
+                    R.drawable.baseline_location_on_24_green
+                } else {
+                    R.drawable.baseline_location_on_24_red
+                }
+                val drawable = ContextCompat.getDrawable(context, markerIcon)
+                val bitmap = drawable?.let {
+                    getBitmapFromDrawable(
+                        it,
+                        if (venue.venueId == selectedMarkerId) 1.5f else 1.0f
+                    )
+                }
+                placemark.setIcon(ImageProvider.fromBitmap(bitmap))
+                placemark.addTapListener { _, _ ->
+                    selectedMarkerId = venue.venueId
+                    onMarkerClick(venue.venueId)
+                    view.map.move(
+                        CameraPosition(point, view.map.cameraPosition.zoom, 0f, 0f),
+                        Animation(Animation.Type.SMOOTH, 0.3f),
+                        null
+                    )
+                    true
                 }
             }
-            clusterizedCollection?.clusterPlacemarks(60.0, 15)
 
             view.map.addCameraListener { _, cameraPosition, _, _ ->
                 onCameraPositionChanged(cameraPosition)
