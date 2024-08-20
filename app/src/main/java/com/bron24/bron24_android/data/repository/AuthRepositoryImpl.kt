@@ -76,7 +76,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     private fun handleHttpExceptionPhone(e: HttpException): PhoneNumberResponse {
         return when (e.code()) {
-            429 -> PhoneNumberResponse(PhoneNumberResponseStatusCode.MANY_REQUESTS)
+            429 -> {
+                Log.d("AuthRepository", "429 error")
+                PhoneNumberResponse(PhoneNumberResponseStatusCode.MANY_REQUESTS)
+            }
             400 -> PhoneNumberResponse(PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER)
             else -> PhoneNumberResponse(PhoneNumberResponseStatusCode.UNKNOWN_ERROR)
         }
@@ -84,7 +87,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     private fun handleHttpExceptionOTP(e: HttpException): OTPCodeResponse {
         return when (e.code()) {
-            400 -> OTPCodeResponse(OTPStatusCode.INCORRECT_OTP, false)
+            400 -> {
+                Log.d("AuthRepository", "400 error")
+                OTPCodeResponse(OTPStatusCode.INCORRECT_OTP, false)
+            }
             else -> OTPCodeResponse(OTPStatusCode.UNKNOWN_ERROR, false)
         }
     }
@@ -92,6 +98,7 @@ class AuthRepositoryImpl @Inject constructor(
     private fun handleHttpExceptionAuth(e: HttpException): AuthResponse {
         return when (e.code()) {
             401 -> {
+                Log.d("AuthRepository", "401 error")
                 handleRefreshFailure()
                 AuthResponse("", "")
             }
