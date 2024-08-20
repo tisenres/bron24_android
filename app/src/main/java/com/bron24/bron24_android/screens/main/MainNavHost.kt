@@ -13,7 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,9 +30,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.screens.main.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.home.HomePage
-import com.bron24.bron24_android.screens.main.components.SplashScreen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.screens.map.GoogleMapScreen
+import com.bron24.bron24_android.screens.map.YandexMapScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 
@@ -178,7 +176,7 @@ fun ProfilePage() {
 
 @Composable
 fun MapPage() {
-    GoogleMapScreen()
+    YandexMapScreen()
 }
 
 @Composable

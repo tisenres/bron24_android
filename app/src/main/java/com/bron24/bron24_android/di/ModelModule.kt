@@ -52,12 +52,14 @@ object ModelModule {
     fun provideVenueMapModel(
         getVenuesCoordinatesUseCase: GetVenuesCoordinatesUseCase,
         getCurrentLocationUseCase: GetCurrentLocationUseCase,
-        checkLocationPermissionUseCase: CheckLocationPermissionUseCase
+        checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
+        getVenueDetailsUseCase: GetVenueDetailsUseCase
     ): VenueMapModel {
         return VenueMapModel(
             getVenuesCoordinatesUseCase,
             getCurrentLocationUseCase,
-            checkLocationPermissionUseCase
+            checkLocationPermissionUseCase,
+            getVenueDetailsUseCase
         )
     }
 

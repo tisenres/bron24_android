@@ -1,5 +1,8 @@
-package com.bron24.bron24_android.screens.venuedetails
+package com.bron24.bron24_android.screens.map
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -13,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,54 +28,80 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.venue.Address
+import com.bron24.bron24_android.domain.entity.venue.City
+import com.bron24.bron24_android.domain.entity.venue.Infrastructure
+import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.bron24.bron24_android.screens.venuedetails.AddressRow
+import com.bron24.bron24_android.screens.venuedetails.AvailableSlots
+import com.bron24.bron24_android.screens.venuedetails.DistanceRow
+import com.bron24.bron24_android.screens.venuedetails.copyAddressToClipboard
 
 @Composable
 fun SmallVenueDetailsScreen(
-
-//    viewModel: VenueDetailsViewModel,
-//    venueId: Int,
-//    onDismiss: () -> Unit
+    modifier: Modifier,
+    venueDetails: VenueDetails
 ) {
-    SmallDetailsContent()
-//    val venueDetails = viewModel.venueDetails.collectAsState().value
-//    VenueMapDetailsContent(details = venueDetails)
+    val context = LocalContext.current
+    var isFavorite by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isFavorite) 1.2f else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy), label = ""
+    )
+
+    SmallDetailsContent(
+        modifier = modifier,
+        venueDetails = venueDetails,
+        isFavorite = isFavorite,
+        favoriteScale = scale,
+        onFavoriteClick = { isFavorite = !isFavorite },
+        onCopyAddressClick = { copyAddressToClipboard(context, venueDetails?.address?.addressName) }
+    )
 }
 
 @Composable
-fun SmallDetailsContent() {
+fun SmallDetailsContent(
+    modifier: Modifier,
+    venueDetails: VenueDetails,
+    isFavorite: Boolean,
+    favoriteScale: Float,
+    onFavoriteClick: () -> Unit,
+    onCopyAddressClick: () -> Unit
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
             .clip(RoundedCornerShape(10.dp))
     ) {
-        SmallImageSection()
+        SmallImageSection(venueDetails)
         Spacer(modifier = Modifier.height(12.dp))
-        SmallHeaderSection()
+        SmallHeaderSection(venueDetails, onCopyAddressClick)
         Spacer(modifier = Modifier.height(12.dp))
-        SmallPricingSection()
+        SmallPricingSection(venueDetails)
     }
 }
 
 @Composable
-fun SmallHeaderSection() {
+fun SmallHeaderSection(venueDetails: VenueDetails?, onCopyAddressClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        SmallTitleSection()
+        SmallTitleSection(venueDetails)
         Spacer(modifier = Modifier.height(8.dp))
-        VenueMapObjectAddressAndPhoneSection()
+        AddressAndPhoneSection(venueDetails, onCopyAddressClick)
         Spacer(modifier = Modifier.height(8.dp))
-        SmallRatingSection()
+        SmallRatingSection(venueDetails)
     }
 }
 
 @Composable
-fun SmallImageSection() {
+fun SmallImageSection(venueDetails: VenueDetails?) {
     Box(
         modifier = Modifier
             .height(150.dp)
@@ -105,7 +135,7 @@ fun SmallImageSection() {
 }
 
 @Composable
-fun SmallTitleSection() {
+fun SmallTitleSection(venueDetails: VenueDetails?) {
     Text(
         text = "Bunyodkor kompleksi",
         style = TextStyle(
@@ -121,28 +151,30 @@ fun SmallTitleSection() {
 }
 
 @Composable
-fun VenueMapObjectAddressAndPhoneSection() {
+fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Unit) {
     Column {
-        SmallAddressRow()
+        AddressRow(details, onCopyAddressClick)
         Spacer(modifier = Modifier.height(4.dp))
-        SmallPhoneRow()
+        AvailableSlots(details)
+        Spacer(modifier = Modifier.height(4.dp))
+        DistanceRow(details)
     }
 }
 
 @Composable
-fun SmallAddressRow() {
+fun SmallAddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_location_on_24_red),
             contentDescription = "Location",
             tint = Color(0xff949494),
-            modifier = Modifier.size(18.dp)
+            modifier = Modifier.size(20.dp)
         )
         Text(
-            text = "Mustaqillik maydoni, Chilanzar, Tashkent, Uzbekistan",
+            text = details?.address?.addressName ?: "",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -162,17 +194,17 @@ fun SmallAddressRow() {
                 fontSize = 12.sp,
                 color = Color(0xFF0067FF),
                 lineHeight = 18.sp,
+                textDecoration = TextDecoration.Underline,
             ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textDecoration = TextDecoration.Underline,
-            modifier = Modifier.padding(start = 5.dp)
+            modifier = Modifier
+                .clickable(onClick = onCopyClick)
+                .padding(start = 5.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
         )
     }
 }
 
 @Composable
-fun SmallRatingSection() {
+fun SmallRatingSection(venueDetails: VenueDetails?) {
     Row {
         repeat(5) { index ->
             Icon(
@@ -211,7 +243,7 @@ fun SmallRatingSection() {
 }
 
 @Composable
-fun SmallPhoneRow() {
+fun SmallPhoneRow(venueDetails: VenueDetails?) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -236,7 +268,7 @@ fun SmallPhoneRow() {
 }
 
 @Composable
-fun SmallPricingSection() {
+fun SmallPricingSection(venueDetails: VenueDetails?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -277,8 +309,48 @@ fun SmallPricingSection() {
     }
 }
 
-@Preview()
+@Preview
 @Composable
 private fun VenueDetailsPreview() {
-    SmallVenueDetailsScreen()
+    SmallVenueDetailsScreen(
+        modifier = Modifier,
+        venueDetails = VenueDetails(
+            venueId = 1,
+            address = Address(
+                id = 6,
+                addressName = "Bunyodkor street, 18",
+                district = "SASASAS",
+                closestMetroStation = "Novza"
+            ),
+            city = City(id = 5, cityName = "Tashkent"),
+            infrastructure = Infrastructure(
+                id = 9,
+                lockerRoom = true,
+                stands = "FDFDFGD",
+                shower = true,
+                parking = true
+            ),
+            venueOwner = VenueOwner(
+                id = 9,
+                ownerName = "Owner Name",
+                tinNumber = 1223243,
+                contact1 = "454545",
+                contact2 = "232323"
+            ),
+            venueName = "Bunyodkor kompleksi",
+            venueType = "out",
+            venueSurface = "Grass",
+            peopleCapacity = 12,
+            sportType = "Football",
+            pricePerHour = "100",
+            description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
+            workingHoursFrom = "9:00",
+            workingHoursTill = "23:00",
+            contact1 = "+998 77 806 0278",
+            contact2 = "+998 77 806 0288",
+            createdAt = "2021-01-01",
+            updatedAt = "2023-01-01",
+            imageUrls = emptyList()
+        ),
+    )
 }

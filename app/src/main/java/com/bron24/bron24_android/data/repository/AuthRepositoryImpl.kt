@@ -2,7 +2,6 @@ package com.bron24.bron24_android.data.repository
 
 import android.util.Log
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
-import com.bron24.bron24_android.data.network.dto.auth.AuthResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.RefreshTokenDto
 import com.bron24.bron24_android.data.network.mappers.toDomainEntity
 import com.bron24.bron24_android.data.network.mappers.toLoginNetworkModel
@@ -17,8 +16,6 @@ import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseSta
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
-import com.bron24.bron24_android.screens.main.AuthEvent
-import com.bron24.bron24_android.screens.main.GlobalAuthEventBus
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -95,6 +92,30 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
+        return try {
+            val refreshTokenDto = RefreshTokenDto(refreshToken)
+            val tokens = authApiService.refreshAccessToken(refreshTokenDto).toDomainEntity()
+
+            if (tokens.accessToken.isNotEmpty() && tokens.refreshToken.isNotEmpty()) {
+                tokenRepository.saveTokens(tokens.accessToken, tokens.refreshToken)
+                true
+            } else {
+                Log.e("AuthRepository", "Received empty tokens from server")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Error during token refresh", e)
+            false
+        }
+    }
+
+    override fun handleRefreshFailure() {
+        Log.e("AuthRepository", "handleRefreshFailure")
+//        tokenRepository.clearTokens()
+//        GlobalAuthEventBus.postEventBlocking(AuthEvent.TokenRefreshFailed)
+    }
+
     private fun handleHttpExceptionAuth(e: HttpException): AuthResponse {
         return when (e.code()) {
             401 -> {
@@ -103,35 +124,9 @@ class AuthRepositoryImpl @Inject constructor(
                 AuthResponse("", "")
             }
             else -> {
-                handleRefreshFailure()
+                Log.d("AuthRepository", "Unexpected error: ${e.code()}")
                 AuthResponse("", "")
             }
         }
-    }
-
-    override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
-        return try {
-            val refreshTokenDto = RefreshTokenDto(refreshToken)
-            Log.d("AuthRepository", "Start refreshing tokens....")
-            val tokens = authApiService.refreshAccessToken(refreshTokenDto).toDomainEntity()
-            Log.d("AuthRepository", "Tokens refreshed.")
-
-            if (tokens.accessToken.isNotEmpty() && tokens.refreshToken.isNotEmpty()) {
-                tokenRepository.saveTokens(tokens.accessToken, tokens.refreshToken)
-                true
-            } else {
-                false
-            }
-        } catch (e: HttpException) {
-            Log.d("AuthRepository", "Tokens refresh failed.")
-            handleHttpExceptionAuth(e)
-            false
-        }
-    }
-
-    private fun handleRefreshFailure() {
-        Log.e("AuthRepository", "handleRefreshFailure")
-        tokenRepository.clearTokens()
-        GlobalAuthEventBus.postEventBlocking(AuthEvent.TokenRefreshFailed)
     }
 }

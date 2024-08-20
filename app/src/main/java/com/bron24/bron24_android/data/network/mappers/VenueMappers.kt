@@ -53,6 +53,7 @@ fun InfrastructureDto.toDomainModel(): Infrastructure {
 
 fun VenueCoordinatesDto.toDomainModel(): VenueCoordinates {
     return VenueCoordinates(
+        venueId = venueId,
         venueName = venueName,
         latitude = latitude,
         longitude = longitude
