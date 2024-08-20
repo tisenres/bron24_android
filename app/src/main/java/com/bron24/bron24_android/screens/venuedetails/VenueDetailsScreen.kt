@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
@@ -52,6 +53,11 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.*
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.mapview.MapView
+import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -76,6 +82,9 @@ fun VenueDetailsScreen(
             onBackClick = onBackClick,
             onFavoriteClick = {},
             onMapClick = {},
+            onNavigateToMap = { lat, long ->
+
+            },
             onTakeRouteClick = {},
             onOrderClick = {}
         )
@@ -104,7 +113,8 @@ fun VenueDetailsContent(
     onFavoriteClick: () -> Unit,
     onMapClick: () -> Unit,
     onTakeRouteClick: () -> Unit,
-    onOrderClick: () -> Unit
+    onOrderClick: () -> Unit,
+    onNavigateToMap: (Double, Double) -> Unit
 ) {
     val scrollState = rememberLazyListState()
     val toolbarHeight = 64.dp
@@ -142,7 +152,17 @@ fun VenueDetailsContent(
             }
             item { InfrastructureSection(details) }
             item { DescriptionSection(details) }
-            item { MapSection(details, onTakeRouteClick) }
+            item {
+                MapSection(
+                    details = details,
+                    onTakeRouteClick = onTakeRouteClick,
+                    onMapClick = {
+                        details?.let { details ->
+                            onNavigateToMap(details.latitude, details.longitude)
+                        }
+                    },
+                )
+            }
             item { Spacer(modifier = Modifier.height(80.dp)) } // Add space for the pricing section
         }
 
@@ -826,22 +846,60 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
 }
 
 @Composable
-fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit) {
+fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick: () -> Unit) {
+    val context = LocalContext.current
+    var mapView by remember { mutableStateOf<MapView?>(null) }
+
+    DisposableEffect(Unit) {
+        MapKitFactory.initialize(context)
+        onDispose {
+            mapView?.onStop()
+            MapKitFactory.getInstance().onStop()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(model = R.drawable.football_field),
-            contentDescription = "Map",
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(109.dp)
-                .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)),
-            contentScale = ContentScale.Crop
-        )
+                .height(200.dp)
+                .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+        ) {
+            AndroidView(
+                factory = { context ->
+                    MapView(context).also { view ->
+                        mapView = view
+                        val venueLocation = Point(
+                            details?.latitude ?: 0.0,
+                            details?.longitude ?: 0.0
+                        )
+                        view.map.move(
+                            CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
+//                            Animation(Animation.Type.SMOOTH, 0.5f),
+//                            null
+                        )
+
+                        // Add a marker for the venue
+                        val placemark = view.map.mapObjects.addPlacemark(venueLocation)
+                        placemark.setIcon(ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_green))
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+
+            // Add a clickable overlay to handle map clicks
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable { onMapClick() }
+            )
+        }
+
         MapDetails(details)
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
@@ -1051,6 +1109,9 @@ private fun VenueDetailsPreview() {
         {},
         {},
         {},
+        onNavigateToMap = { lat, long ->
+
+        },
     )
 }
 

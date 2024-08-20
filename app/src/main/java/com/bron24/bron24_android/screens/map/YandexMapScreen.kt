@@ -35,7 +35,9 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun YandexMapScreen(
-    mapViewModel: VenueMapViewModel = hiltViewModel()
+    mapViewModel: VenueMapViewModel = hiltViewModel(),
+    initialLatitude: Double? = null,
+    initialLongitude: Double? = null
 ) {
     val venues by mapViewModel.venues.collectAsState()
     val currentLocation by mapViewModel.currentLocation.collectAsState()
@@ -43,7 +45,13 @@ fun YandexMapScreen(
     var selectedVenueId by remember { mutableStateOf<Int?>(null) }
     var showVenueDetails by remember { mutableStateOf(false) }
     var currentCity by remember { mutableStateOf("") }
-    var markerCount by remember { mutableStateOf(0) }
+    var markerCount by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(initialLatitude, initialLongitude) {
+        if (initialLatitude != null && initialLongitude != null) {
+            mapViewModel.centerOnCoordinates(initialLatitude, initialLongitude)
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         YandexMapView(

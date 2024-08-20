@@ -105,6 +105,19 @@ fun MainNavHost(
             onDestinationChanged(Screen.MapPage.route)
             MapPage()
         }
+        composable(
+            route = Screen.MapPageWithCoordinates.route,
+            arguments = listOf(
+                navArgument("latitude") { type = NavType.FloatType },
+                navArgument("longitude") { type = NavType.FloatType }
+            )
+        ) { backStackEntry ->
+            onDestinationChanged(Screen.MapPageWithCoordinates.route)
+            val latitude = backStackEntry.arguments?.getFloat("latitude") ?: 0f
+            val longitude = backStackEntry.arguments?.getFloat("longitude") ?: 0f
+            MapPage(latitude = latitude.toDouble(), longitude = longitude.toDouble())
+        }
+
         composable(Screen.OrdersPage.route) {
             onDestinationChanged(Screen.OrdersPage.route)
             OrdersPage()
@@ -175,10 +188,9 @@ fun ProfilePage() {
 
 
 @Composable
-fun MapPage() {
-    YandexMapScreen()
+fun MapPage(latitude: Double? = null, longitude: Double? = null) {
+    YandexMapScreen(initialLatitude = latitude, initialLongitude = longitude)
 }
-
 @Composable
 fun OrdersPage() {
     Box(
