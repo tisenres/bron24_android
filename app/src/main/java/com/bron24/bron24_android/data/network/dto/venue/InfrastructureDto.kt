@@ -1,0 +1,11 @@
+package com.bron24.bron24_android.data.network.dto.venue
+
+import com.google.gson.annotations.SerializedName
+
+data class InfrastructureDto(
+    @SerializedName("id") val id: Int,
+    @SerializedName("locker_room") val lockerRoom: Boolean,
+    @SerializedName("stands") val stands: String,
+    @SerializedName("shower") val shower: Boolean,
+    @SerializedName("parking") val parking: Boolean
+)

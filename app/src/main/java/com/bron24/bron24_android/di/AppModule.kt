@@ -1,15 +1,14 @@
 package com.bron24.bron24_android.di
 
 import android.content.Context
-import com.bron24.bron24_android.features.cityselection.data.CityRepositoryImpl
-import com.bron24.bron24_android.features.cityselection.domain.repository.CityRepository
-import com.bron24.bron24_android.features.cityselection.domain.usecases.GetAvailableCitiesUseCase
-import com.bron24.bron24_android.features.cityselection.domain.usecases.UpdateSelectedCityUseCase
-import com.bron24.bron24_android.features.language.data.local.LanguagePreference
-import com.bron24.bron24_android.features.language.data.repository.LanguageRepositoryImpl
-import com.bron24.bron24_android.features.language.domain.repository.LanguageRepository
-import com.bron24.bron24_android.features.language.domain.usecases.GetAvailableLanguagesUseCase
-import com.bron24.bron24_android.features.language.domain.usecases.UpdateSelectedLanguageUseCase
+import com.bron24.bron24_android.data.local.preference.AppPreference
+import com.bron24.bron24_android.screens.cityselection.data.CityRepositoryImpl
+import com.bron24.bron24_android.screens.cityselection.domain.repository.CityRepository
+import com.bron24.bron24_android.screens.cityselection.domain.usecases.GetAvailableCitiesUseCase
+import com.bron24.bron24_android.screens.cityselection.domain.usecases.UpdateSelectedCityUseCase
+import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
+import com.bron24.bron24_android.helper.util.LocaleManager
+import com.bron24.bron24_android.helper.util.PermissionChecker
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,32 +22,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLanguagePreference(@ApplicationContext context: Context): LanguagePreference {
-        return LanguagePreference(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLanguageRepository(
-        languagePreference: LanguagePreference
-    ): LanguageRepository {
-        return LanguageRepositoryImpl(languagePreference)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGetAvailableLanguagesUseCase(
-        languageRepository: LanguageRepository
-    ): GetAvailableLanguagesUseCase {
-        return GetAvailableLanguagesUseCase(languageRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUpdateSelectedLanguageUseCase(
-        languageRepository: LanguageRepository
-    ): UpdateSelectedLanguageUseCase {
-        return UpdateSelectedLanguageUseCase(languageRepository)
+    fun provideAppPreference(@ApplicationContext context: Context): AppPreference {
+        return AppPreference(context)
     }
 
     @Provides
@@ -71,5 +46,19 @@ object AppModule {
         cityRepository: CityRepository
     ): UpdateSelectedCityUseCase {
         return UpdateSelectedCityUseCase(cityRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providePermissionChecker(@ApplicationContext context: Context): PermissionChecker {
+        return PermissionChecker(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocaleManager(
+        getSelectedLanguageUseCase: GetSelectedLanguageUseCase
+    ): LocaleManager {
+        return LocaleManager(getSelectedLanguageUseCase)
     }
 }
