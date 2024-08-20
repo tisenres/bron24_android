@@ -31,6 +31,7 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.ClusterizedPlacemarkCollection
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
+import kotlinx.coroutines.delay
 
 @Composable
 fun YandexMapScreen(
@@ -43,6 +44,10 @@ fun YandexMapScreen(
     var showVenueDetails by remember { mutableStateOf(false) }
     var currentCity by remember { mutableStateOf("") }
     var markerCount by remember { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        delay(1000L)
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         YandexMapView(
@@ -73,13 +78,19 @@ fun YandexMapScreen(
                 .align(Alignment.TopEnd)
                 .padding(16.dp)
         ) {
-            IconButton(onClick = { /* Zoom in */ }) {
+            IconButton(onClick = {
+                mapViewModel.zoomIn()
+            }) {
                 Icon(Icons.Outlined.LocationOn, contentDescription = "Zoom In")
             }
-            IconButton(onClick = { /* Zoom out */ }) {
+            IconButton(onClick = {
+                mapViewModel.zoomOut()
+            }) {
                 Icon(Icons.Default.LocationOn, contentDescription = "Zoom Out")
             }
-            IconButton(onClick = { /* Center on current location */ }) {
+            IconButton(onClick = {
+                mapViewModel.centerOnCurrentLocation(currentLocation)
+            }) {
                 Icon(Icons.Default.LocationOn, contentDescription = "Current Location")
             }
         }
@@ -131,9 +142,12 @@ fun YandexMapView(
 
     DisposableEffect(Unit) {
         MapKitFactory.initialize(context)
+        mapView?.onStart()
+        MapKitFactory.getInstance().onStart()
+
         onDispose {
-            MapKitFactory.getInstance().onStop()
             mapView?.onStop()
+            MapKitFactory.getInstance().onStop()
         }
     }
 

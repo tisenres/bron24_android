@@ -16,6 +16,8 @@ import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseSta
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
+import com.bron24.bron24_android.screens.main.AuthEvent
+import com.bron24.bron24_android.screens.main.GlobalAuthEventBus
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -112,8 +114,8 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun handleRefreshFailure() {
         Log.e("AuthRepository", "handleRefreshFailure")
-//        tokenRepository.clearTokens()
-//        GlobalAuthEventBus.postEventBlocking(AuthEvent.TokenRefreshFailed)
+        tokenRepository.clearTokens()
+        GlobalAuthEventBus.postEventBlocking(AuthEvent.TokenRefreshFailed)
     }
 
     private fun handleHttpExceptionAuth(e: HttpException): AuthResponse {

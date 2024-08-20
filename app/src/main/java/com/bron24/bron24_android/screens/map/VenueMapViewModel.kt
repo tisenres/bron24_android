@@ -69,4 +69,17 @@ class VenueMapViewModel @Inject constructor(
             }
         }
     }
+
+    fun zoomIn() {
+
+
+    }
+
+    fun zoomOut() {
+
+
+    }
+
+    fun centerOnCurrentLocation(currentLocation: Location?) {
+    }
 }
