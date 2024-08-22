@@ -23,10 +23,8 @@ fun HomePage(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            // Simply displaying the SearchView without any animations
             SearchView(modifier = Modifier.fillMaxWidth())
 
-            // Displaying the VenueListingView
             VenueListingView(
                 navController = navController,
                 listState = listState

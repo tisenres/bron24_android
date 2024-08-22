@@ -32,7 +32,7 @@ import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavController) {
-    // Only define navigation action if the venue is not null
+
     val navigateToDetails: (() -> Unit)? = remember(venue) {
         venue?.venueId?.let { id ->
             { navController.navigate(Screen.VenueDetails.route.replace("{venueId}", id.toString())) }

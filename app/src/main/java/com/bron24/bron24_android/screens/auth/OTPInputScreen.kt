@@ -14,10 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -95,7 +97,8 @@ fun OTPInputScreen(
                     IconButton(
                         onClick = onBackClick,
                         modifier = Modifier
-                            .size(26.dp)
+                            .size(36.dp)
+                            .clip(CircleShape)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_arrow_back),

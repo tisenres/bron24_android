@@ -33,17 +33,16 @@ fun VenueListingView(
     val venues by viewModel.venues.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    // Use LazyColumn to optimize rendering of large lists
     LazyColumn(
         state = listState,
-        contentPadding = PaddingValues(horizontal = 25.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
         modifier = modifier.fillMaxSize()
     ) {
-        item {
+        item(key = "ads") {
             Spacer(modifier = Modifier.height(16.dp))
             AdsSection(modifier = Modifier)
         }
-        item {
+        item(key = "title") {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = stringResource(id = R.string.football_fields),
@@ -60,18 +59,18 @@ fun VenueListingView(
         }
 
         if (isLoading) {
-            items(5) {
+            items(5, key = { "loading_$it" }) {
                 VenueCard(isLoading = true, navController = navController)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         } else {
-            items(venues) { venue ->
+            items(venues, key = { it.venueId }) { venue ->
                 VenueCard(venue = venue, isLoading = false, navController = navController)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
 }
-
 
 @Composable
 @Preview(showBackground = true)

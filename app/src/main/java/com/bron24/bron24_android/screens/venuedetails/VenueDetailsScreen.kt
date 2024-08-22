@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -47,8 +48,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
 import coil.request.ImageRequest
+import coil.size.Size
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.*
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -59,7 +66,6 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun VenueDetailsScreen(
@@ -86,7 +92,7 @@ fun VenueDetailsScreen(
 
             },
             onTakeRouteClick = {},
-            onOrderClick = {}
+            onOrderClick = {},
         )
     }
 }
@@ -105,7 +111,6 @@ fun LoadingScreen() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VenueDetailsContent(
     details: VenueDetails?,
@@ -117,8 +122,14 @@ fun VenueDetailsContent(
     onNavigateToMap: (Double, Double) -> Unit
 ) {
     val scrollState = rememberLazyListState()
-    val toolbarHeight = 64.dp
     val context = LocalContext.current
+    val toolbarHeight = 64.dp
+
+    val toolbarVisible by remember {
+        derivedStateOf {
+            scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -129,9 +140,9 @@ fun VenueDetailsContent(
             state = scrollState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(27.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            item {
+            item(key = "imageSection") {
                 VenueImageSection(
                     imageUrls = details?.imageUrls ?: emptyList(),
                     onBackClick = onBackClick,
@@ -139,90 +150,93 @@ fun VenueDetailsContent(
                     onFavoriteClick = onFavoriteClick
                 )
             }
-            item {
+            item(key = "headerSection") {
                 HeaderSection(
-                    details,
-                    onMapClick,
+                    details = details,
+                    onMapClick = onMapClick,
                     onCopyAddressClick = {
-                        copyAddressToClipboard(
-                            context,
-                            details?.address?.addressName
-                        )
-                    })
+                        copyAddressToClipboard(context, details?.address?.addressName)
+                    }
+                )
             }
-            item { InfrastructureSection(details) }
-            item { DescriptionSection(details) }
-            item {
+            item(key = "infrastructureSection") { InfrastructureSection(details) }
+            item(key = "descriptionSection") { DescriptionSection(details) }
+            item(key = "mapSection") {
                 MapSection(
                     details = details,
                     onTakeRouteClick = onTakeRouteClick,
                     onMapClick = {
-                        details?.let { details ->
-                            onNavigateToMap(details.latitude, details.longitude)
-                        }
-                    },
+                        details?.let { onNavigateToMap(it.latitude, it.longitude) }
+                    }
                 )
             }
-            item { Spacer(modifier = Modifier.height(80.dp)) } // Add space for the pricing section
-        }
-
-        // Collapsing Toolbar
-        val toolbarVisible by remember {
-            derivedStateOf {
-                scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
+            item(key = "spacer") {
+                Spacer(modifier = Modifier.height(80.dp))
             }
         }
 
-        AnimatedVisibility(
+        AnimatedToolbar(
             visible = toolbarVisible,
-            enter = fadeIn(),
-            exit = fadeOut(),
+            title = details?.venueName,
+            onBackClick = onBackClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(toolbarHeight)
-                .background(Color.White)
                 .zIndex(1f)
-        ) {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = details?.venueName ?: "Unknown field",
-                        style = TextStyle(
-                            fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color(0xFF3C2E56),
-                            lineHeight = 22.sp,
-                        ),
-                        modifier = Modifier
-                            .align(Alignment.Center),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color(0xFF3C2E56),
-                    navigationIconContentColor = Color(0xFF3C2E56)
-                )
-            )
-        }
+        )
 
-        // Pricing Section
         PricingSection(
             details = details,
             onOrderClick = onOrderClick,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .background(Color.White)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AnimatedToolbar(
+    visible: Boolean,
+    title: String?,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+        modifier = modifier
+    ) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = title ?: "Unknown field",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 22.sp,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White,
+                titleContentColor = Color(0xFF3C2E56),
+                navigationIconContentColor = Color(0xFF3C2E56)
+            )
         )
     }
 }
@@ -389,7 +403,7 @@ fun ImageOverlay(
                 icon = Icons.Default.ArrowBack,
                 contentDescription = "Back"
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                 ClickableIconButton(
                     onClick = onShareClick,
                     icon = Icons.Default.Share,
@@ -405,6 +419,25 @@ fun ImageOverlay(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 11.5.dp)
         )
+    }
+}
+
+@Composable
+fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        repeat(totalPages) { index ->
+            Box(
+                modifier = Modifier
+                    .height(1.5.dp)
+                    .padding(end = 3.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .width(28.dp)
+                    .background(if (index == currentPage) Color.White else Color(0xFFB7B3B3))
+            )
+        }
     }
 }
 
@@ -427,7 +460,7 @@ fun ClickableIconButton(
             contentDescription = contentDescription,
             tint = tint,
             modifier = Modifier
-                .padding(8.dp)
+                .padding(5.dp)
         )
     }
 }
@@ -654,11 +687,9 @@ fun RatingSection(details: VenueDetails?) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfrastructureSection(details: VenueDetails?) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<Pair<String, Int>?>(null) }
 
@@ -678,7 +709,7 @@ fun InfrastructureSection(details: VenueDetails?) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = rememberModalBottomSheetState()
         ) {
             InfrastructureItemDetails(selectedItem?.first, selectedItem?.second)
         }
@@ -693,20 +724,12 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        details?.let {
-            InfrastructureItem(it.venueType, R.drawable.baseline_stadium_24, onItemClick)
-            InfrastructureItem(
-                "${it.peopleCapacity} players",
-                R.drawable.game_icons_soccer_kick,
-                onItemClick
-            )
-            it.infrastructure?.let { infrastructure ->
+        details?.let { venue ->
+            InfrastructureItem(venue.venueType, R.drawable.baseline_stadium_24, onItemClick)
+            InfrastructureItem("${venue.peopleCapacity} players", R.drawable.game_icons_soccer_kick, onItemClick)
+            venue.infrastructure.let { infrastructure ->
                 if (infrastructure.lockerRoom) {
-                    InfrastructureItem(
-                        "Locker Room",
-                        R.drawable.mingcute_coathanger_fill,
-                        onItemClick
-                    )
+                    InfrastructureItem("Locker Room", R.drawable.mingcute_coathanger_fill, onItemClick)
                 }
                 if (infrastructure.stands.isNotBlank()) {
                     InfrastructureItem("Stands", R.drawable.baseline_chair_24, onItemClick)
@@ -718,9 +741,9 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
                     InfrastructureItem("Parking", R.drawable.baseline_local_parking_24, onItemClick)
                 }
             }
-            InfrastructureItem(it.venueSurface, R.drawable.baseline_grass_24, onItemClick)
+            InfrastructureItem(venue.venueSurface, R.drawable.baseline_grass_24, onItemClick)
             InfrastructureItem(
-                "${it.workingHoursFrom.drop(3)} - ${it.workingHoursTill.drop(3)}",
+                "${venue.workingHoursFrom.drop(3)} - ${venue.workingHoursTill.drop(3)}",
                 R.drawable.baseline_access_time_filled_24,
                 onItemClick
             )
@@ -785,10 +808,8 @@ fun InfrastructureItem(text: String, iconRes: Int, onClick: (String, Int) -> Uni
 
     LaunchedEffect(isPressed) {
         if (isPressed) {
-            launch {
-                delay(100)
-                isPressed = false
-            }
+            delay(100)
+            isPressed = false
         }
     }
 }
@@ -848,13 +869,37 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
 @Composable
 fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick: () -> Unit) {
     val context = LocalContext.current
-    var mapView by remember { mutableStateOf<MapView?>(null) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val mapView = remember { MapView(context) }
 
-    DisposableEffect(Unit) {
-        MapKitFactory.initialize(context)
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> {
+                    MapKitFactory.getInstance().onStart()
+                    mapView.onStart()
+                }
+                Lifecycle.Event.ON_STOP -> {
+                    mapView.onStop()
+                    MapKitFactory.getInstance().onStop()
+                }
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
-            mapView?.onStop()
-            MapKitFactory.getInstance().onStop()
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(details) {
+        details?.let { venue ->
+            val venueLocation = Point(venue.latitude, venue.longitude)
+            mapView.map.move(
+                CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f)
+            )
+            val placemark = mapView.map.mapObjects.addPlacemark(venueLocation)
+            placemark.setIcon(ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_green))
         }
     }
 
@@ -871,32 +916,13 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
                 .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
         ) {
             AndroidView(
-                factory = { context ->
-                    MapView(context).also { view ->
-                        mapView = view
-                        val venueLocation = Point(
-                            details?.latitude ?: 0.0,
-                            details?.longitude ?: 0.0
-                        )
-                        view.map.move(
-                            CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
-//                            Animation(Animation.Type.SMOOTH, 0.5f),
-//                            null
-                        )
-
-                        // Add a marker for the venue
-                        val placemark = view.map.mapObjects.addPlacemark(venueLocation)
-                        placemark.setIcon(ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_green))
-                    }
-                },
+                factory = { mapView },
                 modifier = Modifier.fillMaxSize()
             )
-
-            // Add a clickable overlay to handle map clicks
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable { onMapClick() }
+                    .clickable(onClick = onMapClick)
             )
         }
 
@@ -1039,25 +1065,6 @@ fun PricingSection(
                     )
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        repeat(totalPages) { index ->
-            Box(
-                modifier = Modifier
-                    .height(1.5.dp)
-                    .padding(end = 3.dp)
-                    .clip(RoundedCornerShape(5.dp))
-                    .width(28.dp)
-                    .background(if (index == currentPage) Color.White else Color(0xFFB7B3B3))
-            )
         }
     }
 }

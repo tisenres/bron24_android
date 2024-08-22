@@ -13,7 +13,6 @@ class VenueRepositoryImpl @Inject constructor(
     private val apiService: VenueApiService
 ) : VenueRepository {
     override suspend fun getVenues(): List<Venue> {
-        Log.d("SDGHSHGDGHDGHHDG", "loading venues from Repo....")
         return apiService.getVenues().map { it.toDomainModel() }
     }
 

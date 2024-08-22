@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.venuelisting
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.venue.Venue
@@ -27,7 +26,6 @@ class VenueListingViewModel @Inject constructor(
     }
 
     private fun fetchVenues() {
-        Log.d("SDGHSHGDGHDGHHDG", "Start fetching venues from VM")
         viewModelScope.launch {
             _isLoading.value = true
             val venueList = getVenuesUseCase.execute()
