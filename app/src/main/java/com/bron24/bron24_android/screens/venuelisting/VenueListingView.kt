@@ -21,7 +21,6 @@ import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.adssection.AdsSection
-import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun VenueListingView(

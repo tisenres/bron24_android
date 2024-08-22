@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -22,7 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.Venue
@@ -129,13 +132,16 @@ fun VenueImageSection(venue: Venue) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(venue.imageUrls?.firstOrNull() ?: ""),
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(venue.imageUrls?.firstOrNull() ?: "")
+                .size(320, 180)  // Request a lower resolution image
+                .scale(Scale.FILL)
+                .crossfade(true)
+                .build(),
             contentDescription = "Venue Image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+            modifier = Modifier.fillMaxSize()
         )
         Image(
             painter = painterResource(id = R.drawable.baseline_favorite_24),
