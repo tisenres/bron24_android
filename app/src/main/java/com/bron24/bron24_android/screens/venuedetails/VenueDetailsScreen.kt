@@ -123,7 +123,7 @@ fun VenueDetailsContent(
 ) {
     val scrollState = rememberLazyListState()
     val context = LocalContext.current
-    val toolbarHeight = 64.dp
+    val toolbarHeight = 48.dp
 
     val toolbarVisible by remember {
         derivedStateOf {
