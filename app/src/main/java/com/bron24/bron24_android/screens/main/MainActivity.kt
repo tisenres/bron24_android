@@ -2,9 +2,15 @@ package com.bron24.bron24_android.screens.main
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +21,8 @@ import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
 import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
 import com.bron24.bron24_android.helper.util.LocaleManager
+import com.bron24.bron24_android.helper.util.NetworkConnection
+import com.bron24.bron24_android.screens.main.components.NetworkErrorToastHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +32,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var localeManager: LocaleManager
     private lateinit var navController: NavHostController
+    private lateinit var networkConnection: NetworkConnection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +43,20 @@ class MainActivity : ComponentActivity() {
 
             navController.setViewModelStore(viewModelStoreOwner.viewModelStore)
 
+            networkConnection = NetworkConnection(applicationContext)
+
             CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
                 Bron24_androidTheme {
                     val mainViewModel: MainViewModel = hiltViewModel()
                     OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
+
+                    NetworkErrorToastHandler(networkConnection)
+                }
+            }
+
+            networkConnection.observe(this) { isConnected ->
+                if (!isConnected) {
+                    Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -54,6 +73,18 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         MapKitFactory.getInstance().onStop()
         super.onStop()
+    }
+
+    @Composable
+    fun NetworkErrorToastHandler(networkConnection: NetworkConnection) {
+        val context = LocalContext.current
+        val isConnected by networkConnection.observeAsState(initial = true)
+
+        LaunchedEffect(isConnected) {
+            if (!isConnected) {
+                Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun observeAuthEvents() {

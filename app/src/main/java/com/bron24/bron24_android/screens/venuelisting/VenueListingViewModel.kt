@@ -22,15 +22,24 @@ class VenueListingViewModel @Inject constructor(
     val isLoading = _isLoading.asStateFlow()
 
     init {
-        fetchVenues()
+        getVenues()
     }
 
-    private fun fetchVenues() {
+    private fun getVenues() {
         viewModelScope.launch {
             _isLoading.value = true
-            val venueList = getVenuesUseCase.execute()
-            _venues.value = venueList
-            _isLoading.value = false
+            getVenuesUseCase.execute().collect { venueList ->
+                _venues.value = venueList
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun refreshVenues() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            getVenuesUseCase.refresh()
+            getVenues()
         }
     }
 }

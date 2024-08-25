@@ -134,7 +134,7 @@ fun VenueImageSection(venue: Venue) {
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(venue.imageUrls?.firstOrNull() ?: "")
+                .data(venue.imageUrl ?: "")
                 .size(320, 180)  // Request a lower resolution image
                 .scale(Scale.FILL)
                 .crossfade(true)
@@ -329,6 +329,6 @@ fun PreviewVenueCard() {
             district = "Chilonzor",
             closestMetroStation = "Novza",
         ),
-        imageUrls = emptyList()
+        imageUrl = null
     )
 }

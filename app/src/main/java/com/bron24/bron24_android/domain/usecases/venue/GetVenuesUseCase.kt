@@ -2,21 +2,28 @@ package com.bron24.bron24_android.domain.usecases.venue
 
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.repository.VenueRepository
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetVenuesUseCase @Inject constructor(
     private val repository: VenueRepository
 ) {
-    suspend fun execute(): List<Venue> = coroutineScope {
-        val venues = repository.getVenues()
-        venues.map { venue ->
-            async {
-                val pictures = repository.getVenuePictures(venue.venueId)
-                venue.copy(imageUrls = pictures)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun execute(): Flow<List<Venue>> = repository.getVenues().flatMapLatest { venues ->
+        combine(
+            venues.map { venue ->
+                repository.getVenuePicture(venue.venueId).map { imageUrl ->
+                    venue.copy(imageUrl = imageUrl)
+                }
             }
-        }.awaitAll()
+        ) { it.toList() }
+    }
+
+    suspend fun refresh() {
+        repository.refreshVenues()
     }
 }

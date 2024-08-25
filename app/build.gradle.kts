@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -91,6 +92,11 @@ dependencies {
     implementation(libs.retrofitMoshi)
     implementation(libs.converterGson)
     implementation(libs.okhttpLoggingInterceptor)
+
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    annotationProcessor(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     implementation(libs.lifecycleViewModelCompose)
 

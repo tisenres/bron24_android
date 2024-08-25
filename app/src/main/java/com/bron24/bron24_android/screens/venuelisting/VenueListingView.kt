@@ -5,7 +5,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +25,7 @@ import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.adssection.AdsSection
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VenueListingView(
     navController: NavController,
@@ -32,37 +36,39 @@ fun VenueListingView(
     val venues by viewModel.venues.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
-    LazyColumn(
-        state = listState,
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        modifier = modifier.fillMaxSize()
-    ) {
-        item(key = "ads") {
-            Spacer(modifier = Modifier.height(16.dp))
-            AdsSection(modifier = Modifier)
-        }
-        item(key = "title") {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = stringResource(id = R.string.football_fields),
-                style = TextStyle(
-                    fontFamily = interFontFamily,
-                    fontWeight = FontWeight(600),
-                    fontSize = 20.sp,
-                    lineHeight = 24.sp,
-                    color = Color.Black
-                ),
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+    val pullRefreshState = rememberPullToRefreshState()
 
-        if (isLoading) {
-            items(5, key = { "loading_$it" }) {
-                VenueCard(isLoading = true, navController = navController)
-                Spacer(modifier = Modifier.height(20.dp))
+    PullToRefreshBox(
+        state = pullRefreshState,
+        onRefresh = { viewModel.refreshVenues() },
+        isRefreshing = isLoading,
+        modifier = modifier
+    ) {
+        LazyColumn(
+            state = listState,
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            item(key = "ads") {
+                Spacer(modifier = Modifier.height(16.dp))
+                AdsSection(modifier = Modifier)
             }
-        } else {
+            item(key = "title") {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = stringResource(id = R.string.football_fields),
+                    style = TextStyle(
+                        fontFamily = interFontFamily,
+                        fontWeight = FontWeight(600),
+                        fontSize = 20.sp,
+                        lineHeight = 24.sp,
+                        color = Color.Black
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
             items(venues, key = { it.venueId }) { venue ->
                 VenueCard(venue = venue, isLoading = false, navController = navController)
                 Spacer(modifier = Modifier.height(20.dp))

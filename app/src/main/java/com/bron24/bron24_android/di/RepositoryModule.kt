@@ -12,11 +12,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindVenueRepository(
-        venueRepositoryImpl: VenueRepositoryImpl
-    ): VenueRepository
+//    @Binds
+//    @Singleton
+//    abstract fun bindVenueRepository(
+//        venueRepositoryImpl: VenueRepositoryImpl
+//    ): VenueRepository
 
     @Binds
     @Singleton

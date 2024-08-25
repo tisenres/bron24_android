@@ -1,12 +1,15 @@
 package com.bron24.bron24_android.di
 
 import android.content.Context
+import com.bron24.bron24_android.data.local.db.VenueDao
 import com.bron24.bron24_android.data.local.preference.AppPreference
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
+import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.repository.AuthRepositoryImpl
 import com.bron24.bron24_android.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
 import com.bron24.bron24_android.data.repository.TokenRepositoryImpl
+import com.bron24.bron24_android.data.repository.VenueRepositoryImpl
 import com.bron24.bron24_android.domain.usecases.auth.*
 import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
@@ -88,11 +91,20 @@ object UseCasesModule {
 
     @Provides
     @Singleton
+    fun provideVenueRepository(
+        apiService: VenueApiService,
+        venueDao: VenueDao  // Hilt will automatically inject this
+    ): VenueRepository {
+        return VenueRepositoryImpl(apiService, venueDao)
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(
-        otpService: AuthApiService,
+        authApiService: AuthApiService,
         tokenRepository: TokenRepository
     ): AuthRepository {
-        return AuthRepositoryImpl(otpService, tokenRepository)
+        return AuthRepositoryImpl(authApiService, tokenRepository)
     }
 
     @Provides

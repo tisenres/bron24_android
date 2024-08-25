@@ -10,8 +10,8 @@ class GetVenueDetailsUseCase @Inject constructor(
 
     suspend fun execute(venueId: Int): VenueDetails {
         val venue = venueRepository.getVenueDetailsById(venueId)
-        val pictures = venueRepository.getVenuePictures(venue.venueId)
-        venue.imageUrls = pictures
+//        val pictures = venueRepository.getVenuePictures(venue.venueId)
+//        venue.imageUrls = pictures
         return venue
     }
 }
