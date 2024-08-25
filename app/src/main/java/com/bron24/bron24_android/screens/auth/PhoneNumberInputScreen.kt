@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
-import com.bron24.bron24_android.screens.main.components.ToastManager
-import com.bron24.bron24_android.screens.main.components.ToastType
+import com.bron24.bron24_android.helper.util.presentation.components.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable

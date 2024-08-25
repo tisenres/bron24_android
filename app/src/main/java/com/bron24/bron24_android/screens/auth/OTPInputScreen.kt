@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -44,8 +43,8 @@ import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
-import com.bron24.bron24_android.screens.main.components.ToastManager
-import com.bron24.bron24_android.screens.main.components.ToastType
+import com.bron24.bron24_android.helper.util.presentation.components.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
 

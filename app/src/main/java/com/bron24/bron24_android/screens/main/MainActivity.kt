@@ -22,7 +22,8 @@ import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
 import com.bron24.bron24_android.helper.util.LocaleManager
 import com.bron24.bron24_android.helper.util.NetworkConnection
-import com.bron24.bron24_android.screens.main.components.NetworkErrorToastHandler
+import com.bron24.bron24_android.helper.util.presentation.AuthEvent
+import com.bron24.bron24_android.helper.util.presentation.GlobalAuthEventBus
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

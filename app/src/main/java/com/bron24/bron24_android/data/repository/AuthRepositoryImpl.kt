@@ -16,8 +16,8 @@ import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseSta
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
-import com.bron24.bron24_android.screens.main.AuthEvent
-import com.bron24.bron24_android.screens.main.GlobalAuthEventBus
+import com.bron24.bron24_android.helper.util.presentation.AuthEvent
+import com.bron24.bron24_android.helper.util.presentation.GlobalAuthEventBus
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.main.components
+package com.bron24.bron24_android.helper.util.presentation.components
 
 import kotlinx.coroutines.flow.asSharedFlow
 import androidx.compose.runtime.*

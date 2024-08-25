@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.main.components.ToastManager
-import com.bron24.bron24_android.screens.main.components.ToastType
+import com.bron24.bron24_android.helper.util.presentation.components.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable

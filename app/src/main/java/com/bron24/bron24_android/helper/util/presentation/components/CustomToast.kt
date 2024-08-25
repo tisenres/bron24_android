@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.main.components
+package com.bron24.bron24_android.helper.util.presentation.components
 
 import android.content.Context
 import android.os.Build
