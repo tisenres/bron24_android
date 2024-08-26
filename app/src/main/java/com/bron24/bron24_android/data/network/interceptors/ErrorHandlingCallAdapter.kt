@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.network.interceptors
 
+import android.util.Log
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import dagger.Lazy
@@ -120,10 +121,16 @@ class ErrorHandlingCallAdapterFactory(
         }
 
         private fun handleClientError(call: Call<R>, response: Response<R>, callback: Callback<R>) {
-            runBlocking {
-                errorHandler.handleError(AppError.HttpError(response.code(), response.message()))
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    errorHandler.handleError(AppError.HttpError(response.code(), response.message()))
+                    callback.onResponse(call, response)
+                } catch (e: Exception) {
+                    // Log the exception to understand what's going wrong
+                    Log.e("ErrorHandling", "Exception during error handling: ${e.message}")
+                    callback.onFailure(call, e)
+                }
             }
-            callback.onResponse(call, response)
         }
 
         private fun handleServerError(call: Call<R>, response: Response<R>, callback: Callback<R>) {

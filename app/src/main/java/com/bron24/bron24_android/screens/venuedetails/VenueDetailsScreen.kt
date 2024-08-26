@@ -4,7 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
@@ -50,12 +49,8 @@ import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
-import coil.disk.DiskCache
-import coil.memory.MemoryCache
 import coil.request.ImageRequest
-import coil.size.Size
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.*
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
@@ -346,7 +341,6 @@ fun HeaderSection(details: VenueDetails?, onMapClick: () -> Unit, onCopyAddressC
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VenueImageSection(
     imageUrls: List<String>,
@@ -414,7 +408,7 @@ fun ImageOverlay(
                 icon = Icons.Default.ArrowBack,
                 contentDescription = "Back"
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 ClickableIconButton(
                     onClick = onShareClick,
                     icon = Icons.Default.Share,
@@ -459,21 +453,24 @@ fun ClickableIconButton(
     contentDescription: String,
     tint: Color = Color.Black
 ) {
-    IconButton(
-        onClick = onClick,
+
+    Box(
         modifier = Modifier
-            .size(36.dp)
+            .size(44.dp)
             .clip(CircleShape)
-            .background(Color.White)
+            .background(Color(0xFFFFFFFF))
+            .clickable { onClick }
     ) {
-        Icon(
+        Image(
             imageVector = icon,
             contentDescription = contentDescription,
-            tint = tint,
+            colorFilter = ColorFilter.tint(tint),
             modifier = Modifier
-                .padding(5.dp)
+                .fillMaxSize()
+                .padding(10.dp)
         )
     }
+
 }
 
 @Composable
@@ -489,23 +486,23 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
         )
     )
 
-    IconButton(
-        onClick = {
-            isFavorite = !isFavorite
-            onFavoriteClick()
-        },
-        interactionSource = interactionSource,
+    Box(
         modifier = Modifier
-            .size(36.dp)
+            .size(44.dp)
             .clip(CircleShape)
             .background(Color.White)
+            .clickable {
+                isFavorite = !isFavorite
+                onFavoriteClick()
+            },
     ) {
-        Icon(
+        Image(
             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
             contentDescription = "Favorite",
-            tint = if (isFavorite) Color.Red else Color.Black,
+            colorFilter = ColorFilter.tint(if (isFavorite) Color.Red else Color.Black),
             modifier = Modifier
-                .padding(8.dp)
+                .fillMaxSize()
+                .padding(10.dp)
                 .graphicsLayer(
                     scaleX = scale,
                     scaleY = scale
@@ -535,18 +532,19 @@ fun TitleSection(details: VenueDetails?, onMapClick: () -> Unit) {
             modifier = Modifier.weight(1f)
         )
 
-        IconButton(
-            onClick = onMapClick,
+        Box(
             modifier = Modifier
                 .size(44.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(0xFFF6F6F6))
+                .clickable(onClick = onMapClick)
+                .padding(10.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_map_cute),
                 contentDescription = "map_icon",
                 colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier.fillMaxSize() // Ensure the Image fills the Box
             )
         }
     }
@@ -588,20 +586,28 @@ fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
-        Text(
-            text = "Copy",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
-                color = Color(0xFF0067FF),
-                lineHeight = 18.sp,
-                textDecoration = TextDecoration.Underline,
-            ),
+        Box(
             modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
                 .clickable(onClick = onCopyClick)
-                .padding(start = 5.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
-        )
+                .padding(
+                    horizontal = 8.dp,
+                    vertical = 6.dp,
+                )
+        ) {
+            Text(
+                text = "Copy",
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp,
+                    color = Color(0xFF0067FF),
+                    lineHeight = 18.sp,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     }
 }
 
@@ -684,17 +690,27 @@ fun RatingSection(details: VenueDetails?) {
             )
         )
         Spacer(modifier = Modifier.width(7.dp))
-        Text(
-            text = "See all reviews",
-            style = TextStyle(
-                fontFamily = interFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = Color(0xFF32B768),
-                lineHeight = 18.sp,
-                textDecoration = TextDecoration.Underline
+
+        Box(modifier = Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .clickable {}
+            .padding(
+                horizontal = 8.dp,
+                vertical = 6.dp,
             )
-        )
+        ) {
+            Text(
+                text = "See all reviews",
+                style = TextStyle(
+                    fontFamily = interFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                    color = Color(0xFF32B768),
+                    lineHeight = 18.sp,
+                    textDecoration = TextDecoration.Underline
+                )
+            )
+        }
     }
 }
 
@@ -737,10 +753,18 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
     ) {
         details?.let { venue ->
             InfrastructureItem(venue.venueType, R.drawable.baseline_stadium_24, onItemClick)
-            InfrastructureItem("${venue.peopleCapacity} players", R.drawable.game_icons_soccer_kick, onItemClick)
+            InfrastructureItem(
+                "${venue.peopleCapacity} players",
+                R.drawable.game_icons_soccer_kick,
+                onItemClick
+            )
             venue.infrastructure.let { infrastructure ->
                 if (infrastructure.lockerRoom) {
-                    InfrastructureItem("Locker Room", R.drawable.mingcute_coathanger_fill, onItemClick)
+                    InfrastructureItem(
+                        "Locker Room",
+                        R.drawable.mingcute_coathanger_fill,
+                        onItemClick
+                    )
                 }
                 if (infrastructure.stands.isNotBlank()) {
                     InfrastructureItem("Stands", R.drawable.baseline_chair_24, onItemClick)
@@ -890,10 +914,12 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
                     MapKitFactory.getInstance().onStart()
                     mapView.onStart()
                 }
+
                 Lifecycle.Event.ON_STOP -> {
                     mapView.onStop()
                     MapKitFactory.getInstance().onStop()
                 }
+
                 else -> {}
             }
         }
@@ -910,14 +936,21 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
                 CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f)
             )
             val placemark = mapView.map.mapObjects.addPlacemark(venueLocation)
-            placemark.setIcon(ImageProvider.fromResource(context, R.drawable.baseline_location_on_24_green))
+            placemark.setIcon(
+                ImageProvider.fromResource(
+                    context,
+                    R.drawable.baseline_location_on_24_green
+                )
+            )
         }
     }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .clickable(onClick = onMapClick),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Box(
@@ -933,7 +966,7 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clickable(onClick = onMapClick)
+//                    .clickable(onClick = onMapClick)
             )
         }
 
@@ -946,8 +979,9 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onTakeRouteClick)
-                .padding(vertical = 8.dp),
+//                .clickable(onClick = onTakeRouteClick)
+                .padding(top = 6.dp, bottom = 12.dp)
+                .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -972,7 +1006,10 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
 
 @Composable
 fun MapDetails(details: VenueDetails?) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 10.dp)
+    ) {
         Text(
             text = details?.address?.addressName ?: "Unknown address",
             style = TextStyle(
