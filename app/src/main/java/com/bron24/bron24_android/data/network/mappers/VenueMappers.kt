@@ -1,7 +1,5 @@
 package com.bron24.bron24_android.data.network.mappers
 
-import com.bron24.bron24_android.data.local.db.AddressEntity
-import com.bron24.bron24_android.data.local.db.VenueEntity
 import com.bron24.bron24_android.data.network.dto.venue.AddressDto
 import com.bron24.bron24_android.data.network.dto.venue.CityDto
 import com.bron24.bron24_android.data.network.dto.venue.InfrastructureDto
@@ -42,27 +40,6 @@ fun CityDto.toDomainModel(): City {
         cityName = cityName
     )
 }
-
-fun VenueDto.toVenueEntity() = VenueEntity(
-    venueId = venueId,
-    venueName = venueName,
-    pricePerHour = pricePerHour,
-    addressId = address.id
-)
-
-fun AddressDto.toAddressEntity() = AddressEntity(
-    id = id,
-    addressName = addressName,
-    district = district,
-    closestMetroStation = closestMetroStation
-)
-
-fun AddressEntity.toDomainModel() = Address(
-    id = id,
-    addressName = addressName,
-    district = district,
-    closestMetroStation = closestMetroStation
-)
 
 fun InfrastructureDto.toDomainModel(): Infrastructure {
     return Infrastructure(

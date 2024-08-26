@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface VenueRepository {
     suspend fun getVenues(): List<Venue>
     suspend fun getVenuesCoordinates(): List<VenueCoordinates>
-    suspend fun getVenuePicture(venueId: Int): String?
+    suspend fun getVenuePictures(venueId: Int): List<String>
+    suspend fun getFirstVenuePicture(venueId: Int): String?
     suspend fun getVenueDetailsById(venueId: Int): VenueDetails
 }

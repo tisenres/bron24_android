@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ class VenueListingViewModel @Inject constructor(
     }
 
     private fun getVenues() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _isLoading.value = true
             _venues.value = getVenuesUseCase.execute()
             _isLoading.value = false
