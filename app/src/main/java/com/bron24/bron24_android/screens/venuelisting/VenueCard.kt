@@ -45,7 +45,8 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF4FEF4).copy(alpha = 0.47f), RoundedCornerShape(10.dp))
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color(0xFFF4FEF4).copy(alpha = 0.47f))
             .let {
                 if (isLoading) {
                     it.shimmer()

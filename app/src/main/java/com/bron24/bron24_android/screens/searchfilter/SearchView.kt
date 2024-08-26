@@ -105,6 +105,11 @@ fun SearchRow() {
                     shape = RoundedCornerShape(5.dp)
                 )
                 .height(40.dp)
+                .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
+                .clickable {
+                    // Handle click for the search row
+                    Log.d("SearchRow", "Search row clicked")
+                }
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
             Image(
@@ -129,25 +134,17 @@ fun SearchRow() {
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .clip(RoundedCornerShape(5.dp))
-                .background(color = Color.White),
-            contentAlignment = Alignment.Center,
+                .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
+                .background(color = Color.White)
+                .clickable {},
+            contentAlignment = Alignment.Center
         ) {
-            IconButton(
-                onClick = {
-                    ToastManager.showToast("This is an error message", ToastType.INFO)
-                },
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(5.dp))
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_filter),
-                    contentDescription = "filter_icon",
-                    colorFilter = ColorFilter.tint(Color(0xFF32B768)),
-                    modifier = Modifier.size(18.dp)
-                )
-            }
+            Image(
+                painter = painterResource(id = R.drawable.ic_filter),
+                contentDescription = "filter_icon",
+                colorFilter = ColorFilter.tint(Color(0xFF32B768)),
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }
