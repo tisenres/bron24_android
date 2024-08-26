@@ -58,6 +58,8 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.*
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.yandex.mapkit.MapKitFactory
@@ -243,7 +245,10 @@ private fun AnimatedToolbar(
 
 fun copyAddressToClipboard(context: Context, address: String?) {
     if (address.isNullOrBlank()) {
-        Toast.makeText(context, "No address available to copy", Toast.LENGTH_SHORT).show()
+        ToastManager.showToast(
+            "No address available to copy",
+            ToastType.ERROR
+        )
         return
     }
 
@@ -251,12 +256,18 @@ fun copyAddressToClipboard(context: Context, address: String?) {
     val clip = ClipData.newPlainText("Venue Address", address)
     clipboard?.setPrimaryClip(clip)
 
-    Toast.makeText(context, "Address copied to clipboard", Toast.LENGTH_SHORT).show()
+    ToastManager.showToast(
+        "Address copied to clipboard",
+        ToastType.ERROR
+    )
 }
 
 fun shareVenueDetails(context: Context, details: VenueDetails?) {
     if (details == null) {
-        Toast.makeText(context, "No venue details available to share", Toast.LENGTH_SHORT).show()
+        ToastManager.showToast(
+            "No venue details available to share",
+            ToastType.ERROR
+        )
         return
     }
 

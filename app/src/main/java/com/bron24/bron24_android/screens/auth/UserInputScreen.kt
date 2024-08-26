@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.helper.util.presentation.components.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.ToastType
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -34,103 +34,100 @@ fun UserDataInputScreen(
     onSignUpVerified: () -> Unit,
 ) {
 
-    ToastManager { showToast ->
+    val authState by authViewModel.authState.collectAsState()
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
-        val authState by authViewModel.authState.collectAsState()
-        var firstName by remember { mutableStateOf("") }
-        var lastName by remember { mutableStateOf("") }
-        var isLoading by remember { mutableStateOf(false) }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(horizontal = 20.dp)
+    ) {
+        TopBar()
 
-        Column(
+        Spacer(modifier = Modifier.height(30.dp))
+
+        Text(
+            text = stringResource(id = R.string.enter_personal_data),
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                color = Color.Black,
+                lineHeight = 20.sp,
+                letterSpacing = (-0.028).em
+            ),
+            modifier = Modifier.align(Alignment.Start)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        UserDataField(
+            fieldName = firstName,
+            placeholder = stringResource(id = R.string.first_name),
+            icon = R.drawable.ic_empty_user,
+            onValueChange = { newValue -> firstName = newValue },
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        UserDataField(
+            fieldName = lastName,
+            placeholder = stringResource(id = R.string.last_name),
+            icon = R.drawable.ic_empty_user,
+            onValueChange = { newValue -> lastName = newValue },
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        ConfirmButtonUser(
+            isEnabled = firstName.isNotEmpty() && lastName.isNotEmpty(),
+            onClick = {
+                authViewModel.authenticateUser(
+                    firstName = firstName,
+                    lastName = lastName
+                )
+            },
+            authViewModel = authViewModel,
+            onSignUpVerified = onSignUpVerified
+        )
+    }
+
+    when (authState) {
+        is AuthState.Loading -> {
+            isLoading = true
+            // Show loading indicator
+        }
+
+        is AuthState.Authenticated -> {
+            isLoading = false
+            // Navigate to the next screen when authentication is successful
+            onSignUpVerified()
+        }
+
+        is AuthState.Error -> {
+            isLoading = false
+            ToastManager.showToast(
+                "Error: " + (authState as AuthState.Error).message,
+                ToastType.ERROR
+            )
+        }
+
+        else -> {
+            isLoading = false
+        }
+    }
+
+    if (isLoading) {
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
-                .padding(horizontal = 20.dp)
+                .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
+            contentAlignment = Alignment.Center
         ) {
-            TopBar()
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Text(
-                text = stringResource(id = R.string.enter_personal_data),
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    color = Color.Black,
-                    lineHeight = 20.sp,
-                    letterSpacing = (-0.028).em
-                ),
-                modifier = Modifier.align(Alignment.Start)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            UserDataField(
-                fieldName = firstName,
-                placeholder = stringResource(id = R.string.first_name),
-                icon = R.drawable.ic_empty_user,
-                onValueChange = { newValue -> firstName = newValue },
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            UserDataField(
-                fieldName = lastName,
-                placeholder = stringResource(id = R.string.last_name),
-                icon = R.drawable.ic_empty_user,
-                onValueChange = { newValue -> lastName = newValue },
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            ConfirmButtonUser(
-                isEnabled = firstName.isNotEmpty() && lastName.isNotEmpty(),
-                onClick = {
-                    authViewModel.authenticateUser(
-                        firstName = firstName,
-                        lastName = lastName
-                    )
-                },
-                authViewModel = authViewModel,
-                onSignUpVerified = onSignUpVerified
-            )
-        }
-
-        when (authState) {
-            is AuthState.Loading -> {
-                isLoading = true
-                // Show loading indicator
-            }
-
-            is AuthState.Authenticated -> {
-                isLoading = false
-                // Navigate to the next screen when authentication is successful
-                onSignUpVerified()
-            }
-
-            is AuthState.Error -> {
-                isLoading = false
-                showToast(
-                    "Error: " + (authState as AuthState.Error).message,
-                    ToastType.ERROR
-                )
-            }
-
-            else -> {
-                isLoading = false
-            }
-        }
-
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
-            }
+            CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
         }
     }
 }

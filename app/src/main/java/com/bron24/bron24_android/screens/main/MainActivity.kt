@@ -24,6 +24,10 @@ import com.bron24.bron24_android.helper.util.LocaleManager
 import com.bron24.bron24_android.helper.util.NetworkConnection
 import com.bron24.bron24_android.helper.util.presentation.AuthEvent
 import com.bron24.bron24_android.helper.util.presentation.GlobalAuthEventBus
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ObserveToast
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.screens.auth.AuthState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,7 +37,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var localeManager: LocaleManager
     private lateinit var navController: NavHostController
-    private lateinit var networkConnection: NetworkConnection
+//    private lateinit var networkConnection: NetworkConnection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,22 +48,23 @@ class MainActivity : ComponentActivity() {
 
             navController.setViewModelStore(viewModelStoreOwner.viewModelStore)
 
-            networkConnection = NetworkConnection(applicationContext)
+//            networkConnection = NetworkConnection(applicationContext)
 
             CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
                 Bron24_androidTheme {
                     val mainViewModel: MainViewModel = hiltViewModel()
                     OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
+                    ObserveToast()
 
-                    NetworkErrorToastHandler(networkConnection)
+//                    NetworkErrorToastHandler(networkConnection)
                 }
             }
 
-            networkConnection.observe(this) { isConnected ->
-                if (!isConnected) {
-                    Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
-                }
-            }
+//            networkConnection.observe(this) { isConnected ->
+//                if (!isConnected) {
+//                    Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
+//                }
+//            }
         }
         // Observe Global Auth Events
         observeAuthEvents()
@@ -78,12 +83,14 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun NetworkErrorToastHandler(networkConnection: NetworkConnection) {
-        val context = LocalContext.current
         val isConnected by networkConnection.observeAsState(initial = true)
 
         LaunchedEffect(isConnected) {
             if (!isConnected) {
-                Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+                ToastManager.showToast(
+                    "No internet connection",
+                    ToastType.ERROR
+                )
             }
         }
     }

@@ -27,8 +27,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideErrorHandler(@ApplicationContext context: Context): ErrorHandler {
-        return ErrorHandler(context)
+    fun provideErrorHandler(): ErrorHandler {
+        return ErrorHandler()
     }
 
     @Provides

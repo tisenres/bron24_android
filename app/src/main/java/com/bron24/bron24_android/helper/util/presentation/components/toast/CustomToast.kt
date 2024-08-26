@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.helper.util.presentation.components
+package com.bron24.bron24_android.helper.util.presentation.components.toast
 
 import android.content.Context
 import android.os.Build
@@ -19,9 +19,57 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
 
-enum class ToastType {
-    ERROR, INFO
-}
+//@Composable
+//fun CustomToast(
+//    message: String,
+//    type: ToastType,
+//    durationMillis: Long = 3000,
+//    onDismiss: () -> Unit
+//) {
+//    var isVisible by remember { mutableStateOf(true) }
+//    val context = LocalContext.current
+//
+//    LaunchedEffect(key1 = message) {
+//        if (type == ToastType.ERROR) {
+//            vibrate(context)
+//        }
+//        delay(durationMillis)
+//        isVisible = false
+//        onDismiss()
+//    }
+//
+//    AnimatedVisibility(
+//        visible = isVisible,
+//        enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
+//        exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut()
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(16.dp)
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .align(Alignment.TopCenter)
+//                    .background(
+//                        color = when (type) {
+//                            ToastType.ERROR -> Color(0xFFFF6B6B)
+//                            ToastType.INFO -> Color(0xFF32B768)
+//                        },
+//                        shape = RoundedCornerShape(10.dp)
+//                    )
+//                    .padding(16.dp)
+//            ) {
+//                Text(
+//                    text = message,
+//                    color = Color.White,
+//                    fontSize = 16.sp
+//                )
+//            }
+//        }
+//    }
+//}
+//
 
 @Composable
 fun CustomToast(
@@ -34,7 +82,9 @@ fun CustomToast(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = message) {
-        vibrate(context)
+        if (type == ToastType.ERROR) {
+            vibrate(context)
+        }
         delay(durationMillis)
         isVisible = false
         onDismiss()
@@ -55,8 +105,10 @@ fun CustomToast(
                     .align(Alignment.TopCenter)
                     .background(
                         color = when (type) {
+                            ToastType.SUCCESS -> Color(0xFF32B768)
                             ToastType.ERROR -> Color(0xFFFF6B6B)
-                            ToastType.INFO -> Color(0xFF32B768)
+                            ToastType.WARNING -> Color(0xFFFFA726)
+                            ToastType.INFO -> Color(0xFF4CAF50)
                         },
                         shape = RoundedCornerShape(10.dp)
                     )
@@ -71,6 +123,22 @@ fun CustomToast(
         }
     }
 }
+
+@Composable
+fun ObserveToast() {
+    val toastData by ToastManager.toastData.collectAsState()
+
+    toastData?.let { data ->
+        CustomToast(
+            message = data.message,
+            type = data.type,
+            onDismiss = {
+                ToastManager.clearToast()
+            }
+        )
+    }
+}
+
 
 private fun vibrate(context: Context) {
     val vibrator = ContextCompat.getSystemService(context, Vibrator::class.java)

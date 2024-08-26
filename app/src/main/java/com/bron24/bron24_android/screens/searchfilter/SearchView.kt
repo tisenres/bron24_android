@@ -1,7 +1,9 @@
 package com.bron24.bron24_android.screens.searchfilter
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +26,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 
@@ -127,10 +131,12 @@ fun SearchRow() {
                 .size(40.dp)
                 .clip(RoundedCornerShape(5.dp))
                 .background(color = Color.White),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             IconButton(
-                onClick = {},
+                onClick = {
+                    ToastManager.showToast("This is an error message", ToastType.ERROR)
+                },
                 modifier = Modifier
                     .size(40.dp)
                     .clip(RoundedCornerShape(5.dp))

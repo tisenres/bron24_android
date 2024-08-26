@@ -1,23 +1,20 @@
 package com.bron24.bron24_android.data.network.interceptors
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import javax.inject.Inject
 import javax.inject.Singleton
 
 sealed class AppError {
-    object NetworkError : AppError()
+    data object NetworkError : AppError()
     data class HttpError(val code: Int, val message: String) : AppError()
     data class UnknownError(val message: String) : AppError()
 }
 
 @Singleton
-class ErrorHandler @Inject constructor(private val context: Context) {
+class ErrorHandler {
     private val _errorFlow = MutableSharedFlow<AppError>()
-    val errorFlow = _errorFlow.asSharedFlow()
 
     suspend fun handleError(error: AppError) {
         _errorFlow.emit(error)
@@ -36,6 +33,9 @@ class ErrorHandler @Inject constructor(private val context: Context) {
             is AppError.UnknownError -> error.message
         }
         Log.e("Error_handled", message)
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        ToastManager.showToast(
+            message,
+            ToastType.ERROR
+        )
     }
 }

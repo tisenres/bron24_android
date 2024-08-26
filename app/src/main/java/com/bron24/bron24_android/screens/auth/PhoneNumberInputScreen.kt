@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
-import com.bron24.bron24_android.helper.util.presentation.components.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.ToastType
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -41,96 +41,95 @@ fun PhoneNumberInputScreen(
     authViewModel: AuthViewModel,
     onNavigateToOTPScreen: (String) -> Unit
 ) {
-    ToastManager { showToast ->
-        val authState by authViewModel.authState.collectAsState()
-        val phoneNumber by authViewModel.phoneNumber.collectAsState()
-        val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
-        val focusRequester = remember { FocusRequester() }
-        var isLoading by remember { mutableStateOf(false) }
+    val authState by authViewModel.authState.collectAsState()
+    val phoneNumber by authViewModel.phoneNumber.collectAsState()
+    val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
+    val focusRequester = remember { FocusRequester() }
+    var isLoading by remember { mutableStateOf(false) }
 
-        LaunchedEffect(authState) {
-            when (authState) {
-                is AuthState.Loading -> {
-                    isLoading = true
-                }
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Loading -> {
+                isLoading = true
+            }
 
-                is AuthState.OTPRequested -> {
-                    isLoading = false
-                    val status = (authState as AuthState.OTPRequested).status
-                    when (status) {
-                        PhoneNumberResponseStatusCode.SUCCESS -> {
-                            onNavigateToOTPScreen(phoneNumber)
-                        }
+            is AuthState.OTPRequested -> {
+                isLoading = false
+                val status = (authState as AuthState.OTPRequested).status
+                when (status) {
+                    PhoneNumberResponseStatusCode.SUCCESS -> {
+                        onNavigateToOTPScreen(phoneNumber)
+                    }
 
-                        PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
-                            onNavigateToOTPScreen(phoneNumber)
-                        }
+                    PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
+                        onNavigateToOTPScreen(phoneNumber)
+                    }
 
-                        PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER -> {
-                            showToast(
-                                "Incorrect phone number. Please try again.",
-                                ToastType.ERROR
-                            )
-                        }
-
-                        else -> showToast(
-                            "Failed to request OTP. Please try again later.",
+                    PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER -> {
+                        ToastManager.showToast(
+                            "Incorrect phone number. Please try again.",
                             ToastType.ERROR
                         )
                     }
-                }
 
-                is AuthState.Error -> {
-                    isLoading = false
-                    showToast(
-                        "Error: " + (authState as AuthState.Error).message,
+                    else -> ToastManager.showToast(
+                        "Failed to request OTP. Please try again later.",
                         ToastType.ERROR
                     )
                 }
+            }
 
-                else -> {
-                    isLoading = false
-                    // Handle other states if necessary
-                }
+            is AuthState.Error -> {
+                isLoading = false
+                ToastManager.showToast(
+                    "Error: " + (authState as AuthState.Error).message,
+                    ToastType.ERROR
+                )
+
+            }
+
+            else -> {
+                isLoading = false
+                // Handle other states if necessary
             }
         }
+    }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(horizontal = 20.dp)
+        ) {
+            Spacer(modifier = Modifier.height(36.dp))
+            Logo()
+            Spacer(modifier = Modifier.height(36.dp))
+            CustomPhoneNumberField(
+                value = phoneNumber,
+                onValueChange = { newValue ->
+                    if (newValue.startsWith("+998")) {
+                        authViewModel.updatePhoneNumber(newValue)
+                    }
+                },
+                focusRequester = focusRequester,
+                authViewModel = authViewModel
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            BottomSection(
+                authViewModel,
+                isPhoneNumberValid,
+            )
+        }
+
+        if (isLoading) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
-                    .padding(horizontal = 20.dp)
+                    .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
+                contentAlignment = Alignment.Center
             ) {
-                Spacer(modifier = Modifier.height(36.dp))
-                Logo()
-                Spacer(modifier = Modifier.height(36.dp))
-                CustomPhoneNumberField(
-                    value = phoneNumber,
-                    onValueChange = { newValue ->
-                        if (newValue.startsWith("+998")) {
-                            authViewModel.updatePhoneNumber(newValue)
-                        }
-                    },
-                    focusRequester = focusRequester,
-                    authViewModel = authViewModel
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                BottomSection(
-                    authViewModel,
-                    isPhoneNumberValid,
-                )
-            }
-
-            if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
-                }
+                CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
             }
         }
     }
