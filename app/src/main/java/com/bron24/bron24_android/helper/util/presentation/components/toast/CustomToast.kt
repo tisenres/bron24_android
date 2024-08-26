@@ -64,6 +64,7 @@ fun CustomToast(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
                     .background(Color.White)
                     .border(
                         width = 2.dp,
@@ -71,11 +72,10 @@ fun CustomToast(
                             ToastType.SUCCESS -> Color(0xFF32B768)
                             ToastType.ERROR -> Color(0xFFFF6B6B)
                             ToastType.WARNING -> Color(0xFFFFA726)
-                            ToastType.INFO -> Color(0xFF4CAF50)
+                            ToastType.INFO -> Color(0xFF2196F3)
                         },
                         shape = RoundedCornerShape(10.dp)
                     )
-                    .clip(RoundedCornerShape(10.dp))
                     .padding(16.dp)
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -91,7 +91,7 @@ fun CustomToast(
                             ToastType.SUCCESS -> Color(0xFF32B768)
                             ToastType.ERROR -> Color(0xFFFF6B6B)
                             ToastType.WARNING -> Color(0xFFFFA726)
-                            ToastType.INFO -> Color(0xFF4CAF50)
+                            ToastType.INFO -> Color(0xFF2196F3)
                         })
                     Text(
                         text = message,

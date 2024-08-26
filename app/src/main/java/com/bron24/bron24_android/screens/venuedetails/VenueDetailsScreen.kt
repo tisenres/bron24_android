@@ -247,7 +247,7 @@ fun copyAddressToClipboard(context: Context, address: String?) {
     if (address.isNullOrBlank()) {
         ToastManager.showToast(
             "No address available to copy",
-            ToastType.ERROR
+            ToastType.WARNING
         )
         return
     }
@@ -258,7 +258,7 @@ fun copyAddressToClipboard(context: Context, address: String?) {
 
     ToastManager.showToast(
         "Address copied to clipboard",
-        ToastType.ERROR
+        ToastType.SUCCESS
     )
 }
 
@@ -266,7 +266,7 @@ fun shareVenueDetails(context: Context, details: VenueDetails?) {
     if (details == null) {
         ToastManager.showToast(
             "No venue details available to share",
-            ToastType.ERROR
+            ToastType.WARNING
         )
         return
     }

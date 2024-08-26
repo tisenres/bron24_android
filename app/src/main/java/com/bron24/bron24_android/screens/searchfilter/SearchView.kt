@@ -135,7 +135,7 @@ fun SearchRow() {
         ) {
             IconButton(
                 onClick = {
-                    ToastManager.showToast("This is an error message", ToastType.ERROR)
+                    ToastManager.showToast("This is an error message", ToastType.INFO)
                 },
                 modifier = Modifier
                     .size(40.dp)

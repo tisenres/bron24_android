@@ -235,7 +235,7 @@ fun OTPInputScreen(
                     is AuthState.OTPVerified -> {
                         isVerifying = false
                         if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
-                            ToastManager.showToast("OTP verified successfully", ToastType.INFO)
+                            ToastManager.showToast("OTP verified successfully", ToastType.SUCCESS)
                             if ((authState as AuthState.OTPVerified).userExists) {
                                 onUserLogIn()
                             } else {
