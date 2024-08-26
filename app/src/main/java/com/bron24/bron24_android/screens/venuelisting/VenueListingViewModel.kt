@@ -28,18 +28,12 @@ class VenueListingViewModel @Inject constructor(
     private fun getVenues() {
         viewModelScope.launch {
             _isLoading.value = true
-            getVenuesUseCase.execute().collect { venueList ->
-                _venues.value = venueList
-                _isLoading.value = false
-            }
+            _venues.value = getVenuesUseCase.execute()
+            _isLoading.value = false
         }
     }
 
     fun refreshVenues() {
-        viewModelScope.launch {
-            _isLoading.value = true
-            getVenuesUseCase.refresh()
-            getVenues()
-        }
+        getVenues()
     }
 }

@@ -6,9 +6,8 @@ import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import kotlinx.coroutines.flow.Flow
 
 interface VenueRepository {
-    fun getVenues(): Flow<List<Venue>>
-    suspend fun refreshVenues()
+    suspend fun getVenues(): List<Venue>
     suspend fun getVenuesCoordinates(): List<VenueCoordinates>
-    fun getVenuePicture(venueId: Int): Flow<String?>
+    suspend fun getVenuePicture(venueId: Int): String?
     suspend fun getVenueDetailsById(venueId: Int): VenueDetails
 }

@@ -12,18 +12,10 @@ import javax.inject.Inject
 class GetVenuesUseCase @Inject constructor(
     private val repository: VenueRepository
 ) {
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun execute(): Flow<List<Venue>> = repository.getVenues().flatMapLatest { venues ->
-        combine(
-            venues.map { venue ->
-                repository.getVenuePicture(venue.venueId).map { imageUrl ->
-                    venue.copy(imageUrl = imageUrl)
-                }
-            }
-        ) { it.toList() }
-    }
-
-    suspend fun refresh() {
-        repository.refreshVenues()
+    suspend fun execute(): List<Venue> {
+        val venues = repository.getVenues()
+        return venues.map { venue ->
+            venue.copy(imageUrl = repository.getVenuePicture(venue.venueId))
+        }
     }
 }

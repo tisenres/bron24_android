@@ -8,8 +8,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -42,7 +44,16 @@ fun VenueListingView(
         state = pullRefreshState,
         onRefresh = { viewModel.refreshVenues() },
         isRefreshing = isLoading,
-        modifier = modifier
+        modifier = modifier,
+        indicator = {
+            PullToRefreshDefaults.Indicator(
+                state = pullRefreshState,
+                isRefreshing = isLoading,
+                color = Color(0xFF32B768),
+                containerColor = Color.White,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
     ) {
         LazyColumn(
             state = listState,

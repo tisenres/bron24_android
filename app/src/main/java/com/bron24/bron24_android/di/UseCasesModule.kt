@@ -93,9 +93,8 @@ object UseCasesModule {
     @Singleton
     fun provideVenueRepository(
         apiService: VenueApiService,
-        venueDao: VenueDao  // Hilt will automatically inject this
     ): VenueRepository {
-        return VenueRepositoryImpl(apiService, venueDao)
+        return VenueRepositoryImpl(apiService)
     }
 
     @Provides
