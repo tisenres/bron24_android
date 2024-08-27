@@ -22,7 +22,7 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
-fun HowItWorksScreen2() {
+fun HowItWorksScreen3() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -31,25 +31,25 @@ fun HowItWorksScreen2() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.howitworks2),
-            contentDescription = "Nearby stadiums",
+            painter = painterResource(id = R.drawable.howitworks3),
+            contentDescription = "Select stadium",
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f),
             contentScale = ContentScale.FillWidth
         )
         Text(
-            text = stringResource(id = R.string.select_stadium),
+            text = stringResource(id = R.string.nearby_stadiums),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 color = Color(0xFF3C2E56),
-                lineHeight = 29.4.sp
+                lineHeight = 29.4.sp,
             ),
         )
         Text(
-            text = stringResource(id = R.string.select_stadium_desc),
+            text = stringResource(id = R.string.nearby_stadiums_desc),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -60,7 +60,7 @@ fun HowItWorksScreen2() {
                 letterSpacing = (-0.028).em
             ),
             modifier = Modifier
-                .width(357.dp)
+                .width(331.dp)
                 .padding(top = 16.dp)
         )
     }
@@ -68,6 +68,6 @@ fun HowItWorksScreen2() {
 
 @Composable
 @Preview(showBackground = true)
-fun PreviewHowItWorks2() {
-    HowItWorksScreen2()
+fun PreviewHowItWorks3() {
+    HowItWorksScreen3()
 }

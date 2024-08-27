@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.howitworks
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -24,12 +23,11 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HowItWorksPager(
     onNavigateToAuthScreens: () -> Unit
 ) {
-    val pagerState = rememberPagerState (pageCount = { 2 })
+    val pagerState = rememberPagerState (pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -45,6 +43,7 @@ fun HowItWorksPager(
                 when (page) {
                     0 -> HowItWorksScreen1()
                     1 -> HowItWorksScreen2()
+                    2 -> HowItWorksScreen3()
                 }
             }
         }
@@ -101,14 +100,13 @@ fun HowItWorksPager(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PagerIndicator(pagerState: PagerState) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        repeat(2) { iteration ->
+        repeat(3) { iteration ->
             val color = if (pagerState.currentPage == iteration) Color(0xFF32B768) else Color(0xFFD9D9D9)
             Box(
                 modifier = Modifier

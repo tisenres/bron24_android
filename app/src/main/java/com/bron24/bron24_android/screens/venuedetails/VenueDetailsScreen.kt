@@ -354,6 +354,7 @@ fun VenueImageSection(
         modifier = Modifier
             .height(206.dp)
             .fillMaxWidth()
+            .background(Color.Gray)
     ) {
         HorizontalPager(
             state = pagerState,
@@ -453,13 +454,12 @@ fun ClickableIconButton(
     contentDescription: String,
     tint: Color = Color.Black
 ) {
-
     Box(
         modifier = Modifier
             .size(44.dp)
             .clip(CircleShape)
             .background(Color(0xFFFFFFFF))
-            .clickable { onClick }
+            .clickable(onClick = onClick) // Corrected this line
     ) {
         Image(
             imageVector = icon,
@@ -470,7 +470,6 @@ fun ClickableIconButton(
                 .padding(10.dp)
         )
     }
-
 }
 
 @Composable
@@ -483,7 +482,7 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
-        )
+        ), label = ""
     )
 
     Box(
@@ -491,10 +490,14 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
             .size(44.dp)
             .clip(CircleShape)
             .background(Color.White)
-            .clickable {
-                isFavorite = !isFavorite
-                onFavoriteClick()
-            },
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = {
+                    isFavorite = !isFavorite
+                    onFavoriteClick()
+                }
+            ),
     ) {
         Image(
             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
@@ -1157,7 +1160,10 @@ private fun VenueDetailsPreview() {
             contact2 = "+998 77 806 0288",
             createdAt = "2021-01-01",
             updatedAt = "2023-01-01",
-            imageUrls = emptyList()
+            imageUrls = listOf(
+                "https://www.google.com/imgres?q=football%20stadium&imgurl=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1502846052%2Fphoto%2Ftextured-soccer-game-field-with-neon-fog-center-midfield.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLPSo6ps1NfZ_xviL0tmhnnrcLjjFXAQhsYr3qAOfviY%3D&imgrefurl=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffootball-stadium&docid=LF8uWOsT77kHrM&tbnid=tb_4tkdFa4tgxM&vet=12ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA..i&w=612&h=344&hcb=2&ved=2ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA",
+
+            )
         ),
         {},
         {},
