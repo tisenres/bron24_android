@@ -110,7 +110,7 @@ fun OTPInputScreen(
                     text = stringResource(id = R.string.otp_title),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 22.sp,
                         color = Color.Black,
                         lineHeight = 24.sp,
@@ -196,7 +196,7 @@ fun OTPInputScreen(
                 TextButton(
                     onClick = {
                         authViewModel.requestOTP()
-                        resendCounter = 90 // Reset the counter
+                        resendCounter = 90
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
@@ -312,7 +312,7 @@ fun OTPTextField(
                             text = char,
                             style = TextStyle(
                                 fontFamily = gilroyFontFamily,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = FontWeight.ExtraBold,
                                 fontSize = 16.sp,
                                 color = Color(0xFF8F92A4),
                                 lineHeight = 20.sp,

@@ -69,7 +69,7 @@ fun LocationRequestScreen(
                 text = stringResource(id = R.string.app_name),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.ExtraBold,
                     fontSize = 26.sp,
                     color = Color(0xFF32B768),
                     lineHeight = 31.85.sp,

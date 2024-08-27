@@ -143,7 +143,7 @@ fun TopBar() {
             text = stringResource(id = R.string.register),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.ExtraBold,
                 fontSize = 22.sp,
                 color = Color.Black,
                 lineHeight = 24.sp,

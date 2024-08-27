@@ -58,7 +58,7 @@ fun LanguageSelectionScreen(
                         .height(32.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 26.sp,
                         color = Color(0xFF32B768),
                         lineHeight = 31.85.sp,
@@ -87,10 +87,10 @@ fun LanguageSelectionScreen(
                         .height(32.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 26.sp,
                         color = Color(0xFF32B768),
-                        lineHeight = 32.sp,
+                        lineHeight = 31.85.sp,
                         letterSpacing = (-0.78).sp
                     ),
                 )
@@ -178,7 +178,7 @@ fun LanguageOption(
             style = TextStyle(
                 color = animatedColor,
                 fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Normal,
                 fontFamily = gilroyFontFamily,
                 lineHeight = 64.sp
             ),
