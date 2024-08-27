@@ -44,4 +44,5 @@
     <string name="enter_personal_data">Enter your personal data</string>
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
+    <string name="get_started">Let\'s go</string>
 </resources>

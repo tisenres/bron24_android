@@ -57,7 +57,7 @@ fun UserDataInputScreen(
                 fontSize = 16.sp,
                 color = Color.Black,
                 lineHeight = 20.sp,
-                letterSpacing = (-0.028).em
+//                letterSpacing = (-0.028).em
             ),
             modifier = Modifier.align(Alignment.Start)
         )
@@ -147,7 +147,7 @@ fun TopBar() {
                 fontSize = 22.sp,
                 color = Color.Black,
                 lineHeight = 24.sp,
-                letterSpacing = (-0.028).em,
+//                letterSpacing = (-0.028).em,
                 textAlign = TextAlign.Center
             ),
             modifier = Modifier.align(Alignment.Center)
@@ -199,7 +199,7 @@ fun UserDataField(
                     fontSize = 16.sp,
                     color = Color.Black,
                     lineHeight = 20.sp,
-                    letterSpacing = (-0.028).em
+//                    letterSpacing = (-0.028).em
                 ),
                 decorationBox = { innerTextField ->
                     if (fieldName.isEmpty()) {
@@ -211,7 +211,7 @@ fun UserDataField(
                                 fontSize = 16.sp,
                                 color = Color(0xFFB8BDCA),
                                 lineHeight = 20.sp,
-                                letterSpacing = (-0.028).em
+//                                letterSpacing = (-0.028).em
                             ),
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
@@ -259,7 +259,7 @@ fun ConfirmButtonUser(
             fontFamily = gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
             lineHeight = 32.sp,
-            letterSpacing = (-0.028).em
+//            letterSpacing = (-0.028).em
         )
     }
 

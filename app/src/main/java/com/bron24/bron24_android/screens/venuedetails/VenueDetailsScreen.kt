@@ -509,6 +509,10 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
                 onClick = {
                     isFavorite = !isFavorite
                     onFavoriteClick()
+                    ToastManager.showToast(
+                        "Venue was added to favorites",
+                        ToastType.SUCCESS
+                    )
                 }
             ),
     ) {
@@ -1125,7 +1129,7 @@ fun PricingSection(
                         fontSize = 14.sp,
                         color = Color.White,
                         lineHeight = 16.8.sp,
-                        letterSpacing = (-0.028).em
+//                        letterSpacing = (-0.028).em
                     )
                 )
             }

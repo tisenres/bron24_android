@@ -60,7 +60,7 @@ fun HowItWorksScreen2() {
                 textAlign = TextAlign.Center,
             ),
             modifier = Modifier
-                .width(357.dp)
+                .widthIn(max = 300.dp)
         )
     }
 }

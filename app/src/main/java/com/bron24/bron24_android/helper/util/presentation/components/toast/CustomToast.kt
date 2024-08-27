@@ -78,7 +78,10 @@ fun CustomToast(
                     )
                     .padding(16.dp)
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+//                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
                     Icon(
                         imageVector = when (type) {
                             ToastType.SUCCESS -> Icons.Default.Done
@@ -92,7 +95,9 @@ fun CustomToast(
                             ToastType.ERROR -> Color(0xFFFF6B6B)
                             ToastType.WARNING -> Color(0xFFFFA726)
                             ToastType.INFO -> Color(0xFF2196F3)
-                        })
+                        },
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
                     Text(
                         text = message,
                         style = TextStyle(
@@ -141,5 +146,5 @@ private fun vibrate(context: Context) {
 @Preview(showBackground = true)
 @Composable
 fun BottomNavigationBarPreview() {
-    CustomToast(message = "Internet is not available", type = ToastType.ERROR, onDismiss = {})
+    CustomToast(message = "Internet is not avaisdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlable", type = ToastType.ERROR, onDismiss = {})
 }

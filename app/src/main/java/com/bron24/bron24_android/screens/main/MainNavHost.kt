@@ -177,7 +177,7 @@ fun ProfilePage() {
                 fontSize = 24.sp,
                 color = Color(0xFF32B768),
                 lineHeight = 30.sp,
-                letterSpacing = (-0.028).em
+//                letterSpacing = (-0.028).em
             ),
             modifier = Modifier.align(
                 Alignment.Center
@@ -204,7 +204,7 @@ fun OrdersPage() {
                 fontSize = 24.sp,
                 color = Color(0xFF32B768),
                 lineHeight = 30.sp,
-                letterSpacing = (-0.028).em
+//                letterSpacing = (-0.028).em
             ),
             modifier = Modifier.align(
                 Alignment.Center

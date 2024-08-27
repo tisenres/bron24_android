@@ -202,7 +202,7 @@ fun CustomPhoneNumberField(
                         fontSize = 16.sp,
                         color = Color(0xFFB8BDCA),
                         lineHeight = 20.sp,
-                        letterSpacing = (-0.028).em
+//                        letterSpacing = (-0.028).em
                     ),
                     modifier = Modifier.align(Alignment.Start)
                 )
@@ -219,7 +219,7 @@ fun CustomPhoneNumberField(
                             fontSize = 16.sp,
                             color = Color(0xFFB8BDCA),
                             lineHeight = 20.sp,
-                            letterSpacing = (-0.028).em
+//                            letterSpacing = (-0.028).em
                         )
                     )
                     Spacer(modifier = Modifier.width(3.dp))
@@ -248,7 +248,7 @@ fun CustomPhoneNumberField(
                             fontSize = 16.sp,
                             color = Color.Black,
                             lineHeight = 20.sp,
-                            letterSpacing = (-0.028).em
+//                            letterSpacing = (-0.028).em
                         ),
                         visualTransformation = PhoneNumberVisualTransformation(),
                         decorationBox = { innerTextField ->
@@ -315,7 +315,7 @@ fun ConfirmButton(
             fontFamily = gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
             lineHeight = 32.sp,
-            letterSpacing = (-0.028).em
+//            letterSpacing = (-0.028).em
         )
     }
 }
@@ -335,7 +335,7 @@ fun TermsAndConditionsText() {
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
-                letterSpacing = (-0.028).em
+//                letterSpacing = (-0.028).em
             )
         ) {
             append(stringResource(id = R.string.terms_and_conditions_text))
@@ -351,7 +351,7 @@ fun TermsAndConditionsText() {
             fontSize = 14.sp,
             color = Color.Black,
             lineHeight = 16.8.sp,
-            letterSpacing = (-0.028).em
+//            letterSpacing = (-0.028).em
         ),
         onClick = { offset ->
             annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)

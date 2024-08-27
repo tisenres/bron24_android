@@ -302,7 +302,7 @@ fun SmallPricingSection(venueDetails: VenueDetails?) {
                     fontSize = 14.sp,
                     color = Color.White,
                     lineHeight = 16.8.sp,
-                    letterSpacing = (-0.028).em
+//                    letterSpacing = (-0.028).em
                 )
             )
         }

@@ -78,7 +78,7 @@ fun ProfileRow() {
                         fontSize = 18.sp,
                         color = Color.White,
                         lineHeight = 22.sp,
-                        letterSpacing = (-0.028).em
+//                        letterSpacing = (-0.028).em
                     )
                 )
             }

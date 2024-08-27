@@ -2,6 +2,8 @@ package com.bron24.bron24_android.screens.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +21,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
@@ -35,10 +38,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
@@ -79,6 +82,11 @@ fun OTPInputScreen(
         keyboardController?.show()
     }
 
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
@@ -92,19 +100,10 @@ fun OTPInputScreen(
                     .fillMaxWidth()
                     .height(26.dp),
             ) {
-                IconButton(
+                EnhancedBackButton(
                     onClick = onBackClick,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_arrow_back),
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .size(26.dp)
-                    )
-                }
+                    modifier = Modifier.align(Alignment.CenterStart)
+                )
 
                 Text(
                     text = stringResource(id = R.string.otp_title),
@@ -114,7 +113,7 @@ fun OTPInputScreen(
                         fontSize = 22.sp,
                         color = Color.Black,
                         lineHeight = 24.sp,
-                        letterSpacing = (-0.028).em,
+//                        letterSpacing = (-0.028).em,
                         textAlign = TextAlign.Center
                     ),
                     modifier = Modifier.align(Alignment.Center),
@@ -133,7 +132,7 @@ fun OTPInputScreen(
                     fontSize = 16.sp,
                     color = Color.Black,
                     lineHeight = 20.sp,
-                    letterSpacing = (-0.028).em
+//                    letterSpacing = (-0.028).em
                 ),
                 modifier = Modifier.align(Alignment.Start)
             )
@@ -188,7 +187,7 @@ fun OTPInputScreen(
                             fontSize = 16.sp,
                             color = Color(0xFFB5DAC4),
                             lineHeight = 20.sp,
-                            letterSpacing = (-0.028).em
+//                            letterSpacing = (-0.028).em
                         ),
                     )
                 }
@@ -208,7 +207,7 @@ fun OTPInputScreen(
                             fontSize = 16.sp,
                             color = Color(0xFF32B768),
                             lineHeight = 20.sp,
-                            letterSpacing = (-0.028).em
+//                            letterSpacing = (-0.028).em
                         ),
 //                            modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
@@ -270,6 +269,32 @@ fun OTPInputScreen(
 }
 
 @Composable
+fun EnhancedBackButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(36.dp)
+            .clip(CircleShape)
+            .background(Color.Transparent)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = ripple(),
+                onClick = onClick
+            )
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_arrow_back),
+            contentDescription = "Back",
+            modifier = Modifier
+                .size(26.dp)
+                .align(Alignment.Center)
+        )
+    }
+}
+
+@Composable
 fun OTPTextField(
     otp: String,
     onOtpChange: (String) -> Unit,
@@ -286,8 +311,11 @@ fun OTPTextField(
     BasicTextField(
         value = otp,
         onValueChange = onOtpChange,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        decorationBox = { innerTextField ->
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.NumberPassword,
+            imeAction = ImeAction.Done
+        ),
+        decorationBox = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.CenterHorizontally),
                 modifier = modifier
@@ -316,7 +344,6 @@ fun OTPTextField(
                                 fontSize = 16.sp,
                                 color = Color(0xFF8F92A4),
                                 lineHeight = 20.sp,
-                                letterSpacing = (-0.028).em
                             ),
                         )
                     }
