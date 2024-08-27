@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,8 +42,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
@@ -61,7 +65,7 @@ fun OTPInputScreen(
 ) {
     var otp by remember { mutableStateOf("") }
     val authState by authViewModel.authState.collectAsState()
-    var resendCounter by remember { mutableIntStateOf(90) }
+    var resendCounter by remember { mutableIntStateOf(10) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var isVerifying by remember { mutableStateOf(false) }
@@ -78,6 +82,7 @@ fun OTPInputScreen(
 
     // Ensure keyboard is shown and focus is requested as soon as the composable is launched
     LaunchedEffect(Unit) {
+        delay(1000)
         focusRequester.requestFocus()
         keyboardController?.show()
     }
@@ -87,13 +92,12 @@ fun OTPInputScreen(
         keyboardController?.show()
     }
 
-    Scaffold { paddingValues ->
+    Scaffold {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .padding(20.dp)
-                .padding(paddingValues)
+                .padding(vertical = 20.dp, horizontal = 12.dp)
         ) {
             Box(
                 modifier = Modifier
@@ -132,7 +136,9 @@ fun OTPInputScreen(
                     color = Color.Black,
                     lineHeight = 20.sp,
                 ),
-                modifier = Modifier.align(Alignment.Start)
+                modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .align(Alignment.Start)
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -160,62 +166,58 @@ fun OTPInputScreen(
                     .focusRequester(focusRequester)
             )
 
-            Spacer(modifier = Modifier.height(56.dp))
+            Spacer(modifier = Modifier.height(36.dp)) // Push the resend section to the bottom
 
-            if (resendCounter > 0) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_refresh),
-                        contentDescription = stringResource(id = R.string.refresh)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(id = R.string.resend_code) +
-                                " " + resendCounter / 60 + ":" + String.format(
-                            "%02d",
-                            resendCounter % 60
-                        ),
-                        style = TextStyle(
-                            fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp,
-                            color = Color(0xFFB5DAC4),
-                            lineHeight = 20.sp,
-                        ),
-                    )
-                }
-            } else {
-                TextButton(
-                    onClick = {
-                        authViewModel.requestOTP()
-                        resendCounter = 90
-                    },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.resend_code_button),
-                        style = TextStyle(
-                            fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp,
-                            color = Color(0xFF32B768),
-                            lineHeight = 20.sp,
-                        ),
-                    )
-                }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                contentAlignment = Alignment.Center
 
-                if (isVerifying) {
-                    Box(
+            ) {
+                if (resendCounter > 0) {
+                    Row(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_refresh),
+                            contentDescription = stringResource(id = R.string.refresh)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = stringResource(id = R.string.resend_code) +
+                                    " " + resendCounter / 60 + ":" + String.format(
+                                "%02d",
+                                resendCounter % 60
+                            ),
+                            style = TextStyle(
+                                fontFamily = gilroyFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp,
+                                color = Color(0xFFB5DAC4),
+                                lineHeight = 20.sp,
+                            ),
+                        )
+                    }
+                } else {
+                    UnderlinedResendButton(
+                        onClick = {
+                            authViewModel.requestOTP()
+                            resendCounter = 10
+                        },
+                    )
+
+                    if (isVerifying) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
+                        }
                     }
                 }
             }
@@ -264,13 +266,37 @@ fun OTPInputScreen(
 }
 
 @Composable
+fun UnderlinedResendButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = modifier,
+        interactionSource = remember { MutableInteractionSource() },
+    ) {
+        BasicText(
+            text = stringResource(id = R.string.resend_code_button),
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = Color(0xFF32B768),
+                lineHeight = 20.sp,
+                textDecoration = TextDecoration.Underline
+            )
+        )
+    }
+}
+
+@Composable
 fun EnhancedBackButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
-            .size(64.dp)
+            .size(44.dp)
             .clip(CircleShape)
             .background(Color.Transparent)
             .clickable(
@@ -283,6 +309,7 @@ fun EnhancedBackButton(
             painter = painterResource(id = R.drawable.ic_arrow_back),
             contentDescription = "Back",
             modifier = Modifier
+                .size(32.dp)
                 .align(Alignment.Center)
         )
     }
@@ -345,4 +372,10 @@ fun OTPTextField(
             }
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomNavigationBarPreview() {
+    EnhancedBackButton(onClick = { /*TODO*/ })
 }

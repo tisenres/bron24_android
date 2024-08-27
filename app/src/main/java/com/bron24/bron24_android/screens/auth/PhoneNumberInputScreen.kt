@@ -99,7 +99,10 @@ fun PhoneNumberInputScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .height(74.dp)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
