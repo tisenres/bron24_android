@@ -8,14 +8,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 
-// Set of Material typography styles to start with
-
 val gilroyFontFamily = FontFamily(
-    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
-    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold),
-    Font(resId = R.font.gilroy_heavy, weight = FontWeight.Black),
+    Font(resId = R.font.gilroy_thin, weight = FontWeight.Thin),
+    Font(resId = R.font.gilroy_thin_italic, weight = FontWeight.Thin),
+    Font(resId = R.font.gilroy_ultra_light, weight = FontWeight.ExtraLight),
+    Font(resId = R.font.gilroy_ultra_light_italic, weight = FontWeight.ExtraLight),
     Font(resId = R.font.gilroy_light, weight = FontWeight.Light),
-    Font(resId = R.font.gilroy_medium, weight = FontWeight.Medium)
+    Font(resId = R.font.gilroy_light_italic, weight = FontWeight.Light),
+    Font(resId = R.font.gilroy_regular, weight = FontWeight.Normal),
+    Font(resId = R.font.gilroy_regular_italic, weight = FontWeight.Normal),
+    Font(resId = R.font.gilroy_medium, weight = FontWeight.Medium),
+    Font(resId = R.font.gilroy_medium_italic, weight = FontWeight.Medium),
+    Font(resId = R.font.gilroy_semi_bold, weight = FontWeight.SemiBold),
+    Font(resId = R.font.gilroy_semi_bold_italic, weight = FontWeight.SemiBold),
+    Font(resId = R.font.gilroy_bold, weight = FontWeight.Bold),
+    Font(resId = R.font.gilroy_bold_italic, weight = FontWeight.Bold),
+    Font(resId = R.font.gilroy_extra_bold, weight = FontWeight.ExtraBold),
+    Font(resId = R.font.gilroy_extra_bold_italic, weight = FontWeight.ExtraBold),
+    Font(resId = R.font.gilroy_black, weight = FontWeight.Black),
+    Font(resId = R.font.gilroy_black_italic, weight = FontWeight.Black),
 )
 
 val interFontFamily = FontFamily(

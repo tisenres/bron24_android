@@ -402,19 +402,25 @@ fun ImageOverlay(
                 .fillMaxWidth()
                 .padding(top = 10.dp, start = 10.dp, end = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            ClickableIconButton(
-                onClick = onBackClick,
-                icon = Icons.Default.ArrowBack,
-                contentDescription = "Back"
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Box(modifier = Modifier.weight(1f)) {
+                ClickableIconButton(
+                    onClick = onBackClick,
+                    icon = Icons.Default.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.End
+            ) {
                 ClickableIconButton(
                     onClick = onShareClick,
                     icon = Icons.Default.Share,
                     contentDescription = "Share"
                 )
+                Spacer(modifier = Modifier.width(12.dp))
                 AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
             }
         }
@@ -454,12 +460,19 @@ fun ClickableIconButton(
     contentDescription: String,
     tint: Color = Color.Black
 ) {
+
+    val interactionSource = remember { MutableInteractionSource() }
+
     Box(
         modifier = Modifier
             .size(44.dp)
             .clip(CircleShape)
             .background(Color(0xFFFFFFFF))
-            .clickable(onClick = onClick) // Corrected this line
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = onClick
+            )
     ) {
         Image(
             imageVector = icon,

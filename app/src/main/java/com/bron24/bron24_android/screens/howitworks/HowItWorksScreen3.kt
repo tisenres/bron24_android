@@ -39,7 +39,7 @@ fun HowItWorksScreen3() {
             contentScale = ContentScale.FillWidth
         )
         Text(
-            text = stringResource(id = R.string.nearby_stadiums),
+            text = stringResource(id = R.string.confirm_and_pay),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Bold,
@@ -48,20 +48,19 @@ fun HowItWorksScreen3() {
                 lineHeight = 29.4.sp,
             ),
         )
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = stringResource(id = R.string.nearby_stadiums_desc),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
+                fontSize = 12.sp,
                 color = Color.Black,
-                lineHeight = 16.8.sp,
+                lineHeight = 14.sp,
                 textAlign = TextAlign.Center,
-                letterSpacing = (-0.028).em
             ),
             modifier = Modifier
                 .width(331.dp)
-                .padding(top = 16.dp)
         )
     }
 }

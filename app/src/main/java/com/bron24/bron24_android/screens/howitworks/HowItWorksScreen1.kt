@@ -101,14 +101,13 @@ fun HowItWorksScreen1() {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
+                fontSize = 12.sp,
                 color = Color.Black,
-                lineHeight = 16.8.sp,
+                lineHeight = 18.sp,
                 textAlign = TextAlign.Center,
-                letterSpacing = (-0.028).em
             ),
             modifier = Modifier
-                .width(290.dp)
+                .width(284.dp)
         )
     }
 }

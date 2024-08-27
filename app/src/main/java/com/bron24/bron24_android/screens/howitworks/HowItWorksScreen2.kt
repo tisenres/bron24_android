@@ -48,20 +48,19 @@ fun HowItWorksScreen2() {
                 lineHeight = 29.4.sp
             ),
         )
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = stringResource(id = R.string.select_stadium_desc),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
+                fontSize = 12.sp,
                 color = Color.Black,
-                lineHeight = 16.8.sp,
+                lineHeight = 14.sp,
                 textAlign = TextAlign.Center,
-                letterSpacing = (-0.028).em
             ),
             modifier = Modifier
                 .width(357.dp)
-                .padding(top = 16.dp)
         )
     }
 }
