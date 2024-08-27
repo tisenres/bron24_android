@@ -1,7 +1,10 @@
 package com.bron24.bron24_android.screens.auth
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -12,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -294,6 +298,10 @@ fun ConfirmButton(
     modifier: Modifier = Modifier
 ) {
 
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
+
     Button(
         onClick = {
             onClick()
@@ -304,9 +312,11 @@ fun ConfirmButton(
         ),
         enabled = isEnabled,
         shape = RoundedCornerShape(10.dp),
+        interactionSource = interactionSource,
         modifier = modifier
             .fillMaxWidth()
-            .height(47.dp)
+            .height(52.dp)
+            .scale(scale)
     ) {
         Text(
             text = stringResource(id = R.string.continue_text),
@@ -315,7 +325,6 @@ fun ConfirmButton(
             fontFamily = gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
             lineHeight = 32.sp,
-//            letterSpacing = (-0.028).em
         )
     }
 }
@@ -351,7 +360,6 @@ fun TermsAndConditionsText() {
             fontSize = 14.sp,
             color = Color.Black,
             lineHeight = 16.8.sp,
-//            letterSpacing = (-0.028).em
         ),
         onClick = { offset ->
             annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)
@@ -366,7 +374,4 @@ fun TermsAndConditionsText() {
 @Preview(showBackground = true)
 @Composable
 private fun PhoneNumberInputScreenPreview() {
-//    PhoneNumberInputScreen(authViewModel = AuthViewModel()) {
-//
-//    }
 }

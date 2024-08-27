@@ -98,7 +98,7 @@ fun OTPInputScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(26.dp),
+                    .height(64.dp),
             ) {
                 EnhancedBackButton(
                     onClick = onBackClick,
@@ -113,7 +113,6 @@ fun OTPInputScreen(
                         fontSize = 22.sp,
                         color = Color.Black,
                         lineHeight = 24.sp,
-//                        letterSpacing = (-0.028).em,
                         textAlign = TextAlign.Center
                     ),
                     modifier = Modifier.align(Alignment.Center),
@@ -132,7 +131,6 @@ fun OTPInputScreen(
                     fontSize = 16.sp,
                     color = Color.Black,
                     lineHeight = 20.sp,
-//                    letterSpacing = (-0.028).em
                 ),
                 modifier = Modifier.align(Alignment.Start)
             )
@@ -187,7 +185,6 @@ fun OTPInputScreen(
                             fontSize = 16.sp,
                             color = Color(0xFFB5DAC4),
                             lineHeight = 20.sp,
-//                            letterSpacing = (-0.028).em
                         ),
                     )
                 }
@@ -207,9 +204,7 @@ fun OTPInputScreen(
                             fontSize = 16.sp,
                             color = Color(0xFF32B768),
                             lineHeight = 20.sp,
-//                            letterSpacing = (-0.028).em
                         ),
-//                            modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
 
@@ -275,7 +270,7 @@ fun EnhancedBackButton(
 ) {
     Box(
         modifier = modifier
-            .size(36.dp)
+            .size(64.dp)
             .clip(CircleShape)
             .background(Color.Transparent)
             .clickable(
@@ -288,7 +283,6 @@ fun EnhancedBackButton(
             painter = painterResource(id = R.drawable.ic_arrow_back),
             contentDescription = "Back",
             modifier = Modifier
-                .size(26.dp)
                 .align(Alignment.Center)
         )
     }

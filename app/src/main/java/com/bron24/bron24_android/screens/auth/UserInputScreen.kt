@@ -1,6 +1,9 @@
 package com.bron24.bron24_android.screens.auth
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -10,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,7 +61,6 @@ fun UserDataInputScreen(
                 fontSize = 16.sp,
                 color = Color.Black,
                 lineHeight = 20.sp,
-//                letterSpacing = (-0.028).em
             ),
             modifier = Modifier.align(Alignment.Start)
         )
@@ -147,7 +150,6 @@ fun TopBar() {
                 fontSize = 22.sp,
                 color = Color.Black,
                 lineHeight = 24.sp,
-//                letterSpacing = (-0.028).em,
                 textAlign = TextAlign.Center
             ),
             modifier = Modifier.align(Alignment.Center)
@@ -199,7 +201,6 @@ fun UserDataField(
                     fontSize = 16.sp,
                     color = Color.Black,
                     lineHeight = 20.sp,
-//                    letterSpacing = (-0.028).em
                 ),
                 decorationBox = { innerTextField ->
                     if (fieldName.isEmpty()) {
@@ -211,7 +212,6 @@ fun UserDataField(
                                 fontSize = 16.sp,
                                 color = Color(0xFFB8BDCA),
                                 lineHeight = 20.sp,
-//                                letterSpacing = (-0.028).em
                             ),
                             modifier = Modifier.align(Alignment.CenterVertically)
                         )
@@ -236,6 +236,9 @@ fun ConfirmButtonUser(
     modifier: Modifier = Modifier
 ) {
     val authState by authViewModel.authState.collectAsState()
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
 
     Button(
         onClick = {
@@ -247,10 +250,12 @@ fun ConfirmButtonUser(
         ),
         enabled = isEnabled,
         shape = RoundedCornerShape(10.dp),
+        interactionSource = interactionSource,
         modifier = modifier
             .fillMaxWidth()
+            .height(52.dp)
             .padding(bottom = 20.dp)
-            .height(47.dp)
+            .scale(scale)
     ) {
         Text(
             text = stringResource(id = R.string.continue_text),
@@ -259,7 +264,6 @@ fun ConfirmButtonUser(
             fontFamily = gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
             lineHeight = 32.sp,
-//            letterSpacing = (-0.028).em
         )
     }
 
