@@ -18,8 +18,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -48,7 +46,7 @@ object NetworkModule {
     @Named("BaseRetrofit")
     fun provideBaseRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://cuddly-becoming-loon.ngrok-free.app/")
+            .baseUrl("http://109.123.241.109:46343/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -72,7 +70,7 @@ object NetworkModule {
         errorHandlingCallAdapterFactory: ErrorHandlingCallAdapterFactory
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://cuddly-becoming-loon.ngrok-free.app/")
+            .baseUrl("http://109.123.241.109:46343/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(errorHandlingCallAdapterFactory)

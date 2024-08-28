@@ -63,7 +63,7 @@ fun OTPInputScreen(
 ) {
     var otp by remember { mutableStateOf("") }
     val authState by authViewModel.authState.collectAsState()
-    var resendCounter by remember { mutableIntStateOf(10) }
+    var resendCounter by remember { mutableIntStateOf(90) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var isVerifying by remember { mutableStateOf(false) }
@@ -200,7 +200,7 @@ fun OTPInputScreen(
                     UnderlinedResendButton(
                         onClick = {
                             authViewModel.requestOTP()
-                            resendCounter = 10
+                            resendCounter = 90
                         },
                     )
 
