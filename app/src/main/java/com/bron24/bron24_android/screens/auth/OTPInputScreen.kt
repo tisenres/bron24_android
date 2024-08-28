@@ -86,12 +86,13 @@ fun OTPInputScreen(
     }
 
 
-    Scaffold {
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(vertical = 20.dp, horizontal = 12.dp)
+                .padding(paddingValues)
         ) {
             Box(
                 modifier = Modifier
