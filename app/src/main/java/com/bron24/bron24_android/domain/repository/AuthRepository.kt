@@ -9,7 +9,8 @@ import com.bron24.bron24_android.domain.entity.user.User
 interface AuthRepository {
     suspend fun requestOTP(otpRequest: OTPRequest): PhoneNumberResponse
     suspend fun verifyOTP(otpRequest: OTPRequest): OTPCodeResponse
-    suspend fun authenticateUser(user: User): AuthResponse
+    suspend fun signUpUser(user: User): AuthResponse
+    suspend fun loginUser(user: User): AuthResponse
     suspend fun refreshAndSaveTokens(refreshToken: String): Boolean
-//    suspend fun refreshAccessToken(refreshToken: String): AuthResponse
+    fun handleRefreshFailure()
 }

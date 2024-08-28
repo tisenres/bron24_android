@@ -2,13 +2,13 @@ package com.bron24.bron24_android.screens.howitworks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,9 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
 
@@ -28,7 +26,7 @@ import kotlinx.coroutines.launch
 fun HowItWorksPager(
     onNavigateToAuthScreens: () -> Unit
 ) {
-    val pagerState = rememberLazyListState()
+    val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -36,33 +34,29 @@ fun HowItWorksPager(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        LazyRow(
-            modifier = Modifier.weight(1f),
+        HorizontalPager(
             state = pagerState,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            itemsIndexed(listOf(0, 1)) { index, _ ->
-                Box(modifier = Modifier.fillParentMaxSize()) {
-                    when (index) {
-                        0 -> HowItWorksScreen1()
-                        1 -> HowItWorksScreen2(onFinishClick = {
-                            onNavigateToAuthScreens()
-                        })
-                    }
+            modifier = Modifier.weight(1f)
+        ) { page ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                when (page) {
+                    0 -> HowItWorksScreen1()
+                    1 -> HowItWorksScreen2()
+                    2 -> HowItWorksScreen3()
                 }
             }
         }
 
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = 10.dp)
         ) {
-            TextButton(onClick = {
-                onNavigateToAuthScreens()
-            }) {
+            // Skip button
+            TextButton(
+                onClick = { onNavigateToAuthScreens() },
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
                 Text(
                     text = stringResource(id = R.string.skip),
                     style = TextStyle(
@@ -72,41 +66,31 @@ fun HowItWorksPager(
                         color = Color.Black,
                         lineHeight = 17.15.sp,
                         textAlign = TextAlign.Center,
-                        letterSpacing = (-0.78).sp
                     )
                 )
             }
 
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                for (i in 0..1) {
-                    Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .padding(10.dp)
-                            .background(
-                                if (pagerState.firstVisibleItemIndex == i) Color(0xFF32B768) else Color(
-                                    0xFFD9D9D9
-                                ),
-                                shape = CircleShape
-                            )
-                    )
-                }
-            }
+            // Centered Pager Indicator
+            PagerIndicator(
+                pagerState = pagerState,
+                modifier = Modifier.align(Alignment.Center)
+            )
 
-            TextButton(onClick = {
-                if (pagerState.firstVisibleItemIndex == 0) {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToItem(1)
+            // Next button
+            TextButton(
+                onClick = {
+                    if (pagerState.currentPage < 2) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    } else {
+                        onNavigateToAuthScreens()
                     }
-                } else {
-                    onNavigateToAuthScreens()
-                }
-            }) {
+                },
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
                 Text(
-                    text = stringResource(id = R.string.next),
+                    text = if (pagerState.currentPage == 2) stringResource(id = R.string.get_started) else stringResource(id = R.string.next),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
@@ -114,20 +98,28 @@ fun HowItWorksPager(
                         color = Color(0xFF32B768),
                         lineHeight = 17.15.sp,
                         textAlign = TextAlign.Center,
-                        letterSpacing = (-0.78).sp
                     )
                 )
             }
         }
+    }
+}
 
-        LaunchedEffect(pagerState) {
-            snapshotFlow { pagerState.isScrollInProgress }.collect { isScrolling ->
-                if (!isScrolling) {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToItem(pagerState.firstVisibleItemIndex)
-                    }
-                }
-            }
+@Composable
+fun PagerIndicator(pagerState: PagerState, modifier: Modifier = Modifier) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        repeat(pagerState.pageCount) { iteration ->
+            val color = if (pagerState.currentPage == iteration) Color(0xFF32B768) else Color(0xFFD9D9D9)
+            Box(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .size(10.dp)
+                    .background(color = color, shape = CircleShape)
+            )
         }
     }
 }

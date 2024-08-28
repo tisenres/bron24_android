@@ -1,12 +1,11 @@
 package com.bron24.bron24_android.screens.map
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.user.Location
-import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
+import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +25,9 @@ class VenueMapViewModel @Inject constructor(
     private val _locationPermissionState = MutableStateFlow(LocationPermissionState.DENIED)
     val locationPermissionState: StateFlow<LocationPermissionState> = _locationPermissionState
 
+    private val _venueDetails = MutableStateFlow<VenueDetails?>(null)
+    val venueDetails: StateFlow<VenueDetails?> = _venueDetails
+
     init {
         fetchVenuesForMap()
         checkLocationPermission()
@@ -37,17 +39,19 @@ class VenueMapViewModel @Inject constructor(
 
     private fun fetchVenuesForMap() {
         viewModelScope.launch {
-            val venuesList = listOf(
-                VenueCoordinates(venueName = "Test1", latitude = "41.331015", longitude = "69.284542"),
-                VenueCoordinates(venueName = "Test2", latitude = "41.298642", longitude = "69.228816"),
-                VenueCoordinates(venueName = "Test3", latitude = "41.287311", longitude = "69.245017"),
-                VenueCoordinates(venueName = "Test4", latitude = "41.300475", longitude = "69.286420"),
-            )
+            val venuesList = model.getVenuesCoordinatesUseCase()
             _venues.value = venuesList
         }
     }
 
-    fun updateCurrentLocation() {
+    fun fetchVenueDetails(venueId: Int) {
+        viewModelScope.launch {
+            val details = model.getVenueDetails(venueId)
+            _venueDetails.value = details
+        }
+    }
+
+    private fun updateCurrentLocation() {
         viewModelScope.launch {
             model.getCurrentLocation().collect { location ->
                 _currentLocation.value = location
@@ -64,5 +68,24 @@ class VenueMapViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun centerOnCoordinates(latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            _currentLocation.value = Location(latitude, longitude)
+        }
+    }
+
+    fun zoomIn() {
+
+
+    }
+
+    fun zoomOut() {
+
+
+    }
+
+    fun centerOnCurrentLocation(currentLocation: Location?) {
     }
 }

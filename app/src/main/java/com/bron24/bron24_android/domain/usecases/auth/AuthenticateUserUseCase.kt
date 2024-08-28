@@ -10,8 +10,13 @@ class AuthenticateUserUseCase @Inject constructor(
     private val authRepository: AuthRepository,
     private val tokenRepository: TokenRepository
 ) {
-    suspend fun execute(user: User): AuthResponse {
-        val response = authRepository.authenticateUser(user)
+
+    suspend fun execute(user: User, userExists: Boolean): AuthResponse {
+        val response = if (userExists) {
+            authRepository.loginUser(user)
+        } else {
+            authRepository.signUpUser(user)
+        }
         if (response.accessToken.isNotBlank() && response.refreshToken.isNotBlank()) {
             tokenRepository.saveTokens(response.accessToken, response.refreshToken)
         }

@@ -1,10 +1,7 @@
 package com.bron24.bron24_android.screens.auth
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
-import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,7 +61,7 @@ class AuthViewModel @Inject constructor(
                     _phoneNumber.value.replace("+", ""),
                     _otp.value
                 )
-                _authState.value = AuthState.OTPVerified(response.status, response.userExists)
+                _authState.value = AuthState.OTPVerified(response.result, response.userExists)
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
             }

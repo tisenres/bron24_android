@@ -1,24 +1,21 @@
 package com.bron24.bron24_android.screens.searchfilter
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -28,18 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 
 @Composable
 fun SearchView(modifier: Modifier = Modifier) {
-
-    // Use remember to cache the SharedPreferences and avoid recomputing it
-    val preferences: SharedPreferences =
-        LocalContext.current.getSharedPreferences("settings", Context.MODE_PRIVATE)
-
 
     Column(
         modifier = modifier
@@ -53,7 +46,7 @@ fun SearchView(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ProfileRow()
-        SearchRow(preferences)
+        SearchRow()
     }
 }
 
@@ -85,7 +78,7 @@ fun ProfileRow() {
                         fontSize = 18.sp,
                         color = Color.White,
                         lineHeight = 22.sp,
-                        letterSpacing = (-0.028).em
+//                        letterSpacing = (-0.028).em
                     )
                 )
             }
@@ -94,7 +87,7 @@ fun ProfileRow() {
 }
 
 @Composable
-fun SearchRow(preferences: SharedPreferences) {
+fun SearchRow() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -112,16 +105,19 @@ fun SearchRow(preferences: SharedPreferences) {
                     shape = RoundedCornerShape(5.dp)
                 )
                 .height(40.dp)
+                .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
+                .clickable {
+                    // Handle click for the search row
+                    Log.d("SearchRow", "Search row clicked")
+                }
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            // Cache the image resource
             Image(
                 painter = rememberAsyncImagePainter(model = R.drawable.ic_search_green),
                 contentDescription = "search_icon",
                 modifier = Modifier.size(15.dp),
             )
             Spacer(modifier = Modifier.width(9.dp))
-            // Cache the string resource
             val searchHint = stringResource(id = R.string.search_stadium)
             Text(
                 text = searchHint,
@@ -138,32 +134,17 @@ fun SearchRow(preferences: SharedPreferences) {
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .clip(RoundedCornerShape(5.dp))
-                .background(color = Color.White),
+                .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
+                .background(color = Color.White)
+                .clickable {},
             contentAlignment = Alignment.Center
         ) {
-            IconButton(
-                onClick = {
-                    // Fetch shared preferences data once
-                    val authToken = preferences.getString("auth_token", null)
-                    val refreshToken = preferences.getString("refresh_token", null)
-
-                    Log.d("SDHJSDJHHJDJHSDJH", "Access $authToken Refresh $refreshToken")
-
-                    preferences.edit().remove("auth_token").apply()
-
-                    Log.d("SDHJSDJHHJDJHSDJH", "Access $authToken Refresh $refreshToken")
-                },
-                modifier = Modifier.size(24.dp)
-            ) {
-                // Cache the image resource
-                Image(
-                    painter = painterResource(id = R.drawable.ic_filter),
-                    contentDescription = "filter_icon",
-                    colorFilter = ColorFilter.tint(Color(0xFF32B768)),
-                    modifier = Modifier.size(18.dp)
-                )
-            }
+            Image(
+                painter = painterResource(id = R.drawable.ic_filter),
+                contentDescription = "filter_icon",
+                colorFilter = ColorFilter.tint(Color(0xFF32B768)),
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }

@@ -13,7 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,11 +28,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.bron24.bron24_android.screens.main.components.BottomNavigationBar
+import com.bron24.bron24_android.helper.util.presentation.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.home.HomePage
-import com.bron24.bron24_android.screens.main.components.SplashScreen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.screens.map.GoogleMapScreen
+import com.bron24.bron24_android.screens.map.YandexMapScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 
@@ -107,6 +105,19 @@ fun MainNavHost(
             onDestinationChanged(Screen.MapPage.route)
             MapPage()
         }
+        composable(
+            route = Screen.MapPageWithCoordinates.route,
+            arguments = listOf(
+                navArgument("latitude") { type = NavType.FloatType },
+                navArgument("longitude") { type = NavType.FloatType }
+            )
+        ) { backStackEntry ->
+            onDestinationChanged(Screen.MapPageWithCoordinates.route)
+            val latitude = backStackEntry.arguments?.getFloat("latitude") ?: 0f
+            val longitude = backStackEntry.arguments?.getFloat("longitude") ?: 0f
+            MapPage(latitude = latitude.toDouble(), longitude = longitude.toDouble())
+        }
+
         composable(Screen.OrdersPage.route) {
             onDestinationChanged(Screen.OrdersPage.route)
             OrdersPage()
@@ -166,7 +177,7 @@ fun ProfilePage() {
                 fontSize = 24.sp,
                 color = Color(0xFF32B768),
                 lineHeight = 30.sp,
-                letterSpacing = (-0.028).em
+//                letterSpacing = (-0.028).em
             ),
             modifier = Modifier.align(
                 Alignment.Center
@@ -177,10 +188,9 @@ fun ProfilePage() {
 
 
 @Composable
-fun MapPage() {
-    GoogleMapScreen()
+fun MapPage(latitude: Double? = null, longitude: Double? = null) {
+    YandexMapScreen(initialLatitude = latitude, initialLongitude = longitude)
 }
-
 @Composable
 fun OrdersPage() {
     Box(
@@ -194,7 +204,7 @@ fun OrdersPage() {
                 fontSize = 24.sp,
                 color = Color(0xFF32B768),
                 lineHeight = 30.sp,
-                letterSpacing = (-0.028).em
+//                letterSpacing = (-0.028).em
             ),
             modifier = Modifier.align(
                 Alignment.Center

@@ -12,6 +12,7 @@ class TokenRepositoryImpl @Inject constructor(
 
     private var cachedAccessToken: String? = null
     private var cachedRefreshToken: String? = null
+    private var refreshFailed: Boolean = false
 
     init {
         loadTokensFromPreferences()
@@ -26,6 +27,7 @@ class TokenRepositoryImpl @Inject constructor(
         cachedAccessToken = accessToken
         cachedRefreshToken = refreshToken
         appPreference.saveTokens(accessToken, refreshToken)
+        refreshFailed = false  // Reset the flag when new tokens are saved
     }
 
     override fun getAccessToken(): String? {
@@ -40,5 +42,14 @@ class TokenRepositoryImpl @Inject constructor(
         cachedAccessToken = null
         cachedRefreshToken = null
         appPreference.clearTokens()
+        refreshFailed = false  // Reset the flag when tokens are cleared
+    }
+
+    override fun setRefreshFailed(failed: Boolean) {
+        refreshFailed = failed
+    }
+
+    override fun hasRefreshFailed(): Boolean {
+        return refreshFailed
     }
 }

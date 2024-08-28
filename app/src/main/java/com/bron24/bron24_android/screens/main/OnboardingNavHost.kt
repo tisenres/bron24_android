@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.main
 
-import UserDataInputScreen
 import androidx.compose.animation.*
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -15,9 +14,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.domain.entity.enums.OnboardingScreen
 import com.bron24.bron24_android.screens.auth.AuthViewModel
-import com.bron24.bron24_android.screens.auth.MockAuthViewModel
 import com.bron24.bron24_android.screens.auth.OTPInputScreen
 import com.bron24.bron24_android.screens.auth.PhoneNumberInputScreen
+import com.bron24.bron24_android.screens.auth.UserDataInputScreen
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
 import com.bron24.bron24_android.screens.language.LanguageSelectionScreen
 import com.bron24.bron24_android.screens.location.LocationRequestScreen
@@ -160,22 +159,5 @@ fun OnboardingNavHost(
                 MainAppScaffold()
             }
         }
-    }
-}
-
-@Composable
-fun AnimatedScreenTransition(content: @Composable () -> Unit) {
-    var visible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        visible = true
-    }
-
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(animationSpec = tween(400)),
-        exit = fadeOut(animationSpec = tween(400))
-    ) {
-        content()
     }
 }

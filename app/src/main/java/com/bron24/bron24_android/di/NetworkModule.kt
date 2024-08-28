@@ -2,7 +2,12 @@ package com.bron24.bron24_android.di
 
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
-import com.bron24.bron24_android.data.network.interceptors.AuthInterceptor
+import com.bron24.bron24_android.data.network.interceptors.ErrorHandler
+import com.bron24.bron24_android.data.network.interceptors.HttpInterceptor
+import com.bron24.bron24_android.data.network.interceptors.ErrorHandlingCallAdapterFactory
+import com.bron24.bron24_android.domain.repository.AuthRepository
+import com.bron24.bron24_android.domain.repository.TokenRepository
+import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,7 +16,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -19,7 +27,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    fun provideErrorHandler(): ErrorHandler {
+        return ErrorHandler()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(authInterceptor: HttpInterceptor): OkHttpClient {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
@@ -31,10 +45,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    @Named("BaseRetrofit")
+    fun provideBaseRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://cuddly-becoming-loon.ngrok-free.app/")
-//            .baseUrl("http://10.0.2.2:8000/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -42,13 +56,38 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideVenueApiService(retrofit: Retrofit): VenueApiService {
+    fun provideErrorHandlingCallAdapterFactory(
+        authRepository: Lazy<AuthRepository>,
+        tokenRepository: TokenRepository,
+        errorHandler: ErrorHandler
+    ): ErrorHandlingCallAdapterFactory {
+        return ErrorHandlingCallAdapterFactory(authRepository, tokenRepository, errorHandler)
+    }
+
+    @Provides
+    @Singleton
+    @Named("ErrorHandlingRetrofit")
+    fun provideErrorHandlingRetrofit(
+        okHttpClient: OkHttpClient,
+        errorHandlingCallAdapterFactory: ErrorHandlingCallAdapterFactory
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://cuddly-becoming-loon.ngrok-free.app/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(errorHandlingCallAdapterFactory)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideVenueApiService(@Named("ErrorHandlingRetrofit") retrofit: Retrofit): VenueApiService {
         return retrofit.create(VenueApiService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideOTPApiService(retrofit: Retrofit): AuthApiService {
+    fun provideAuthApiService(@Named("BaseRetrofit") retrofit: Retrofit): AuthApiService {
         return retrofit.create(AuthApiService::class.java)
     }
 }

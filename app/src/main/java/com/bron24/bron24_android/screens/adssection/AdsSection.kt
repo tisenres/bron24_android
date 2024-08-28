@@ -1,8 +1,8 @@
 package com.bron24.bron24_android.screens.adssection
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -22,7 +22,6 @@ import coil.compose.AsyncImage
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AdsSection(modifier: Modifier = Modifier) {
     val images = remember {
@@ -51,16 +50,25 @@ fun AdsSection(modifier: Modifier = Modifier) {
                     color = Color.Black
                 )
             )
-            Text(
-                text = stringResource(id = R.string.see_all),
-                style = androidx.compose.ui.text.TextStyle(
-                    fontFamily = interFontFamily,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight(600),
-                    fontSize = 14.sp,
-                    lineHeight = 19.sp,
-                    color = Color(0xFF32B768)
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp)) // Rounded corners for the box
+                    .background(Color.Gray.copy(alpha = 0.1f)) // Transparent gray background
+                    .clickable {
+                    }
+                    .padding(horizontal = 10.dp, vertical = 6.dp) // Padding to give some space around the text
+            ) {
+                Text(
+                    text = stringResource(id = R.string.see_all),
+                    style = androidx.compose.ui.text.TextStyle(
+                        fontFamily = interFontFamily,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight(600),
+                        fontSize = 14.sp,
+                        lineHeight = 19.sp,
+                        color = Color(0xFF32B768) // Accent color for the text
+                    )
                 )
-            )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

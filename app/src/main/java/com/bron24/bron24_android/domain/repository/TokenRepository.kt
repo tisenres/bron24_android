@@ -5,4 +5,6 @@ interface TokenRepository {
     fun getAccessToken(): String?
     fun getRefreshToken(): String?
     fun clearTokens()
+    fun setRefreshFailed(failed: Boolean)
+    fun hasRefreshFailed(): Boolean
 }

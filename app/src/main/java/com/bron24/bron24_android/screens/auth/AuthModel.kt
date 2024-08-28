@@ -8,23 +8,41 @@ import com.bron24.bron24_android.domain.usecases.auth.*
 import javax.inject.Inject
 
 class AuthModel @Inject constructor(
-    private val authFlowUseCase: AuthenticateFlowUseCase,
+    private val requestOTPUseCase: RequestOTPUseCase,
+    private val verifyOTPUseCase: VerifyOTPUseCase,
+    private val authenticateUserUseCase: AuthenticateUserUseCase
 ) {
+
+    private var userExists: Boolean = false
+
     suspend fun requestOTP(phoneNumber: String): PhoneNumberResponse {
-        return authFlowUseCase.requestOTP(phoneNumber)
+        return requestOTPUseCase.execute(phoneNumber)
     }
 
     suspend fun verifyOTP(phoneNumber: String, otp: Int): OTPCodeResponse {
-        return authFlowUseCase.verifyOTP(phoneNumber, otp)
+        val response = verifyOTPUseCase.execute(phoneNumber, otp)
+        userExists = response.userExists
+        if (userExists) {
+            authenticateUserUseCase.execute(
+                User(
+                    firstName = "",
+                    lastName = "",
+                    phoneNumber = phoneNumber,
+                ),
+                userExists
+            )
+        }
+        return response
     }
 
     suspend fun authUser(phoneNumber: String, firstName: String, lastName: String): AuthResponse {
-        return authFlowUseCase.authenticateUser(
+        return authenticateUserUseCase.execute(
             User(
                 firstName = firstName,
                 lastName = lastName,
                 phoneNumber = phoneNumber,
-            )
+            ),
+            userExists
         )
     }
 }

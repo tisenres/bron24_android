@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
@@ -23,10 +24,8 @@ fun HomePage(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            // Simply displaying the SearchView without any animations
             SearchView(modifier = Modifier.fillMaxWidth())
 
-            // Displaying the VenueListingView
             VenueListingView(
                 navController = navController,
                 listState = listState

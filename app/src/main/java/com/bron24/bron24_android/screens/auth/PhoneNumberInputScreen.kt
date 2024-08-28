@@ -1,7 +1,10 @@
 package com.bron24.bron24_android.screens.auth
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -12,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -32,8 +36,8 @@ import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
-import com.bron24.bron24_android.screens.main.components.ToastManager
-import com.bron24.bron24_android.screens.main.components.ToastType
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -41,89 +45,98 @@ fun PhoneNumberInputScreen(
     authViewModel: AuthViewModel,
     onNavigateToOTPScreen: (String) -> Unit
 ) {
-    ToastManager { showToast ->
-        val authState by authViewModel.authState.collectAsState()
-        val phoneNumber by authViewModel.phoneNumber.collectAsState()
-        val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
-        val focusRequester = remember { FocusRequester() }
-        var isLoading by remember { mutableStateOf(false) }
+    val authState by authViewModel.authState.collectAsState()
+    val phoneNumber by authViewModel.phoneNumber.collectAsState()
+    val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
+    val focusRequester = remember { FocusRequester() }
+    var isLoading by remember { mutableStateOf(false) }
 
-        LaunchedEffect(authState) {
-            when (authState) {
-                is AuthState.Loading -> {
-                    isLoading = true
-                }
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Loading -> {
+                isLoading = true
+            }
 
-                is AuthState.OTPRequested -> {
-                    isLoading = false
-                    val status = (authState as AuthState.OTPRequested).status
-                    when (status) {
-                        PhoneNumberResponseStatusCode.SUCCESS -> {
-                            onNavigateToOTPScreen(phoneNumber)
-                        }
+            is AuthState.OTPRequested -> {
+                isLoading = false
+                val status = (authState as AuthState.OTPRequested).status
+                when (status) {
+                    PhoneNumberResponseStatusCode.SUCCESS -> {
+                        onNavigateToOTPScreen(phoneNumber)
+                    }
 
-                        PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
-                            onNavigateToOTPScreen(phoneNumber)
-                        }
+                    PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
+                        onNavigateToOTPScreen(phoneNumber)
+                    }
 
-                        else -> showToast(
-                            "Failed to request OTP. Please try again later.",
+                    PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER -> {
+                        ToastManager.showToast(
+                            "Incorrect phone number. Please try again.",
                             ToastType.ERROR
                         )
                     }
-                }
 
-                is AuthState.Error -> {
-                    isLoading = false
-                    showToast(
-                        "Error: " + (authState as AuthState.Error).message,
+                    else -> ToastManager.showToast(
+                        "Failed to request OTP. Please try again later.",
                         ToastType.ERROR
                     )
                 }
+            }
 
-                else -> {
-                    isLoading = false
-                    // Handle other states if necessary
-                }
+            is AuthState.Error -> {
+                isLoading = false
+                ToastManager.showToast(
+                    "Error: " + (authState as AuthState.Error).message,
+                    ToastType.ERROR
+                )
+
+            }
+
+            else -> {
+                isLoading = false
+                // Handle other states if necessary
             }
         }
+    }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .height(74.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(horizontal = 20.dp)
+        ) {
+            Spacer(modifier = Modifier.height(36.dp))
+            Logo()
+            Spacer(modifier = Modifier.height(36.dp))
+            CustomPhoneNumberField(
+                value = phoneNumber,
+                onValueChange = { newValue ->
+                    if (newValue.startsWith("+998")) {
+                        authViewModel.updatePhoneNumber(newValue)
+                    }
+                },
+                focusRequester = focusRequester,
+                authViewModel = authViewModel
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            BottomSection(
+                authViewModel,
+                isPhoneNumberValid,
+            )
+        }
+
+        if (isLoading) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
-                    .padding(horizontal = 20.dp)
+                    .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
+                contentAlignment = Alignment.Center
             ) {
-                Spacer(modifier = Modifier.height(36.dp))
-                Logo()
-                Spacer(modifier = Modifier.height(36.dp))
-                CustomPhoneNumberField(
-                    value = phoneNumber,
-                    onValueChange = { newValue ->
-                        if (newValue.startsWith("+998")) {
-                            authViewModel.updatePhoneNumber(newValue)
-                        }
-                    },
-                    focusRequester = focusRequester,
-                    authViewModel = authViewModel
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                BottomSection(
-                    authViewModel,
-                    isPhoneNumberValid,
-                )
-            }
-
-            if (isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
-                }
+                CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
             }
         }
     }
@@ -196,7 +209,7 @@ fun CustomPhoneNumberField(
                         fontSize = 16.sp,
                         color = Color(0xFFB8BDCA),
                         lineHeight = 20.sp,
-                        letterSpacing = (-0.028).em
+//                        letterSpacing = (-0.028).em
                     ),
                     modifier = Modifier.align(Alignment.Start)
                 )
@@ -213,7 +226,7 @@ fun CustomPhoneNumberField(
                             fontSize = 16.sp,
                             color = Color(0xFFB8BDCA),
                             lineHeight = 20.sp,
-                            letterSpacing = (-0.028).em
+//                            letterSpacing = (-0.028).em
                         )
                     )
                     Spacer(modifier = Modifier.width(3.dp))
@@ -242,7 +255,7 @@ fun CustomPhoneNumberField(
                             fontSize = 16.sp,
                             color = Color.Black,
                             lineHeight = 20.sp,
-                            letterSpacing = (-0.028).em
+//                            letterSpacing = (-0.028).em
                         ),
                         visualTransformation = PhoneNumberVisualTransformation(),
                         decorationBox = { innerTextField ->
@@ -288,6 +301,10 @@ fun ConfirmButton(
     modifier: Modifier = Modifier
 ) {
 
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
+
     Button(
         onClick = {
             onClick()
@@ -298,9 +315,11 @@ fun ConfirmButton(
         ),
         enabled = isEnabled,
         shape = RoundedCornerShape(10.dp),
+        interactionSource = interactionSource,
         modifier = modifier
             .fillMaxWidth()
-            .height(47.dp)
+            .height(52.dp)
+            .scale(scale)
     ) {
         Text(
             text = stringResource(id = R.string.continue_text),
@@ -309,7 +328,6 @@ fun ConfirmButton(
             fontFamily = gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
             lineHeight = 32.sp,
-            letterSpacing = (-0.028).em
         )
     }
 }
@@ -329,7 +347,7 @@ fun TermsAndConditionsText() {
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
-                letterSpacing = (-0.028).em
+//                letterSpacing = (-0.028).em
             )
         ) {
             append(stringResource(id = R.string.terms_and_conditions_text))
@@ -345,7 +363,6 @@ fun TermsAndConditionsText() {
             fontSize = 14.sp,
             color = Color.Black,
             lineHeight = 16.8.sp,
-            letterSpacing = (-0.028).em
         ),
         onClick = { offset ->
             annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)
@@ -360,7 +377,4 @@ fun TermsAndConditionsText() {
 @Preview(showBackground = true)
 @Composable
 private fun PhoneNumberInputScreenPreview() {
-//    PhoneNumberInputScreen(authViewModel = AuthViewModel()) {
-//
-//    }
 }

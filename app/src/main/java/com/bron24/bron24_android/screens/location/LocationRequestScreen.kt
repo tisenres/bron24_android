@@ -3,8 +3,11 @@ package com.bron24.bron24_android.screens.location
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,8 +23,11 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -69,11 +75,11 @@ fun LocationRequestScreen(
                 text = stringResource(id = R.string.app_name),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.ExtraBold,
                     fontSize = 26.sp,
                     color = Color(0xFF32B768),
                     lineHeight = 31.85.sp,
-                    letterSpacing = (-0.78).sp
+//                    letterSpacing = (-0.78).sp
                 ),
             )
 
@@ -117,29 +123,47 @@ fun LocationRequestScreen(
                     .padding(bottom = 10.dp)
             )
 
-            OutlinedButton(
-                onClick = {
-                    viewModel.setLocationPermissionGranted(false)
-                    onDenyClick()
-                },
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color(0xFF26A045)
-                ),
-                shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(1.dp, Color(0xFF26A045)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.deny_button),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = gilroyFontFamily,
-                    lineHeight = 32.sp
-                )
-            }
+            EnhancedOutlinedButton(
+                onClick = { viewModel.setLocationPermissionGranted(false) },
+                onDenyClick = onDenyClick
+            )
         }
+    }
+}
+
+@Composable
+fun EnhancedOutlinedButton(
+    onClick: () -> Unit,
+    onDenyClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (isPressed) 0.98f else 1f, label = "")
+
+    OutlinedButton(
+        onClick = {
+            onClick()
+            onDenyClick()
+        },
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = Color(0xFF26A045)
+        ),
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(1.dp, Color(0xFF26A045)),
+        interactionSource = interactionSource,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(52.dp)
+            .scale(scale)
+    ) {
+        Text(
+            text = stringResource(id = R.string.deny_button),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            fontFamily = gilroyFontFamily,
+            lineHeight = 32.sp
+        )
     }
 }
 
@@ -149,6 +173,10 @@ fun LocationButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
+
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -156,9 +184,11 @@ fun LocationButton(
             containerColor = Color(0xFF26A045)
         ),
         shape = RoundedCornerShape(8.dp),
+        interactionSource = interactionSource,
         modifier = modifier
             .fillMaxWidth()
             .height(52.dp)
+            .scale(scale)
     ) {
         Text(
             text = text,
