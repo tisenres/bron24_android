@@ -4,7 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
@@ -33,6 +32,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -44,16 +44,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.*
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.mapview.MapView
+import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun VenueDetailsScreen(
@@ -76,8 +85,11 @@ fun VenueDetailsScreen(
             onBackClick = onBackClick,
             onFavoriteClick = {},
             onMapClick = {},
+            onNavigateToMap = { lat, long ->
+
+            },
             onTakeRouteClick = {},
-            onOrderClick = {}
+            onOrderClick = {},
         )
     }
 }
@@ -96,7 +108,6 @@ fun LoadingScreen() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VenueDetailsContent(
     details: VenueDetails?,
@@ -104,22 +115,31 @@ fun VenueDetailsContent(
     onFavoriteClick: () -> Unit,
     onMapClick: () -> Unit,
     onTakeRouteClick: () -> Unit,
-    onOrderClick: () -> Unit
+    onOrderClick: () -> Unit,
+    onNavigateToMap: (Double, Double) -> Unit
 ) {
     val scrollState = rememberLazyListState()
-    val toolbarHeight = 56.dp
-    val toolbarOffsetHeightPx = remember { mutableFloatStateOf(0f) }
     val context = LocalContext.current
+    val toolbarHeight = 48.dp
 
-    Box(modifier = Modifier.fillMaxSize()
-        .background(Color.White)) {
+    val toolbarVisible by remember {
+        derivedStateOf {
+            scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
         LazyColumn(
             state = scrollState,
-            modifier = Modifier.fillMaxSize() ,
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 80.dp),
-            verticalArrangement = Arrangement.spacedBy(27.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            item {
+            item(key = "imageSection") {
                 VenueImageSection(
                     imageUrls = details?.imageUrls ?: emptyList(),
                     onBackClick = onBackClick,
@@ -127,65 +147,41 @@ fun VenueDetailsContent(
                     onFavoriteClick = onFavoriteClick
                 )
             }
-            item { HeaderSection(
-                details,
-                onMapClick,
-                onCopyAddressClick = { copyAddressToClipboard(context, details?.address?.addressName) }) }
-            item { InfrastructureSection(details) }
-            item { DescriptionSection(details) }
-            item { MapSection(details, onTakeRouteClick) }
-            item { Spacer(modifier = Modifier.height(80.dp)) } // Add space for the pricing section
-        }
-
-        // Collapsing Toolbar
-        val toolbarVisible by remember {
-            derivedStateOf {
-                scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
+            item(key = "headerSection") {
+                HeaderSection(
+                    details = details,
+                    onMapClick = onMapClick,
+                    onCopyAddressClick = {
+                        copyAddressToClipboard(context, details?.address?.addressName)
+                    }
+                )
+            }
+            item(key = "infrastructureSection") { InfrastructureSection(details) }
+            item(key = "descriptionSection") { DescriptionSection(details) }
+            item(key = "mapSection") {
+                MapSection(
+                    details = details,
+                    onTakeRouteClick = onTakeRouteClick,
+                    onMapClick = {
+                        details?.let { onNavigateToMap(it.latitude, it.longitude) }
+                    }
+                )
+            }
+            item(key = "spacer") {
+                Spacer(modifier = Modifier.height(80.dp))
             }
         }
 
-        AnimatedVisibility(
+        AnimatedToolbar(
             visible = toolbarVisible,
-            enter = fadeIn(),
-            exit = fadeOut(),
+            title = details?.venueName,
+            onBackClick = onBackClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(toolbarHeight)
-                .background(Color.White)
                 .zIndex(1f)
-        ) {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = details?.venueName ?: "Unknown field",
-                        style = TextStyle(
-                            fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color(0xFF3C2E56),
-                            lineHeight = 22.sp,
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color(0xFF3C2E56),
-                    navigationIconContentColor = Color(0xFF3C2E56)
-                )
-            )
-        }
+        )
 
-        // Pricing Section
         PricingSection(
             details = details,
             onOrderClick = onOrderClick,
@@ -196,9 +192,58 @@ fun VenueDetailsContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AnimatedToolbar(
+    visible: Boolean,
+    title: String?,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+        modifier = modifier
+    ) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = title ?: "Unknown field",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 22.sp,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White,
+                titleContentColor = Color(0xFF3C2E56),
+                navigationIconContentColor = Color(0xFF3C2E56)
+            )
+        )
+    }
+}
+
 fun copyAddressToClipboard(context: Context, address: String?) {
     if (address.isNullOrBlank()) {
-        Toast.makeText(context, "No address available to copy", Toast.LENGTH_SHORT).show()
+        ToastManager.showToast(
+            "No address available to copy",
+            ToastType.WARNING
+        )
         return
     }
 
@@ -206,12 +251,18 @@ fun copyAddressToClipboard(context: Context, address: String?) {
     val clip = ClipData.newPlainText("Venue Address", address)
     clipboard?.setPrimaryClip(clip)
 
-    Toast.makeText(context, "Address copied to clipboard", Toast.LENGTH_SHORT).show()
+    ToastManager.showToast(
+        "Address copied to clipboard",
+        ToastType.SUCCESS
+    )
 }
 
 fun shareVenueDetails(context: Context, details: VenueDetails?) {
     if (details == null) {
-        Toast.makeText(context, "No venue details available to share", Toast.LENGTH_SHORT).show()
+        ToastManager.showToast(
+            "No venue details available to share",
+            ToastType.WARNING
+        )
         return
     }
 
@@ -239,7 +290,7 @@ fun DescriptionSection(details: VenueDetails?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
         SectionTitle(text = "Additional info")
         Spacer(modifier = Modifier.height(15.dp))
@@ -280,7 +331,7 @@ fun HeaderSection(details: VenueDetails?, onMapClick: () -> Unit, onCopyAddressC
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
         TitleSection(details, onMapClick)
         Spacer(modifier = Modifier.height(14.dp))
@@ -290,7 +341,6 @@ fun HeaderSection(details: VenueDetails?, onMapClick: () -> Unit, onCopyAddressC
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VenueImageSection(
     imageUrls: List<String>,
@@ -304,6 +354,7 @@ fun VenueImageSection(
         modifier = Modifier
             .height(206.dp)
             .fillMaxWidth()
+            .background(Color.Gray)
     ) {
         HorizontalPager(
             state = pagerState,
@@ -351,19 +402,25 @@ fun ImageOverlay(
                 .fillMaxWidth()
                 .padding(top = 10.dp, start = 10.dp, end = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            ClickableIconButton(
-                onClick = onBackClick,
-                icon = Icons.Default.ArrowBack,
-                contentDescription = "Back"
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Box(modifier = Modifier.weight(1f)) {
+                ClickableIconButton(
+                    onClick = onBackClick,
+                    icon = Icons.Default.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.End
+            ) {
                 ClickableIconButton(
                     onClick = onShareClick,
                     icon = Icons.Default.Share,
                     contentDescription = "Share"
                 )
+                Spacer(modifier = Modifier.width(12.dp))
                 AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
             }
         }
@@ -378,25 +435,52 @@ fun ImageOverlay(
 }
 
 @Composable
+fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        repeat(totalPages) { index ->
+            Box(
+                modifier = Modifier
+                    .height(1.5.dp)
+                    .padding(end = 3.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .width(28.dp)
+                    .background(if (index == currentPage) Color.White else Color(0xFFB7B3B3))
+            )
+        }
+    }
+}
+
+@Composable
 fun ClickableIconButton(
     onClick: () -> Unit,
     icon: ImageVector,
     contentDescription: String,
     tint: Color = Color.Black
 ) {
-    IconButton(
-        onClick = onClick,
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Box(
         modifier = Modifier
-            .size(36.dp)
+            .size(44.dp)
             .clip(CircleShape)
-            .background(Color.White)
+            .background(Color(0xFFFFFFFF))
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = onClick
+            )
     ) {
-        Icon(
+        Image(
             imageVector = icon,
             contentDescription = contentDescription,
-            tint = tint,
+            colorFilter = ColorFilter.tint(tint),
             modifier = Modifier
-                .size(24.dp)
+                .fillMaxSize()
+                .padding(10.dp)
         )
     }
 }
@@ -411,26 +495,34 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
-        )
+        ), label = ""
     )
 
-    IconButton(
-        onClick = {
-            isFavorite = !isFavorite
-            onFavoriteClick()
-        },
-        interactionSource = interactionSource,
+    Box(
         modifier = Modifier
-            .size(40.dp)
+            .size(44.dp)
             .clip(CircleShape)
             .background(Color.White)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = {
+                    isFavorite = !isFavorite
+                    onFavoriteClick()
+                    ToastManager.showToast(
+                        "Venue was added to favorites",
+                        ToastType.SUCCESS
+                    )
+                }
+            ),
     ) {
-        Icon(
+        Image(
             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
             contentDescription = "Favorite",
-            tint = if (isFavorite) Color.Red else Color.Black,
+            colorFilter = ColorFilter.tint(if (isFavorite) Color.Red else Color.Black),
             modifier = Modifier
-                .size(24.dp)
+                .fillMaxSize()
+                .padding(10.dp)
                 .graphicsLayer(
                     scaleX = scale,
                     scaleY = scale
@@ -460,18 +552,19 @@ fun TitleSection(details: VenueDetails?, onMapClick: () -> Unit) {
             modifier = Modifier.weight(1f)
         )
 
-        IconButton(
-            onClick = onMapClick,
+        Box(
             modifier = Modifier
                 .size(44.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(0xFFF6F6F6))
+                .clickable(onClick = onMapClick)
+                .padding(10.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_map_cute),
                 contentDescription = "map_icon",
                 colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier.fillMaxSize() // Ensure the Image fills the Box
             )
         }
     }
@@ -513,20 +606,28 @@ fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
-        Text(
-            text = "Copy",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
-                color = Color(0xFF0067FF),
-                lineHeight = 18.sp,
-                textDecoration = TextDecoration.Underline,
-            ),
+        Box(
             modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
                 .clickable(onClick = onCopyClick)
-                .padding(start = 5.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
-        )
+                .padding(
+                    horizontal = 8.dp,
+                    vertical = 6.dp,
+                )
+        ) {
+            Text(
+                text = "Copy",
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp,
+                    color = Color(0xFF0067FF),
+                    lineHeight = 18.sp,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     }
 }
 
@@ -609,32 +710,40 @@ fun RatingSection(details: VenueDetails?) {
             )
         )
         Spacer(modifier = Modifier.width(7.dp))
-        Text(
-            text = "See all reviews",
-            style = TextStyle(
-                fontFamily = interFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = Color(0xFF32B768),
-                lineHeight = 18.sp,
-                textDecoration = TextDecoration.Underline
+
+        Box(modifier = Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .clickable {}
+            .padding(
+                horizontal = 8.dp,
+                vertical = 6.dp,
             )
-        )
+        ) {
+            Text(
+                text = "See all reviews",
+                style = TextStyle(
+                    fontFamily = interFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                    color = Color(0xFF32B768),
+                    lineHeight = 18.sp,
+                    textDecoration = TextDecoration.Underline
+                )
+            )
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfrastructureSection(details: VenueDetails?) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<Pair<String, Int>?>(null) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
     ) {
         SectionTitle(text = "Facilities")
         Spacer(modifier = Modifier.height(15.dp))
@@ -647,7 +756,7 @@ fun InfrastructureSection(details: VenueDetails?) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState
+            sheetState = rememberModalBottomSheetState()
         ) {
             InfrastructureItemDetails(selectedItem?.first, selectedItem?.second)
         }
@@ -662,14 +771,14 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        details?.let {
-            InfrastructureItem(it.venueType, R.drawable.baseline_stadium_24, onItemClick)
+        details?.let { venue ->
+            InfrastructureItem(venue.venueType, R.drawable.baseline_stadium_24, onItemClick)
             InfrastructureItem(
-                "${it.peopleCapacity} players",
+                "${venue.peopleCapacity} players",
                 R.drawable.game_icons_soccer_kick,
                 onItemClick
             )
-            it.infrastructure?.let { infrastructure ->
+            venue.infrastructure.let { infrastructure ->
                 if (infrastructure.lockerRoom) {
                     InfrastructureItem(
                         "Locker Room",
@@ -687,9 +796,9 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
                     InfrastructureItem("Parking", R.drawable.baseline_local_parking_24, onItemClick)
                 }
             }
-            InfrastructureItem(it.venueSurface, R.drawable.baseline_grass_24, onItemClick)
+            InfrastructureItem(venue.venueSurface, R.drawable.baseline_grass_24, onItemClick)
             InfrastructureItem(
-                "${it.workingHoursFrom.drop(3)} - ${it.workingHoursTill.drop(3)}",
+                "${venue.workingHoursFrom.drop(3)} - ${venue.workingHoursTill.drop(3)}",
                 R.drawable.baseline_access_time_filled_24,
                 onItemClick
             )
@@ -754,10 +863,8 @@ fun InfrastructureItem(text: String, iconRes: Int, onClick: (String, Int) -> Uni
 
     LaunchedEffect(isPressed) {
         if (isPressed) {
-            launch {
-                delay(100)
-                isPressed = false
-            }
+            delay(100)
+            isPressed = false
         }
     }
 }
@@ -815,22 +922,74 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
 }
 
 @Composable
-fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit) {
+fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick: () -> Unit) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val mapView = remember { MapView(context) }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> {
+                    MapKitFactory.getInstance().onStart()
+                    mapView.onStart()
+                }
+
+                Lifecycle.Event.ON_STOP -> {
+                    mapView.onStop()
+                    MapKitFactory.getInstance().onStop()
+                }
+
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(details) {
+        details?.let { venue ->
+            val venueLocation = Point(venue.latitude, venue.longitude)
+            mapView.map.move(
+                CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f)
+            )
+            val placemark = mapView.map.mapObjects.addPlacemark(venueLocation)
+            placemark.setIcon(
+                ImageProvider.fromResource(
+                    context,
+                    R.drawable.baseline_location_on_24_green
+                )
+            )
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 16.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .clickable(onClick = onMapClick),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(model = R.drawable.football_field),
-            contentDescription = "Map",
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(109.dp)
-                .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp)),
-            contentScale = ContentScale.Crop
-        )
+                .height(200.dp)
+                .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+        ) {
+            AndroidView(
+                factory = { mapView },
+                modifier = Modifier.fillMaxSize()
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+//                    .clickable(onClick = onMapClick)
+            )
+        }
+
         MapDetails(details)
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
@@ -840,8 +999,9 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onTakeRouteClick)
-                .padding(vertical = 8.dp),
+//                .clickable(onClick = onTakeRouteClick)
+                .padding(top = 6.dp, bottom = 12.dp)
+                .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -866,7 +1026,10 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit) {
 
 @Composable
 fun MapDetails(details: VenueDetails?) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 10.dp)
+    ) {
         Text(
             text = details?.address?.addressName ?: "Unknown address",
             style = TextStyle(
@@ -936,7 +1099,7 @@ fun PricingSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(70.dp)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -966,29 +1129,10 @@ fun PricingSection(
                         fontSize = 14.sp,
                         color = Color.White,
                         lineHeight = 16.8.sp,
-                        letterSpacing = (-0.028).em
+//                        letterSpacing = (-0.028).em
                     )
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        repeat(totalPages) { index ->
-            Box(
-                modifier = Modifier
-                    .height(1.5.dp)
-                    .padding(end = 3.dp)
-                    .clip(RoundedCornerShape(5.dp))
-                    .width(28.dp)
-                    .background(if (index == currentPage) Color.White else Color(0xFFB7B3B3))
-            )
         }
     }
 }
@@ -1033,13 +1177,19 @@ private fun VenueDetailsPreview() {
             contact2 = "+998 77 806 0288",
             createdAt = "2021-01-01",
             updatedAt = "2023-01-01",
-            imageUrls = emptyList()
+            imageUrls = listOf(
+                "https://www.google.com/imgres?q=football%20stadium&imgurl=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1502846052%2Fphoto%2Ftextured-soccer-game-field-with-neon-fog-center-midfield.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLPSo6ps1NfZ_xviL0tmhnnrcLjjFXAQhsYr3qAOfviY%3D&imgrefurl=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffootball-stadium&docid=LF8uWOsT77kHrM&tbnid=tb_4tkdFa4tgxM&vet=12ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA..i&w=612&h=344&hcb=2&ved=2ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA",
+
+            )
         ),
         {},
         {},
         {},
         {},
         {},
+        onNavigateToMap = { lat, long ->
+
+        },
     )
 }
 

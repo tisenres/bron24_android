@@ -21,7 +21,7 @@ fun VenueDto.toDomainModel(): Venue {
         venueName = venueName,
         pricePerHour = formatPrice(pricePerHour),
         address = address.toDomainModel(),
-        imageUrls = emptyList()
+        imageUrl = null
     )
 }
 

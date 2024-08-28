@@ -3,10 +3,12 @@ package com.bron24.bron24_android.screens.language
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,7 +46,7 @@ fun LanguageSelectionScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary)
+            .background(Color.White)
             .padding(top = 30.dp, end = 24.dp, bottom = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
@@ -58,11 +60,10 @@ fun LanguageSelectionScreen(
                         .height(32.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 26.sp,
                         color = Color(0xFF32B768),
                         lineHeight = 31.85.sp,
-                        letterSpacing = (-0.78).sp
                     ),
                 )
 
@@ -87,11 +88,10 @@ fun LanguageSelectionScreen(
                         .height(32.dp),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 26.sp,
                         color = Color(0xFF32B768),
-                        lineHeight = 32.sp,
-                        letterSpacing = (-0.78).sp
+                        lineHeight = 31.85.sp,
                     ),
                 )
 
@@ -192,14 +192,20 @@ fun ConfirmButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val colors = ButtonDefaults.buttonColors(
+        containerColor = if (isEnabled) Color(0xFF26A045) else Color(0xFFE4E4E4),
+        contentColor = Color.White,
+        disabledContainerColor = Color(0xFFE4E4E4),
+        disabledContentColor = Color.Gray
+    )
+
     Button(
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            contentColor = Color.White,
-            containerColor = if (isEnabled) Color(0xFF26A045) else Color(0xFFE4E4E4)
-        ),
         enabled = isEnabled,
         shape = RoundedCornerShape(8.dp),
+        colors = colors,
+        interactionSource = interactionSource,
         modifier = modifier
             .fillMaxWidth()
             .height(52.dp)

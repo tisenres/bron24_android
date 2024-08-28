@@ -70,6 +70,12 @@ class VenueMapViewModel @Inject constructor(
         }
     }
 
+    fun centerOnCoordinates(latitude: Double, longitude: Double) {
+        viewModelScope.launch {
+            _currentLocation.value = Location(latitude, longitude)
+        }
+    }
+
     fun zoomIn() {
 
 

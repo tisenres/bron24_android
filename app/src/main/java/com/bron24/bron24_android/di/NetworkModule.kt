@@ -2,7 +2,8 @@ package com.bron24.bron24_android.di
 
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
-import com.bron24.bron24_android.data.network.interceptors.AuthInterceptor
+import com.bron24.bron24_android.data.network.interceptors.ErrorHandler
+import com.bron24.bron24_android.data.network.interceptors.HttpInterceptor
 import com.bron24.bron24_android.data.network.interceptors.ErrorHandlingCallAdapterFactory
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
@@ -17,6 +18,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -24,7 +27,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    fun provideErrorHandler(): ErrorHandler {
+        return ErrorHandler()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(authInterceptor: HttpInterceptor): OkHttpClient {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
@@ -47,17 +56,26 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideErrorHandlingCallAdapterFactory(
+        authRepository: Lazy<AuthRepository>,
+        tokenRepository: TokenRepository,
+        errorHandler: ErrorHandler
+    ): ErrorHandlingCallAdapterFactory {
+        return ErrorHandlingCallAdapterFactory(authRepository, tokenRepository, errorHandler)
+    }
+
+    @Provides
+    @Singleton
     @Named("ErrorHandlingRetrofit")
     fun provideErrorHandlingRetrofit(
         okHttpClient: OkHttpClient,
-        authRepository: Lazy<AuthRepository>,
-        tokenRepository: TokenRepository
+        errorHandlingCallAdapterFactory: ErrorHandlingCallAdapterFactory
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://cuddly-becoming-loon.ngrok-free.app/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(ErrorHandlingCallAdapterFactory(authRepository, tokenRepository))
+            .addCallAdapterFactory(errorHandlingCallAdapterFactory)
             .build()
     }
 

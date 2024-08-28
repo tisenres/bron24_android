@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.main
+package com.bron24.bron24_android.helper.util.presentation
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

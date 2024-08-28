@@ -1,14 +1,12 @@
 package com.bron24.bron24_android.screens.howitworks
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -24,12 +22,11 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HowItWorksPager(
     onNavigateToAuthScreens: () -> Unit
 ) {
-    val pagerState = rememberPagerState (pageCount = { 2 })
+    val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -44,23 +41,22 @@ fun HowItWorksPager(
             Box(modifier = Modifier.fillMaxSize()) {
                 when (page) {
                     0 -> HowItWorksScreen1()
-                    1 -> HowItWorksScreen2(onFinishClick = {
-                        onNavigateToAuthScreens()
-                    })
+                    1 -> HowItWorksScreen2()
+                    2 -> HowItWorksScreen3()
                 }
             }
         }
 
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = 10.dp)
         ) {
-            TextButton(onClick = {
-                onNavigateToAuthScreens()
-            }) {
+            // Skip button
+            TextButton(
+                onClick = { onNavigateToAuthScreens() },
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
                 Text(
                     text = stringResource(id = R.string.skip),
                     style = TextStyle(
@@ -70,24 +66,31 @@ fun HowItWorksPager(
                         color = Color.Black,
                         lineHeight = 17.15.sp,
                         textAlign = TextAlign.Center,
-                        letterSpacing = (-0.78).sp
                     )
                 )
             }
 
-            PagerIndicator(pagerState = pagerState)
+            // Centered Pager Indicator
+            PagerIndicator(
+                pagerState = pagerState,
+                modifier = Modifier.align(Alignment.Center)
+            )
 
-            TextButton(onClick = {
-                if (pagerState.currentPage < 1) {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+            // Next button
+            TextButton(
+                onClick = {
+                    if (pagerState.currentPage < 2) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    } else {
+                        onNavigateToAuthScreens()
                     }
-                } else {
-                    onNavigateToAuthScreens()
-                }
-            }) {
+                },
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
                 Text(
-                    text = stringResource(id = R.string.next),
+                    text = if (pagerState.currentPage == 2) stringResource(id = R.string.get_started) else stringResource(id = R.string.next),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
@@ -95,7 +98,6 @@ fun HowItWorksPager(
                         color = Color(0xFF32B768),
                         lineHeight = 17.15.sp,
                         textAlign = TextAlign.Center,
-                        letterSpacing = (-0.78).sp
                     )
                 )
             }
@@ -103,14 +105,14 @@ fun HowItWorksPager(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PagerIndicator(pagerState: PagerState) {
+fun PagerIndicator(pagerState: PagerState, modifier: Modifier = Modifier) {
     Row(
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
     ) {
-        repeat(2) { iteration ->
+        repeat(pagerState.pageCount) { iteration ->
             val color = if (pagerState.currentPage == iteration) Color(0xFF32B768) else Color(0xFFD9D9D9)
             Box(
                 modifier = Modifier

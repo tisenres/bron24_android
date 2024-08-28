@@ -1,11 +1,13 @@
-package com.bron24.bron24_android.screens.main.components
+package com.bron24.bron24_android.helper.util.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -84,13 +86,15 @@ fun CustomBottomBarItem(
 
     Column(
         modifier = Modifier
+            .padding(10.dp)
             .clickable(
                 onClick = {
                     onClick()
                     currentColor = selectedColor
                 },
+
                 interactionSource = remember { MutableInteractionSource() },
-                indication = null
+                indication = ripple()
             )
             .wrapContentWidth(Alignment.CenterHorizontally)
             .wrapContentHeight(Alignment.CenterVertically),
