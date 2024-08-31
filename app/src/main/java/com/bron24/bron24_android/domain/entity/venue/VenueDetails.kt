@@ -19,7 +19,7 @@ data class VenueDetails(
     val contact2: String,
     val createdAt: String,
     val updatedAt: String,
-    var imageUrls: List<String>?,
+    var imageUrls: List<String> = emptyList(),
     val latitude: Double = 0.0,
     val longitude: Double = 0.0
 )

@@ -7,11 +7,9 @@ import javax.inject.Inject
 class GetVenueDetailsUseCase @Inject constructor(
     private val venueRepository: VenueRepository
 ) {
-
     suspend fun execute(venueId: Int): VenueDetails {
         val venue = venueRepository.getVenueDetailsById(venueId)
-//        val pictures = venueRepository.getVenuePictures(venue.venueId)
-//        venue.imageUrls = pictures
-        return venue
+        val pictures = venueRepository.getVenuePictures(venueId)
+        return venue.copy(imageUrls = pictures)
     }
 }

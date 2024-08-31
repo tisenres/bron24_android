@@ -136,7 +136,6 @@ fun VenueImageSection(venue: Venue) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(venue.imageUrl ?: "")
-                .size(320, 180)  // Request a lower resolution image
                 .scale(Scale.FILL)
                 .crossfade(true)
                 .build(),
@@ -276,9 +275,9 @@ fun VenueFooter(venue: Venue) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = Color(0xFF3C2E56),
-                        lineHeight = 14.7.sp,
+                        lineHeight = 16.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom)
                 )
@@ -293,9 +292,9 @@ fun VenueFooter(venue: Venue) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = Color(0xFF3C2E56),
-                        lineHeight = 14.7.sp,
+                        lineHeight = 16.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom)
                 )
@@ -304,9 +303,9 @@ fun VenueFooter(venue: Venue) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = Color(0xFF26A045),
-                        lineHeight = 14.7.sp,
+                        lineHeight = 16.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom),
                     maxLines = 1,

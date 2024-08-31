@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -65,7 +64,7 @@ fun LocationRequestScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary)
+            .background(Color.White)
             .padding(top = 30.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.Start
@@ -102,7 +101,7 @@ fun LocationRequestScreen(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = Color.Black,
                     lineHeight = 20.sp
                 ),
                 modifier = Modifier

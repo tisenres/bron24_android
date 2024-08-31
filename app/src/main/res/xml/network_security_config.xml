@@ -12,4 +12,8 @@
         <!-- This is for the ngrok domain -->
         <domain includeSubdomains="true">109.123.241.109</domain>
     </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- This is for the ngrok domain -->
+        <domain includeSubdomains="true">91.211.249.185</domain>
+    </domain-config>
 </network-security-config>
