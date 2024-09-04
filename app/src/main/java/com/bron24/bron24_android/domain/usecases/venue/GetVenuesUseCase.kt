@@ -22,13 +22,30 @@ class GetVenuesUseCase @Inject constructor(
         infrastructure: Boolean? = null,
         district: String? = null
     ): Flow<List<Venue>> = flow {
-        checkLocationPermissionUseCase.execute().collect { permissionState ->
-            when (permissionState) {
-                LocationPermissionState.GRANTED -> {
-                    getCurrentLocationUseCase.execute().collect { location ->
+        try {
+            checkLocationPermissionUseCase.execute().collect { permissionState ->
+                when (permissionState) {
+                    LocationPermissionState.GRANTED -> {
+                        getCurrentLocationUseCase.execute().collect { location ->
+                            val venues = repository.getVenues(
+                                latitude = location.latitude,
+                                longitude = location.longitude,
+                                sort = sort,
+                                availableTime = availableTime,
+                                minPrice = minPrice,
+                                maxPrice = maxPrice,
+                                infrastructure = infrastructure,
+                                district = district
+                            )
+                            emit(venues.map { venue ->
+                                venue.copy(imageUrl = repository.getFirstVenuePicture(venue.venueId))
+                            })
+                        }
+                    }
+                    LocationPermissionState.DENIED -> {
                         val venues = repository.getVenues(
-                            latitude = location.latitude,
-                            longitude = location.longitude,
+                            latitude = null,
+                            longitude = null,
                             sort = sort,
                             availableTime = availableTime,
                             minPrice = minPrice,
@@ -41,22 +58,10 @@ class GetVenuesUseCase @Inject constructor(
                         })
                     }
                 }
-                LocationPermissionState.DENIED -> {
-                    val venues = repository.getVenues(
-                        latitude = null,
-                        longitude = null,
-                        sort = sort,
-                        availableTime = availableTime,
-                        minPrice = minPrice,
-                        maxPrice = maxPrice,
-                        infrastructure = infrastructure,
-                        district = district
-                    )
-                    emit(venues.map { venue ->
-                        venue.copy(imageUrl = repository.getFirstVenuePicture(venue.venueId))
-                    })
-                }
             }
+        } catch (e: Exception) {
+            // Log the error if needed
+            emit(emptyList())
         }
     }
 }

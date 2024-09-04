@@ -30,7 +30,7 @@ class VenueMapModel @Inject constructor(
         return getVenuesCoordinatesUseCase.execute()
     }
 
-    suspend fun getVenueDetails(venueId: Int): VenueDetails {
+    suspend fun getVenueDetails(venueId: Int): VenueDetails? {
         return getVenueDetailsUseCase.execute(venueId)
     }
 }

@@ -9,7 +9,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface VenueApiService {
-    @GET("api/v1/venues")
+    @GET("api/v1/venues/")
     suspend fun getVenues(
         @Query("lat") latitude: Double? = null,
         @Query("lon") longitude: Double? = null,
@@ -19,14 +19,14 @@ interface VenueApiService {
         @Query("max_price") maxPrice: Int? = null,
         @Query("infrastructure") infrastructure: Boolean? = null,
         @Query("district") district: String? = null
-    ): List<VenueDto>
+    ): List<VenueDto>?
 
     @GET("api/v1/venues/coordinates/")
-    suspend fun getVenuesCoordinates(): List<VenueCoordinatesDto>
+    suspend fun getVenuesCoordinates(): List<VenueCoordinatesDto>?
 
     @GET("api/v1/venues/pictures/{id}/")
-    suspend fun getVenuePictures(@Path("id") id: Int): List<PictureDto>
+    suspend fun getVenuePictures(@Path("id") id: Int): List<PictureDto>?
 
     @GET("api/v1/venues/{id}/")
-    suspend fun getVenueDetails(@Path("id") id: Int): VenueDetailsDto
+    suspend fun getVenueDetails(@Path("id") id: Int): VenueDetailsDto?
 }

@@ -8,6 +8,11 @@ class GetVenuesCoordinatesUseCase @Inject constructor(
     private val repository: VenueRepository
 ) {
     suspend fun execute(): List<VenueCoordinates> {
-        return repository.getVenuesCoordinates()
+        return try {
+            repository.getVenuesCoordinates()
+        } catch (e: Exception) {
+            // Log the error if needed
+            emptyList()
+        }
     }
 }

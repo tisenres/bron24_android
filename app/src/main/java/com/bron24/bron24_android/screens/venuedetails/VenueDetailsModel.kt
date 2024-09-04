@@ -7,7 +7,7 @@ import javax.inject.Inject
 class VenueDetailsModel @Inject constructor(
     private val getVenueDetailsUseCase: GetVenueDetailsUseCase
 ) {
-    suspend fun getVenueDetails(venueId: Int): VenueDetails {
+    suspend fun getVenueDetails(venueId: Int): VenueDetails? {
         return getVenueDetailsUseCase.execute(venueId)
     }
 }

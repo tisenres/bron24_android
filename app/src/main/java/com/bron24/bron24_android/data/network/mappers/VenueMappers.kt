@@ -17,85 +17,89 @@ import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 
 fun VenueDto.toDomainModel(): Venue {
     return Venue(
-        venueId = venueId,
-        venueName = venueName,
-        pricePerHour = formatPrice(pricePerHour),
-        address = address.toDomainModel(),
+        venueId = venueId ?: 0,
+        venueName = venueName.orEmpty(),
+        pricePerHour = formatPrice(pricePerHour) ?: "0",
+        address = address.toDomainModel() ?: Address(0, "", "", ""),
         imageUrl = null
     )
 }
 
 fun AddressDto.toDomainModel(): Address {
     return Address(
-        id = id,
-        addressName = addressName,
-        district = district,
-        closestMetroStation = closestMetroStation
+        id = id ?: 0,
+        addressName = addressName.orEmpty(),
+        district = district.orEmpty(),
+        closestMetroStation = closestMetroStation.orEmpty()
     )
 }
 
 fun CityDto.toDomainModel(): City {
     return City(
-        id = id,
-        cityName = cityName
+        id = id ?: 0,
+        cityName = cityName.orEmpty()
     )
 }
 
 fun InfrastructureDto.toDomainModel(): Infrastructure {
     return Infrastructure(
-        id = id,
-        lockerRoom = lockerRoom,
-        stands = stands,
-        shower = shower,
-        parking = parking
+        id = id ?: 0,
+        lockerRoom = lockerRoom ?: false,
+        stands = stands ?: "",
+        shower = shower ?: false,
+        parking = parking ?: false
     )
 }
 
 fun VenueCoordinatesDto.toDomainModel(): VenueCoordinates {
     return VenueCoordinates(
-        venueId = venueId,
-        venueName = venueName,
-        latitude = latitude ?: "0.0",
-        longitude = longitude ?: "0.0"
+        venueId = venueId ?: 0,
+        venueName = venueName.orEmpty(),
+        latitude = latitude?.toString() ?: "0.0",
+        longitude = longitude?.toString() ?: "0.0"
     )
 }
 
 fun VenueOwnerDto.toDomainModel(): VenueOwner {
     return VenueOwner(
-        id = id,
-        ownerName = ownerName,
-        tinNumber = tinNumber,
-        contact1 = contact1,
-        contact2 = contact2
+        id = id ?: 0,
+        ownerName = ownerName.orEmpty(),
+        tinNumber = tinNumber ?: 0,
+        contact1 = contact1.orEmpty(),
+        contact2 = contact2.orEmpty()
     )
 }
 
 fun VenueDetailsDto.toDomainModel(): VenueDetails {
     return VenueDetails(
-        venueId = venueId,
-        address = address.toDomainModel(),
-        city = city.toDomainModel(),
-        infrastructure = infrastructure.toDomainModel(),
-        venueOwner = venueOwner?.toDomainModel(),
-        venueName = venueName,
-        venueType = venueType,
-        venueSurface = venueSurface,
-        peopleCapacity = peopleCapacity,
-        sportType = sportType,
-        pricePerHour = formatPrice(pricePerHour),
-        description = description,
-        workingHoursFrom = workingHoursFrom,
-        workingHoursTill = workingHoursTill,
-        contact1 = contact1,
-        contact2 = contact2,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        venueId = venueId ?: 0,
+        address = address.toDomainModel() ?: Address(0, "", "", ""),
+        city = city.toDomainModel() ?: City(0, ""),
+        infrastructure = infrastructure.toDomainModel() ?: Infrastructure(0, false, "", false, false),
+        venueOwner = venueOwner?.toDomainModel() ?: VenueOwner(0, "", 0, "", ""),
+        venueName = venueName.orEmpty(),
+        venueType = venueType.orEmpty(),
+        venueSurface = venueSurface.orEmpty(),
+        peopleCapacity = peopleCapacity ?: 0,
+        sportType = sportType.orEmpty(),
+        pricePerHour = formatPrice(pricePerHour) ?: "0",
+        description = description.orEmpty(),
+        workingHoursFrom = workingHoursFrom.orEmpty(),
+        workingHoursTill = workingHoursTill.orEmpty(),
+        contact1 = contact1.orEmpty(),
+        contact2 = contact2.orEmpty(),
+        createdAt = createdAt.orEmpty(),
+        updatedAt = updatedAt.orEmpty(),
         imageUrls = emptyList()
     )
 }
 
 fun formatPrice(price: String): String {
-    val floatPrice = price.toFloat()
-    val intPrice = floatPrice.toInt()
-    return String.format("%,d", intPrice).replace(",", " ")
+    return try {
+        val floatPrice = price.toFloat()
+        val intPrice = floatPrice.toInt()
+        String.format("%,d", intPrice).replace(",", " ")
+    } catch (e: NumberFormatException) {
+        "0" // Return "0" if parsing fails
+    }
 }

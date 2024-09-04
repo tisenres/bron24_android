@@ -19,8 +19,8 @@ fun FilterScreen(
     onDismiss: () -> Unit
 ) {
     var availableTime by remember { mutableStateOf("") }
-    var minPrice by remember { mutableStateOf(0) }
-    var maxPrice by remember { mutableStateOf(100000) }
+    var minPrice by remember { mutableIntStateOf(0) }
+    var maxPrice by remember { mutableIntStateOf(100000) }
     var infrastructure by remember { mutableStateOf(false) }
     var district by remember { mutableStateOf("") }
 
