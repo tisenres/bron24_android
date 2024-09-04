@@ -46,8 +46,8 @@ object NetworkModule {
     @Named("BaseRetrofit")
     fun provideBaseRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-//            .baseUrl("http://109.123.241.109:46343/")
-            .baseUrl("http://91.211.249.185:8000/")
+//            .baseUrl("http://109.123.241.109:46343/") // Real OTP
+            .baseUrl("http://91.211.249.185:8000/") // Test OTP via webhook
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -71,8 +71,8 @@ object NetworkModule {
         errorHandlingCallAdapterFactory: ErrorHandlingCallAdapterFactory
     ): Retrofit {
         return Retrofit.Builder()
-//            .baseUrl("http://109.123.241.109:46343/")
-            .baseUrl("http://91.211.249.185:8000/")
+//            .baseUrl("http://109.123.241.109:46343/") // Real OTP
+            .baseUrl("http://91.211.249.185:8000/") // Test OTP via webhook
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(errorHandlingCallAdapterFactory)
