@@ -9,6 +9,7 @@ sealed class Screen(val route: String) {
     object LocationPermission : Screen("locationPermission")
     object Main : Screen("main")
     object HomePage : Screen("homePage")
+    object Filter : Screen("filter")
     object VenueDetails : Screen("venueDetails/{venueId}")
     object MapPage : Screen("mapPage")
     object MapPageWithCoordinates : Screen("mapPage/{latitude}/{longitude}")

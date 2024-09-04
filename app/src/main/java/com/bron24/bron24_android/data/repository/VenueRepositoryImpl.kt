@@ -14,8 +14,20 @@ class VenueRepositoryImpl @Inject constructor(
     private val apiService: VenueApiService
 ) : VenueRepository {
 
-    override suspend fun getVenues(): List<Venue> = withContext(Dispatchers.IO) {
-        apiService.getVenues().map { it.toDomainModel() }
+    override suspend fun getVenues(
+        latitude: Double?,
+        longitude: Double?,
+        sort: String?,
+        availableTime: String?,
+        minPrice: Int?,
+        maxPrice: Int?,
+        infrastructure: Boolean?,
+        district: String?
+    ): List<Venue> = withContext(Dispatchers.IO) {
+        apiService.getVenues(
+            latitude, longitude, sort, availableTime,
+            minPrice, maxPrice, infrastructure, district
+        ).map { it.toDomainModel() }
     }
 
     override suspend fun getVenuesCoordinates(): List<VenueCoordinates> = withContext(Dispatchers.IO) {

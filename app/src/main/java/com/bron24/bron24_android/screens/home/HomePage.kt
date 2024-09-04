@@ -8,6 +8,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.searchfilter.SearchView
 import com.bron24.bron24_android.screens.venuelisting.VenueListingView
 
@@ -24,7 +25,10 @@ fun HomePage(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            SearchView(modifier = Modifier.fillMaxWidth())
+            SearchView(
+                modifier = Modifier.fillMaxWidth(),
+                navController
+            )
 
             VenueListingView(
                 navController = navController,

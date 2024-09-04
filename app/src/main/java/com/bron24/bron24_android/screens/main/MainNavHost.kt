@@ -32,6 +32,7 @@ import com.bron24.bron24_android.helper.util.presentation.components.BottomNavig
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.map.YandexMapScreen
+import com.bron24.bron24_android.screens.searchfilter.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 
@@ -116,6 +117,20 @@ fun MainNavHost(
             val latitude = backStackEntry.arguments?.getFloat("latitude") ?: 0f
             val longitude = backStackEntry.arguments?.getFloat("longitude") ?: 0f
             MapPage(latitude = latitude.toDouble(), longitude = longitude.toDouble())
+        }
+
+        composable(Screen.Filter.route) {
+            onDestinationChanged(Screen.Filter.route)
+            FilterScreen(
+                onApplyFilter = { filterOptions ->
+                    // Handle the applied filter
+                    // You might want to pass this back to your ViewModel
+                    navController.popBackStack()
+                },
+                onDismiss = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(Screen.OrdersPage.route) {

@@ -45,4 +45,6 @@
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
     <string name="get_started">Let\'s go</string>
+    <string name="sort_by">Sort by</string>
+    <string name="filter">Filter</string>
 </resources>
