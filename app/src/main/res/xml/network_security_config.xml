@@ -18,6 +18,6 @@
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <!-- This is for the ngrok domain -->
-        <domain includeSubdomains="true">ebd8-82-215-105-180.ngrok-free.app</domain>
+        <domain includeSubdomains="true">ngrok-free.app</domain>
     </domain-config>
 </network-security-config>
