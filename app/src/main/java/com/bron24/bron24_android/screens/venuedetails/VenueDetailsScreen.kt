@@ -985,7 +985,7 @@ fun MapSection(details: VenueDetails?) {
                                 view.map.mapObjects.clear()
 
                                 val placemark = view.map.mapObjects.addPlacemark(venueLocation)
-                                val markerIcon = R.drawable.baseline_location_on_24_green
+                                val markerIcon = R.drawable.baseline_location_on_24_red
                                 val drawable = ContextCompat.getDrawable(context, markerIcon)
                                 val bitmap = drawable?.let {
                                     getBitmapFromDrawable(it, 1.5f)
