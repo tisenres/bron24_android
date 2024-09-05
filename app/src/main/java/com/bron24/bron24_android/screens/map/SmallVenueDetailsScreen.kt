@@ -350,7 +350,9 @@ private fun VenueDetailsPreview() {
             contact2 = "+998 77 806 0288",
             createdAt = "2021-01-01",
             updatedAt = "2023-01-01",
-            imageUrls = emptyList()
+            imageUrls = emptyList(),
+            latitude = 46.232323,
+            longitude = 65.232323
         ),
     )
 }

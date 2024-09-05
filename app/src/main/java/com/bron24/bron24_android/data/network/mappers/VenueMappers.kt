@@ -92,7 +92,9 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         contact2 = contact2.orEmpty(),
         createdAt = createdAt.orEmpty(),
         updatedAt = updatedAt.orEmpty(),
-        imageUrls = emptyList()
+        imageUrls = emptyList(),
+        longitude = longitude.toDouble(),
+        latitude = latitude.toDouble()
     )
 }
 

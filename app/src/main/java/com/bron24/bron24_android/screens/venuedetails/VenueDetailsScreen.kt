@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
@@ -915,42 +916,33 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
 @Composable
 fun MapSection(details: VenueDetails?) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val mapView = remember { MapView(context) }
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    var mapView by remember { mutableStateOf<MapView?>(null) }
 
     DisposableEffect(lifecycleOwner) {
+        val mapKit = MapKitFactory.getInstance()
+        mapKit.onStart()
+        mapView = MapView(context).apply { onStart() }
+
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_START -> {
-                    MapKitFactory.getInstance().onStart()
-                    mapView.onStart()
+                    mapKit.onStart()
+                    mapView?.onStart()
                 }
                 Lifecycle.Event.ON_STOP -> {
-                    mapView.onStop()
-                    MapKitFactory.getInstance().onStop()
+                    mapView?.onStop()
+                    mapKit.onStop()
                 }
                 else -> {}
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
+
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
-    LaunchedEffect(details) {
-        details?.let { venue ->
-            val venueLocation = Point(venue.latitude, venue.longitude)
-            mapView.map.move(
-                CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f)
-            )
-            val placemark = mapView.map.mapObjects.addPlacemark(venueLocation)
-            placemark.setIcon(
-                ImageProvider.fromResource(
-                    context,
-                    R.drawable.baseline_location_on_24_green
-                )
-            )
+            mapView?.onStop()
+            mapKit.onStop()
         }
     }
 
@@ -972,10 +964,27 @@ fun MapSection(details: VenueDetails?) {
                 .height(200.dp)
                 .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
         ) {
-            AndroidView(
-                factory = { mapView },
-                modifier = Modifier.fillMaxSize()
-            )
+            mapView?.let { map ->
+                AndroidView(
+                    factory = { map },
+                    modifier = Modifier.fillMaxSize()
+                ) { mapView ->
+                    details?.let { venue ->
+                        Log.d("MapSection", "Venue coordinates: ${venue.latitude}, ${venue.longitude}")
+                        val venueLocation = Point(venue.latitude, venue.longitude)
+                        mapView.map.move(
+                            CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f)
+                        )
+                        val placemark = mapView.map.mapObjects.addPlacemark(venueLocation)
+                        placemark.setIcon(
+                            ImageProvider.fromResource(
+                                context,
+                                R.drawable.baseline_location_on_24_green
+                            )
+                        )
+                    }
+                }
+            }
         }
 
         MapDetails(details)
@@ -1181,8 +1190,9 @@ private fun VenueDetailsPreview() {
             updatedAt = "2023-01-01",
             imageUrls = listOf(
                 "https://www.google.com/imgres?q=football%20stadium&imgurl=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1502846052%2Fphoto%2Ftextured-soccer-game-field-with-neon-fog-center-midfield.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLPSo6ps1NfZ_xviL0tmhnnrcLjjFXAQhsYr3qAOfviY%3D&imgrefurl=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffootball-stadium&docid=LF8uWOsT77kHrM&tbnid=tb_4tkdFa4tgxM&vet=12ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA..i&w=612&h=344&hcb=2&ved=2ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA",
-
-            )
+            ),
+            latitude = 65.23232323,
+            longitude = 46.23232323
         ),
         {},
         {},
