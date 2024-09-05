@@ -141,6 +141,42 @@ fun MainNavHost(
             onDestinationChanged(Screen.ProfilePage.route)
             ProfilePage()
         }
+//        composable(
+//            route = Screen.VenueDetails.route,
+//            arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
+//            enterTransition = {
+//                fadeIn(
+//                    animationSpec = tween(
+//                        300, easing = LinearEasing
+//                    )
+//                ) + slideIntoContainer(
+//                    animationSpec = tween(100, easing = EaseIn),
+//                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+//                )
+//            },
+//            exitTransition = {
+//                fadeOut(
+//                    animationSpec = tween(
+//                        300, easing = LinearEasing
+//                    )
+//                ) + slideOutOfContainer(
+//                    animationSpec = tween(100, easing = EaseOut),
+//                    towards = AnimatedContentTransitionScope.SlideDirection.End
+//                )
+//            }
+//        ) { backStackEntry ->
+//            onDestinationChanged(Screen.VenueDetails.route)
+//            val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
+//            val viewModel: VenueDetailsViewModel = hiltViewModel()
+//            VenueDetailsScreen(
+//                viewModel = viewModel,
+//                venueId = venueId,
+//                onBackClick = {
+//                    navController.popBackStack()
+//                },
+//            )
+//        }
+
         composable(
             route = Screen.VenueDetails.route,
             arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
@@ -174,6 +210,11 @@ fun MainNavHost(
                 onBackClick = {
                     navController.popBackStack()
                 },
+                onOrderClick = {
+                    // Navigate to the booking screen or show booking bottom sheet
+                    // For example:
+                    // navController.navigate(Screen.Booking.createRoute(venueId))
+                }
             )
         }
     }

@@ -72,7 +72,8 @@ import kotlinx.coroutines.delay
 fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onOrderClick: () -> Unit
 ) {
     LaunchedEffect(key1 = venueId) {
         viewModel.fetchVenueDetails(venueId)
@@ -89,7 +90,7 @@ fun VenueDetailsScreen(
             onBackClick = onBackClick,
             onFavoriteClick = {},
             onSmallMapClick = {},
-            onOrderClick = {},
+            onOrderClick = onOrderClick,
         )
     }
 }
@@ -934,10 +935,12 @@ fun MapSection(details: VenueDetails?) {
                     mapKit.onStart()
                     mapView?.onStart()
                 }
+
                 Lifecycle.Event.ON_STOP -> {
                     mapView?.onStop()
                     mapKit.onStop()
                 }
+
                 else -> {}
             }
         }
@@ -975,7 +978,10 @@ fun MapSection(details: VenueDetails?) {
                     update = { view ->
                         details?.let { venue ->
                             try {
-                                Log.d("MapSection", "Venue coordinates: ${venue.latitude}, ${venue.longitude}")
+                                Log.d(
+                                    "MapSection",
+                                    "Venue coordinates: ${venue.latitude}, ${venue.longitude}"
+                                )
                                 val venueLocation = Point(venue.latitude, venue.longitude)
                                 view.map.move(
                                     CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
@@ -1064,7 +1070,8 @@ fun navigateToMapApp(context: Context, latitude: Double, longitude: Double, venu
         context.startActivity(mapIntent)
     } else {
         // If Google Maps is not installed, open in browser
-        val browserUri = Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude")
+        val browserUri =
+            Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude")
         val browserIntent = Intent(Intent.ACTION_VIEW, browserUri)
         context.startActivity(browserIntent)
     }
@@ -1072,9 +1079,10 @@ fun navigateToMapApp(context: Context, latitude: Double, longitude: Double, venu
 
 @Composable
 fun MapDetails(details: VenueDetails?) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 10.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
     ) {
         Text(
             text = details?.address?.addressName ?: "Unknown address",
@@ -1175,7 +1183,7 @@ fun PricingSection(
                         fontSize = 14.sp,
                         color = Color.White,
                         lineHeight = 16.8.sp,
-//                        letterSpacing = (-0.028).em
+                        //                        letterSpacing = (-0.028).em
                     )
                 )
             }

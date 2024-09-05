@@ -1,8 +1,7 @@
 package com.bron24.bron24_android.screens.map
 
-import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
+import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.user.Location
-import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
