@@ -1,11 +1,18 @@
 package com.bron24.bron24_android.screens.venuelisting
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,6 +40,9 @@ import com.bron24.bron24_android.screens.adssection.AdsSection
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.bron24.bron24_android.screens.main.Screen
 
@@ -95,21 +105,28 @@ fun VenueListingView(
                         ),
                         modifier = Modifier.weight(1f)
                     )
-                    Button(
-                        onClick = { sortExpanded = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF32B768)),
-                        modifier = Modifier.padding(start = 8.dp)
-                    ) {
-                        Text(
-                            text = "Sort",
-                            style = TextStyle(
-                                fontFamily = interFontFamily,
-                                fontWeight = FontWeight(600),
-                                fontSize = 14.sp,
-                                color = Color.White
-                            )
-                        )
-                    }
+//                    Box(
+//                        modifier = Modifier
+//                            .clip(RoundedCornerShape(8.dp)) // Rounded corners for the box
+//                            .background(Color.Gray.copy(alpha = 0.1f)) // Transparent gray background
+//                            .clickable {
+//                                sortExpanded = true
+//                            }
+//                            .padding(horizontal = 10.dp, vertical = 6.dp) // Padding to give some space around the text
+//                    ) {
+//                        Text(
+//                            text = stringResource(id = R.string.sort_by),
+//                            style = TextStyle(
+//                                fontFamily = interFontFamily,
+//                                fontWeight = FontWeight(600),
+//                                fontSize = 14.sp,
+//                                lineHeight = 19.sp,
+//                                color = Color(0xFF32B768) // Accent color for the text
+//                            )
+//                        )
+//                    }
+
+                    SortRow(onSortClick = { sortExpanded = true })
                 }
             }
 
@@ -163,8 +180,66 @@ fun VenueListingView(
 }
 
 @Composable
-@Preview(showBackground = true)
+fun SortRow(onSortClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 10.dp, vertical = 6.dp)
+            .selectable(
+                selected = false,
+                onClick = onSortClick,
+                interactionSource = interactionSource,
+                indication = ripple()
+            )
+            .padding(4.dp), // Add some padding inside the ripple area
+        horizontalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_sort_24),
+            contentDescription = "Sort",
+            tint = Color(0xFF32B768),
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = stringResource(id = R.string.sort_by),
+            style = TextStyle(
+                fontFamily = interFontFamily,
+                fontWeight = FontWeight(600),
+                fontSize = 14.sp,
+                lineHeight = 19.sp,
+                color = Color(0xFF32B768) // Accent color for the text
+            ),
+            modifier = Modifier.align(Alignment.CenterVertically),
+        )
+    }
+}
+
+@Composable
 fun PreviewVenueListingView() {
-    val navController = rememberNavController()
-    VenueListingView(navController = navController)
+//    val navController = rememberNavController()
+//    VenueListingView(navController = navController)
+    Row(modifier = Modifier
+        .padding(horizontal = 10.dp, vertical = 6.dp)
+        .clickable {  },
+        horizontalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_sort_24),
+            contentDescription = "Sort",
+            tint = Color(0xFF32B768),
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = stringResource(id = R.string.sort_by),
+            style = TextStyle(
+                fontFamily = interFontFamily,
+                fontWeight = FontWeight(600),
+                fontSize = 14.sp,
+                lineHeight = 19.sp,
+                color = Color(0xFF32B768) // Accent color for the text
+            ),
+            modifier = Modifier.align(Alignment.CenterVertically),
+        )
+    }
 }

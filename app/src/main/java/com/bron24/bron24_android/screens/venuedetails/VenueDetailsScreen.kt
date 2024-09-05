@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
@@ -83,11 +84,7 @@ fun VenueDetailsScreen(
             details = venueDetails,
             onBackClick = onBackClick,
             onFavoriteClick = {},
-            onMapClick = {},
-            onNavigateToMap = { lat, long ->
-
-            },
-            onTakeRouteClick = {},
+            onSmallMapClick = {},
             onOrderClick = {},
         )
     }
@@ -112,10 +109,8 @@ fun VenueDetailsContent(
     details: VenueDetails?,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
-    onMapClick: () -> Unit,
-    onTakeRouteClick: () -> Unit,
-    onOrderClick: () -> Unit,
-    onNavigateToMap: (Double, Double) -> Unit
+    onSmallMapClick: () -> Unit,
+    onOrderClick: () -> Unit
 ) {
     val scrollState = rememberLazyListState()
     val context = LocalContext.current
@@ -149,7 +144,7 @@ fun VenueDetailsContent(
             item(key = "headerSection") {
                 HeaderSection(
                     details = details,
-                    onMapClick = onMapClick,
+                    onMapClick = onSmallMapClick,
                     onCopyAddressClick = {
                         copyAddressToClipboard(context, details?.address?.addressName)
                     }
@@ -157,15 +152,7 @@ fun VenueDetailsContent(
             }
             item(key = "infrastructureSection") { InfrastructureSection(details) }
             item(key = "descriptionSection") { DescriptionSection(details) }
-            item(key = "mapSection") {
-                MapSection(
-                    details = details,
-                    onTakeRouteClick = onTakeRouteClick,
-                    onMapClick = {
-                        details?.let { onNavigateToMap(it.latitude, it.longitude) }
-                    }
-                )
-            }
+            item(key = "mapSection") { MapSection(details = details) }
             item(key = "spacer") {
                 Spacer(modifier = Modifier.height(80.dp))
             }
@@ -207,18 +194,23 @@ private fun AnimatedToolbar(
     ) {
         TopAppBar(
             title = {
-                Text(
-                    text = title ?: "Unknown field",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = Color(0xFF3C2E56),
-                        lineHeight = 22.sp,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Box(
+                    modifier = Modifier.fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = title ?: "Unknown field",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color(0xFF3C2E56),
+                            lineHeight = 22.sp,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
@@ -351,7 +343,7 @@ fun VenueImageSection(
 
     Box(
         modifier = Modifier
-            .height(206.dp)
+            .height(230.dp)
             .fillMaxWidth()
             .background(Color.Gray)
     ) {
@@ -921,7 +913,7 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
 }
 
 @Composable
-fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick: () -> Unit) {
+fun MapSection(details: VenueDetails?) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val mapView = remember { MapView(context) }
@@ -933,12 +925,10 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
                     MapKitFactory.getInstance().onStart()
                     mapView.onStart()
                 }
-
                 Lifecycle.Event.ON_STOP -> {
                     mapView.onStop()
                     MapKitFactory.getInstance().onStop()
                 }
-
                 else -> {}
             }
         }
@@ -969,7 +959,11 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(10.dp))
-            .clickable(onClick = onMapClick),
+            .clickable {
+                details?.let { venue ->
+                    navigateToMapApp(context, venue.latitude, venue.longitude, venue.venueName)
+                }
+            },
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Box(
@@ -982,11 +976,6 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
                 factory = { mapView },
                 modifier = Modifier.fillMaxSize()
             )
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-//                    .clickable(onClick = onMapClick)
-            )
         }
 
         MapDetails(details)
@@ -998,14 +987,13 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-//                .clickable(onClick = onTakeRouteClick)
                 .padding(top = 6.dp, bottom = 12.dp)
                 .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Take a route",
+                text = "Open in Maps",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -1016,10 +1004,25 @@ fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick:
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_right),
-                contentDescription = "Take route",
+                contentDescription = "Open in Maps",
                 modifier = Modifier.size(14.dp)
             )
         }
+    }
+}
+
+fun navigateToMapApp(context: Context, latitude: Double, longitude: Double, venueName: String) {
+    val gmmIntentUri = Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude($venueName)")
+    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+    mapIntent.setPackage("com.google.android.apps.maps")
+
+    if (mapIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(mapIntent)
+    } else {
+        // If Google Maps is not installed, open in browser
+        val browserUri = Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude")
+        val browserIntent = Intent(Intent.ACTION_VIEW, browserUri)
+        context.startActivity(browserIntent)
     }
 }
 
@@ -1184,11 +1187,7 @@ private fun VenueDetailsPreview() {
         {},
         {},
         {},
-        {},
-        {},
-        onNavigateToMap = { lat, long ->
-
-        },
+        {}
     )
 }
 

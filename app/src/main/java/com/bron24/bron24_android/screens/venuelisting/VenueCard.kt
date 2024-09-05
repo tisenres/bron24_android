@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.round
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -177,7 +178,7 @@ fun VenueDetailsRow(venue: Venue) {
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "3 " + stringResource(id = R.string.km),
+            text = String.format("%.1f", venue.distance) + " " + stringResource(id = R.string.km),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -329,6 +330,7 @@ fun PreviewVenueCard() {
             district = "Chilonzor",
             closestMetroStation = "Novza",
         ),
-        imageUrl = null
+        imageUrl = null,
+        distance = 0.0
     )
 }
