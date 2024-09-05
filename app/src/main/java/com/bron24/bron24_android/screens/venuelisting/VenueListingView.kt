@@ -95,6 +95,21 @@ fun VenueListingView(
                         ),
                         modifier = Modifier.weight(1f)
                     )
+                    Button(
+                        onClick = { sortExpanded = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF32B768)),
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Text(
+                            text = "Sort",
+                            style = TextStyle(
+                                fontFamily = interFontFamily,
+                                fontWeight = FontWeight(600),
+                                fontSize = 14.sp,
+                                color = Color.White
+                            )
+                        )
+                    }
                 }
             }
 

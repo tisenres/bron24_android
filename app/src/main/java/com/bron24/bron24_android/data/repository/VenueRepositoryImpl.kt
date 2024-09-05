@@ -28,7 +28,7 @@ class VenueRepositoryImpl @Inject constructor(
             apiService.getVenues(
                 latitude, longitude, sort, availableTime,
                 minPrice, maxPrice, infrastructure, district
-            )?.map { it.toDomainModel() } ?: emptyList()
+            )?.data?.map { it.toDomainModel() } ?: emptyList()
         } catch (e: Exception) {
             // Log the error if needed
             emptyList()
@@ -55,7 +55,7 @@ class VenueRepositoryImpl @Inject constructor(
 
     override suspend fun getVenuePictures(venueId: Int): List<String> = withContext(Dispatchers.IO) {
         try {
-            apiService.getVenuePictures(venueId)?.mapNotNull { it.url } ?: emptyList()
+            apiService.getVenuePictures(venueId)?.map { it.url } ?: emptyList()
         } catch (e: Exception) {
             // Log the error if needed
             emptyList()
@@ -64,7 +64,7 @@ class VenueRepositoryImpl @Inject constructor(
 
     override suspend fun getVenueDetailsById(venueId: Int): VenueDetails? = withContext(Dispatchers.IO) {
         try {
-            apiService.getVenueDetails(venueId)?.toDomainModel()
+            apiService.getVenueDetails(venueId)?.data?.toDomainModel()
         } catch (e: Exception) {
             // Log the error if needed
             null

@@ -7,6 +7,7 @@ import com.bron24.bron24_android.data.network.dto.venue.VenueCoordinatesDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDetailsDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueOwnerDto
+import com.bron24.bron24_android.data.network.dto.venue.VenueResponseDto
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.City
 import com.bron24.bron24_android.domain.entity.venue.Infrastructure

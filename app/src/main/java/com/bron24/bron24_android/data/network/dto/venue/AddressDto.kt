@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class AddressDto(
     @SerializedName("id") val id: Int,
     @SerializedName("address_name") val addressName: String,
-    @SerializedName("longitude") val longitude: String,
-    @SerializedName("latitude") val latitude: String,
+//    @SerializedName("longitude") val longitude: String,
+//    @SerializedName("latitude") val latitude: String,
     @SerializedName("district") val district: String,
     @SerializedName("closest_metro_station") val closestMetroStation: String
 )

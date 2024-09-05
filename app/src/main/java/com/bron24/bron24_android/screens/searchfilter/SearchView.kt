@@ -136,7 +136,9 @@ fun SearchRow(onFilterClick: () -> Unit) {
                 .size(40.dp)
                 .clip(RoundedCornerShape(5.dp))
                 .background(color = Color.White)
-                .clickable { onFilterClick() },
+                .clickable {
+//                    onFilterClick()
+                           },
             contentAlignment = Alignment.Center
         ) {
             Image(
