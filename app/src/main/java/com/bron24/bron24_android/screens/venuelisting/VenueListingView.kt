@@ -217,29 +217,6 @@ fun SortRow(onSortClick: () -> Unit) {
 
 @Composable
 fun PreviewVenueListingView() {
-//    val navController = rememberNavController()
-//    VenueListingView(navController = navController)
-    Row(modifier = Modifier
-        .padding(horizontal = 10.dp, vertical = 6.dp)
-        .clickable {  },
-        horizontalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_sort_24),
-            contentDescription = "Sort",
-            tint = Color(0xFF32B768),
-            modifier = Modifier.size(20.dp)
-        )
-        Text(
-            text = stringResource(id = R.string.sort_by),
-            style = TextStyle(
-                fontFamily = interFontFamily,
-                fontWeight = FontWeight(600),
-                fontSize = 14.sp,
-                lineHeight = 19.sp,
-                color = Color(0xFF32B768) // Accent color for the text
-            ),
-            modifier = Modifier.align(Alignment.CenterVertically),
-        )
-    }
+    val navController = rememberNavController()
+    VenueListingView(navController = navController)
 }

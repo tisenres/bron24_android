@@ -36,11 +36,16 @@ import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavController) {
-
     val navigateToDetails: (() -> Unit)? = remember(venue) {
         venue?.venueId?.let { id ->
             { navController.navigate(Screen.VenueDetails.route.replace("{venueId}", id.toString())) }
         }
+    }
+
+    val shimmerModifier = if (isLoading) {
+        Modifier.shimmer()
+    } else {
+        Modifier
     }
 
     Column(
@@ -48,13 +53,14 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(Color(0xFFF4FEF4).copy(alpha = 0.47f))
+            .then(shimmerModifier)
             .let {
-                if (isLoading) {
-                    it.shimmer()
-                } else {
+                if (!isLoading) {
                     navigateToDetails?.let { action ->
                         it.clickable(onClick = action)
                     } ?: it
+                } else {
+                    it
                 }
             }
     ) {

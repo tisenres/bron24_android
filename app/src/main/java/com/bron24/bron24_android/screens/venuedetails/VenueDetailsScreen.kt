@@ -4,6 +4,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
@@ -58,6 +60,7 @@ import com.bron24.bron24_android.helper.util.presentation.components.toast.Toast
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -806,15 +809,15 @@ fun InfrastructureItem(text: String, iconRes: Int, onClick: (String, Int) -> Uni
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
-        )
+        ), label = ""
     )
     val backgroundColor by animateColorAsState(
         targetValue = if (isPressed) Color(0xFF32B768) else Color.White,
-        animationSpec = tween(durationMillis = 300)
+        animationSpec = tween(durationMillis = 300), label = ""
     )
     val textColor by animateColorAsState(
         targetValue = if (isPressed) Color.White else Color.Black,
-        animationSpec = tween(durationMillis = 300)
+        animationSpec = tween(durationMillis = 300), label = ""
     )
 
     Column(
@@ -918,6 +921,7 @@ fun MapSection(details: VenueDetails?) {
     val context = LocalContext.current
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     DisposableEffect(lifecycleOwner) {
         val mapKit = MapKitFactory.getInstance()
@@ -967,23 +971,44 @@ fun MapSection(details: VenueDetails?) {
             mapView?.let { map ->
                 AndroidView(
                     factory = { map },
-                    modifier = Modifier.fillMaxSize()
-                ) { mapView ->
-                    details?.let { venue ->
-                        Log.d("MapSection", "Venue coordinates: ${venue.latitude}, ${venue.longitude}")
-                        val venueLocation = Point(venue.latitude, venue.longitude)
-                        mapView.map.move(
-                            CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f)
-                        )
-                        val placemark = mapView.map.mapObjects.addPlacemark(venueLocation)
-                        placemark.setIcon(
-                            ImageProvider.fromResource(
-                                context,
-                                R.drawable.baseline_location_on_24_green
-                            )
-                        )
+                    modifier = Modifier.fillMaxSize(),
+                    update = { view ->
+                        details?.let { venue ->
+                            try {
+                                Log.d("MapSection", "Venue coordinates: ${venue.latitude}, ${venue.longitude}")
+                                val venueLocation = Point(venue.latitude, venue.longitude)
+                                view.map.move(
+                                    CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
+                                    Animation(Animation.Type.SMOOTH, 0.3f),
+                                    null
+                                )
+                                view.map.mapObjects.clear()
+
+                                val placemark = view.map.mapObjects.addPlacemark(venueLocation)
+                                val markerIcon = R.drawable.baseline_location_on_24_green
+                                val drawable = ContextCompat.getDrawable(context, markerIcon)
+                                val bitmap = drawable?.let {
+                                    getBitmapFromDrawable(it, 1.5f)
+                                }
+                                placemark.setIcon(ImageProvider.fromBitmap(bitmap))
+
+                                errorMessage = null
+                            } catch (e: Exception) {
+                                Log.e("MapSection", "Error updating map: ${e.message}")
+                                errorMessage = "Error loading map: ${e.message}"
+                            }
+                        }
                     }
-                }
+                )
+            }
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp)
+                )
             }
         }
 
@@ -1017,6 +1042,16 @@ fun MapSection(details: VenueDetails?) {
                 modifier = Modifier.size(14.dp)
             )
         }
+    }
+}
+
+fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
+    val width = (drawable.intrinsicWidth * scaleFactor).toInt()
+    val height = (drawable.intrinsicHeight * scaleFactor).toInt()
+    return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
+        val canvas = android.graphics.Canvas(this)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
     }
 }
 
