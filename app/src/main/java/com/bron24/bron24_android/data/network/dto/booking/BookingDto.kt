@@ -8,5 +8,7 @@ data class BookingDto(
     @SerializedName("user_id") val userId: String,
     @SerializedName("start_time") val startTime: Long,
     @SerializedName("end_time") val endTime: Long,
-    @SerializedName("status") val status: String
+    @SerializedName("status") val status: String,
+//    @SerializedName("created_at") val createdAt: String,
+//    @SerializedName("updated_at") val updatedAt: String
 )

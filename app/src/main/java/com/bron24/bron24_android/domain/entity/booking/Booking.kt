@@ -6,5 +6,6 @@ data class Booking(
     val userId: String,
     val startTime: Long,
     val endTime: Long,
-    val status: BookingStatus = BookingStatus.PENDING
+    val status: BookingStatus = BookingStatus.PENDING,
+    val stadiumPart: String
 )

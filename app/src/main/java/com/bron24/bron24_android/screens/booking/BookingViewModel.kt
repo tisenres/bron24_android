@@ -8,10 +8,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class BookingViewModel @Inject constructor(private val bookingModel: BookingModel) : ViewModel() {
+class BookingViewModel @Inject constructor() : ViewModel() {
 
     private val _bookingState = MutableStateFlow<BookingState>(BookingState.Idle)
     val bookingState: StateFlow<BookingState> = _bookingState.asStateFlow()
@@ -24,6 +25,35 @@ class BookingViewModel @Inject constructor(private val bookingModel: BookingMode
 
     private val _selectedTime = MutableStateFlow<Long?>(null)
     val selectedTime: StateFlow<Long?> = _selectedTime.asStateFlow()
+
+    // Mock data
+    private val stadiumParts = listOf("A", "B")
+    val availableDates = listOf(
+        Date().time,
+        Date().time + 86400000,
+        Date().time + 172800000,
+        Date().time + 259200000,
+        Date().time + 345600000
+    )
+    val availableTimes = listOf(
+        32400000L, // 9:00 AM
+        36000000L, // 10:00 AM
+        39600000L, // 11:00 AM
+        43200000L, // 12:00 PM
+        46800000L, // 1:00 PM
+        50400000L, // 2:00 PM
+        54000000L, // 3:00 PM
+        57600000L  // 4:00 PM
+    )
+
+    private val _availableStadiumParts = MutableStateFlow(stadiumParts)
+    val availableStadiumParts: StateFlow<List<String>> = _availableStadiumParts.asStateFlow()
+
+//    private val _availableDates = MutableStateFlow(availableDates)
+//    val availableDates: StateFlow<List<Long>> = _availableDates.asStateFlow()
+//
+//    private val _availableTimes = MutableStateFlow(availableTimes)
+//    val availableTimes: StateFlow<List<Long>> = _availableTimes.asStateFlow()
 
     fun selectStadiumPart(part: String) {
         _selectedStadiumPart.value = part
@@ -50,17 +80,25 @@ class BookingViewModel @Inject constructor(private val bookingModel: BookingMode
         viewModelScope.launch {
             _bookingState.value = BookingState.Loading
             try {
+                // Simulate API call delay
+                kotlinx.coroutines.delay(1000)
+
                 val booking = Booking(
+                    id = generateMockId(),
                     venueId = venueId,
                     userId = userId,
                     startTime = date + time,
-                    endTime = date + time + 3600000 // Assuming 1 hour booking
+                    endTime = date + time + 3600000, // Assuming 1 hour booking
+                    stadiumPart = stadiumPart
                 )
-                val result = bookingModel.createBooking(booking)
-                _bookingState.value = BookingState.Success(result)
+                _bookingState.value = BookingState.Success(booking)
             } catch (e: Exception) {
                 _bookingState.value = BookingState.Error(e.message ?: "Unknown error")
             }
         }
+    }
+
+    private fun generateMockId(): String {
+        return "BOOKING-${System.currentTimeMillis()}"
     }
 }

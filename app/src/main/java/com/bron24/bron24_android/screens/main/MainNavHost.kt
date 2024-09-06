@@ -9,26 +9,32 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.navigation.compose.composable
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.helper.util.presentation.components.BottomNavigationBar
+import com.bron24.bron24_android.screens.booking.BookingScreen
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.map.YandexMapScreen
@@ -65,6 +71,10 @@ fun MainNavHost(
     modifier: Modifier,
     onDestinationChanged: (String) -> Unit
 ) {
+
+    var showBookingBottomSheet by remember { mutableStateOf(false) }
+    var currentVenueId by remember { mutableStateOf<Int?>(null) }
+
     NavHost(
         navController = navController,
         startDestination = Screen.HomePage.route,
@@ -207,16 +217,38 @@ fun MainNavHost(
             VenueDetailsScreen(
                 viewModel = viewModel,
                 venueId = venueId,
-                onBackClick = {
-                    navController.popBackStack()
-                },
+                onBackClick = { navController.popBackStack() },
                 onOrderClick = {
-                    // Navigate to the booking screen or show booking bottom sheet
-                    // For example:
-                    // navController.navigate(Screen.Booking.createRoute(venueId))
+                    currentVenueId = venueId
+                    showBookingBottomSheet = true
                 }
             )
+            if (showBookingBottomSheet) {
+                BookingBottomSheet(
+                    venueId = currentVenueId ?: 0,
+                    onDismiss = { showBookingBottomSheet = false }
+                )
+            }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit) {
+    val sheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
+        BookingScreen(
+            viewModel = hiltViewModel(),
+            onOrderClick = {
+                // Handle order confirmation
+                onDismiss()
+            }
+        )
     }
 }
 
@@ -233,7 +265,6 @@ fun ProfilePage() {
                 fontSize = 24.sp,
                 color = Color(0xFF32B768),
                 lineHeight = 30.sp,
-//                letterSpacing = (-0.028).em
             ),
             modifier = Modifier.align(
                 Alignment.Center
@@ -260,7 +291,6 @@ fun OrdersPage() {
                 fontSize = 24.sp,
                 color = Color(0xFF32B768),
                 lineHeight = 30.sp,
-//                letterSpacing = (-0.028).em
             ),
             modifier = Modifier.align(
                 Alignment.Center

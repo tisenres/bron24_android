@@ -11,7 +11,8 @@ fun BookingDto.toDomainModel(): Booking {
         userId = userId,
         startTime = startTime,
         endTime = endTime,
-        status = BookingStatus.valueOf(status)
+        status = BookingStatus.valueOf(status),
+        stadiumPart = "A"
     )
 }
 

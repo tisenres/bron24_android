@@ -12,6 +12,7 @@ sealed class Screen(val route: String) {
     object Filter : Screen("filter")
     object VenueDetails : Screen("venueDetails/{venueId}")
     object MapPage : Screen("mapPage")
+    object Booking : Screen("booking/{venueId}")
     object MapPageWithCoordinates : Screen("mapPage/{latitude}/{longitude}")
     object OrdersPage : Screen("ordersPage")
     object ProfilePage : Screen("profilePage")
