@@ -240,7 +240,8 @@ fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit) {
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = Color.White,
     ) {
         BookingScreen(
             viewModel = hiltViewModel(),
