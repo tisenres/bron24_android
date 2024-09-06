@@ -183,6 +183,7 @@ fun SectorButton(
         modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
+            .clickable {}
             .padding(vertical = 13.dp, horizontal = 29.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -206,7 +207,9 @@ fun DateSection(
 ) {
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {},
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -264,8 +267,8 @@ fun DateItem(dateItem: DateItem, onDateSelected: (Long) -> Unit) {
             .width(60.dp)
             .clip(RoundedCornerShape(18.dp))
             .background(backgroundColor)
-            .padding(vertical = 12.dp)
-            .clickable { onDateSelected(dateItem.day.toLong()) },
+            .clickable { onDateSelected(dateItem.day.toLong()) }
+            .padding(vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
@@ -321,21 +324,27 @@ fun AvailableTimesSection(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             timeSlots.forEach { timeSlot ->
-                TimeSlotItem(timeSlot)
+                TimeSlotItem(timeSlot,
+                    { "sdsd" })
             }
         }
     }
 }
 
 @Composable
-fun TimeSlotItem(timeSlot: TimeSlot) {
+fun TimeSlotItem(
+    timeSlot: TimeSlot,
+    onTimeSelected: (String) -> Unit
+) {
     val backgroundColor = when {
-        !timeSlot.isAvailable -> Color(0xFF32B768)
-        else -> Color(0xFFF5F5F5)
+        timeSlot.isSelected -> Color(0xFF32B768) // Green for selected
+        timeSlot.isAvailable -> Color(0xFFF5F5F5) // Light gray for available
+        else -> Color(0xFFE7E7E7) // Darker gray for unavailable
     }
     val textColor = when {
-        !timeSlot.isAvailable -> Color(0xFFC1C1C1)
-        else -> Color.Black
+        timeSlot.isSelected -> Color.White
+        timeSlot.isAvailable -> Color.Black
+        else -> Color(0xFFC1C1C1) // Light gray text for unavailable
     }
 
     Box(
@@ -344,6 +353,9 @@ fun TimeSlotItem(timeSlot: TimeSlot) {
             .width(110.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
+            .clickable(enabled = timeSlot.isAvailable && !timeSlot.isSelected) {
+                onTimeSelected(timeSlot.time)
+            }
             .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
