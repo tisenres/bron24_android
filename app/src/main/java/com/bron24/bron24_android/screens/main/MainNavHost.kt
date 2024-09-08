@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.main
 
+import android.app.DatePickerDialog
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -16,6 +17,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -35,12 +39,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.helper.util.presentation.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.booking.BookingScreen
+import com.bron24.bron24_android.screens.booking.BookingViewModel
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.map.YandexMapScreen
 import com.bron24.bron24_android.screens.searchfilter.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
+import java.util.Calendar
 
 @Composable
 fun MainAppScaffold() {
@@ -236,20 +242,47 @@ fun MainNavHost(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit) {
+    val viewModel: BookingViewModel = hiltViewModel()
+    val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = Color.White,
+        containerColor = Color.White
     ) {
         BookingScreen(
-            viewModel = hiltViewModel(),
+            viewModel = viewModel,
             onOrderClick = {
                 // Handle order confirmation
                 onDismiss()
             }
         )
+    }
+
+    // DatePicker setup
+    val datePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val calendar = Calendar.getInstance().apply {
+                    set(year, month, dayOfMonth)
+                }
+                viewModel.selectDate(calendar.timeInMillis)
+            },
+            Calendar.getInstance().get(Calendar.YEAR),
+            Calendar.getInstance().get(Calendar.MONTH),
+            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+        )
+    }
+
+    // Observe changes to show DatePicker
+    val showDatePicker by viewModel.showDatePicker.collectAsState()
+    if (showDatePicker) {
+        LaunchedEffect(Unit) {
+            datePickerDialog.show()
+            viewModel.onDatePickerShown()
+        }
     }
 }
 

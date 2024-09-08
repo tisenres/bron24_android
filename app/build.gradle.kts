@@ -22,6 +22,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+//        ndk {
+//            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
+//        }
     }
 
     buildTypes {
@@ -41,6 +45,16 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a") // Add 'armeabi-v7a', 'arm64-v8a'
+            isUniversalApk = false
+        }
+    }
+
     buildFeatures {
         compose = true
     }

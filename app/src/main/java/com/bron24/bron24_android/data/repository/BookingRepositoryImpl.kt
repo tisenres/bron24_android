@@ -10,9 +10,9 @@ import javax.inject.Inject
 class BookingRepositoryImpl @Inject constructor(
     private val bookingApiService: BookingApiService
 ) : BookingRepository {
-    override suspend fun createBooking(booking: Booking): Booking =
-        bookingApiService.createBooking(booking.toDto()).toDomainModel()
+//    override suspend fun createBooking(booking: Booking): Booking =
+//        bookingApiService.createBooking(booking.toDto()).toDomainModel()
 
-    override suspend fun getBookingById(bookingId: String): Booking =
-        bookingApiService.getBookingById(bookingId).toDomainModel()
+//    override suspend fun getBookingById(bookingId: String): Booking =
+//        bookingApiService.getBookingById(bookingId).toDomainModel()
 }

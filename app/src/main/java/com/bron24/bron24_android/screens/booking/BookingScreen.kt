@@ -1,8 +1,10 @@
 package com.bron24.bron24_android.screens.booking
 
+import android.app.DatePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -30,11 +30,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -49,63 +55,64 @@ import com.bron24.bron24_android.domain.entity.booking.DateItem
 import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @Composable
 fun BookingScreen(
     viewModel: BookingViewModel = hiltViewModel(),
     onOrderClick: () -> Unit
 ) {
-    val bookingState by viewModel.bookingState.collectAsState()
-    val selectedStadiumPart by viewModel.selectedStadiumPart.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
-    val selectedTime by viewModel.selectedTime.collectAsState()
+    val availableDates by viewModel.availableDates.collectAsState()
+    val visibleMonthYear by viewModel.visibleMonthYear.collectAsState()
+    val selectedStadiumPart by viewModel.selectedStadiumPart.collectAsState()
     val availableStadiumParts by viewModel.availableStadiumParts.collectAsState()
+    val selectedTime by viewModel.selectedTime.collectAsState()
+    val availableTimes by viewModel.availableTimes.collectAsState()
+    val bookingState by viewModel.bookingState.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .verticalScroll(rememberScrollState())
-            .padding(bottom = 70.dp), // Add padding for PricingSection
-        verticalArrangement = Arrangement.spacedBy(40.dp)
-    ) {
-        StadiumPartSection(
-            sectors = availableStadiumParts.map { Sector(it, it == selectedStadiumPart) },
-            onSectorSelected = { viewModel.selectStadiumPart(it) }
-        )
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
-        DateSection(
-            dates = viewModel.availableDates.map {
-                val date = Date(it)
-                val isSelected = selectedDate == it
-                DateItem(
-                    day = SimpleDateFormat("d", Locale.getDefault()).format(date).toInt(),
-                    dayOfWeek = SimpleDateFormat("EEE", Locale.getDefault()).format(date),
-                    month = SimpleDateFormat("MMMM", Locale.getDefault()).format(date),
-                    isSelected = isSelected
-                )
-            },
-            onDateSelected = { viewModel.selectDate(it) }
-        )
-
-        AvailableTimesSection(
-            timeSlots = viewModel.availableTimes.map {
-                val isSelected = selectedTime == it
-                TimeSlot(
-                    time = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(it)),
-                    isAvailable = true,
-                    isSelected = isSelected
-                )
-            },
-            onTimeSelected = { viewModel.selectTime(it) }
-        )
+    LaunchedEffect(Unit) {
+        viewModel.selectDate(Calendar.getInstance().timeInMillis) // Select today's date by default
     }
 
-    // Add PricingSection at the bottom
     Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 90.dp),
+            verticalArrangement = Arrangement.spacedBy(40.dp)
+        ) {
+            StadiumPartSection(
+                sectors = availableStadiumParts.map { Sector(it, it == selectedStadiumPart) },
+                onSectorSelected = {
+                    viewModel.selectStadiumPart(it)
+                    viewModel.fetchTimeSlots()
+                }
+            )
+
+            DateSection(
+                dates = availableDates,
+                visibleMonthYear = visibleMonthYear,
+                onDateSelected = { timestamp ->
+                    viewModel.selectDate(timestamp)
+                    viewModel.fetchTimeSlots()
+                },
+                onMonthClick = { viewModel.showDatePicker() },
+                onVisibleDatesChanged = viewModel::updateVisibleMonthYear
+            )
+
+            AvailableTimesSection(
+                timeSlots = availableTimes.map { TimeSlot(it, it == selectedTime, true) },
+                onTimeSelected = { viewModel.selectTime(it) }
+            )
+        }
+
         PricingSection(
             pricePerHour = "74767364", // Mock price
             onOrderClick = {
@@ -117,22 +124,44 @@ fun BookingScreen(
     }
 
     // Handle booking state
-    when (val state = bookingState) {
+    when (bookingState) {
         is BookingState.Loading -> {
             CircularProgressIndicator(modifier = Modifier.fillMaxSize())
         }
 
         is BookingState.Error -> {
-            Text("Error: ${state.message}")
+            Text("Error: ${(bookingState as BookingState.Error).message}")
         }
 
         is BookingState.Success -> {
-            LaunchedEffect(state) {
+            LaunchedEffect(bookingState) {
                 // Handle successful booking, e.g., navigate to confirmation screen
             }
         }
 
         else -> {} // Idle state, do nothing
+    }
+
+    // DatePicker Dialog
+    val showDatePicker by viewModel.showDatePicker.collectAsState()
+    if (showDatePicker) {
+        val currentDate = Calendar.getInstance()
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                currentDate.set(year, month, dayOfMonth)
+                coroutineScope.launch {
+                    viewModel.selectDate(currentDate.timeInMillis)
+                    viewModel.fetchTimeSlots()
+                }
+            },
+            currentDate.get(Calendar.YEAR),
+            currentDate.get(Calendar.MONTH),
+            currentDate.get(Calendar.DAY_OF_MONTH)
+        ).apply {
+            setOnDismissListener { viewModel.onDatePickerShown() }
+            show()
+        }
     }
 }
 
@@ -183,7 +212,7 @@ fun SectorButton(
         modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
-            .clickable {}
+            .clickable(onClick = onClick)
             .padding(vertical = 13.dp, horizontal = 29.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -203,13 +232,19 @@ fun SectorButton(
 @Composable
 fun DateSection(
     dates: List<DateItem>,
-    onDateSelected: (Long) -> Unit
+    visibleMonthYear: String,
+    onDateSelected: (Long) -> Unit,
+    onMonthClick: () -> Unit,
+    onVisibleDatesChanged: (DateItem) -> Unit
 ) {
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {},
+                .clickable(onClick = onMonthClick),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -232,7 +267,7 @@ fun DateSection(
                 colorFilter = ColorFilter.tint(Color(0xFF949494)),
             )
             Text(
-                dates.firstOrNull()?.month ?: "",
+                visibleMonthYear,
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -246,28 +281,50 @@ fun DateSection(
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(scrollState)
         ) {
-            items(dates) { dateItem ->
-                DateItem(dateItem, onDateSelected)
+            dates.forEach { dateItem ->
+                DateItem(
+                    dateItem = dateItem,
+                    onClick = { /* ... */ },
+                    modifier = Modifier.onGloballyPositioned { coordinates ->
+                        val isVisible = coordinates.boundsInRoot().let { bounds ->
+                            bounds.left >= 0 && bounds.right <= coordinates.size.width
+                        }
+                        if (isVisible) {
+                            onVisibleDatesChanged(dateItem)
+                        }
+                    }
+                )
             }
+        }
+    }
+
+    // Center the initially selected date
+    LaunchedEffect(dates) {
+        val selectedIndex = dates.indexOfFirst { it.isSelected }
+        if (selectedIndex != -1) {
+            scrollState.animateScrollTo(selectedIndex * (60 + 12) - 150)
         }
     }
 }
 
 @Composable
-fun DateItem(dateItem: DateItem, onDateSelected: (Long) -> Unit) {
+fun DateItem(dateItem: DateItem, onClick: () -> Unit, modifier: Modifier) {
     val backgroundColor = if (dateItem.isSelected) Color(0xFF32B768) else Color(0xFFF5F5F5)
     val textColorDayOfWeek = if (dateItem.isSelected) Color.White else Color(0xFF616161)
     val textColorDay = if (dateItem.isSelected) Color.White else Color.Black
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .width(60.dp)
             .clip(RoundedCornerShape(18.dp))
             .background(backgroundColor)
-            .clickable { onDateSelected(dateItem.day.toLong()) }
+            .clickable(onClick = onClick)
             .padding(vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp)
@@ -307,7 +364,6 @@ fun AvailableTimesSection(
     ) {
         Text(
             "Available times",
-            fontSize = 24.sp,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -324,8 +380,10 @@ fun AvailableTimesSection(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             timeSlots.forEach { timeSlot ->
-                TimeSlotItem(timeSlot,
-                    { "sdsd" })
+                TimeSlotItem(
+                    timeSlot = timeSlot,
+                    onTimeSelected = { onTimeSelected(timeSlot.time) }
+                )
             }
         }
     }
@@ -334,17 +392,17 @@ fun AvailableTimesSection(
 @Composable
 fun TimeSlotItem(
     timeSlot: TimeSlot,
-    onTimeSelected: (String) -> Unit
+    onTimeSelected: () -> Unit
 ) {
     val backgroundColor = when {
-        timeSlot.isSelected -> Color(0xFF32B768) // Green for selected
-        timeSlot.isAvailable -> Color(0xFFF5F5F5) // Light gray for available
-        else -> Color(0xFFE7E7E7) // Darker gray for unavailable
+        timeSlot.isSelected -> Color(0xFF32B768)
+        timeSlot.isAvailable -> Color(0xFFF5F5F5)
+        else -> Color(0xFFE7E7E7)
     }
     val textColor = when {
         timeSlot.isSelected -> Color.White
         timeSlot.isAvailable -> Color.Black
-        else -> Color(0xFFC1C1C1) // Light gray text for unavailable
+        else -> Color(0xFFC1C1C1)
     }
 
     Box(
@@ -353,14 +411,15 @@ fun TimeSlotItem(
             .width(110.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
-            .clickable(enabled = timeSlot.isAvailable && !timeSlot.isSelected) {
-                onTimeSelected(timeSlot.time)
-            }
+            .clickable(
+                enabled = timeSlot.isAvailable && !timeSlot.isSelected,
+                onClick = onTimeSelected
+            )
             .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = timeSlot.time,
+            text = timeSlot.time.toString(),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -423,6 +482,10 @@ fun PricingSection(
             }
         }
     }
+}
+
+fun LayoutCoordinates.findChildBounds(parent: LayoutCoordinates, key: String): Rect {
+    return this.boundsInRoot()
 }
 
 @Preview(showBackground = true)

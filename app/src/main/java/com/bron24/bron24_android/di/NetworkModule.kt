@@ -4,8 +4,8 @@ import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.network.interceptors.ErrorHandler
-import com.bron24.bron24_android.data.network.interceptors.HttpInterceptor
 import com.bron24.bron24_android.data.network.interceptors.ErrorHandlingCallAdapterFactory
+import com.bron24.bron24_android.data.network.interceptors.HttpInterceptor
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import dagger.Lazy
