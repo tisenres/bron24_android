@@ -14,25 +14,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.venue.Address
-import com.bron24.bron24_android.domain.entity.venue.City
-import com.bron24.bron24_android.domain.entity.venue.Infrastructure
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.screens.venuedetails.AddressRow
@@ -43,33 +40,57 @@ import com.bron24.bron24_android.screens.venuedetails.copyAddressToClipboard
 @Composable
 fun SmallVenueDetailsScreen(
     modifier: Modifier,
-    venueDetails: VenueDetails
+    venueDetails: VenueDetails?,
+    onClose: () -> Unit
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
+
     val scale by animateFloatAsState(
         targetValue = if (isFavorite) 1.2f else 1f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy), label = ""
     )
 
-    SmallDetailsContent(
-        modifier = modifier,
-        venueDetails = venueDetails,
-        isFavorite = isFavorite,
-        favoriteScale = scale,
-        onFavoriteClick = { isFavorite = !isFavorite },
-        onCopyAddressClick = { copyAddressToClipboard(context, venueDetails?.address?.addressName) }
-    )
+    val isLoading by remember { derivedStateOf { venueDetails == null } }
+
+    if (isLoading) {
+        LoadingScreen()
+    } else {
+        SmallDetailsContent(
+            modifier = modifier,
+            venueDetails = venueDetails,
+            isFavorite = isFavorite,
+            favoriteScale = scale,
+            onFavoriteClick = { isFavorite = !isFavorite },
+            onCopyAddressClick = { copyAddressToClipboard(context, venueDetails?.address?.addressName) },
+            onClose = onClose
+        )
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        CircularProgressIndicator(
+            color = Color(0xFF32B768),
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
 }
 
 @Composable
 fun SmallDetailsContent(
     modifier: Modifier,
-    venueDetails: VenueDetails,
+    venueDetails: VenueDetails?,
     isFavorite: Boolean,
     favoriteScale: Float,
     onFavoriteClick: () -> Unit,
-    onCopyAddressClick: () -> Unit
+    onCopyAddressClick: () -> Unit,
+    onClose: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -77,7 +98,7 @@ fun SmallDetailsContent(
             .background(Color.White)
             .clip(RoundedCornerShape(10.dp))
     ) {
-        SmallImageSection(venueDetails)
+        SmallImageSection(venueDetails, isFavorite, favoriteScale, onFavoriteClick)
         Spacer(modifier = Modifier.height(12.dp))
         SmallHeaderSection(venueDetails, onCopyAddressClick)
         Spacer(modifier = Modifier.height(12.dp))
@@ -101,7 +122,12 @@ fun SmallHeaderSection(venueDetails: VenueDetails?, onCopyAddressClick: () -> Un
 }
 
 @Composable
-fun SmallImageSection(venueDetails: VenueDetails?) {
+fun SmallImageSection(
+    venueDetails: VenueDetails?,
+    isFavorite: Boolean,
+    favoriteScale: Float,
+    onFavoriteClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .height(150.dp)
@@ -111,8 +137,7 @@ fun SmallImageSection(venueDetails: VenueDetails?) {
             painter = rememberAsyncImagePainter(model = R.drawable.football_field),
             contentDescription = "Venue Image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         )
         Box(
             modifier = Modifier
@@ -122,13 +147,14 @@ fun SmallImageSection(venueDetails: VenueDetails?) {
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = "Favorite",
-                tint = Color.Black,
+                tint = if (isFavorite) Color.Red else Color.White,
                 modifier = Modifier
                     .size(40.dp)
+                    .scale(favoriteScale)
                     .clip(CircleShape)
                     .background(Color.White)
                     .padding(10.dp)
-
+                    .clickable(onClick = onFavoriteClick)
             )
         }
     }
@@ -137,7 +163,7 @@ fun SmallImageSection(venueDetails: VenueDetails?) {
 @Composable
 fun SmallTitleSection(venueDetails: VenueDetails?) {
     Text(
-        text = "Bunyodkor kompleksi",
+        text = venueDetails?.venueName ?: "Unknown venue",
         style = TextStyle(
             fontFamily = gilroyFontFamily,
             fontWeight = FontWeight.ExtraBold,
@@ -277,7 +303,7 @@ fun SmallPricingSection(venueDetails: VenueDetails?) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "100 sum/hour",
+            text = "${venueDetails?.pricePerHour} ${stringResource(id = R.string.som_per_hour)}",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -302,7 +328,6 @@ fun SmallPricingSection(venueDetails: VenueDetails?) {
                     fontSize = 14.sp,
                     color = Color.White,
                     lineHeight = 16.8.sp,
-//                    letterSpacing = (-0.028).em
                 )
             )
         }
@@ -312,47 +337,4 @@ fun SmallPricingSection(venueDetails: VenueDetails?) {
 @Preview
 @Composable
 private fun VenueDetailsPreview() {
-    SmallVenueDetailsScreen(
-        modifier = Modifier,
-        venueDetails = VenueDetails(
-            venueId = 1,
-            address = Address(
-                id = 6,
-                addressName = "Bunyodkor street, 18",
-                district = "SASASAS",
-                closestMetroStation = "Novza"
-            ),
-            city = City(id = 5, cityName = "Tashkent"),
-            infrastructure = Infrastructure(
-                id = 9,
-                lockerRoom = true,
-                stands = "FDFDFGD",
-                shower = true,
-                parking = true
-            ),
-            venueOwner = VenueOwner(
-                id = 9,
-                ownerName = "Owner Name",
-                tinNumber = 1223243,
-                contact1 = "454545",
-                contact2 = "232323"
-            ),
-            venueName = "Bunyodkor kompleksi",
-            venueType = "out",
-            venueSurface = "Grass",
-            peopleCapacity = 12,
-            sportType = "Football",
-            pricePerHour = "100",
-            description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
-            workingHoursFrom = "9:00",
-            workingHoursTill = "23:00",
-            contact1 = "+998 77 806 0278",
-            contact2 = "+998 77 806 0288",
-            createdAt = "2021-01-01",
-            updatedAt = "2023-01-01",
-            imageUrls = emptyList(),
-            latitude = 46.232323,
-            longitude = 65.232323
-        ),
-    )
 }

@@ -39,8 +39,8 @@ fun YandexMapScreen(
 ) {
     val venues by mapViewModel.venues.collectAsState()
     val currentLocation by mapViewModel.currentLocation.collectAsState()
+    val selectedVenueId by mapViewModel.selectedVenueId.collectAsState()
     val venueDetails by mapViewModel.venueDetails.collectAsState()
-    var selectedVenueId by remember { mutableStateOf<Int?>(null) }
     var showVenueDetails by remember { mutableStateOf(false) }
     var currentCity by remember { mutableStateOf("") }
     var markerCount by remember { mutableIntStateOf(0) }
@@ -55,9 +55,9 @@ fun YandexMapScreen(
         YandexMapView(
             currentLocation = currentLocation,
             venues = venues,
+            selectedVenueId = selectedVenueId,
             onMarkerClick = { clickedVenueId ->
-                selectedVenueId = clickedVenueId
-                mapViewModel.fetchVenueDetails(clickedVenueId)
+                mapViewModel.selectVenue(clickedVenueId)
                 showVenueDetails = true
             },
             onCameraPositionChanged = { position ->
@@ -80,19 +80,13 @@ fun YandexMapScreen(
                 .align(Alignment.TopEnd)
                 .padding(16.dp)
         ) {
-            IconButton(onClick = {
-                mapViewModel.zoomIn()
-            }) {
+            IconButton(onClick = { mapViewModel.zoomIn() }) {
                 Icon(Icons.Outlined.LocationOn, contentDescription = "Zoom In")
             }
-            IconButton(onClick = {
-                mapViewModel.zoomOut()
-            }) {
+            IconButton(onClick = { mapViewModel.zoomOut() }) {
                 Icon(Icons.Default.LocationOn, contentDescription = "Zoom Out")
             }
-            IconButton(onClick = {
-                mapViewModel.centerOnCurrentLocation(currentLocation)
-            }) {
+            IconButton(onClick = { mapViewModel.centerOnCurrentLocation() }) {
                 Icon(Icons.Default.LocationOn, contentDescription = "Current Location")
             }
         }
@@ -120,12 +114,11 @@ fun YandexMapScreen(
                     }
                 }
         ) {
-            venueDetails?.let { details ->
-                SmallVenueDetailsScreen(
-                    modifier = Modifier.padding(16.dp),
-                    venueDetails = details
-                )
-            }
+            SmallVenueDetailsScreen(
+                modifier = Modifier.padding(16.dp),
+                venueDetails = venueDetails,
+                onClose = { mapViewModel.clearSelectedVenue() }
+            )
         }
     }
 }
@@ -134,14 +127,13 @@ fun YandexMapScreen(
 fun YandexMapView(
     currentLocation: Location?,
     venues: List<VenueCoordinates>,
+    selectedVenueId: Int?,
     onMarkerClick: (Int) -> Unit,
     onCameraPositionChanged: (CameraPosition) -> Unit
 ) {
     val context = LocalContext.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
-    var selectedMarkerId by remember { mutableStateOf<Int?>(null) }
 
-    // Initialize MapKit and handle lifecycle
     DisposableEffect(Unit) {
         MapKitFactory.initialize(context)
         mapView?.onStart()
@@ -172,27 +164,19 @@ fun YandexMapView(
             venues.forEach { venue ->
                 val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
                 val placemark = view.map.mapObjects.addPlacemark(point)
-                val markerIcon = if (venue.venueId == selectedMarkerId) {
+                val isSelected = venue.venueId == selectedVenueId
+                val markerIcon = if (isSelected) {
                     R.drawable.baseline_location_on_24_green
                 } else {
                     R.drawable.baseline_location_on_24_red
                 }
                 val drawable = ContextCompat.getDrawable(context, markerIcon)
                 val bitmap = drawable?.let {
-                    getBitmapFromDrawable(
-                        it,
-                        if (venue.venueId == selectedMarkerId) 1.5f else 1.0f
-                    )
+                    getBitmapFromDrawable(it, if (isSelected) 1.5f else 1.0f)
                 }
                 placemark.setIcon(ImageProvider.fromBitmap(bitmap))
                 placemark.addTapListener { _, _ ->
-                    selectedMarkerId = venue.venueId
                     onMarkerClick(venue.venueId)
-                    view.map.move(
-                        CameraPosition(point, view.map.cameraPosition.zoom, 0f, 0f),
-                        Animation(Animation.Type.SMOOTH, 0.3f),
-                        null
-                    )
                     true
                 }
             }
@@ -216,6 +200,7 @@ fun YandexMapView(
         }
     }
 }
+
 
 fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
     val width = (drawable.intrinsicWidth * scaleFactor).toInt()
