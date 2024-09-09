@@ -409,7 +409,6 @@ fun VenueImageSection(
         ImageOverlay(
             currentPage = pagerState.currentPage,
             totalPages = imageUrls.size,
-            onBackClick = onBackClick,
             onShareClick = onShareClick,
             onFavoriteClick = onFavoriteClick
         )
@@ -436,7 +435,6 @@ fun VenueImage(imageUrl: String, page: Int) {
 fun ImageOverlay(
     currentPage: Int,
     totalPages: Int,
-    onBackClick: () -> Unit,
     onShareClick: () -> Unit,
     onFavoriteClick: () -> Unit
 ) {
@@ -445,28 +443,17 @@ fun ImageOverlay(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, start = 10.dp, end = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
         ) {
-            Box(modifier = Modifier.weight(1f)) {
-                ClickableIconButton(
-                    onClick = onBackClick,
-                    icon = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
-                )
-            }
-            Row(
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.End
-            ) {
-                ClickableIconButton(
-                    onClick = onShareClick,
-                    icon = Icons.Default.Share,
-                    contentDescription = "Share"
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
-            }
+            ClickableIconButton(
+                onClick = onShareClick,
+                icon = Icons.Default.Share,
+                contentDescription = "Share"
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
+
         }
         BottomIndicators(
             currentPage = currentPage,
@@ -691,7 +678,6 @@ fun DistanceRow(details: VenueDetails?) {
     )
 }
 
-
 @Composable
 fun InfoRow(icon: Int, text: String) {
     Row(
@@ -817,7 +803,11 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         details?.let { venue ->
-            InfrastructureItem(venue.venueType.capitalize(), R.drawable.baseline_stadium_24, onItemClick)
+            InfrastructureItem(
+                venue.venueType.capitalize(),
+                R.drawable.baseline_stadium_24,
+                onItemClick
+            )
             InfrastructureItem(
                 "${venue.peopleCapacity} players",
                 R.drawable.game_icons_soccer_kick,
@@ -841,7 +831,11 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
                     InfrastructureItem("Parking", R.drawable.baseline_local_parking_24, onItemClick)
                 }
             }
-            InfrastructureItem(venue.venueSurface.capitalize(), R.drawable.baseline_grass_24, onItemClick)
+            InfrastructureItem(
+                venue.venueSurface.capitalize(),
+                R.drawable.baseline_grass_24,
+                onItemClick
+            )
             InfrastructureItem(
                 "${venue.workingHoursFrom.drop(3)} - ${venue.workingHoursTill.drop(3)}",
                 R.drawable.baseline_access_time_filled_24,
@@ -985,10 +979,12 @@ fun MapSection(details: VenueDetails?) {
                     mapKit.onStart()
                     mapView?.onStart()
                 }
+
                 Lifecycle.Event.ON_STOP -> {
                     mapView?.onStop()
                     mapKit.onStop()
                 }
+
                 else -> {}
             }
         }
@@ -1108,7 +1104,12 @@ fun MapSection(details: VenueDetails?) {
                 .matchParentSize()
                 .clickable {
                     details?.let { venue ->
-                        openMapWithOptions(context, venue.latitude, venue.longitude, venue.venueName)
+                        openMapWithOptions(
+                            context,
+                            venue.latitude,
+                            venue.longitude,
+                            venue.venueName
+                        )
                     }
                 }
         )
@@ -1139,7 +1140,8 @@ fun openMapWithOptions(context: Context, latitude: Double, longitude: Double, ve
         context.startActivity(chooserIntent)
     } else {
         // If no map apps are installed, open in browser
-        val browserUri = Uri.parse("https://www.openstreetmap.org/?mlat=$latitude&mlon=$longitude#map=15/$latitude/$longitude")
+        val browserUri =
+            Uri.parse("https://www.openstreetmap.org/?mlat=$latitude&mlon=$longitude#map=15/$latitude/$longitude")
         val browserIntent = Intent(Intent.ACTION_VIEW, browserUri)
         context.startActivity(browserIntent)
     }

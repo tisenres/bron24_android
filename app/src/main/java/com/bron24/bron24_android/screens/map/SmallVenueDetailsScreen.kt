@@ -1,14 +1,22 @@
 package com.bron24.bron24_android.screens.map
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,20 +38,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.venuedetails.AddressRow
-import com.bron24.bron24_android.screens.venuedetails.AvailableSlots
-import com.bron24.bron24_android.screens.venuedetails.DistanceRow
-import com.bron24.bron24_android.screens.venuedetails.copyAddressToClipboard
 
 @Composable
 fun SmallVenueDetailsScreen(
     modifier: Modifier,
-    venueDetails: VenueDetails?,
+    venueId: Int,
+    viewModel: VenueMapViewModel,
     onClose: () -> Unit
 ) {
     val context = LocalContext.current
@@ -51,6 +63,7 @@ fun SmallVenueDetailsScreen(
         animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy), label = ""
     )
 
+    val venueDetails by viewModel.venueDetails.collectAsState()
     val isLoading by remember { derivedStateOf { venueDetails == null } }
 
     if (isLoading) {
@@ -62,7 +75,12 @@ fun SmallVenueDetailsScreen(
             isFavorite = isFavorite,
             favoriteScale = scale,
             onFavoriteClick = { isFavorite = !isFavorite },
-            onCopyAddressClick = { copyAddressToClipboard(context, venueDetails?.address?.addressName) },
+            onCopyAddressClick = {
+                copyAddressToClipboard(
+                    context,
+                    venueDetails?.address?.addressName
+                )
+            },
             onClose = onClose
         )
     }
@@ -118,6 +136,182 @@ fun SmallHeaderSection(venueDetails: VenueDetails?, onCopyAddressClick: () -> Un
         AddressAndPhoneSection(venueDetails, onCopyAddressClick)
         Spacer(modifier = Modifier.height(8.dp))
         SmallRatingSection(venueDetails)
+    }
+}
+
+@Composable
+fun SmallVenueImageSection(
+    imageUrls: List<String>,
+    onBackClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onFavoriteClick: () -> Unit
+) {
+    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
+
+    Box(
+        modifier = Modifier
+            .height(230.dp)
+            .fillMaxWidth()
+            .background(Color.Gray)
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            VenueImage(imageUrl = imageUrls[page], page = page)
+        }
+        ImageOverlay(
+            currentPage = pagerState.currentPage,
+            totalPages = imageUrls.size,
+            onShareClick = onShareClick,
+            onFavoriteClick = onFavoriteClick
+        )
+    }
+}
+
+@Composable
+fun VenueImage(imageUrl: String, page: Int) {
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .placeholder(R.drawable.placeholder)
+            .build()
+    )
+    Image(
+        painter = painter,
+        contentDescription = "Venue Image $page",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize()
+    )
+}
+
+@Composable
+fun ImageOverlay(
+    currentPage: Int,
+    totalPages: Int,
+    onShareClick: () -> Unit,
+    onFavoriteClick: () -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ClickableIconButton(
+                onClick = onShareClick,
+                icon = Icons.Default.Share,
+                contentDescription = "Share"
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
+        }
+        BottomIndicators(
+            currentPage = currentPage,
+            totalPages = totalPages,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 11.5.dp)
+        )
+    }
+}
+
+@Composable
+fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        repeat(totalPages) { index ->
+            Box(
+                modifier = Modifier
+                    .height(1.5.dp)
+                    .padding(end = 3.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .width(28.dp)
+                    .background(if (index == currentPage) Color.White else Color(0xFFB7B3B3))
+            )
+        }
+    }
+}
+
+@Composable
+fun ClickableIconButton(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    tint: Color = Color.Black
+) {
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Box(
+        modifier = Modifier
+            .size(44.dp)
+            .clip(CircleShape)
+            .background(Color(0xFFFFFFFF))
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = onClick
+            )
+    ) {
+        Image(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            colorFilter = ColorFilter.tint(tint),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp)
+        )
+    }
+}
+
+@Composable
+fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
+    var isFavorite by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val scale by animateFloatAsState(
+        targetValue = if (isFavorite) 1.2f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ), label = ""
+    )
+
+    Box(
+        modifier = Modifier
+            .size(44.dp)
+            .clip(CircleShape)
+            .background(Color.White)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = {
+                    isFavorite = !isFavorite
+                    onFavoriteClick()
+                    ToastManager.showToast(
+                        "Venue was added to favorites",
+                        ToastType.SUCCESS
+                    )
+                }
+            ),
+    ) {
+        Image(
+            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+            contentDescription = "Favorite",
+            colorFilter = ColorFilter.tint(if (isFavorite) Color.Red else Color.Black),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp)
+                .graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale
+                )
+        )
     }
 }
 
@@ -179,11 +373,54 @@ fun SmallTitleSection(venueDetails: VenueDetails?) {
 @Composable
 fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Unit) {
     Column {
-        AddressRow(details, onCopyAddressClick)
+        SmallAddressRow(details, onCopyAddressClick)
         Spacer(modifier = Modifier.height(4.dp))
         AvailableSlots(details)
         Spacer(modifier = Modifier.height(4.dp))
         DistanceRow(details)
+    }
+}
+
+@Composable
+fun AvailableSlots(details: VenueDetails?) {
+    InfoRow(
+        icon = R.drawable.baseline_event_available_24,
+        text = "12 available slots"
+    )
+}
+
+@Composable
+fun DistanceRow(details: VenueDetails?) {
+    InfoRow(
+        icon = R.drawable.mingcute_navigation_fill,
+        text = "2.3 km from you"
+    )
+}
+
+@Composable
+fun InfoRow(icon: Int, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            tint = Color(0xff949494),
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = text,
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                color = Color(0xFF949494),
+                lineHeight = 18.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -269,31 +506,6 @@ fun SmallRatingSection(venueDetails: VenueDetails?) {
 }
 
 @Composable
-fun SmallPhoneRow(venueDetails: VenueDetails?) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_local_phone_24),
-            contentDescription = "Phone",
-            tint = Color(0xff949494),
-            modifier = Modifier.size(18.dp)
-        )
-        Text(
-            text = "+998 77 806 0278",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
-                color = Color(0xFF949494),
-                lineHeight = 18.sp,
-            )
-        )
-    }
-}
-
-@Composable
 fun SmallPricingSection(venueDetails: VenueDetails?) {
     Row(
         modifier = Modifier
@@ -332,6 +544,25 @@ fun SmallPricingSection(venueDetails: VenueDetails?) {
             )
         }
     }
+}
+
+fun copyAddressToClipboard(context: Context, address: String?) {
+    if (address.isNullOrBlank()) {
+        ToastManager.showToast(
+            "No address available to copy",
+            ToastType.WARNING
+        )
+        return
+    }
+
+    val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)
+    val clip = ClipData.newPlainText("Venue Address", address)
+    clipboard?.setPrimaryClip(clip)
+
+    ToastManager.showToast(
+        "Address copied to clipboard",
+        ToastType.SUCCESS
+    )
 }
 
 @Preview

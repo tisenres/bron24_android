@@ -40,10 +40,7 @@ fun YandexMapScreen(
     val venues by mapViewModel.venues.collectAsState()
     val currentLocation by mapViewModel.currentLocation.collectAsState()
     val selectedVenueId by mapViewModel.selectedVenueId.collectAsState()
-    val venueDetails by mapViewModel.venueDetails.collectAsState()
     var showVenueDetails by remember { mutableStateOf(false) }
-    var currentCity by remember { mutableStateOf("") }
-    var markerCount by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(initialLatitude, initialLongitude) {
         if (initialLatitude != null && initialLongitude != null) {
@@ -60,18 +57,7 @@ fun YandexMapScreen(
                 mapViewModel.selectVenue(clickedVenueId)
                 showVenueDetails = true
             },
-            onCameraPositionChanged = { position ->
-                currentCity = "Current City" // Replace with actual city detection logic
-                markerCount = venues.size // Replace with actual visible marker count logic
-            }
-        )
-
-        // City information
-        Text(
-            text = "Current city: $currentCity",
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 16.dp)
+            onCameraPositionChanged = {}
         )
 
         // Zoom and location controls
@@ -91,14 +77,6 @@ fun YandexMapScreen(
             }
         }
 
-        // Marker count
-        Text(
-            text = "Visible markers: $markerCount",
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(16.dp)
-        )
-
         // Venue details
         AnimatedVisibility(
             visible = showVenueDetails,
@@ -116,7 +94,8 @@ fun YandexMapScreen(
         ) {
             SmallVenueDetailsScreen(
                 modifier = Modifier.padding(16.dp),
-                venueDetails = venueDetails,
+                venueId = selectedVenueId ?: 0,
+                viewModel = mapViewModel,
                 onClose = { mapViewModel.clearSelectedVenue() }
             )
         }

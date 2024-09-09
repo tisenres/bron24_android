@@ -69,12 +69,11 @@ class VenueMapViewModel @Inject constructor(
         }
     }
 
-    fun fetchVenueDetails(venueId: Int) {
+    private fun fetchVenueDetails() {
         viewModelScope.launch {
             try {
-                val details = model.getVenueDetails(venueId)
+                val details = model.getVenueDetails(selectedVenueId.value ?: 0)
                 _venueDetails.value = details
-                _selectedVenueId.value = venueId
             } catch (e: Exception) {
                 Log.e("VenueDetailsViewModel", "Error fetching venue details", e)
             }
@@ -119,7 +118,7 @@ class VenueMapViewModel @Inject constructor(
 
     fun selectVenue(venueId: Int) {
         _selectedVenueId.value = venueId
-        fetchVenueDetails(venueId)
+        fetchVenueDetails()
     }
 
     fun clearSelectedVenue() {
