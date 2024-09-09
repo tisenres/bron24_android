@@ -93,10 +93,7 @@ fun YandexMapScreen(
                 }
         ) {
             SmallVenueDetailsScreen(
-                modifier = Modifier.padding(16.dp),
-                venueId = selectedVenueId ?: 0,
                 viewModel = mapViewModel,
-                onClose = { mapViewModel.clearSelectedVenue() }
             )
         }
     }
@@ -145,9 +142,9 @@ fun YandexMapView(
                 val placemark = view.map.mapObjects.addPlacemark(point)
                 val isSelected = venue.venueId == selectedVenueId
                 val markerIcon = if (isSelected) {
-                    R.drawable.baseline_location_on_24_green
-                } else {
                     R.drawable.baseline_location_on_24_red
+                } else {
+                    R.drawable.baseline_location_on_24_green
                 }
                 val drawable = ContextCompat.getDrawable(context, markerIcon)
                 val bitmap = drawable?.let {

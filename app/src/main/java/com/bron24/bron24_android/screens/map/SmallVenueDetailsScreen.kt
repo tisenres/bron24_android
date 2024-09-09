@@ -23,7 +23,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -48,22 +47,14 @@ import com.bron24.bron24_android.helper.util.presentation.components.toast.Toast
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.venuedetails.shareVenueDetails
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun SmallVenueDetailsScreen(
-    modifier: Modifier,
-    venueId: Int,
     viewModel: VenueMapViewModel,
-    onClose: () -> Unit
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
-
-    val scale by animateFloatAsState(
-        targetValue = if (isFavorite) 1.2f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy), label = ""
-    )
 
     val venueDetails by viewModel.venueDetails.collectAsState()
     val isLoading by remember { derivedStateOf { venueDetails == null } }
@@ -72,10 +63,8 @@ fun SmallVenueDetailsScreen(
         LoadingScreen()
     } else {
         SmallDetailsContent(
-            modifier = modifier,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
             venueDetails = venueDetails,
-            isFavorite = isFavorite,
-            favoriteScale = scale,
             onFavoriteClick = { isFavorite = !isFavorite },
             onCopyAddressClick = {
                 copyAddressToClipboard(
@@ -83,7 +72,6 @@ fun SmallVenueDetailsScreen(
                     venueDetails?.address?.addressName
                 )
             },
-            onClose = onClose
         )
     }
 }
@@ -92,13 +80,89 @@ fun SmallVenueDetailsScreen(
 fun LoadingScreen() {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .height(300.dp)
+            .clip(RoundedCornerShape(10.dp))
             .background(Color.White)
+            .shimmer()
     ) {
-        CircularProgressIndicator(
-            color = Color(0xFF32B768),
-            modifier = Modifier.align(Alignment.Center)
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Shimmer for image
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.LightGray)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Shimmer for title
+            Box(
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(24.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.LightGray)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Shimmer for address
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.LightGray)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Shimmer for rating
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                repeat(5) {
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(Color.LightGray)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Shimmer for price and button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(24.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color.LightGray)
+                )
+                Box(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(40.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.LightGray)
+                )
+            }
+        }
     }
 }
 
@@ -106,11 +170,8 @@ fun LoadingScreen() {
 fun SmallDetailsContent(
     modifier: Modifier,
     venueDetails: VenueDetails?,
-    isFavorite: Boolean,
-    favoriteScale: Float,
     onFavoriteClick: () -> Unit,
     onCopyAddressClick: () -> Unit,
-    onClose: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -118,8 +179,8 @@ fun SmallDetailsContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
             .clip(RoundedCornerShape(10.dp))
+            .background(Color.White)
     ) {
         SmallImageSection(
             imageUrls = venueDetails?.imageUrls ?: emptyList(),
@@ -145,36 +206,6 @@ fun SmallHeaderSection(venueDetails: VenueDetails?, onCopyAddressClick: () -> Un
         AddressAndPhoneSection(venueDetails, onCopyAddressClick)
         Spacer(modifier = Modifier.height(8.dp))
         SmallRatingSection(venueDetails)
-    }
-}
-
-@Composable
-fun SmallVenueImageSection(
-    imageUrls: List<String>,
-    onBackClick: () -> Unit,
-    onShareClick: () -> Unit,
-    onFavoriteClick: () -> Unit
-) {
-    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
-
-    Box(
-        modifier = Modifier
-            .height(230.dp)
-            .fillMaxWidth()
-            .background(Color.Gray)
-    ) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { page ->
-            VenueImage(imageUrl = imageUrls[page], page = page)
-        }
-        ImageOverlay(
-            currentPage = pagerState.currentPage,
-            totalPages = imageUrls.size,
-            onShareClick = onShareClick,
-            onFavoriteClick = onFavoriteClick
-        )
     }
 }
 
@@ -214,7 +245,7 @@ fun ImageOverlay(
                 icon = Icons.Default.Share,
                 contentDescription = "Share"
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
         }
         BottomIndicators(
@@ -258,7 +289,7 @@ fun ClickableIconButton(
 
     Box(
         modifier = Modifier
-            .size(44.dp)
+            .size(38.dp)
             .clip(CircleShape)
             .background(Color(0xFFFFFFFF))
             .clickable(
@@ -273,7 +304,7 @@ fun ClickableIconButton(
             colorFilter = ColorFilter.tint(tint),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp)
+                .padding(8.dp)
         )
     }
 }
@@ -293,7 +324,7 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
 
     Box(
         modifier = Modifier
-            .size(44.dp)
+            .size(38.dp)
             .clip(CircleShape)
             .background(Color.White)
             .clickable(
@@ -315,7 +346,7 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
             colorFilter = ColorFilter.tint(if (isFavorite) Color.Red else Color.Black),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp)
+                .padding(8.dp)
                 .graphicsLayer(
                     scaleX = scale,
                     scaleY = scale

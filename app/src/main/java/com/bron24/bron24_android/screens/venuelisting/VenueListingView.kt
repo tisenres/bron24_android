@@ -185,29 +185,30 @@ fun SortRow(onSortClick: () -> Unit) {
 
     Row(
         modifier = Modifier
-            .padding(horizontal = 10.dp, vertical = 6.dp)
             .selectable(
                 selected = false,
-                onClick = onSortClick,
+                onClick = {
+                // TODO
+                },
                 interactionSource = interactionSource,
                 indication = ripple()
-            )
-            .padding(4.dp), // Add some padding inside the ripple area
+            ),
+//            .padding(4.dp), // Add some padding inside the ripple area
         horizontalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_sort_24),
             contentDescription = "Sort",
             tint = Color(0xFF32B768),
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(22.dp)
         )
         Text(
             text = stringResource(id = R.string.sort_by),
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight(600),
-                fontSize = 14.sp,
-                lineHeight = 19.sp,
+                fontSize = 16.sp,
+                lineHeight = 22.sp,
                 color = Color(0xFF32B768) // Accent color for the text
             ),
             modifier = Modifier.align(Alignment.CenterVertically),
@@ -215,8 +216,10 @@ fun SortRow(onSortClick: () -> Unit) {
     }
 }
 
+@Preview
 @Composable
 fun PreviewVenueListingView() {
-    val navController = rememberNavController()
-    VenueListingView(navController = navController)
+//    val navController = rememberNavController()
+//    VenueListingView(navController = navController)
+    SortRow({})
 }
