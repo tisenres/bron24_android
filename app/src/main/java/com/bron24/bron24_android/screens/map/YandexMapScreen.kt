@@ -131,6 +131,9 @@ fun YandexMapView(
                         13f, 0f, 0f
                     )
                 )
+                view.map.isZoomGesturesEnabled = true
+                view.map.isRotateGesturesEnabled = false
+                view.map.isFastTapEnabled = true
             }
         },
         modifier = Modifier.fillMaxSize(),
@@ -148,11 +151,17 @@ fun YandexMapView(
                 }
                 val drawable = ContextCompat.getDrawable(context, markerIcon)
                 val bitmap = drawable?.let {
-                    getBitmapFromDrawable(it, if (isSelected) 1.5f else 1.0f)
+                    getBitmapFromDrawable(it, if (isSelected) 1.8f else 1.5f)
                 }
                 placemark.setIcon(ImageProvider.fromBitmap(bitmap))
+
                 placemark.addTapListener { _, _ ->
                     onMarkerClick(venue.venueId)
+//                    view.map.move(
+//                        CameraPosition(point, view.map.cameraPosition.zoom, 0f, 0f),
+//                        Animation(Animation.Type.SMOOTH, 0.3f),
+//                        null
+//                    )
                     true
                 }
             }
