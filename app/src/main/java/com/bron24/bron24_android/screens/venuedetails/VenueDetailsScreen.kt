@@ -800,7 +800,8 @@ fun InfrastructureSection(details: VenueDetails?) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = rememberModalBottomSheetState()
+            sheetState = rememberModalBottomSheetState(),
+            containerColor = Color.White
         ) {
             InfrastructureItemDetails(selectedItem?.first, selectedItem?.second)
         }
@@ -816,7 +817,7 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         details?.let { venue ->
-            InfrastructureItem(venue.venueType, R.drawable.baseline_stadium_24, onItemClick)
+            InfrastructureItem(venue.venueType.capitalize(), R.drawable.baseline_stadium_24, onItemClick)
             InfrastructureItem(
                 "${venue.peopleCapacity} players",
                 R.drawable.game_icons_soccer_kick,
@@ -840,7 +841,7 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
                     InfrastructureItem("Parking", R.drawable.baseline_local_parking_24, onItemClick)
                 }
             }
-            InfrastructureItem(venue.venueSurface, R.drawable.baseline_grass_24, onItemClick)
+            InfrastructureItem(venue.venueSurface.capitalize(), R.drawable.baseline_grass_24, onItemClick)
             InfrastructureItem(
                 "${venue.workingHoursFrom.drop(3)} - ${venue.workingHoursTill.drop(3)}",
                 R.drawable.baseline_access_time_filled_24,
@@ -918,6 +919,7 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
             .padding(start = 16.dp, bottom = 20.dp, end = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -930,7 +932,7 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
                     painter = painterResource(id = it),
                     contentDescription = text,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
@@ -940,9 +942,9 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
+                        fontSize = 20.sp,
                         color = Color.Black,
-                        lineHeight = 30.sp,
+                        lineHeight = 34.sp,
                     ),
                     textAlign = TextAlign.Start,
                     maxLines = 1,
@@ -983,12 +985,10 @@ fun MapSection(details: VenueDetails?) {
                     mapKit.onStart()
                     mapView?.onStart()
                 }
-
                 Lifecycle.Event.ON_STOP -> {
                     mapView?.onStop()
                     mapKit.onStop()
                 }
-
                 else -> {}
             }
         }
@@ -1001,101 +1001,117 @@ fun MapSection(details: VenueDetails?) {
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(10.dp))
             .clickable {
                 details?.let { venue ->
-                    navigateToMapApp(context, venue.latitude, venue.longitude, venue.venueName)
+                    openMapWithOptions(context, venue.latitude, venue.longitude, venue.venueName)
                 }
-            },
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            }
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            mapView?.let { map ->
-                AndroidView(
-                    factory = { map },
-                    modifier = Modifier.fillMaxSize(),
-                    update = { view ->
-                        details?.let { venue ->
-                            try {
-                                Log.d(
-                                    "MapSection",
-                                    "Venue coordinates: ${venue.latitude}, ${venue.longitude}"
-                                )
-                                val venueLocation = Point(venue.latitude, venue.longitude)
-                                view.map.move(
-                                    CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
-                                    Animation(Animation.Type.SMOOTH, 0.3f),
-                                    null
-                                )
-                                view.map.mapObjects.clear()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+            ) {
+                mapView?.let { map ->
+                    AndroidView(
+                        factory = { map },
+                        modifier = Modifier.fillMaxSize(),
+                        update = { view ->
+                            details?.let { venue ->
+                                try {
+                                    val venueLocation = Point(venue.latitude, venue.longitude)
+                                    view.map.move(
+                                        CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
+                                        Animation(Animation.Type.SMOOTH, 0.3f),
+                                        null
+                                    )
+                                    view.map.mapObjects.clear()
 
-                                val placemark = view.map.mapObjects.addPlacemark(venueLocation)
-                                val markerIcon = R.drawable.baseline_location_on_24_red
-                                val drawable = ContextCompat.getDrawable(context, markerIcon)
-                                val bitmap = drawable?.let {
-                                    getBitmapFromDrawable(it, 1.5f)
+                                    val placemark = view.map.mapObjects.addPlacemark(venueLocation)
+                                    val markerIcon = R.drawable.baseline_location_on_24_red
+                                    val drawable = ContextCompat.getDrawable(context, markerIcon)
+                                    val bitmap = drawable?.let {
+                                        getBitmapFromDrawable(it, 1.5f)
+                                    }
+                                    placemark.setIcon(ImageProvider.fromBitmap(bitmap))
+
+                                    // Disable user interaction with the map
+                                    view.map.isScrollGesturesEnabled = false
+                                    view.map.isZoomGesturesEnabled = false
+                                    view.map.isTiltGesturesEnabled = false
+                                    view.map.isRotateGesturesEnabled = false
+
+                                    errorMessage = null
+                                } catch (e: Exception) {
+                                    Log.e("MapSection", "Error updating map: ${e.message}")
+                                    errorMessage = "Error loading map: ${e.message}"
                                 }
-                                placemark.setIcon(ImageProvider.fromBitmap(bitmap))
-
-                                errorMessage = null
-                            } catch (e: Exception) {
-                                Log.e("MapSection", "Error updating map: ${e.message}")
-                                errorMessage = "Error loading map: ${e.message}"
                             }
                         }
-                    }
-                )
+                    )
+                }
+                errorMessage?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp)
+                    )
+                }
             }
-            errorMessage?.let {
+
+            MapDetails(details)
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 0.5.dp,
+                color = Color(0xFFD4D4D4)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp, bottom = 12.dp)
+                    .padding(horizontal = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = it,
-                    color = Color.Red,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(16.dp)
+                    text = "Open in Maps",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 18.sp
+                    )
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    contentDescription = "Open in Maps",
+                    modifier = Modifier.size(14.dp)
                 )
             }
         }
 
-        MapDetails(details)
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 0.5.dp,
-            color = Color(0xFFD4D4D4)
-        )
-        Row(
+        // Clickable overlay
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 6.dp, bottom = 12.dp)
-                .padding(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Open in Maps",
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = Color(0xFF3C2E56),
-                    lineHeight = 18.sp
-                )
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_right),
-                contentDescription = "Open in Maps",
-                modifier = Modifier.size(14.dp)
-            )
-        }
+                .matchParentSize()
+                .clickable {
+                    details?.let { venue ->
+                        openMapWithOptions(context, venue.latitude, venue.longitude, venue.venueName)
+                    }
+                }
+        )
     }
 }
 
@@ -1106,6 +1122,26 @@ fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap
         val canvas = android.graphics.Canvas(this)
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
+    }
+}
+
+fun openMapWithOptions(context: Context, latitude: Double, longitude: Double, venueName: String) {
+    val encodedName = Uri.encode(venueName)
+    val uriString = "geo:$latitude,$longitude?q=$latitude,$longitude($encodedName)"
+    val geoUri = Uri.parse(uriString)
+    val mapIntent = Intent(Intent.ACTION_VIEW, geoUri)
+
+    val packageManager = context.packageManager
+    val activities = packageManager.queryIntentActivities(mapIntent, 0)
+
+    if (activities.isNotEmpty()) {
+        val chooserIntent = Intent.createChooser(mapIntent, "Open map with")
+        context.startActivity(chooserIntent)
+    } else {
+        // If no map apps are installed, open in browser
+        val browserUri = Uri.parse("https://www.openstreetmap.org/?mlat=$latitude&mlon=$longitude#map=15/$latitude/$longitude")
+        val browserIntent = Intent(Intent.ACTION_VIEW, browserUri)
+        context.startActivity(browserIntent)
     }
 }
 
