@@ -3,6 +3,7 @@ package com.bron24.bron24_android.screens.map
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -47,6 +48,7 @@ import com.bron24.bron24_android.helper.util.presentation.components.toast.Toast
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.bron24.bron24_android.screens.venuedetails.shareVenueDetails
 
 @Composable
 fun SmallVenueDetailsScreen(
@@ -110,13 +112,20 @@ fun SmallDetailsContent(
     onCopyAddressClick: () -> Unit,
     onClose: () -> Unit
 ) {
+
+    val context = LocalContext.current
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
             .clip(RoundedCornerShape(10.dp))
     ) {
-        SmallImageSection(venueDetails, isFavorite, favoriteScale, onFavoriteClick)
+        SmallImageSection(
+            imageUrls = venueDetails?.imageUrls ?: emptyList(),
+            onShareClick = { shareVenueDetails(context, venueDetails) },
+            onFavoriteClick
+        )
         Spacer(modifier = Modifier.height(12.dp))
         SmallHeaderSection(venueDetails, onCopyAddressClick)
         Spacer(modifier = Modifier.height(12.dp))
@@ -317,40 +326,33 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
 
 @Composable
 fun SmallImageSection(
-    venueDetails: VenueDetails?,
-    isFavorite: Boolean,
-    favoriteScale: Float,
+    imageUrls: List<String>,
+    onShareClick: () -> Unit,
     onFavoriteClick: () -> Unit
 ) {
+
+    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
+
     Box(
         modifier = Modifier
             .height(150.dp)
             .fillMaxWidth()
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(model = R.drawable.football_field),
-            contentDescription = "Venue Image",
-            contentScale = ContentScale.Crop,
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier.fillMaxSize()
-        )
-        Box(
-            modifier = Modifier
-                .padding(top = 10.dp, end = 10.dp)
-                .align(Alignment.TopEnd)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "Favorite",
-                tint = if (isFavorite) Color.Red else Color.White,
-                modifier = Modifier
-                    .size(40.dp)
-                    .scale(favoriteScale)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(10.dp)
-                    .clickable(onClick = onFavoriteClick)
+        ) { page ->
+            VenueImage(
+                imageUrl = imageUrls[page],
+                page = page
             )
         }
+        ImageOverlay(
+            currentPage = pagerState.currentPage,
+            totalPages = imageUrls.size,
+            onShareClick = onShareClick,
+            onFavoriteClick = onFavoriteClick
+        )
     }
 }
 
@@ -563,6 +565,34 @@ fun copyAddressToClipboard(context: Context, address: String?) {
         "Address copied to clipboard",
         ToastType.SUCCESS
     )
+}
+
+fun shareVenueDetails(context: Context, details: VenueDetails?) {
+    if (details == null) {
+        ToastManager.showToast(
+            "No venue details available to share",
+            ToastType.WARNING
+        )
+        return
+    }
+
+    val shareText = buildString {
+        appendLine("Check out this venue:")
+        appendLine("Name: ${details.venueName}")
+        appendLine("Address: ${details.address.addressName}")
+        appendLine("Price: ${details.pricePerHour} per hour")
+        appendLine("Working hours: ${details.workingHoursFrom} - ${details.workingHoursTill}")
+        appendLine("Description: ${details.description}")
+    }
+
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, shareText)
+        type = "text/plain"
+    }
+
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    context.startActivity(shareIntent)
 }
 
 @Preview
