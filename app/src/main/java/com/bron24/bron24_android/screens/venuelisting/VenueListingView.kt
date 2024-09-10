@@ -52,7 +52,8 @@ fun VenueListingView(
     navController: NavController,
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier,
-    viewModel: VenueListingViewModel = hiltViewModel()
+    viewModel: VenueListingViewModel = hiltViewModel(),
+    onConfetti: () -> Unit
 ) {
     val venues by viewModel.venues.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -84,7 +85,7 @@ fun VenueListingView(
         ) {
             item(key = "ads") {
                 Spacer(modifier = Modifier.height(16.dp))
-                AdsSection(modifier = Modifier)
+                AdsSection(modifier = Modifier, onConfetti = onConfetti)
             }
             item(key = "title") {
                 Row(

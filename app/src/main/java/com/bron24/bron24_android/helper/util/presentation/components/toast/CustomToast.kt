@@ -46,6 +46,7 @@ fun CustomToast(
         }
         when (type) {
             ToastType.SUCCESS -> delay(1000)
+            ToastType.INFO -> delay(5000)
             else -> delay(3000)
         }
         isVisible = false

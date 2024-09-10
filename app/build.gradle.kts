@@ -119,6 +119,8 @@ dependencies {
 
     testImplementation(libs.hiltAndroidTesting)
     kaptTest(libs.hiltCompiler)
+
+    implementation(libs.konfetti.compose)
 }
 
 kapt {
