@@ -28,6 +28,9 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.InputListener
+import com.yandex.mapkit.map.MapObjectCollection
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 
@@ -109,6 +112,7 @@ fun YandexMapView(
 ) {
     val context = LocalContext.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
+    var mapObjects by remember { mutableStateOf<MapObjectCollection?>(null) }
 
     DisposableEffect(Unit) {
         MapKitFactory.initialize(context)
@@ -125,6 +129,7 @@ fun YandexMapView(
         factory = { context ->
             MapView(context).also { view ->
                 mapView = view
+                mapObjects = view.map.mapObjects.addCollection()
                 view.map.move(
                     CameraPosition(
                         Point(currentLocation?.latitude ?: 0.0, currentLocation?.longitude ?: 0.0),
@@ -138,11 +143,11 @@ fun YandexMapView(
         },
         modifier = Modifier.fillMaxSize(),
         update = { view ->
-            view.map.mapObjects.clear()
+            mapObjects?.clear()
 
             venues.forEach { venue ->
                 val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                val placemark = view.map.mapObjects.addPlacemark(point)
+                val placemark = mapObjects?.addPlacemark(point)
                 val isSelected = venue.venueId == selectedVenueId
                 val markerIcon = if (isSelected) {
                     R.drawable.baseline_location_on_24_red
@@ -153,24 +158,44 @@ fun YandexMapView(
                 val bitmap = drawable?.let {
                     getBitmapFromDrawable(it, if (isSelected) 1.8f else 1.5f)
                 }
-                placemark.setIcon(ImageProvider.fromBitmap(bitmap))
+                placemark?.setIcon(ImageProvider.fromBitmap(bitmap))
 
-                placemark.addTapListener { _, _ ->
-                    onMarkerClick(venue.venueId)
-//                    view.map.move(
-//                        CameraPosition(point, view.map.cameraPosition.zoom, 0f, 0f),
-//                        Animation(Animation.Type.SMOOTH, 0.3f),
-//                        null
-//                    )
-                    true
-                }
+                placemark?.userData = venue.venueId
             }
+
+            // Set up a single tap listener for the entire map
+            view.map.addInputListener(object : InputListener {
+                override fun onMapTap(map: com.yandex.mapkit.map.Map, point: Point) {
+                    // Handle map tap if needed
+                }
+
+                override fun onMapLongTap(map: com.yandex.mapkit.map.Map, point: Point) {
+                    // Handle long tap if needed
+                }
+            })
 
             view.map.addCameraListener { _, cameraPosition, _, _ ->
                 onCameraPositionChanged(cameraPosition)
             }
         }
     )
+
+    // Set up a composable effect to handle marker clicks
+    LaunchedEffect(mapObjects) {
+        mapObjects?.addTapListener { mapObject, point ->
+            if (mapObject is PlacemarkMapObject) {
+                val venueId = mapObject.userData as? Int
+                if (venueId != null) {
+                    onMarkerClick(venueId)
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        }
+    }
 
     LaunchedEffect(currentLocation) {
         currentLocation?.let { location ->
@@ -185,7 +210,6 @@ fun YandexMapView(
         }
     }
 }
-
 
 fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
     val width = (drawable.intrinsicWidth * scaleFactor).toInt()
