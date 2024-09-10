@@ -33,6 +33,7 @@ import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
+import com.yandex.mapkit.map.Map
 
 @Composable
 fun YandexMapScreen(
@@ -159,43 +160,25 @@ fun YandexMapView(
                     getBitmapFromDrawable(it, if (isSelected) 1.8f else 1.5f)
                 }
                 placemark?.setIcon(ImageProvider.fromBitmap(bitmap))
-
                 placemark?.userData = venue.venueId
+
+                placemark?.addTapListener { mapObject, _ ->
+                    val clickedVenueId = mapObject.userData as? Int
+                    if (clickedVenueId != null) {
+                        onMarkerClick(clickedVenueId)
+                        centerCameraOnMarker(view.map, point)
+                        true
+                    } else {
+                        false
+                    }
+                }
             }
-
-            // Set up a single tap listener for the entire map
-            view.map.addInputListener(object : InputListener {
-                override fun onMapTap(map: com.yandex.mapkit.map.Map, point: Point) {
-                    // Handle map tap if needed
-                }
-
-                override fun onMapLongTap(map: com.yandex.mapkit.map.Map, point: Point) {
-                    // Handle long tap if needed
-                }
-            })
 
             view.map.addCameraListener { _, cameraPosition, _, _ ->
                 onCameraPositionChanged(cameraPosition)
             }
         }
     )
-
-    // Set up a composable effect to handle marker clicks
-    LaunchedEffect(mapObjects) {
-        mapObjects?.addTapListener { mapObject, point ->
-            if (mapObject is PlacemarkMapObject) {
-                val venueId = mapObject.userData as? Int
-                if (venueId != null) {
-                    onMarkerClick(venueId)
-                    true
-                } else {
-                    false
-                }
-            } else {
-                false
-            }
-        }
-    }
 
     LaunchedEffect(currentLocation) {
         currentLocation?.let { location ->
@@ -209,6 +192,23 @@ fun YandexMapView(
             )
         }
     }
+}
+
+fun centerCameraOnMarker(map: Map, point: Point) {
+    val targetPosition = map.cameraPosition.target
+    val zoom = map.cameraPosition.zoom
+    val azimuth = map.cameraPosition.azimuth
+    val tilt = map.cameraPosition.tilt
+
+    // Calculate a point slightly above the marker
+    val offsetY = 0.002 // Adjust this value to change how much above the marker the camera centers
+    val newPoint = Point(point.latitude - offsetY, point.longitude)
+
+    map.move(
+        CameraPosition(newPoint, zoom + 3, azimuth, tilt),
+        Animation(Animation.Type.SMOOTH, 0.5f),
+        null
+    )
 }
 
 fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
