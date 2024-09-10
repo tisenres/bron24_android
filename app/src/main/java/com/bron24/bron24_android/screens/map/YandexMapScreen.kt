@@ -3,6 +3,7 @@ package com.bron24.bron24_android.screens.map
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -28,9 +29,7 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.MapObjectCollection
-import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import com.yandex.mapkit.map.Map
@@ -86,18 +85,32 @@ fun YandexMapScreen(
             visible = showVenueDetails,
             enter = slideInVertically(initialOffsetY = { it }),
             exit = slideOutVertically(targetOffsetY = { it }),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .pointerInput(Unit) {
-                    detectVerticalDragGestures { _, dragAmount ->
-                        if (dragAmount > 0) {
-                            showVenueDetails = false
-                        }
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            val dismissState = rememberSwipeToDismissBoxState(
+                confirmValueChange = { dismissValue ->
+                    if (dismissValue == SwipeToDismissBoxValue.StartToEnd || dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                        showVenueDetails = false
+                        mapViewModel.clearSelectedVenue()
+                        true
+                    } else {
+                        false
                     }
                 }
-        ) {
-            SmallVenueDetailsScreen(
-                viewModel = mapViewModel,
+            )
+
+            SwipeToDismissBox(
+                state = dismissState,
+                backgroundContent = { /* Optional background content */ },
+                content = {
+                    SmallVenueDetailsScreen(
+                        viewModel = mapViewModel,
+                        onClose = {
+                            showVenueDetails = false
+                            mapViewModel.clearSelectedVenue()
+                        }
+                    )
+                }
             )
         }
     }
@@ -165,6 +178,7 @@ fun YandexMapView(
                 placemark?.addTapListener { mapObject, _ ->
                     val clickedVenueId = mapObject.userData as? Int
                     if (clickedVenueId != null) {
+                        Log.d("YandexMapView", "Marker clicked: VenueID = $clickedVenueId")
                         onMarkerClick(clickedVenueId)
                         centerCameraOnMarker(view.map, point)
                         true

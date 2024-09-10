@@ -124,5 +124,6 @@ class VenueMapViewModel @Inject constructor(
     fun clearSelectedVenue() {
         _selectedVenueId.value = null
         _venueDetails.value = null
+        _venues.value = _venues.value
     }
 }

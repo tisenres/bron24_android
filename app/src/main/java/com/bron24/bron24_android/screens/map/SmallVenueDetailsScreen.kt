@@ -52,6 +52,7 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun SmallVenueDetailsScreen(
     viewModel: VenueMapViewModel,
+    onClose: () -> Unit
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
