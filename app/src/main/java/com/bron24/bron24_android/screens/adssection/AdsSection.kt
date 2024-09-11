@@ -19,13 +19,13 @@ import coil.compose.AsyncImage
 import com.bron24.bron24_android.R
 
 @Composable
-fun AdsSection(modifier: Modifier = Modifier, onConfetti: () -> Unit) {
+fun AdsSection(modifier: Modifier = Modifier) {
     val images = remember {
         listOf(
-            R.drawable.birthday_pic,
             R.drawable.offer_image_1,
             R.drawable.view_soccer_ball,
-            R.drawable.che_pic
+            R.drawable.offer_image_1,
+            R.drawable.view_soccer_ball
         )
     }
     val pagerState = rememberPagerState(pageCount = { images.size })
@@ -37,10 +37,6 @@ fun AdsSection(modifier: Modifier = Modifier, onConfetti: () -> Unit) {
             AdsImageSection(
                 images = images,
                 pagerState = pagerState,
-                onClickAd = {
-                    Log.d("AdsSection", "Ad clicked, showing confetti")
-                    onConfetti() // Set confetti to true when ad is clicked
-                }
             )
         }
 
@@ -48,7 +44,7 @@ fun AdsSection(modifier: Modifier = Modifier, onConfetti: () -> Unit) {
 }
 
 @Composable
-fun AdsImageSection(images: List<Int>, pagerState: PagerState, onClickAd: () -> Unit) {
+fun AdsImageSection(images: List<Int>, pagerState: PagerState) {
     Column(
         modifier = Modifier
             .height(180.dp)
@@ -64,22 +60,22 @@ fun AdsImageSection(images: List<Int>, pagerState: PagerState, onClickAd: () -> 
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                OfferImage(imageRes = images[page], onClickAd)
+                OfferImage(imageRes = images[page])
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        BottomIndicators(
-            currentPage = pagerState.currentPage,
-            totalPages = images.size,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+//        Spacer(modifier = Modifier.height(16.dp))
+//
+//        BottomIndicators(
+//            currentPage = pagerState.currentPage,
+//            totalPages = images.size,
+//            modifier = Modifier.align(Alignment.CenterHorizontally)
+//        )
     }
 }
 
 @Composable
-fun OfferImage(imageRes: Int, onClickAd: () -> Unit) {
+fun OfferImage(imageRes: Int) {
     AsyncImage(
         model = imageRes,
         contentDescription = "offer_image",
@@ -88,7 +84,6 @@ fun OfferImage(imageRes: Int, onClickAd: () -> Unit) {
             .clip(RoundedCornerShape(10.dp))
             .clickable {
                 Log.d("OfferImage", "Image clicked")
-                onClickAd() // Click applied directly to the image
             },
         contentScale = androidx.compose.ui.layout.ContentScale.Crop
     )

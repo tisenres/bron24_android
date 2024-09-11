@@ -53,7 +53,6 @@ fun VenueListingView(
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier,
     viewModel: VenueListingViewModel = hiltViewModel(),
-    onConfetti: () -> Unit
 ) {
     val venues by viewModel.venues.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -85,7 +84,7 @@ fun VenueListingView(
         ) {
             item(key = "ads") {
                 Spacer(modifier = Modifier.height(16.dp))
-                AdsSection(modifier = Modifier, onConfetti = onConfetti)
+                AdsSection()
             }
             item(key = "title") {
                 Row(
@@ -96,7 +95,7 @@ fun VenueListingView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(id = R.string.football_fields),
+                        text = stringResource(id = R.string.recommendations),
                         style = TextStyle(
                             fontFamily = interFontFamily,
                             fontWeight = FontWeight(600),
@@ -127,7 +126,7 @@ fun VenueListingView(
 //                        )
 //                    }
 
-                    SortRow(onSortClick = { sortExpanded = true })
+//                    SortRow(onSortClick = { sortExpanded = true })
                 }
             }
 

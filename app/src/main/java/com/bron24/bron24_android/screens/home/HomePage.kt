@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun HomePage(navController: NavController) {
     val listState = rememberLazyListState()
-    var showConfetti by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -47,31 +46,7 @@ fun HomePage(navController: NavController) {
             VenueListingView(
                 navController = navController,
                 listState = listState,
-                onConfetti = {showConfetti = true}
             )
-        }
-
-        if (showConfetti) {
-            KonfettiView(
-                parties = listOf(
-                    Party(
-                        speed = 0f,
-                        maxSpeed = 30f,
-                        damping = 0.9f,
-                        spread = 360,
-                        colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
-                        position = Position.Relative(0.5, 0.3),
-                        emitter = Emitter(duration = 100, TimeUnit.MILLISECONDS).max(100)
-                    )
-                ),
-                modifier = Modifier.fillMaxSize()
-            )
-
-            // Automatically hide confetti after 2 seconds
-            LaunchedEffect(showConfetti) {
-                kotlinx.coroutines.delay(2000)
-                showConfetti = false
-            }
         }
     }
 }
