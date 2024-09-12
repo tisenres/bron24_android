@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -42,6 +43,11 @@ fun UserDataInputScreen(
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        keyboardController?.hide()
+    }
 
     Column(
         modifier = Modifier
@@ -253,7 +259,6 @@ fun ConfirmButtonUser(
         interactionSource = interactionSource,
         modifier = modifier
             .fillMaxWidth()
-            .height(52.dp)
             .padding(bottom = 20.dp)
             .scale(scale)
     ) {
