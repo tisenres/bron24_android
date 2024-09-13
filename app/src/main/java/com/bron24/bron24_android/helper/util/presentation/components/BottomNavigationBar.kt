@@ -88,7 +88,7 @@ fun CustomBottomBarItem(
                     indication = ripple(
                         bounded = false,
                         color = Color.Gray,
-                        radius = 40.dp // Increased radius for "infinity" effect
+                        radius = 35.dp // Increased radius for "infinity" effect
                     ),
                     interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
                 )

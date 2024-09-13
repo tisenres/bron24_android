@@ -1,17 +1,29 @@
 package com.bron24.bron24_android.screens.venuelisting
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -22,7 +34,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.math.round
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -30,6 +41,8 @@ import coil.size.Scale
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.Venue
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.valentinilk.shimmer.shimmer
@@ -41,6 +54,8 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
             { navController.navigate(Screen.VenueDetails.route.replace("{venueId}", id.toString())) }
         }
     }
+
+    val onFavoriteClick: () -> Unit = {}
 
     val shimmerModifier = if (isLoading) {
         Modifier.shimmer()
@@ -67,7 +82,7 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
         if (isLoading) {
             LoadingPlaceholder()
         } else if (venue != null) {
-            VenueImageSection(venue)
+            VenueImageSection(venue, onFavoriteClick)
             VenueTitleRow(venue)
             VenueDetailsRow(venue)
             VenueFooter(venue)
@@ -133,7 +148,7 @@ fun LoadingPlaceholder() {
 }
 
 @Composable
-fun VenueImageSection(venue: Venue) {
+fun VenueImageSection(venue: Venue, onFavoriteClick: () -> Unit) {
     Box(
         modifier = Modifier
             .height(162.dp)
@@ -150,13 +165,55 @@ fun VenueImageSection(venue: Venue) {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        Image(
-            painter = painterResource(id = R.drawable.baseline_favorite_24),
-            contentDescription = "Overlay Image",
+        AnimatedFavoriteButton(
+            onFavoriteClick,
             modifier = Modifier
-                .padding(top = 10.dp, end = 10.dp)
-                .size(21.dp)
                 .align(Alignment.TopEnd)
+                .padding(5.dp)
+        )
+    }
+}
+
+@Composable
+fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit, modifier: Modifier = Modifier) {
+    var isFavorite by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val scale by animateFloatAsState(
+        targetValue = if (isFavorite) 1.2f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ), label = ""
+    )
+
+    Box(
+        modifier = modifier
+            .size(40.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = {
+                    isFavorite = !isFavorite
+                    onFavoriteClick()
+                    ToastManager.showToast(
+                        "Venue was added to favorites",
+                        ToastType.SUCCESS
+                    )
+                }
+            )
+    ) {
+        Image(
+            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.Favorite,
+            contentDescription = "Favorite",
+            colorFilter = ColorFilter.tint(if (isFavorite) Color.Red else Color.White),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+                .graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale
+                )
         )
     }
 }
