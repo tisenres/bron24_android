@@ -130,10 +130,22 @@ fun VenueListingView(
                 }
             }
 
-            items(venues, key = { it.venueId }) { venue ->
-                VenueCard(venue = venue, isLoading = false, navController = navController)
-                Spacer(modifier = Modifier.height(20.dp))
+            if (isLoading) {
+                // Display shimmer placeholders while loading
+                items(5) { // Arbitrary number of placeholders
+                    VenueCard(venue = null, isLoading = true, navController = navController)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            } else {
+                items(venues, key = { it.venueId }) { venue ->
+                    VenueCard(venue = venue, isLoading = false, navController = navController)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
             }
+//            items(venues, key = { it.venueId }) { venue ->
+//                VenueCard(venue = venue, isLoading = false, navController = navController)
+//                Spacer(modifier = Modifier.height(20.dp))
+//            }
         }
     }
 
@@ -221,5 +233,5 @@ fun SortRow(onSortClick: () -> Unit) {
 fun PreviewVenueListingView() {
 //    val navController = rememberNavController()
 //    VenueListingView(navController = navController)
-    SortRow({})
+//    SortRow({})
 }

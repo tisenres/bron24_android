@@ -87,7 +87,7 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth()
                 .height(162.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -97,7 +97,7 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth()
                 .height(20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -107,7 +107,7 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth(0.6f)
                 .height(20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -117,7 +117,7 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth()
                 .height(20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -127,7 +127,7 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth(0.6f)
                 .height(20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
     }
 }
