@@ -1,10 +1,9 @@
 //package com.bron24.bron24_android.domain.usecases.booking
 //
 //import com.bron24.bron24_android.domain.repository.BookingRepository
+//import javax.inject.Inject
 //
-//class CancelBookingUseCase(private val bookingRepository: BookingRepository) {
-//
-//    fun execute(bookingId: String) {
-//        bookingRepository.cancelBooking(bookingId)
-//    }
+//class CancelBookingUseCase @Inject constructor(private val repository: BookingRepository) {
+//    suspend fun execute(bookingId: String): Result<Unit> =
+//        repository.cancelBooking(bookingId)
 //}

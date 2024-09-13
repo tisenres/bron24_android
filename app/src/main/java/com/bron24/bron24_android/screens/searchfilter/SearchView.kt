@@ -22,18 +22,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 
 @Composable
-fun SearchView(modifier: Modifier = Modifier) {
-
+fun SearchView(modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -46,7 +44,9 @@ fun SearchView(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ProfileRow()
-        SearchRow()
+        SearchRow(onFilterClick = {
+            navController.navigate(Screen.Filter.route)
+        })
     }
 }
 
@@ -87,7 +87,7 @@ fun ProfileRow() {
 }
 
 @Composable
-fun SearchRow() {
+fun SearchRow(onFilterClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -134,9 +134,11 @@ fun SearchRow() {
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
+                .clip(RoundedCornerShape(5.dp))
                 .background(color = Color.White)
-                .clickable {},
+                .clickable {
+//                    onFilterClick()
+                           },
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -152,5 +154,5 @@ fun SearchRow() {
 @Composable
 @Preview(showBackground = true)
 fun PreviewSearchView() {
-    SearchView()
+
 }

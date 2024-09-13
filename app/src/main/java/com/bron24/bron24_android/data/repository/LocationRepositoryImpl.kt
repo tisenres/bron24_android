@@ -2,7 +2,7 @@ package com.bron24.bron24_android.data.repository
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
+import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.repository.LocationRepository
 import com.bron24.bron24_android.helper.util.PermissionChecker

@@ -22,6 +22,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+//        ndk {
+//            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a"))
+//        }
     }
 
     buildTypes {
@@ -41,6 +45,16 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a") // Add 'armeabi-v7a', 'arm64-v8a'
+            isUniversalApk = false
+        }
+    }
+
     buildFeatures {
         compose = true
     }
@@ -74,6 +88,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.accompanist.pager)
+    implementation(libs.accompanist.pager.indicators)
 
     implementation(libs.morfly.compose)
 
@@ -105,6 +121,8 @@ dependencies {
 
     testImplementation(libs.hiltAndroidTesting)
     kaptTest(libs.hiltCompiler)
+
+    implementation(libs.konfetti.compose)
 }
 
 kapt {

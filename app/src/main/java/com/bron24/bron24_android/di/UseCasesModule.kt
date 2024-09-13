@@ -4,8 +4,10 @@ import android.content.Context
 import com.bron24.bron24_android.data.local.db.VenueDao
 import com.bron24.bron24_android.data.local.preference.AppPreference
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
+import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.repository.AuthRepositoryImpl
+import com.bron24.bron24_android.data.repository.BookingRepositoryImpl
 import com.bron24.bron24_android.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
 import com.bron24.bron24_android.data.repository.TokenRepositoryImpl
@@ -14,6 +16,9 @@ import com.bron24.bron24_android.domain.usecases.auth.*
 import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
 import com.bron24.bron24_android.domain.repository.*
+import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
+import com.bron24.bron24_android.domain.usecases.booking.GetBookingDetailsUseCase
+import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
 import com.bron24.bron24_android.helper.util.PermissionChecker
 import dagger.Module
 import dagger.Provides
@@ -78,6 +83,16 @@ object UseCasesModule {
         return VerifyOTPUseCase(authRepository)
     }
 
+    @Provides
+    fun provideGetAvailableDatesUseCase(repository: BookingRepository): GetBookingDetailsUseCase {
+        return GetBookingDetailsUseCase(repository)
+    }
+
+    @Provides
+    fun provideCreateBookingUseCase(repository: BookingRepository): CreateBookingUseCase {
+        return CreateBookingUseCase(repository)
+    }
+
 
     // Repositories - Start
 
@@ -121,6 +136,16 @@ object UseCasesModule {
         appPreference: AppPreference
     ): TokenRepository {
         return TokenRepositoryImpl(appPreference)
+    }
+
+    @Module
+    @InstallIn(SingletonComponent::class)
+    object RepositoryModule {
+        @Provides
+        @Singleton
+        fun provideBookingRepository(apiService: BookingApiService): BookingRepository {
+            return BookingRepositoryImpl(apiService)
+        }
     }
 
     // Repositories - End

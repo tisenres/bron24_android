@@ -1,7 +1,7 @@
 package com.bron24.bron24_android.screens.map
 
-import com.bron24.bron24_android.domain.entity.enums.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.user.Location
+import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
@@ -30,7 +30,7 @@ class VenueMapModel @Inject constructor(
         return getVenuesCoordinatesUseCase.execute()
     }
 
-    suspend fun getVenueDetails(venueId: Int): VenueDetails {
+    suspend fun getVenueDetails(venueId: Int): VenueDetails? {
         return getVenueDetailsUseCase.execute(venueId)
     }
 }

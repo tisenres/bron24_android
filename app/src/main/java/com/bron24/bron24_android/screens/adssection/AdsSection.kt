@@ -1,6 +1,6 @@
 package com.bron24.bron24_android.screens.adssection
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,18 +9,13 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.main.theme.interFontFamily
 
 @Composable
 fun AdsSection(modifier: Modifier = Modifier) {
@@ -34,50 +29,19 @@ fun AdsSection(modifier: Modifier = Modifier) {
     }
     val pagerState = rememberPagerState(pageCount = { images.size })
 
-    Column(modifier = modifier) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.special_offers),
-                style = androidx.compose.ui.text.TextStyle(
-                    fontFamily = interFontFamily,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight(600),
-                    fontSize = 20.sp,
-                    lineHeight = 24.sp,
-                    color = Color.Black
-                )
+    // Ensure that confetti state is handled properly
+
+    Box(modifier = modifier.fillMaxWidth()) {
+        Column {
+            AdsImageSection(
+                images = images,
+                pagerState = pagerState,
             )
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp)) // Rounded corners for the box
-                    .background(Color.Gray.copy(alpha = 0.1f)) // Transparent gray background
-                    .clickable {
-                    }
-                    .padding(horizontal = 10.dp, vertical = 6.dp) // Padding to give some space around the text
-            ) {
-                Text(
-                    text = stringResource(id = R.string.see_all),
-                    style = androidx.compose.ui.text.TextStyle(
-                        fontFamily = interFontFamily,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight(600),
-                        fontSize = 14.sp,
-                        lineHeight = 19.sp,
-                        color = Color(0xFF32B768) // Accent color for the text
-                    )
-                )
-            }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        AdsImageSection(images, pagerState)
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AdsImageSection(images: List<Int>, pagerState: PagerState) {
     Column(
@@ -99,14 +63,29 @@ fun AdsImageSection(images: List<Int>, pagerState: PagerState) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        BottomIndicators(
-            currentPage = pagerState.currentPage,
-            totalPages = images.size,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+//        Spacer(modifier = Modifier.height(16.dp))
+//
+//        BottomIndicators(
+//            currentPage = pagerState.currentPage,
+//            totalPages = images.size,
+//            modifier = Modifier.align(Alignment.CenterHorizontally)
+//        )
     }
+}
+
+@Composable
+fun OfferImage(imageRes: Int) {
+    AsyncImage(
+        model = imageRes,
+        contentDescription = "offer_image",
+        modifier = Modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(10.dp))
+            .clickable {
+                Log.d("OfferImage", "Image clicked")
+            },
+        contentScale = androidx.compose.ui.layout.ContentScale.Crop
+    )
 }
 
 @Composable
@@ -132,14 +111,3 @@ fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Mod
     }
 }
 
-@Composable
-fun OfferImage(imageRes: Int) {
-    AsyncImage(
-        model = imageRes,
-        contentDescription = "offer_image",
-        modifier = Modifier
-            .fillMaxSize()
-            .clip(RoundedCornerShape(10.dp)),
-        contentScale = androidx.compose.ui.layout.ContentScale.Crop
-    )
-}

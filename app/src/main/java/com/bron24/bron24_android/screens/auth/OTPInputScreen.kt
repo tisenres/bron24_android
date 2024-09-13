@@ -63,10 +63,15 @@ fun OTPInputScreen(
 ) {
     var otp by remember { mutableStateOf("") }
     val authState by authViewModel.authState.collectAsState()
-    var resendCounter by remember { mutableIntStateOf(10) }
+    var resendCounter by remember { mutableIntStateOf(90) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var isVerifying by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
 
     // Coroutine scope for handling the counter
     LaunchedEffect(resendCounter) {
@@ -79,11 +84,10 @@ fun OTPInputScreen(
     }
 
     // Ensure keyboard is shown and focus is requested as soon as the composable is launched
-    LaunchedEffect(Unit) {
-        delay(1000)
-        focusRequester.requestFocus()
-        keyboardController?.show()
-    }
+//    LaunchedEffect(Unit) {
+//        focusRequester.requestFocus()
+//        keyboardController?.show()
+//    }
 
 
     Scaffold { paddingValues ->
@@ -200,7 +204,7 @@ fun OTPInputScreen(
                     UnderlinedResendButton(
                         onClick = {
                             authViewModel.requestOTP()
-                            resendCounter = 10
+                            resendCounter = 90
                         },
                     )
 
@@ -238,8 +242,8 @@ fun OTPInputScreen(
                                 ToastType.ERROR
                             )
                             otp = ""
-                            focusRequester.requestFocus()
-                            keyboardController?.show()
+//                            focusRequester.requestFocus()
+//                            keyboardController?.show()
                         }
                     }
 
@@ -317,13 +321,6 @@ fun OTPTextField(
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
-    }
-
     BasicTextField(
         value = otp,
         onValueChange = onOtpChange,
@@ -365,7 +362,10 @@ fun OTPTextField(
                     }
                 }
             }
-        }
+        },
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .fillMaxWidth()
     )
 }
 

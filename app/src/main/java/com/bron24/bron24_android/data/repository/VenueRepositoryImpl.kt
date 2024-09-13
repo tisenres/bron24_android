@@ -14,23 +14,60 @@ class VenueRepositoryImpl @Inject constructor(
     private val apiService: VenueApiService
 ) : VenueRepository {
 
-    override suspend fun getVenues(): List<Venue> = withContext(Dispatchers.IO) {
-        apiService.getVenues().map { it.toDomainModel() }
+    override suspend fun getVenues(
+        latitude: Double?,
+        longitude: Double?,
+        sort: String?,
+        availableTime: String?,
+        minPrice: Int?,
+        maxPrice: Int?,
+        infrastructure: Boolean?,
+        district: String?
+    ): List<Venue> = withContext(Dispatchers.IO) {
+        try {
+            apiService.getVenues(
+                latitude, longitude, sort, availableTime,
+                minPrice, maxPrice, infrastructure, district
+            )?.data?.map { it.toDomainModel() } ?: emptyList()
+        } catch (e: Exception) {
+            // Log the error if needed
+            emptyList()
+        }
     }
 
     override suspend fun getVenuesCoordinates(): List<VenueCoordinates> = withContext(Dispatchers.IO) {
-        apiService.getVenuesCoordinates().map { it.toDomainModel() }
+        try {
+            apiService.getVenuesCoordinates()?.map { it.toDomainModel() } ?: emptyList()
+        } catch (e: Exception) {
+            // Log the error if needed
+            emptyList()
+        }
     }
 
     override suspend fun getFirstVenuePicture(venueId: Int): String? = withContext(Dispatchers.IO) {
-        apiService.getVenuePictures(venueId).firstOrNull()?.url
+        try {
+            apiService.getVenuePictures(venueId)?.firstOrNull()?.url
+        } catch (e: Exception) {
+            // Log the error if needed
+            null
+        }
     }
 
     override suspend fun getVenuePictures(venueId: Int): List<String> = withContext(Dispatchers.IO) {
-        apiService.getVenuePictures(venueId).map { it.url }
+        try {
+            apiService.getVenuePictures(venueId)?.map { it.url } ?: emptyList()
+        } catch (e: Exception) {
+            // Log the error if needed
+            emptyList()
+        }
     }
 
-    override suspend fun getVenueDetailsById(venueId: Int): VenueDetails = withContext(Dispatchers.IO) {
-        apiService.getVenueDetails(venueId).toDomainModel()
+    override suspend fun getVenueDetailsById(venueId: Int): VenueDetails? = withContext(Dispatchers.IO) {
+        try {
+            apiService.getVenueDetails(venueId)?.data?.toDomainModel()
+        } catch (e: Exception) {
+            // Log the error if needed
+            null
+        }
     }
 }

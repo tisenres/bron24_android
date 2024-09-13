@@ -2,9 +2,7 @@ package com.bron24.bron24_android.helper.util.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -14,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,35 +32,25 @@ fun BottomNavigationBar(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .height(72.dp)
-            .background(Color.White)
-            .padding(start = 30.dp, end = 30.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .background(Color.White),
+        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CustomBottomBarItem(
-            iconRes = R.drawable.ic_home,
-            label = stringResource(id = R.string.home),
-            isSelected = currentRoute == Screen.HomePage.route,
-            onClick = { navController.navigate(Screen.HomePage.route) }
+        val items = listOf(
+            Triple(R.drawable.ic_home, stringResource(id = R.string.home), Screen.HomePage.route),
+            Triple(R.drawable.ic_map, stringResource(id = R.string.nearby), Screen.MapPage.route),
+            Triple(R.drawable.ic_wallet, stringResource(id = R.string.orders), Screen.OrdersPage.route),
+            Triple(R.drawable.ic_person, stringResource(id = R.string.profile), Screen.ProfilePage.route)
         )
-        CustomBottomBarItem(
-            iconRes = R.drawable.ic_map,
-            label = stringResource(id = R.string.nearby),
-            isSelected = currentRoute == Screen.MapPage.route,
-            onClick = { navController.navigate(Screen.MapPage.route) }
-        )
-        CustomBottomBarItem(
-            iconRes = R.drawable.ic_wallet,
-            label = stringResource(id = R.string.orders),
-            isSelected = currentRoute == Screen.OrdersPage.route,
-            onClick = { navController.navigate(Screen.OrdersPage.route) }
-        )
-        CustomBottomBarItem(
-            iconRes = R.drawable.ic_person,
-            label = stringResource(id = R.string.profile),
-            isSelected = currentRoute == Screen.ProfilePage.route,
-            onClick = { navController.navigate(Screen.ProfilePage.route) }
-        )
+
+        items.forEach { (iconRes, label, route) ->
+            CustomBottomBarItem(
+                iconRes = iconRes,
+                label = label,
+                isSelected = currentRoute == route,
+                onClick = { navController.navigate(route) }
+            )
+        }
     }
 }
 
@@ -84,38 +70,51 @@ fun CustomBottomBarItem(
         currentColor = if (isSelected) selectedColor else unselectedColor
     }
 
-    Column(
+    Box(
         modifier = Modifier
-            .padding(10.dp)
-            .clickable(
-                onClick = {
-                    onClick()
-                    currentColor = selectedColor
-                },
-
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple()
-            )
-            .wrapContentWidth(Alignment.CenterHorizontally)
-            .wrapContentHeight(Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .size(72.dp)
+            .background(Color.Transparent),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = label,
-            tint = currentColor,
-            modifier = Modifier.size(24.dp)
+        // Ripple effect container
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(
+                    onClick = {
+                        onClick()
+                        currentColor = selectedColor
+                    },
+                    indication = ripple(
+                        bounded = false,
+                        color = Color.Gray,
+                        radius = 35.dp // Increased radius for "infinity" effect
+                    ),
+                    interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                )
         )
-        Text(
-            text = label,
-            fontFamily = gilroyFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 10.sp,
-            lineHeight = 12.25.sp,
-            color = currentColor,
-            modifier = Modifier.padding(top = 5.dp)
-        )
+
+        // Content
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = label,
+                tint = currentColor,
+                modifier = Modifier.size(24.dp)
+            )
+            Text(
+                text = label,
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp,
+                lineHeight = 12.25.sp,
+                color = currentColor,
+                modifier = Modifier.padding(top = 5.dp)
+            )
+        }
     }
 }
 

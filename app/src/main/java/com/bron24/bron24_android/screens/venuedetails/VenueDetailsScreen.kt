@@ -4,14 +4,40 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -19,9 +45,32 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ripple
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +81,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -42,7 +90,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
@@ -52,11 +99,16 @@ import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.venue.*
+import com.bron24.bron24_android.domain.entity.venue.Address
+import com.bron24.bron24_android.domain.entity.venue.City
+import com.bron24.bron24_android.domain.entity.venue.Infrastructure
+import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -68,7 +120,9 @@ import kotlinx.coroutines.delay
 fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onOrderClick: () -> Unit,
+    onMapClick: (Double, Double) -> Unit
 ) {
     LaunchedEffect(key1 = venueId) {
         viewModel.fetchVenueDetails(venueId)
@@ -84,12 +138,8 @@ fun VenueDetailsScreen(
             details = venueDetails,
             onBackClick = onBackClick,
             onFavoriteClick = {},
-            onMapClick = {},
-            onNavigateToMap = { lat, long ->
-
-            },
-            onTakeRouteClick = {},
-            onOrderClick = {},
+            onMapClick = onMapClick,
+            onOrderClick = onOrderClick,
         )
     }
 }
@@ -113,10 +163,8 @@ fun VenueDetailsContent(
     details: VenueDetails?,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
-    onMapClick: () -> Unit,
-    onTakeRouteClick: () -> Unit,
     onOrderClick: () -> Unit,
-    onNavigateToMap: (Double, Double) -> Unit
+    onMapClick: (Double, Double) -> Unit
 ) {
     val scrollState = rememberLazyListState()
     val context = LocalContext.current
@@ -158,15 +206,7 @@ fun VenueDetailsContent(
             }
             item(key = "infrastructureSection") { InfrastructureSection(details) }
             item(key = "descriptionSection") { DescriptionSection(details) }
-            item(key = "mapSection") {
-                MapSection(
-                    details = details,
-                    onTakeRouteClick = onTakeRouteClick,
-                    onMapClick = {
-                        details?.let { onNavigateToMap(it.latitude, it.longitude) }
-                    }
-                )
-            }
+            item(key = "mapSection") { MapSection(details = details) }
             item(key = "spacer") {
                 Spacer(modifier = Modifier.height(80.dp))
             }
@@ -208,18 +248,23 @@ private fun AnimatedToolbar(
     ) {
         TopAppBar(
             title = {
-                Text(
-                    text = title ?: "Unknown field",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = Color(0xFF3C2E56),
-                        lineHeight = 22.sp,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Box(
+                    modifier = Modifier.fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = title ?: "Unknown field",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color(0xFF3C2E56),
+                            lineHeight = 22.sp,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
@@ -269,7 +314,7 @@ fun shareVenueDetails(context: Context, details: VenueDetails?) {
     val shareText = buildString {
         appendLine("Check out this venue:")
         appendLine("Name: ${details.venueName}")
-        appendLine("Address: ${details.address?.addressName}")
+        appendLine("Address: ${details.address.addressName}")
         appendLine("Price: ${details.pricePerHour} per hour")
         appendLine("Working hours: ${details.workingHoursFrom} - ${details.workingHoursTill}")
         appendLine("Description: ${details.description}")
@@ -327,7 +372,7 @@ fun SectionTitle(text: String) {
 }
 
 @Composable
-fun HeaderSection(details: VenueDetails?, onMapClick: () -> Unit, onCopyAddressClick: () -> Unit) {
+fun HeaderSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit, onCopyAddressClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -352,7 +397,7 @@ fun VenueImageSection(
 
     Box(
         modifier = Modifier
-            .height(206.dp)
+            .height(230.dp)
             .fillMaxWidth()
             .background(Color.Gray)
     ) {
@@ -532,7 +577,7 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
 }
 
 @Composable
-fun TitleSection(details: VenueDetails?, onMapClick: () -> Unit) {
+fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -557,14 +602,16 @@ fun TitleSection(details: VenueDetails?, onMapClick: () -> Unit) {
                 .size(44.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(0xFFF6F6F6))
-                .clickable(onClick = onMapClick)
+                .clickable {
+                    onMapClick(details?.latitude ?: 0.0, details?.longitude ?: 0.0)
+                }
                 .padding(10.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_map_cute),
                 contentDescription = "map_icon",
                 colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
-                modifier = Modifier.fillMaxSize() // Ensure the Image fills the Box
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
@@ -646,7 +693,6 @@ fun DistanceRow(details: VenueDetails?) {
         text = "2.3 km from you"
     )
 }
-
 
 @Composable
 fun InfoRow(icon: Int, text: String) {
@@ -756,7 +802,8 @@ fun InfrastructureSection(details: VenueDetails?) {
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            sheetState = rememberModalBottomSheetState()
+            sheetState = rememberModalBottomSheetState(),
+            containerColor = Color.White
         ) {
             InfrastructureItemDetails(selectedItem?.first, selectedItem?.second)
         }
@@ -772,7 +819,7 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         details?.let { venue ->
-            InfrastructureItem(venue.venueType, R.drawable.baseline_stadium_24, onItemClick)
+            InfrastructureItem(venue.venueType.capitalize(), R.drawable.baseline_stadium_24, onItemClick)
             InfrastructureItem(
                 "${venue.peopleCapacity} players",
                 R.drawable.game_icons_soccer_kick,
@@ -796,7 +843,7 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
                     InfrastructureItem("Parking", R.drawable.baseline_local_parking_24, onItemClick)
                 }
             }
-            InfrastructureItem(venue.venueSurface, R.drawable.baseline_grass_24, onItemClick)
+            InfrastructureItem(venue.venueSurface.capitalize(), R.drawable.baseline_grass_24, onItemClick)
             InfrastructureItem(
                 "${venue.workingHoursFrom.drop(3)} - ${venue.workingHoursTill.drop(3)}",
                 R.drawable.baseline_access_time_filled_24,
@@ -814,15 +861,15 @@ fun InfrastructureItem(text: String, iconRes: Int, onClick: (String, Int) -> Uni
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
-        )
+        ), label = ""
     )
     val backgroundColor by animateColorAsState(
         targetValue = if (isPressed) Color(0xFF32B768) else Color.White,
-        animationSpec = tween(durationMillis = 300)
+        animationSpec = tween(durationMillis = 300), label = ""
     )
     val textColor by animateColorAsState(
         targetValue = if (isPressed) Color.White else Color.Black,
-        animationSpec = tween(durationMillis = 300)
+        animationSpec = tween(durationMillis = 300), label = ""
     )
 
     Column(
@@ -874,6 +921,7 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
             .padding(start = 16.dp, bottom = 20.dp, end = 30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -886,7 +934,7 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
                     painter = painterResource(id = it),
                     contentDescription = text,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
@@ -896,9 +944,9 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
+                        fontSize = 20.sp,
                         color = Color.Black,
-                        lineHeight = 30.sp,
+                        lineHeight = 34.sp,
                     ),
                     textAlign = TextAlign.Start,
                     maxLines = 1,
@@ -922,113 +970,205 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
 }
 
 @Composable
-fun MapSection(details: VenueDetails?, onTakeRouteClick: () -> Unit, onMapClick: () -> Unit) {
+fun MapSection(details: VenueDetails?) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val mapView = remember { MapView(context) }
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    var mapView by remember { mutableStateOf<MapView?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     DisposableEffect(lifecycleOwner) {
+        val mapKit = MapKitFactory.getInstance()
+        mapKit.onStart()
+        mapView = MapView(context).apply { onStart() }
+
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_START -> {
-                    MapKitFactory.getInstance().onStart()
-                    mapView.onStart()
+                    mapKit.onStart()
+                    mapView?.onStart()
                 }
-
                 Lifecycle.Event.ON_STOP -> {
-                    mapView.onStop()
-                    MapKitFactory.getInstance().onStop()
+                    mapView?.onStop()
+                    mapKit.onStop()
                 }
-
                 else -> {}
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
+
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+            mapView?.onStop()
+            mapKit.onStop()
         }
     }
 
-    LaunchedEffect(details) {
-        details?.let { venue ->
-            val venueLocation = Point(venue.latitude, venue.longitude)
-            mapView.map.move(
-                CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f)
-            )
-            val placemark = mapView.map.mapObjects.addPlacemark(venueLocation)
-            placemark.setIcon(
-                ImageProvider.fromResource(
-                    context,
-                    R.drawable.baseline_location_on_24_green
-                )
-            )
-        }
-    }
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(10.dp))
-            .clickable(onClick = onMapClick),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .clickable {
+                details?.let { venue ->
+                    openMapWithOptions(context, venue.latitude, venue.longitude, venue.venueName)
+                }
+            }
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AndroidView(
-                factory = { mapView },
-                modifier = Modifier.fillMaxSize()
-            )
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-//                    .clickable(onClick = onMapClick)
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+            ) {
+                mapView?.let { map ->
+                    AndroidView(
+                        factory = { map },
+                        modifier = Modifier.fillMaxSize(),
+                        update = { view ->
+                            details?.let { venue ->
+                                try {
+                                    val venueLocation = Point(venue.latitude, venue.longitude)
+                                    view.map.move(
+                                        CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
+                                        Animation(Animation.Type.SMOOTH, 0.3f),
+                                        null
+                                    )
+                                    view.map.mapObjects.clear()
+
+                                    val placemark = view.map.mapObjects.addPlacemark(venueLocation)
+                                    val markerIcon = R.drawable.baseline_location_on_24_red
+                                    val drawable = ContextCompat.getDrawable(context, markerIcon)
+                                    val bitmap = drawable?.let {
+                                        getBitmapFromDrawable(it, 1.5f)
+                                    }
+                                    placemark.setIcon(ImageProvider.fromBitmap(bitmap))
+
+                                    // Disable user interaction with the map
+                                    view.map.isScrollGesturesEnabled = false
+                                    view.map.isZoomGesturesEnabled = false
+                                    view.map.isTiltGesturesEnabled = false
+                                    view.map.isRotateGesturesEnabled = false
+
+                                    errorMessage = null
+                                } catch (e: Exception) {
+                                    Log.e("MapSection", "Error updating map: ${e.message}")
+                                    errorMessage = "Error loading map: ${e.message}"
+                                }
+                            }
+                        }
+                    )
+                }
+                errorMessage?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp)
+                    )
+                }
+            }
+
+            MapDetails(details)
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 0.5.dp,
+                color = Color(0xFFD4D4D4)
             )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp, bottom = 12.dp)
+                    .padding(horizontal = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Open in Maps",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 18.sp
+                    )
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    contentDescription = "Open in Maps",
+                    modifier = Modifier.size(14.dp)
+                )
+            }
         }
 
-        MapDetails(details)
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            thickness = 0.5.dp,
-            color = Color(0xFFD4D4D4)
-        )
-        Row(
+        // Clickable overlay
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-//                .clickable(onClick = onTakeRouteClick)
-                .padding(top = 6.dp, bottom = 12.dp)
-                .padding(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Take a route",
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = Color(0xFF3C2E56),
-                    lineHeight = 18.sp
-                )
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_right),
-                contentDescription = "Take route",
-                modifier = Modifier.size(14.dp)
-            )
-        }
+                .matchParentSize()
+                .clickable {
+                    details?.let { venue ->
+                        openMapWithOptions(context, venue.latitude, venue.longitude, venue.venueName)
+                    }
+                }
+        )
+    }
+}
+
+fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
+    val width = (drawable.intrinsicWidth * scaleFactor).toInt()
+    val height = (drawable.intrinsicHeight * scaleFactor).toInt()
+    return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
+        val canvas = android.graphics.Canvas(this)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+    }
+}
+
+fun openMapWithOptions(context: Context, latitude: Double, longitude: Double, venueName: String) {
+    val encodedName = Uri.encode(venueName)
+    val uriString = "geo:$latitude,$longitude?q=$latitude,$longitude($encodedName)"
+    val geoUri = Uri.parse(uriString)
+    val mapIntent = Intent(Intent.ACTION_VIEW, geoUri)
+
+    val packageManager = context.packageManager
+    val activities = packageManager.queryIntentActivities(mapIntent, 0)
+
+    if (activities.isNotEmpty()) {
+        val chooserIntent = Intent.createChooser(mapIntent, "Open map with")
+        context.startActivity(chooserIntent)
+    } else {
+        // If no map apps are installed, open in browser
+        val browserUri = Uri.parse("https://www.openstreetmap.org/?mlat=$latitude&mlon=$longitude#map=15/$latitude/$longitude")
+        val browserIntent = Intent(Intent.ACTION_VIEW, browserUri)
+        context.startActivity(browserIntent)
+    }
+}
+
+fun navigateToMapApp(context: Context, latitude: Double, longitude: Double, venueName: String) {
+    val gmmIntentUri = Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude($venueName)")
+    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+    mapIntent.setPackage("com.google.android.apps.maps")
+
+    if (mapIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(mapIntent)
+    } else {
+        // If Google Maps is not installed, open in browser
+        val browserUri =
+            Uri.parse("https://www.google.com/maps/search/?api=1&query=$latitude,$longitude")
+        val browserIntent = Intent(Intent.ACTION_VIEW, browserUri)
+        context.startActivity(browserIntent)
     }
 }
 
 @Composable
 fun MapDetails(details: VenueDetails?) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 10.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp)
     ) {
         Text(
             text = details?.address?.addressName ?: "Unknown address",
@@ -1129,7 +1269,6 @@ fun PricingSection(
                         fontSize = 14.sp,
                         color = Color.White,
                         lineHeight = 16.8.sp,
-//                        letterSpacing = (-0.028).em
                     )
                 )
             }
@@ -1137,61 +1276,58 @@ fun PricingSection(
     }
 }
 
-@Preview(widthDp = 390, heightDp = 793, showBackground = true)
-@Composable
-private fun VenueDetailsPreview() {
-    VenueDetailsContent(
-        details = VenueDetails(
-            venueId = 1,
-            address = Address(
-                id = 6,
-                addressName = "Bunyodkor street, 18",
-                district = "SASASAS",
-                closestMetroStation = "Novza"
-            ),
-            city = City(id = 5, cityName = "Tashkent"),
-            infrastructure = Infrastructure(
-                id = 9,
-                lockerRoom = true,
-                stands = "FDFDFGD",
-                shower = true,
-                parking = true
-            ),
-            venueOwner = VenueOwner(
-                id = 9,
-                ownerName = "Owner Name",
-                tinNumber = 1223243,
-                contact1 = "454545",
-                contact2 = "232323"
-            ),
-            venueName = "Bunyodkor kompleksi",
-            venueType = "out",
-            venueSurface = "Grass",
-            peopleCapacity = 12,
-            sportType = "Football",
-            pricePerHour = "100",
-            description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
-            workingHoursFrom = "9:00",
-            workingHoursTill = "23:00",
-            contact1 = "+998 77 806 0278",
-            contact2 = "+998 77 806 0288",
-            createdAt = "2021-01-01",
-            updatedAt = "2023-01-01",
-            imageUrls = listOf(
-                "https://www.google.com/imgres?q=football%20stadium&imgurl=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1502846052%2Fphoto%2Ftextured-soccer-game-field-with-neon-fog-center-midfield.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLPSo6ps1NfZ_xviL0tmhnnrcLjjFXAQhsYr3qAOfviY%3D&imgrefurl=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffootball-stadium&docid=LF8uWOsT77kHrM&tbnid=tb_4tkdFa4tgxM&vet=12ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA..i&w=612&h=344&hcb=2&ved=2ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA",
-
-            )
-        ),
-        {},
-        {},
-        {},
-        {},
-        {},
-        onNavigateToMap = { lat, long ->
-
-        },
-    )
-}
+//@Preview(widthDp = 390, heightDp = 793, showBackground = true)
+//@Composable
+//private fun VenueDetailsPreview() {
+//    VenueDetailsContent(
+//        details = VenueDetails(
+//            venueId = 1,
+//            address = Address(
+//                id = 6,
+//                addressName = "Bunyodkor street, 18",
+//                district = "SASASAS",
+//                closestMetroStation = "Novza"
+//            ),
+//            city = City(id = 5, cityName = "Tashkent"),
+//            infrastructure = Infrastructure(
+//                id = 9,
+//                lockerRoom = true,
+//                stands = "FDFDFGD",
+//                shower = true,
+//                parking = true
+//            ),
+//            venueOwner = VenueOwner(
+//                id = 9,
+//                ownerName = "Owner Name",
+//                tinNumber = 1223243,
+//                contact1 = "454545",
+//                contact2 = "232323"
+//            ),
+//            venueName = "Bunyodkor kompleksi",
+//            venueType = "out",
+//            venueSurface = "Grass",
+//            peopleCapacity = 12,
+//            sportType = "Football",
+//            pricePerHour = "100",
+//            description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
+//            workingHoursFrom = "9:00",
+//            workingHoursTill = "23:00",
+//            contact1 = "+998 77 806 0278",
+//            contact2 = "+998 77 806 0288",
+//            createdAt = "2021-01-01",
+//            updatedAt = "2023-01-01",
+//            imageUrls = listOf(
+//                "https://www.google.com/imgres?q=football%20stadium&imgurl=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1502846052%2Fphoto%2Ftextured-soccer-game-field-with-neon-fog-center-midfield.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLPSo6ps1NfZ_xviL0tmhnnrcLjjFXAQhsYr3qAOfviY%3D&imgrefurl=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffootball-stadium&docid=LF8uWOsT77kHrM&tbnid=tb_4tkdFa4tgxM&vet=12ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA..i&w=612&h=344&hcb=2&ved=2ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA",
+//            ),
+//            latitude = 65.23232323,
+//            longitude = 46.23232323
+//        ),
+//        {},
+//        {},
+//        {},
+//        {.0, 0.0}
+//    )
+//}
 
 @Preview(widthDp = 390, heightDp = 793, showBackground = true)
 @Composable

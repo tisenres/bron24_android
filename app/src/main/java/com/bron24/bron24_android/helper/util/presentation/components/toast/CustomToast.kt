@@ -35,7 +35,6 @@ import kotlinx.coroutines.delay
 fun CustomToast(
     message: String,
     type: ToastType,
-    durationMillis: Long = 3000,
     onDismiss: () -> Unit
 ) {
     var isVisible by remember { mutableStateOf(true) }
@@ -45,9 +44,14 @@ fun CustomToast(
         if (type == ToastType.ERROR) {
             vibrate(context)
         }
-        delay(durationMillis)
+        when (type) {
+            ToastType.SUCCESS -> delay(1000)
+            ToastType.INFO -> delay(5000)
+            else -> delay(3000)
+        }
         isVisible = false
         onDismiss()
+
     }
 
     AnimatedVisibility(
@@ -146,5 +150,8 @@ private fun vibrate(context: Context) {
 @Preview(showBackground = true)
 @Composable
 fun BottomNavigationBarPreview() {
-    CustomToast(message = "Internet is not avaisdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlable", type = ToastType.ERROR, onDismiss = {})
+    CustomToast(
+        message = "Internet is not avaisdsdsdsdsdsdsdsdsdsdsdsdsdsdsdlable",
+        type = ToastType.ERROR,
+        onDismiss = {})
 }

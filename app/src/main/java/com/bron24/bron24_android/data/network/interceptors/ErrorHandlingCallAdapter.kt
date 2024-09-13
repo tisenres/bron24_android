@@ -19,6 +19,8 @@ import retrofit2.Retrofit
 import java.io.IOException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class ErrorHandlingCallAdapterFactory(
     private val authRepository: Lazy<AuthRepository>,
@@ -75,6 +77,33 @@ class ErrorHandlingCallAdapterFactory(
                     handleFailure(call, t, callback)
                 }
             })
+        }
+
+        private fun handleFailure(call: Call<R>, t: Throwable, callback: Callback<R>) {
+            CoroutineScope(Dispatchers.Main).launch {
+                when (t) {
+                    is UnknownHostException -> {
+                        errorHandler.handleError(AppError.UnresolvedHostError)
+                        callback.onResponse(call, Response.success(null))
+                    }
+                    is SocketTimeoutException -> {
+                        errorHandler.handleError(AppError.TimeoutError)
+                        callback.onResponse(call, Response.success(null))
+                    }
+                    is IOException -> {
+                        errorHandler.handleError(AppError.NetworkError)
+                        callback.onResponse(call, Response.success(null))
+                    }
+                    is HttpException -> {
+                        errorHandler.handleError(AppError.HttpError(t.code(), t.message()))
+                        callback.onResponse(call, Response.success(null))
+                    }
+                    else -> {
+                        errorHandler.handleError(AppError.UnknownError(t.message ?: "Unknown error occurred"))
+                        callback.onResponse(call, Response.success(null))
+                    }
+                }
+            }
         }
 
         override fun execute(): Response<R> {
@@ -147,16 +176,16 @@ class ErrorHandlingCallAdapterFactory(
             callback.onResponse(call, response)
         }
 
-        private fun handleFailure(call: Call<R>, t: Throwable, callback: Callback<R>) {
-            runBlocking {
-                when (t) {
-                    is IOException -> errorHandler.handleError(AppError.NetworkError)
-                    is HttpException -> errorHandler.handleError(AppError.HttpError(t.code(), t.message()))
-                    else -> errorHandler.handleError(AppError.UnknownError(t.message ?: "Unknown error occurred"))
-                }
-            }
-            callback.onFailure(call, t)
-        }
+//        private fun handleFailure(call: Call<R>, t: Throwable, callback: Callback<R>) {
+//            runBlocking {
+//                when (t) {
+//                    is IOException -> errorHandler.handleError(AppError.NetworkError)
+//                    is HttpException -> errorHandler.handleError(AppError.HttpError(t.code(), t.message()))
+//                    else -> errorHandler.handleError(AppError.UnknownError(t.message ?: "Unknown error occurred"))
+//                }
+//            }
+//            callback.onFailure(call, t)
+//        }
 
         private fun handleUnauthorizedSync(): Response<R>? {
             val refreshToken = tokenRepository.getRefreshToken()

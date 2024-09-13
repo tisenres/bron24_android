@@ -1,17 +1,29 @@
 package com.bron24.bron24_android.screens.venuelisting
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -29,17 +41,26 @@ import coil.size.Scale
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.Venue
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavController) {
-
     val navigateToDetails: (() -> Unit)? = remember(venue) {
         venue?.venueId?.let { id ->
             { navController.navigate(Screen.VenueDetails.route.replace("{venueId}", id.toString())) }
         }
+    }
+
+    val onFavoriteClick: () -> Unit = {}
+
+    val shimmerModifier = if (isLoading) {
+        Modifier.shimmer()
+    } else {
+        Modifier
     }
 
     Column(
@@ -47,20 +68,21 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(Color(0xFFF4FEF4).copy(alpha = 0.47f))
+            .then(shimmerModifier)
             .let {
-                if (isLoading) {
-                    it.shimmer()
-                } else {
+                if (!isLoading) {
                     navigateToDetails?.let { action ->
                         it.clickable(onClick = action)
                     } ?: it
+                } else {
+                    it
                 }
             }
     ) {
         if (isLoading) {
             LoadingPlaceholder()
         } else if (venue != null) {
-            VenueImageSection(venue)
+            VenueImageSection(venue, onFavoriteClick)
             VenueTitleRow(venue)
             VenueDetailsRow(venue)
             VenueFooter(venue)
@@ -80,7 +102,7 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth()
                 .height(162.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -90,7 +112,7 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth()
                 .height(20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -100,7 +122,7 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth(0.6f)
                 .height(20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -110,7 +132,7 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth()
                 .height(20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -120,13 +142,13 @@ fun LoadingPlaceholder() {
                 .fillMaxWidth(0.6f)
                 .height(20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Color.Gray.copy(alpha = 0.47f))
+                .background(Color.Gray.copy(alpha = 0.2f))
         )
     }
 }
 
 @Composable
-fun VenueImageSection(venue: Venue) {
+fun VenueImageSection(venue: Venue, onFavoriteClick: () -> Unit) {
     Box(
         modifier = Modifier
             .height(162.dp)
@@ -136,7 +158,6 @@ fun VenueImageSection(venue: Venue) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(venue.imageUrl ?: "")
-                .size(320, 180)  // Request a lower resolution image
                 .scale(Scale.FILL)
                 .crossfade(true)
                 .build(),
@@ -144,13 +165,55 @@ fun VenueImageSection(venue: Venue) {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        Image(
-            painter = painterResource(id = R.drawable.baseline_favorite_24),
-            contentDescription = "Overlay Image",
+        AnimatedFavoriteButton(
+            onFavoriteClick,
             modifier = Modifier
-                .padding(top = 10.dp, end = 10.dp)
-                .size(21.dp)
                 .align(Alignment.TopEnd)
+                .padding(5.dp)
+        )
+    }
+}
+
+@Composable
+fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit, modifier: Modifier = Modifier) {
+    var isFavorite by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val scale by animateFloatAsState(
+        targetValue = if (isFavorite) 1.2f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ), label = ""
+    )
+
+    Box(
+        modifier = modifier
+            .size(40.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = {
+                    isFavorite = !isFavorite
+                    onFavoriteClick()
+                    ToastManager.showToast(
+                        "Venue was added to favorites",
+                        ToastType.SUCCESS
+                    )
+                }
+            )
+    ) {
+        Image(
+            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.Favorite,
+            contentDescription = "Favorite",
+            colorFilter = ColorFilter.tint(if (isFavorite) Color.Red else Color.White),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+                .graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale
+                )
         )
     }
 }
@@ -178,7 +241,7 @@ fun VenueDetailsRow(venue: Venue) {
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "3 " + stringResource(id = R.string.km),
+            text = String.format("%.1f", venue.distance) + " " + stringResource(id = R.string.km),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -276,9 +339,9 @@ fun VenueFooter(venue: Venue) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = Color(0xFF3C2E56),
-                        lineHeight = 14.7.sp,
+                        lineHeight = 16.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom)
                 )
@@ -293,9 +356,9 @@ fun VenueFooter(venue: Venue) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = Color(0xFF3C2E56),
-                        lineHeight = 14.7.sp,
+                        lineHeight = 16.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom)
                 )
@@ -304,9 +367,9 @@ fun VenueFooter(venue: Venue) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = Color(0xFF26A045),
-                        lineHeight = 14.7.sp,
+                        lineHeight = 16.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom),
                     maxLines = 1,
@@ -330,6 +393,7 @@ fun PreviewVenueCard() {
             district = "Chilonzor",
             closestMetroStation = "Novza",
         ),
-        imageUrl = null
+        imageUrl = null,
+        distance = 0.0
     )
 }

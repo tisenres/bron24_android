@@ -1,83 +1,193 @@
 package com.bron24.bron24_android.screens.map
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.venue.Address
-import com.bron24.bron24_android.domain.entity.venue.City
-import com.bron24.bron24_android.domain.entity.venue.Infrastructure
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.domain.entity.venue.VenueOwner
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.venuedetails.AddressRow
-import com.bron24.bron24_android.screens.venuedetails.AvailableSlots
-import com.bron24.bron24_android.screens.venuedetails.DistanceRow
-import com.bron24.bron24_android.screens.venuedetails.copyAddressToClipboard
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun SmallVenueDetailsScreen(
-    modifier: Modifier,
-    venueDetails: VenueDetails
+    viewModel: VenueMapViewModel,
+    onClose: () -> Unit
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(
-        targetValue = if (isFavorite) 1.2f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy), label = ""
-    )
 
-    SmallDetailsContent(
-        modifier = modifier,
-        venueDetails = venueDetails,
-        isFavorite = isFavorite,
-        favoriteScale = scale,
-        onFavoriteClick = { isFavorite = !isFavorite },
-        onCopyAddressClick = { copyAddressToClipboard(context, venueDetails?.address?.addressName) }
-    )
+    val venueDetails by viewModel.venueDetails.collectAsState()
+    val isLoading by remember { derivedStateOf { venueDetails == null } }
+
+    if (isLoading) {
+        LoadingScreen()
+    } else {
+        SmallDetailsContent(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+            venueDetails = venueDetails,
+            onFavoriteClick = { isFavorite = !isFavorite },
+            onCopyAddressClick = {
+                copyAddressToClipboard(
+                    context,
+                    venueDetails?.address?.addressName
+                )
+            },
+        )
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.White)
+            .shimmer()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Shimmer for image
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.LightGray)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Shimmer for title
+            Box(
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(24.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.LightGray)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Shimmer for address
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.LightGray)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Shimmer for rating
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                repeat(5) {
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(Color.LightGray)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Shimmer for price and button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .height(24.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color.LightGray)
+                )
+                Box(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(40.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.LightGray)
+                )
+            }
+        }
+    }
 }
 
 @Composable
 fun SmallDetailsContent(
     modifier: Modifier,
-    venueDetails: VenueDetails,
-    isFavorite: Boolean,
-    favoriteScale: Float,
+    venueDetails: VenueDetails?,
     onFavoriteClick: () -> Unit,
-    onCopyAddressClick: () -> Unit
+    onCopyAddressClick: () -> Unit,
 ) {
+
+    val context = LocalContext.current
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
             .clip(RoundedCornerShape(10.dp))
+            .background(Color.White)
     ) {
-        SmallImageSection(venueDetails)
+        SmallImageSection(
+            imageUrls = venueDetails?.imageUrls ?: emptyList(),
+            onShareClick = { shareVenueDetails(context, venueDetails) },
+            onFavoriteClick
+        )
         Spacer(modifier = Modifier.height(12.dp))
         SmallHeaderSection(venueDetails, onCopyAddressClick)
         Spacer(modifier = Modifier.height(12.dp))
@@ -101,43 +211,187 @@ fun SmallHeaderSection(venueDetails: VenueDetails?, onCopyAddressClick: () -> Un
 }
 
 @Composable
-fun SmallImageSection(venueDetails: VenueDetails?) {
-    Box(
-        modifier = Modifier
-            .height(150.dp)
-            .fillMaxWidth()
-    ) {
-        Image(
-            painter = rememberAsyncImagePainter(model = R.drawable.football_field),
-            contentDescription = "Venue Image",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-        )
-        Box(
-            modifier = Modifier
-                .padding(top = 10.dp, end = 10.dp)
-                .align(Alignment.TopEnd)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "Favorite",
-                tint = Color.Black,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(10.dp)
+fun VenueImage(imageUrl: String, page: Int) {
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .placeholder(R.drawable.placeholder)
+            .build()
+    )
+    Image(
+        painter = painter,
+        contentDescription = "Venue Image $page",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize()
+    )
+}
 
+@Composable
+fun ImageOverlay(
+    currentPage: Int,
+    totalPages: Int,
+    onShareClick: () -> Unit,
+    onFavoriteClick: () -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, start = 10.dp, end = 10.dp),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ClickableIconButton(
+                onClick = onShareClick,
+                icon = Icons.Default.Share,
+                contentDescription = "Share"
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
+        }
+        BottomIndicators(
+            currentPage = currentPage,
+            totalPages = totalPages,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 11.5.dp)
+        )
+    }
+}
+
+@Composable
+fun BottomIndicators(currentPage: Int, totalPages: Int, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        repeat(totalPages) { index ->
+            Box(
+                modifier = Modifier
+                    .height(1.5.dp)
+                    .padding(end = 3.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .width(28.dp)
+                    .background(if (index == currentPage) Color.White else Color(0xFFB7B3B3))
             )
         }
     }
 }
 
 @Composable
+fun ClickableIconButton(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    tint: Color = Color.Black
+) {
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Box(
+        modifier = Modifier
+            .size(38.dp)
+            .clip(CircleShape)
+            .background(Color(0xFFFFFFFF))
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = onClick
+            )
+    ) {
+        Image(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            colorFilter = ColorFilter.tint(tint),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        )
+    }
+}
+
+@Composable
+fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
+    var isFavorite by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    val scale by animateFloatAsState(
+        targetValue = if (isFavorite) 1.2f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ), label = ""
+    )
+
+    Box(
+        modifier = Modifier
+            .size(38.dp)
+            .clip(CircleShape)
+            .background(Color.White)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                onClick = {
+                    isFavorite = !isFavorite
+                    onFavoriteClick()
+                    ToastManager.showToast(
+                        "Venue was added to favorites",
+                        ToastType.SUCCESS
+                    )
+                }
+            ),
+    ) {
+        Image(
+            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+            contentDescription = "Favorite",
+            colorFilter = ColorFilter.tint(if (isFavorite) Color.Red else Color.Black),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+                .graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale
+                )
+        )
+    }
+}
+
+@Composable
+fun SmallImageSection(
+    imageUrls: List<String>,
+    onShareClick: () -> Unit,
+    onFavoriteClick: () -> Unit
+) {
+
+    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
+
+    Box(
+        modifier = Modifier
+            .height(150.dp)
+            .fillMaxWidth()
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            VenueImage(
+                imageUrl = imageUrls[page],
+                page = page
+            )
+        }
+        ImageOverlay(
+            currentPage = pagerState.currentPage,
+            totalPages = imageUrls.size,
+            onShareClick = onShareClick,
+            onFavoriteClick = onFavoriteClick
+        )
+    }
+}
+
+@Composable
 fun SmallTitleSection(venueDetails: VenueDetails?) {
     Text(
-        text = "Bunyodkor kompleksi",
+        text = venueDetails?.venueName ?: "Unknown venue",
         style = TextStyle(
             fontFamily = gilroyFontFamily,
             fontWeight = FontWeight.ExtraBold,
@@ -153,11 +407,54 @@ fun SmallTitleSection(venueDetails: VenueDetails?) {
 @Composable
 fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Unit) {
     Column {
-        AddressRow(details, onCopyAddressClick)
+        SmallAddressRow(details, onCopyAddressClick)
         Spacer(modifier = Modifier.height(4.dp))
         AvailableSlots(details)
         Spacer(modifier = Modifier.height(4.dp))
         DistanceRow(details)
+    }
+}
+
+@Composable
+fun AvailableSlots(details: VenueDetails?) {
+    InfoRow(
+        icon = R.drawable.baseline_event_available_24,
+        text = "12 available slots"
+    )
+}
+
+@Composable
+fun DistanceRow(details: VenueDetails?) {
+    InfoRow(
+        icon = R.drawable.mingcute_navigation_fill,
+        text = "2.3 km from you"
+    )
+}
+
+@Composable
+fun InfoRow(icon: Int, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            tint = Color(0xff949494),
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = text,
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                color = Color(0xFF949494),
+                lineHeight = 18.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -243,31 +540,6 @@ fun SmallRatingSection(venueDetails: VenueDetails?) {
 }
 
 @Composable
-fun SmallPhoneRow(venueDetails: VenueDetails?) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_local_phone_24),
-            contentDescription = "Phone",
-            tint = Color(0xff949494),
-            modifier = Modifier.size(18.dp)
-        )
-        Text(
-            text = "+998 77 806 0278",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
-                color = Color(0xFF949494),
-                lineHeight = 18.sp,
-            )
-        )
-    }
-}
-
-@Composable
 fun SmallPricingSection(venueDetails: VenueDetails?) {
     Row(
         modifier = Modifier
@@ -277,7 +549,7 @@ fun SmallPricingSection(venueDetails: VenueDetails?) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "100 sum/hour",
+            text = "${venueDetails?.pricePerHour} ${stringResource(id = R.string.som_per_hour)}",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -302,55 +574,60 @@ fun SmallPricingSection(venueDetails: VenueDetails?) {
                     fontSize = 14.sp,
                     color = Color.White,
                     lineHeight = 16.8.sp,
-//                    letterSpacing = (-0.028).em
                 )
             )
         }
     }
 }
 
+fun copyAddressToClipboard(context: Context, address: String?) {
+    if (address.isNullOrBlank()) {
+        ToastManager.showToast(
+            "No address available to copy",
+            ToastType.WARNING
+        )
+        return
+    }
+
+    val clipboard = ContextCompat.getSystemService(context, ClipboardManager::class.java)
+    val clip = ClipData.newPlainText("Venue Address", address)
+    clipboard?.setPrimaryClip(clip)
+
+    ToastManager.showToast(
+        "Address copied to clipboard",
+        ToastType.SUCCESS
+    )
+}
+
+fun shareVenueDetails(context: Context, details: VenueDetails?) {
+    if (details == null) {
+        ToastManager.showToast(
+            "No venue details available to share",
+            ToastType.WARNING
+        )
+        return
+    }
+
+    val shareText = buildString {
+        appendLine("Check out this venue:")
+        appendLine("Name: ${details.venueName}")
+        appendLine("Address: ${details.address.addressName}")
+        appendLine("Price: ${details.pricePerHour} per hour")
+        appendLine("Working hours: ${details.workingHoursFrom} - ${details.workingHoursTill}")
+        appendLine("Description: ${details.description}")
+    }
+
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, shareText)
+        type = "text/plain"
+    }
+
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    context.startActivity(shareIntent)
+}
+
 @Preview
 @Composable
 private fun VenueDetailsPreview() {
-    SmallVenueDetailsScreen(
-        modifier = Modifier,
-        venueDetails = VenueDetails(
-            venueId = 1,
-            address = Address(
-                id = 6,
-                addressName = "Bunyodkor street, 18",
-                district = "SASASAS",
-                closestMetroStation = "Novza"
-            ),
-            city = City(id = 5, cityName = "Tashkent"),
-            infrastructure = Infrastructure(
-                id = 9,
-                lockerRoom = true,
-                stands = "FDFDFGD",
-                shower = true,
-                parking = true
-            ),
-            venueOwner = VenueOwner(
-                id = 9,
-                ownerName = "Owner Name",
-                tinNumber = 1223243,
-                contact1 = "454545",
-                contact2 = "232323"
-            ),
-            venueName = "Bunyodkor kompleksi",
-            venueType = "out",
-            venueSurface = "Grass",
-            peopleCapacity = 12,
-            sportType = "Football",
-            pricePerHour = "100",
-            description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
-            workingHoursFrom = "9:00",
-            workingHoursTill = "23:00",
-            contact1 = "+998 77 806 0278",
-            contact2 = "+998 77 806 0288",
-            createdAt = "2021-01-01",
-            updatedAt = "2023-01-01",
-            imageUrls = emptyList()
-        ),
-    )
 }
