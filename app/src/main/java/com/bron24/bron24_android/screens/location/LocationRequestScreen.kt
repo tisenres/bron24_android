@@ -38,6 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTapGestures
 
 @Composable
 fun LocationRequestScreen(
@@ -45,7 +48,6 @@ fun LocationRequestScreen(
     onDenyClick: () -> Unit,
     viewModel: LocationViewModel = hiltViewModel(),
 ) {
-
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
@@ -59,8 +61,11 @@ fun LocationRequestScreen(
     )
 
     val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     LaunchedEffect(Unit) {
         keyboardController?.hide()
+        focusManager.clearFocus()
     }
 
     LaunchedEffect(key1 = Unit) {
@@ -71,7 +76,15 @@ fun LocationRequestScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(top = 30.dp, start = 24.dp, end = 24.dp, bottom = 24.dp),
+            .padding(top = 30.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                )
+            },
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.Start
     ) {
@@ -84,7 +97,6 @@ fun LocationRequestScreen(
                     fontSize = 26.sp,
                     color = Color(0xFF32B768),
                     lineHeight = 31.85.sp,
-//                    letterSpacing = (-0.78).sp
                 ),
             )
 

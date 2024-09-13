@@ -49,16 +49,21 @@ import java.util.concurrent.TimeUnit
 fun YandexMapScreen(
     mapViewModel: VenueMapViewModel = hiltViewModel(),
     initialLatitude: Double? = null,
-    initialLongitude: Double? = null
+    initialLongitude: Double? = null,
+    initialSelectedVenueId: Int = -1
 ) {
     val venues by mapViewModel.venues.collectAsState()
     val currentLocation by mapViewModel.currentLocation.collectAsState()
     val selectedVenueId by mapViewModel.selectedVenueId.collectAsState()
     var showVenueDetails by remember { mutableStateOf(false) }
 
-    LaunchedEffect(initialLatitude, initialLongitude) {
+    LaunchedEffect(initialLatitude, initialLongitude, initialSelectedVenueId) {
         if (initialLatitude != null && initialLongitude != null) {
             mapViewModel.centerOnCoordinates(initialLatitude, initialLongitude)
+        }
+        if (initialSelectedVenueId != -1) {
+            mapViewModel.selectVenue(initialSelectedVenueId)
+            showVenueDetails = true
         }
     }
 

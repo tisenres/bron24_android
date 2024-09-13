@@ -121,7 +121,8 @@ fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
     onBackClick: () -> Unit,
-    onOrderClick: () -> Unit
+    onOrderClick: () -> Unit,
+    onMapClick: (Double, Double) -> Unit
 ) {
     LaunchedEffect(key1 = venueId) {
         viewModel.fetchVenueDetails(venueId)
@@ -137,7 +138,7 @@ fun VenueDetailsScreen(
             details = venueDetails,
             onBackClick = onBackClick,
             onFavoriteClick = {},
-            onSmallMapClick = {},
+            onMapClick = onMapClick,
             onOrderClick = onOrderClick,
         )
     }
@@ -162,8 +163,8 @@ fun VenueDetailsContent(
     details: VenueDetails?,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
-    onSmallMapClick: () -> Unit,
-    onOrderClick: () -> Unit
+    onOrderClick: () -> Unit,
+    onMapClick: (Double, Double) -> Unit
 ) {
     val scrollState = rememberLazyListState()
     val context = LocalContext.current
@@ -197,7 +198,7 @@ fun VenueDetailsContent(
             item(key = "headerSection") {
                 HeaderSection(
                     details = details,
-                    onMapClick = onSmallMapClick,
+                    onMapClick = onMapClick,
                     onCopyAddressClick = {
                         copyAddressToClipboard(context, details?.address?.addressName)
                     }
@@ -371,7 +372,7 @@ fun SectionTitle(text: String) {
 }
 
 @Composable
-fun HeaderSection(details: VenueDetails?, onMapClick: () -> Unit, onCopyAddressClick: () -> Unit) {
+fun HeaderSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit, onCopyAddressClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -576,7 +577,7 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
 }
 
 @Composable
-fun TitleSection(details: VenueDetails?, onMapClick: () -> Unit) {
+fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -601,14 +602,16 @@ fun TitleSection(details: VenueDetails?, onMapClick: () -> Unit) {
                 .size(44.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(0xFFF6F6F6))
-                .clickable(onClick = onMapClick)
+                .clickable {
+                    onMapClick(details?.latitude ?: 0.0, details?.longitude ?: 0.0)
+                }
                 .padding(10.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_map_cute),
                 contentDescription = "map_icon",
                 colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
-                modifier = Modifier.fillMaxSize() // Ensure the Image fills the Box
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
@@ -1273,58 +1276,58 @@ fun PricingSection(
     }
 }
 
-@Preview(widthDp = 390, heightDp = 793, showBackground = true)
-@Composable
-private fun VenueDetailsPreview() {
-    VenueDetailsContent(
-        details = VenueDetails(
-            venueId = 1,
-            address = Address(
-                id = 6,
-                addressName = "Bunyodkor street, 18",
-                district = "SASASAS",
-                closestMetroStation = "Novza"
-            ),
-            city = City(id = 5, cityName = "Tashkent"),
-            infrastructure = Infrastructure(
-                id = 9,
-                lockerRoom = true,
-                stands = "FDFDFGD",
-                shower = true,
-                parking = true
-            ),
-            venueOwner = VenueOwner(
-                id = 9,
-                ownerName = "Owner Name",
-                tinNumber = 1223243,
-                contact1 = "454545",
-                contact2 = "232323"
-            ),
-            venueName = "Bunyodkor kompleksi",
-            venueType = "out",
-            venueSurface = "Grass",
-            peopleCapacity = 12,
-            sportType = "Football",
-            pricePerHour = "100",
-            description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
-            workingHoursFrom = "9:00",
-            workingHoursTill = "23:00",
-            contact1 = "+998 77 806 0278",
-            contact2 = "+998 77 806 0288",
-            createdAt = "2021-01-01",
-            updatedAt = "2023-01-01",
-            imageUrls = listOf(
-                "https://www.google.com/imgres?q=football%20stadium&imgurl=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1502846052%2Fphoto%2Ftextured-soccer-game-field-with-neon-fog-center-midfield.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLPSo6ps1NfZ_xviL0tmhnnrcLjjFXAQhsYr3qAOfviY%3D&imgrefurl=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffootball-stadium&docid=LF8uWOsT77kHrM&tbnid=tb_4tkdFa4tgxM&vet=12ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA..i&w=612&h=344&hcb=2&ved=2ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA",
-            ),
-            latitude = 65.23232323,
-            longitude = 46.23232323
-        ),
-        {},
-        {},
-        {},
-        {}
-    )
-}
+//@Preview(widthDp = 390, heightDp = 793, showBackground = true)
+//@Composable
+//private fun VenueDetailsPreview() {
+//    VenueDetailsContent(
+//        details = VenueDetails(
+//            venueId = 1,
+//            address = Address(
+//                id = 6,
+//                addressName = "Bunyodkor street, 18",
+//                district = "SASASAS",
+//                closestMetroStation = "Novza"
+//            ),
+//            city = City(id = 5, cityName = "Tashkent"),
+//            infrastructure = Infrastructure(
+//                id = 9,
+//                lockerRoom = true,
+//                stands = "FDFDFGD",
+//                shower = true,
+//                parking = true
+//            ),
+//            venueOwner = VenueOwner(
+//                id = 9,
+//                ownerName = "Owner Name",
+//                tinNumber = 1223243,
+//                contact1 = "454545",
+//                contact2 = "232323"
+//            ),
+//            venueName = "Bunyodkor kompleksi",
+//            venueType = "out",
+//            venueSurface = "Grass",
+//            peopleCapacity = 12,
+//            sportType = "Football",
+//            pricePerHour = "100",
+//            description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
+//            workingHoursFrom = "9:00",
+//            workingHoursTill = "23:00",
+//            contact1 = "+998 77 806 0278",
+//            contact2 = "+998 77 806 0288",
+//            createdAt = "2021-01-01",
+//            updatedAt = "2023-01-01",
+//            imageUrls = listOf(
+//                "https://www.google.com/imgres?q=football%20stadium&imgurl=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1502846052%2Fphoto%2Ftextured-soccer-game-field-with-neon-fog-center-midfield.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLPSo6ps1NfZ_xviL0tmhnnrcLjjFXAQhsYr3qAOfviY%3D&imgrefurl=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffootball-stadium&docid=LF8uWOsT77kHrM&tbnid=tb_4tkdFa4tgxM&vet=12ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA..i&w=612&h=344&hcb=2&ved=2ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA",
+//            ),
+//            latitude = 65.23232323,
+//            longitude = 46.23232323
+//        ),
+//        {},
+//        {},
+//        {},
+//        {.0, 0.0}
+//    )
+//}
 
 @Preview(widthDp = 390, heightDp = 793, showBackground = true)
 @Composable

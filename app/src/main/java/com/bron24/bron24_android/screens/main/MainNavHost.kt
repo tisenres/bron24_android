@@ -118,21 +118,23 @@ fun MainNavHost(
             onDestinationChanged(Screen.HomePage.route)
             HomePage(navController)
         }
-        composable(Screen.MapPage.route) {
-            onDestinationChanged(Screen.MapPage.route)
-            MapPage()
-        }
+//        composable(Screen.MapPage.route) {
+//            onDestinationChanged(Screen.MapPage.route)
+//            MapPage()
+//        }
         composable(
-            route = Screen.MapPageWithCoordinates.route,
+            route = Screen.MapPage.route,
             arguments = listOf(
-                navArgument("latitude") { type = NavType.FloatType },
-                navArgument("longitude") { type = NavType.FloatType }
+                navArgument("latitude") { type = NavType.FloatType; defaultValue = 0f },
+                navArgument("longitude") { type = NavType.FloatType; defaultValue = 0f },
+                navArgument("selectedVenueId") { type = NavType.IntType; defaultValue = -1 }
             )
         ) { backStackEntry ->
-            onDestinationChanged(Screen.MapPageWithCoordinates.route)
+            onDestinationChanged(Screen.MapPage.route)
             val latitude = backStackEntry.arguments?.getFloat("latitude") ?: 0f
             val longitude = backStackEntry.arguments?.getFloat("longitude") ?: 0f
-            MapPage(latitude = latitude.toDouble(), longitude = longitude.toDouble())
+            val selectedVenueId = backStackEntry.arguments?.getInt("selectedVenueId") ?: -1
+            MapPage(latitude = latitude.toDouble(), longitude = longitude.toDouble(), selectedVenueId = selectedVenueId)
         }
 
         composable(Screen.Filter.route) {
@@ -157,6 +159,15 @@ fun MainNavHost(
             onDestinationChanged(Screen.ProfilePage.route)
             ProfilePage()
         }
+
+//        composable(
+//            route = "${Screen.MapPage.route}/{venueId}",
+//            arguments = listOf(navArgument("venueId") { type = NavType.IntType })
+//        ) { backStackEntry ->
+//            onDestinationChanged(Screen.MapPage.route)
+//            val venueId = backStackEntry.arguments?.getInt("venueId") ?: -1
+//            MapPage(selectedVenueId = venueId)
+//        }
 //        composable(
 //            route = Screen.VenueDetails.route,
 //            arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
@@ -227,6 +238,9 @@ fun MainNavHost(
                 onOrderClick = {
                     currentVenueId = venueId
                     showBookingBottomSheet = true
+                },
+                onMapClick = { latitude, longitude ->
+                    navController.navigate("${Screen.MapPage.route}?latitude=${latitude}&longitude=${longitude}&selectedVenueId=${venueId}")
                 }
             )
             if (showBookingBottomSheet) {
@@ -309,9 +323,14 @@ fun ProfilePage() {
 
 
 @Composable
-fun MapPage(latitude: Double? = null, longitude: Double? = null) {
-    YandexMapScreen(initialLatitude = latitude, initialLongitude = longitude)
+fun MapPage(latitude: Double? = null, longitude: Double? = null, selectedVenueId: Int = -1) {
+    YandexMapScreen(
+        initialLatitude = latitude,
+        initialLongitude = longitude,
+        initialSelectedVenueId = selectedVenueId
+    )
 }
+
 @Composable
 fun OrdersPage() {
     Box(

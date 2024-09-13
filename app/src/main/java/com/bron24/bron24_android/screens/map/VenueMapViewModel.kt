@@ -42,6 +42,15 @@ class VenueMapViewModel @Inject constructor(
         checkLocationPermission()
     }
 
+    fun centerOnVenue(venueId: Int) {
+        viewModelScope.launch {
+            val venue = _venues.value.find { it.venueId == venueId }
+            venue?.let {
+                centerOnCoordinates(it.latitude.toDouble(), it.longitude.toDouble())
+            }
+        }
+    }
+
     private fun fetchVenuesForMap() {
         viewModelScope.launch {
             val venuesList = model.getVenuesCoordinatesUseCase()
