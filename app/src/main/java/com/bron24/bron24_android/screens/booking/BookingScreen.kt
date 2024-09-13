@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.booking
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -41,6 +42,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -61,6 +63,8 @@ import java.util.Calendar
 @Composable
 fun BookingScreen(
     viewModel: BookingViewModel = hiltViewModel(),
+    venueId: Int,
+    pricePerHour: String,
     onOrderClick: () -> Unit
 ) {
     val selectedDate by viewModel.selectedDate.collectAsState()
@@ -74,6 +78,12 @@ fun BookingScreen(
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+    val density = LocalDensity.current
+
+    LaunchedEffect(Unit) {
+        viewModel.selectDate(Calendar.getInstance().timeInMillis) // Select today's date by default
+    }
 
     LaunchedEffect(Unit) {
         viewModel.selectDate(Calendar.getInstance().timeInMillis) // Select today's date by default
@@ -102,9 +112,29 @@ fun BookingScreen(
                 onDateSelected = { timestamp ->
                     viewModel.selectDate(timestamp)
                     viewModel.fetchTimeSlots()
+
+
+                    coroutineScope.launch {
+                        // Scroll to center the selected date
+
+                        val selectedIndex = availableDates.indexOfFirst { it.isSelected }
+
+
+                        if (selectedIndex != -1) {
+                            val itemWidth = 72.dp // Width of date item + spacing
+                            val centerOffset = scrollState.maxValue / 2
+                            val targetScroll = with(density) {
+                                (selectedIndex * itemWidth.toPx()).toInt() - centerOffset
+                            }
+                            scrollState.animateScrollTo(
+                                targetScroll.coerceIn(0, scrollState.maxValue)
+                            )
+                        }
+                    }
                 },
                 onMonthClick = { viewModel.showDatePicker() },
-                onVisibleDatesChanged = viewModel::updateVisibleMonthYear
+                onVisibleDatesChanged = viewModel::updateVisibleMonthYear,
+                scrollState = scrollState
             )
 
             AvailableTimesSection(
@@ -114,7 +144,7 @@ fun BookingScreen(
         }
 
         PricingSection(
-            pricePerHour = "74767364", // Mock price
+            pricePerHour = pricePerHour,
             onOrderClick = {
                 viewModel.createBooking(venueId = 1, userId = "user123")
                 onOrderClick()
@@ -146,6 +176,10 @@ fun BookingScreen(
     val showDatePicker by viewModel.showDatePicker.collectAsState()
     if (showDatePicker) {
         val currentDate = Calendar.getInstance()
+        val maxDate = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+        }
+
         DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
@@ -159,6 +193,7 @@ fun BookingScreen(
             currentDate.get(Calendar.MONTH),
             currentDate.get(Calendar.DAY_OF_MONTH)
         ).apply {
+            datePicker.maxDate = maxDate.timeInMillis
             setOnDismissListener { viewModel.onDatePickerShown() }
             show()
         }
@@ -235,7 +270,8 @@ fun DateSection(
     visibleMonthYear: String,
     onDateSelected: (Long) -> Unit,
     onMonthClick: () -> Unit,
-    onVisibleDatesChanged: (DateItem) -> Unit
+    onVisibleDatesChanged: (DateItem) -> Unit,
+    scrollState: ScrollState
 ) {
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
@@ -290,7 +326,7 @@ fun DateSection(
             dates.forEach { dateItem ->
                 DateItem(
                     dateItem = dateItem,
-                    onClick = { /* ... */ },
+                    onClick = { onDateSelected(dateItem.timestamp) },
                     modifier = Modifier.onGloballyPositioned { coordinates ->
                         val isVisible = coordinates.boundsInRoot().let { bounds ->
                             bounds.left >= 0 && bounds.right <= coordinates.size.width
@@ -491,8 +527,8 @@ fun LayoutCoordinates.findChildBounds(parent: LayoutCoordinates, key: String): R
 @Preview(showBackground = true)
 @Composable
 private fun BookingScreenPreview() {
-    BookingScreen(
-        viewModel = hiltViewModel(),
-        onOrderClick = {}
-    )
+//    BookingScreen(
+//        viewModel = hiltViewModel(),
+//        onOrderClick = {}
+//    )
 }

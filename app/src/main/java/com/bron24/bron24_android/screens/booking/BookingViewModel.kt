@@ -46,35 +46,34 @@ class BookingViewModel @Inject constructor() : ViewModel() {
     private val _availableTimes = MutableStateFlow<List<Long>>(emptyList())
     val availableTimes: StateFlow<List<Long>> = _availableTimes.asStateFlow()
 
+    private val _booking = MutableStateFlow(
+        Booking(
+            id = "1",
+            venueId = 1,
+            userId = "user123",
+            startTime = System.currentTimeMillis(),
+            endTime = System.currentTimeMillis() + 7200000, // 2 hours later
+            venueName = "Bunyodkor kompleksi",
+            address = Address(
+                id = 9,
+                addressName = "Tashkent",
+                district = "Chilanzar",
+                closestMetroStation = "Novza"
+            ),
+            date = System.currentTimeMillis(),
+            status = BookingStatus.PENDING,
+            stadiumPart = "Sector A",
+            fullName = "Cristiano Ronaldo",
+            firstNumber = "+998 90 900 90 90",
+            secondNumber = "+998",
+            totalPrice = "100 000 sum"
+        )
+    )
+    val booking: StateFlow<Booking> = _booking
+
     init {
         generateDateItems()
         generateAvailableTimes()
-    }
-
-    private fun generateDateItems() {
-        viewModelScope.launch {
-            val calendar = Calendar.getInstance()
-            val dateItems = mutableListOf<DateItem>()
-            for (i in 0 until 365) {
-                val timestamp = calendar.timeInMillis
-                dateItems.add(
-                    DateItem(
-                        day = calendar.get(Calendar.DAY_OF_MONTH),
-                        dayOfWeek = SimpleDateFormat(
-                            "EEE",
-                            Locale.getDefault()
-                        ).format(calendar.time),
-                        month = SimpleDateFormat("MMMM", Locale.getDefault()).format(calendar.time),
-                        year = calendar.get(Calendar.YEAR),
-                        isSelected = timestamp == _selectedDate.value,
-                        timestamp = timestamp
-                    )
-                )
-                calendar.add(Calendar.DAY_OF_YEAR, 1)
-            }
-            _availableDates.value = dateItems
-            updateVisibleMonthYear(dateItems.first())
-        }
     }
 
     private fun generateAvailableTimes() {
@@ -139,11 +138,47 @@ class BookingViewModel @Inject constructor() : ViewModel() {
 
     fun selectDate(timestamp: Long) {
         _selectedDate.value = timestamp
-        _availableDates.value =
-            _availableDates.value.map { it.copy(isSelected = it.timestamp == timestamp) }
+        _availableDates.value = _availableDates.value.map { it.copy(isSelected = it.timestamp == timestamp) }
         _availableDates.value.find { it.timestamp == timestamp }?.let { updateVisibleMonthYear(it) }
         fetchTimeSlots()
+
+        // Update available dates to only include dates in the same month as the selected date
+        val selectedCalendar = Calendar.getInstance().apply { timeInMillis = timestamp }
+        val currentMonth = selectedCalendar.get(Calendar.MONTH)
+        val currentYear = selectedCalendar.get(Calendar.YEAR)
+
+        _availableDates.value = _availableDates.value.filter { dateItem ->
+            val itemCalendar = Calendar.getInstance().apply { timeInMillis = dateItem.timestamp }
+            itemCalendar.get(Calendar.MONTH) == currentMonth && itemCalendar.get(Calendar.YEAR) == currentYear
+        }
     }
+
+    private fun generateDateItems() {
+        viewModelScope.launch {
+            val calendar = Calendar.getInstance()
+            val dateItems = mutableListOf<DateItem>()
+            val currentMonth = calendar.get(Calendar.MONTH)
+            val currentYear = calendar.get(Calendar.YEAR)
+
+            while (calendar.get(Calendar.MONTH) == currentMonth && calendar.get(Calendar.YEAR) == currentYear) {
+                val timestamp = calendar.timeInMillis
+                dateItems.add(
+                    DateItem(
+                        day = calendar.get(Calendar.DAY_OF_MONTH),
+                        dayOfWeek = SimpleDateFormat("EEE", Locale.getDefault()).format(calendar.time),
+                        month = SimpleDateFormat("MMMM", Locale.getDefault()).format(calendar.time),
+                        year = calendar.get(Calendar.YEAR),
+                        isSelected = timestamp == _selectedDate.value,
+                        timestamp = timestamp
+                    )
+                )
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+            }
+            _availableDates.value = dateItems
+            updateVisibleMonthYear(dateItems.first())
+        }
+    }
+
 
     fun selectStadiumPart(part: String) {
         _selectedStadiumPart.value = part

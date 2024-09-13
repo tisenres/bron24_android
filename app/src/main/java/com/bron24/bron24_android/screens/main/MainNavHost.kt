@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.main
 
-import android.app.DatePickerDialog
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -17,8 +16,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -231,12 +228,14 @@ fun MainNavHost(
             onDestinationChanged(Screen.VenueDetails.route)
             val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
             val viewModel: VenueDetailsViewModel = hiltViewModel()
+            var currentPricePerHour = ""
             VenueDetailsScreen(
                 viewModel = viewModel,
                 venueId = venueId,
                 onBackClick = { navController.popBackStack() },
-                onOrderClick = {
+                onOrderClick = { pricePerHour ->
                     currentVenueId = venueId
+                    currentPricePerHour = pricePerHour
                     showBookingBottomSheet = true
                 },
                 onMapClick = { latitude, longitude ->
@@ -246,7 +245,8 @@ fun MainNavHost(
             if (showBookingBottomSheet) {
                 BookingBottomSheet(
                     venueId = currentVenueId ?: 0,
-                    onDismiss = { showBookingBottomSheet = false }
+                    onDismiss = { showBookingBottomSheet = false },
+                    pricePerHour = currentPricePerHour
                 )
             }
         }
@@ -255,9 +255,8 @@ fun MainNavHost(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit) {
+fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit, pricePerHour: String) {
     val viewModel: BookingViewModel = hiltViewModel()
-    val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
@@ -266,6 +265,8 @@ fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit) {
         containerColor = Color.White
     ) {
         BookingScreen(
+            venueId = venueId,
+            pricePerHour = pricePerHour,
             viewModel = viewModel,
             onOrderClick = {
                 // Handle order confirmation
@@ -275,29 +276,29 @@ fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit) {
     }
 
     // DatePicker setup
-    val datePickerDialog = remember {
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                val calendar = Calendar.getInstance().apply {
-                    set(year, month, dayOfMonth)
-                }
-                viewModel.selectDate(calendar.timeInMillis)
-            },
-            Calendar.getInstance().get(Calendar.YEAR),
-            Calendar.getInstance().get(Calendar.MONTH),
-            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-        )
-    }
+//    val datePickerDialog = remember {
+//        DatePickerDialog(
+//            context,
+//            { _, year, month, dayOfMonth ->
+//                val calendar = Calendar.getInstance().apply {
+//                    set(year, month, dayOfMonth)
+//                }
+//                viewModel.selectDate(calendar.timeInMillis)
+//            },
+//            Calendar.getInstance().get(Calendar.YEAR),
+//            Calendar.getInstance().get(Calendar.MONTH),
+//            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+//        )
+//    }
 
     // Observe changes to show DatePicker
-    val showDatePicker by viewModel.showDatePicker.collectAsState()
-    if (showDatePicker) {
-        LaunchedEffect(Unit) {
-            datePickerDialog.show()
-            viewModel.onDatePickerShown()
-        }
-    }
+//    val showDatePicker by viewModel.showDatePicker.collectAsState()
+//    if (showDatePicker) {
+//        LaunchedEffect(Unit) {
+//            datePickerDialog.show()
+//            viewModel.onDatePickerShown()
+//        }
+//    }
 }
 
 @Composable

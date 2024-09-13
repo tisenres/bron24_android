@@ -99,11 +99,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.venue.Address
-import com.bron24.bron24_android.domain.entity.venue.City
-import com.bron24.bron24_android.domain.entity.venue.Infrastructure
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.domain.entity.venue.VenueOwner
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -121,7 +117,7 @@ fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
     onBackClick: () -> Unit,
-    onOrderClick: () -> Unit,
+    onOrderClick: (String) -> Unit,
     onMapClick: (Double, Double) -> Unit
 ) {
     LaunchedEffect(key1 = venueId) {
@@ -139,7 +135,7 @@ fun VenueDetailsScreen(
             onBackClick = onBackClick,
             onFavoriteClick = {},
             onMapClick = onMapClick,
-            onOrderClick = onOrderClick,
+            onOrderClick = { venueDetails?.pricePerHour?.let { onOrderClick(it) } },
         )
     }
 }
