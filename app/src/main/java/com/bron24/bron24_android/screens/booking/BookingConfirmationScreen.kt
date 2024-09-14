@@ -36,13 +36,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter.formatDate
@@ -394,10 +393,21 @@ fun ConfirmButton(
 fun PaymentMethodsBottomSheet(onDismiss: () -> Unit) {
     ModalBottomSheetLayout(
         sheetContent = {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Payment methods", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(16.dp))
+            Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                Text(
+                    text = "Payment methods",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.Black,
+                        lineHeight = 20.sp,
+                    ),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
                 PaymentOption("Cash", R.drawable.cash_icon, isSelected = true)
+                Spacer(modifier = Modifier.height(10.dp))
                 PaymentOption(
                     "UzCard **** **** **** 0961",
                     R.drawable.cash_icon,
@@ -415,45 +425,85 @@ fun PaymentMethodsBottomSheet(onDismiss: () -> Unit) {
 
 @Composable
 fun PaymentOption(title: String, iconRes: Int, isSelected: Boolean) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp)),
     ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = title,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(text = title, fontSize = 16.sp)
-        Spacer(modifier = Modifier.weight(1f))
-        RadioButton(selected = isSelected, onClick = { /* Handle selection */ })
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(start = 16.dp, end = 5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = title,
+                modifier = Modifier.size(30.dp)
+            )
+            Spacer(modifier = Modifier.width(17.dp))
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    lineHeight = 20.sp,
+                ),
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            RadioButton(
+                selected = isSelected,
+                onClick = { },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = Color(0xFF32B768),
+                    unselectedColor = Color.Gray,
+                    disabledColor = Color.LightGray
+                )
+            )
+        }
     }
 }
 
 @Composable
 fun AddCardOption() {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp))
     ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = "Add card",
-            tint = Color(0xFF32B768)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(text = "Add card", fontSize = 16.sp, color = Color(0xFF32B768))
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = Icons.Default.KeyboardArrowRight,
-            contentDescription = "Add",
-            tint = Color.Gray
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.icon_park_outline_add),
+                contentDescription = "Add",
+                modifier = Modifier.size(30.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = "Add card", style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    lineHeight = 20.sp,
+                )
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                modifier = Modifier.size(26.dp),
+                imageVector = Icons.Default.KeyboardArrowRight,
+                contentDescription = "Add",
+                tint = Color.Black
+            )
+        }
     }
 }
 
@@ -478,7 +528,10 @@ fun PromoCodeBottomSheet(onDismiss: () -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF32B768))
                 ) {
-                    Text("Apply", color = Color.White)
+                    Text(
+                        "Apply",
+                        color = Color.White
+                    )
                 }
             }
         },
@@ -492,6 +545,28 @@ fun PromoCodeBottomSheet(onDismiss: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun BookingScreenPreview() {
-//    BookingConfirmationScreen(viewModel = hiltViewModel())
-    PaymentMethodsBottomSheet {  }
+    Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
+        Text(
+            text = "Payment methods",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color.Black,
+                lineHeight = 20.sp,
+            ),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        PaymentOption("Cash", R.drawable.cash_pic, isSelected = true)
+        Spacer(modifier = Modifier.height(10.dp))
+        PaymentOption(
+            "UzCard **** **** **** 0961",
+            R.drawable.uzcard,
+            isSelected = false
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        AddCardOption()
+    }
+//    PaymentOption("Sydysydysd", R.drawable.cash_icon, isSelected = false)
 }
