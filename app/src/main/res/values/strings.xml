@@ -48,4 +48,5 @@
     <string name="sort_by">Sort by</string>
     <string name="filter">Filter</string>
     <string name="recommendations">Recommend</string>
+    <string name="confirm">Confirm</string>
 </resources>

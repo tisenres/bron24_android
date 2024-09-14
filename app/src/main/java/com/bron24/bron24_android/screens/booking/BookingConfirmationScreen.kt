@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -59,15 +60,20 @@ fun BookingConfirmationScreen(viewModel: BookingViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .padding(horizontal = 24.dp)
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = 24.dp,
+                    top = 10.dp
+                )
         ) {
             TopAppBar()
             BookingInfoCard(bookingInfo)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             PaymentMethodButton { showPaymentMethods = true }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             PromoCodeButton { showPromoCode = true }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             TotalAmount(bookingInfo.totalPrice)
             Spacer(modifier = Modifier.weight(1f))
             ConfirmButton(true, onClick = { /* Handle confirm button click */ })
@@ -115,25 +121,42 @@ fun BookingInfoCard(booking: Booking) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
+            .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp))
     ) {
-        Column(modifier = Modifier.padding(horizontal = 25.dp, vertical = 15.dp)) {
-            VenueInfo(booking.venueName, booking.address.toString())
-            BookingDetail("DATE", formatDate(booking.date))
-            BookingDetail("TIME", formatTimeRange(booking.startTime, booking.endTime))
-            BookingDetail("STADIUM PART", booking.stadiumPart)
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
-            BookingDetail("FULL NAME", booking.fullName)
-            BookingDetail("FIRST NUMBER", booking.firstNumber)
-            booking.secondNumber?.let { BookingDetail("SECOND NUMBER", it) }
+        Column(modifier = Modifier.padding(vertical = 15.dp)) {
+            VenueInfo(
+                booking.venueName, booking.address.toString(),
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+            Divider(modifier = Modifier.padding(vertical = 15.dp))
+            Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                BookingDetail("DATE", formatDate(booking.date))
+                Spacer(modifier = Modifier.height(15.dp))
+                BookingDetail("TIME", formatTimeRange(booking.startTime, booking.endTime))
+                Spacer(modifier = Modifier.height(15.dp))
+                BookingDetail("STADIUM PART", booking.stadiumPart)
+            }
+            Divider(modifier = Modifier.padding(vertical = 15.dp))
+            Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                BookingDetail("FULL NAME", booking.fullName)
+                Spacer(modifier = Modifier.height(15.dp))
+                BookingDetail("FIRST NUMBER", booking.firstNumber)
+                Spacer(modifier = Modifier.height(15.dp))
+                booking.secondNumber?.let { BookingDetail("SECOND NUMBER", it) }
+            }
+
         }
+
     }
 }
 
 
 @Composable
-fun VenueInfo(venue: String, address: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+fun VenueInfo(venue: String, address: String, modifier: Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Image(
             painter = painterResource(id = R.drawable.venue_icon),
             contentDescription = "Venue",
@@ -170,8 +193,7 @@ fun VenueInfo(venue: String, address: String) {
 fun BookingDetail(label: String, value: String) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
@@ -202,30 +224,49 @@ fun PaymentMethodButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
+            .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, Color.LightGray)
+        shape = RoundedCornerShape(15.dp),
+        border = BorderStroke(1.dp, Color.LightGray),
+        contentPadding = PaddingValues(start = 15.dp, end = 20.dp, top = 21.dp, bottom = 21.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.payment_method),
-                    contentDescription = "Payment",
-                    modifier = Modifier.size(24.dp)
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .border(1.dp, Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_payment_24),
+                        contentDescription = "Cash",
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+                Spacer(modifier = Modifier.width(17.dp))
+                Text(
+                    "Choose Payment",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color.Black,
+                        lineHeight = 20.sp,
+                    )
                 )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text("Choose Payment", fontSize = 16.sp)
             }
             Icon(
+                modifier = Modifier.size(26.dp),
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Choose",
-                tint = Color.Gray
+                tint = Color.Black
             )
         }
     }
@@ -236,11 +277,11 @@ fun PromoCodeButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
+            .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, Color.LightGray)
+        shape = RoundedCornerShape(15.dp),
+        border = BorderStroke(1.dp, Color.LightGray),
+        contentPadding = PaddingValues(start = 15.dp, end = 20.dp, top = 21.dp, bottom = 21.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -248,18 +289,36 @@ fun PromoCodeButton(onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.promo_code),
-                    contentDescription = "Promo",
-                    modifier = Modifier.size(24.dp)
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .border(1.dp, Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.promo_code),
+                        contentDescription = "Cash",
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+                Spacer(modifier = Modifier.width(17.dp))
+                Text(
+                    "Enter promo code",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color.Black,
+                        lineHeight = 20.sp,
+                    )
                 )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text("Enter promo code", fontSize = 16.sp)
             }
             Icon(
+                modifier = Modifier.size(26.dp),
                 imageVector = Icons.Default.KeyboardArrowRight,
-                contentDescription = "Enter",
-                tint = Color.Gray
+                contentDescription = "Choose",
+                tint = Color.Black
             )
         }
     }
@@ -271,8 +330,28 @@ fun TotalAmount(total: String) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text("Total", fontSize = 16.sp, color = Color.Gray)
-        Text(total, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Text(
+            text = "TOTAL",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                color = Color(0xFF949494),
+                lineHeight = 20.sp,
+            ),
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+        Text(
+            total,
+            fontSize = 18.sp,
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = Color.Black,
+                lineHeight = 20.sp
+            )
+        )
     }
 }
 
@@ -284,7 +363,7 @@ fun ConfirmButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val colors = ButtonDefaults.buttonColors(
-        containerColor = if (isEnabled) Color(0xFF26A045) else Color(0xFFE4E4E4),
+        containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4),
         contentColor = Color.White,
         disabledContainerColor = Color(0xFFE4E4E4),
         disabledContentColor = Color.Gray
@@ -299,10 +378,9 @@ fun ConfirmButton(
         modifier = modifier
             .fillMaxWidth()
             .height(52.dp)
-            .padding(start = 24.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.next),
+            text = stringResource(id = R.string.confirm),
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = gilroyFontFamily,
@@ -414,5 +492,6 @@ fun PromoCodeBottomSheet(onDismiss: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun BookingScreenPreview() {
-    BookingConfirmationScreen(viewModel = hiltViewModel())
+//    BookingConfirmationScreen(viewModel = hiltViewModel())
+    PaymentMethodsBottomSheet {  }
 }
