@@ -34,7 +34,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.runtime.*
@@ -542,9 +541,16 @@ fun PromoCodeBottomSheet(onDismiss: () -> Unit) {
     )
 }
 
+
 @Preview(showBackground = true)
 @Composable
 private fun BookingScreenPreview() {
+    BookingConfirmationScreen(viewModel = BookingViewModel())
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PaymentPreview() {
     Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
         Text(
             text = "Payment methods",
@@ -568,5 +574,5 @@ private fun BookingScreenPreview() {
         Spacer(modifier = Modifier.height(10.dp))
         AddCardOption()
     }
-//    PaymentOption("Sydysydysd", R.drawable.cash_icon, isSelected = false)
 }
+
