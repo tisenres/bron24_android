@@ -36,6 +36,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.RadioButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -86,7 +88,14 @@ fun BookingConfirmationScreen(viewModel: BookingViewModel) {
         }
 
         if (showPromoCode) {
-            PromoCodeBottomSheet { showPromoCode = false }
+            PromoCodeBottomSheet(
+                onDismiss = { showPromoCode = false },
+                onApply = { code ->
+                    // Handle promo code application
+                    viewModel.applyPromoCode(code)
+                    showPromoCode = false
+                }
+            )
         }
     }
 }
@@ -275,11 +284,78 @@ fun PaymentMethodButton(onClick: () -> Unit) {
 }
 
 @Composable
+fun PromoCodeBottomSheet(
+    onDismiss: () -> Unit,
+    onApply: (String) -> Unit
+) {
+    var promoCode by remember { mutableStateOf("") }
+    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded)
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
+            ) {
+                Text(
+                    "Enter promo code",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color.Black,
+                        lineHeight = 22.sp,
+                    ),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                OutlinedTextField(
+                    value = promoCode,
+                    onValueChange = { promoCode = it },
+                    label = { Text("Promo code") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+                Button(
+                    onClick = {
+                        onApply(promoCode)
+                        onDismiss()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF32B768))
+                ) {
+                    Text(
+                        "Apply",
+                        color = Color.White,
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                        )
+                    )
+                }
+            }
+        },
+        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        scrimColor = Color.Black.copy(alpha = 0.5f),
+        content = {}
+    )
+
+    LaunchedEffect(sheetState) {
+        if (sheetState.currentValue != ModalBottomSheetValue.Expanded) {
+            onDismiss()
+        }
+    }
+}
+
+@Composable
 fun PromoCodeButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
         shape = RoundedCornerShape(15.dp),
         border = BorderStroke(1.dp, Color.LightGray),
@@ -298,7 +374,7 @@ fun PromoCodeButton(onClick: () -> Unit) {
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.promo_code),
-                        contentDescription = "Cash",
+                        contentDescription = "Promo Code",
                         modifier = Modifier
                             .padding(5.dp)
                             .align(Alignment.Center)
@@ -528,16 +604,7 @@ fun PromoCodeBottomSheet(onDismiss: () -> Unit) {
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = { /* Handle promo code application */ },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF32B768))
-                ) {
-                    Text(
-                        "Apply",
-                        color = Color.White
-                    )
-                }
+                ConfirmButton(isEnabled = true, onClick = {}, title = "Apply")
             }
         },
         sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded),
@@ -579,6 +646,37 @@ private fun PaymentPreview() {
         )
         Spacer(modifier = Modifier.height(10.dp))
         AddCardOption()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PromocodePreview() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
+    ) {
+        Text(
+            "Enter promo code",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color.Black,
+                lineHeight = 22.sp,
+            ),
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+//        OutlinedTextField(
+//            value = "sdjhjshdjhsd",
+//            onValueChange = { promoCode = it },
+//            label = { Text("Promo code") },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(bottom = 16.dp)
+//        )
+//        ConfirmButton(isEnabled = true, onClick = {}, title = "Apply")
     }
 }
 

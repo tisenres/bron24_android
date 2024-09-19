@@ -241,4 +241,8 @@ class BookingViewModel @Inject constructor(
     private fun generateMockId(): String {
         return "BOOKING-${System.currentTimeMillis()}"
     }
+
+    fun applyPromoCode(code: String) {
+
+    }
 }
