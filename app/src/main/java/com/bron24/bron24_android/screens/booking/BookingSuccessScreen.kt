@@ -56,14 +56,14 @@ fun BookingSuccessScreen(
             Spacer(modifier = Modifier.height(45.dp))
 
             Text(
-                text = "Success !",
+                text = "Success!",
                 color = Color(0xFF3C2E56),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 24.sp,
+                    fontSize = 30.sp,
                     color = Color(0xFF3C2E56),
-                    lineHeight = 30.sp,
+                    lineHeight = 40.sp,
                 ),
             )
 
