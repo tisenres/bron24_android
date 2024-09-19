@@ -74,7 +74,11 @@ fun BookingConfirmationScreen(viewModel: BookingViewModel) {
             Spacer(modifier = Modifier.height(15.dp))
             TotalAmount(bookingInfo.totalPrice)
             Spacer(modifier = Modifier.weight(1f))
-            ConfirmButton(true, onClick = { /* Handle confirm button click */ })
+            ConfirmButton(
+                true,
+                onClick = { /* Handle confirm button click */ },
+                title = stringResource(id = R.string.confirm)
+            )
         }
 
         if (showPaymentMethods) {
@@ -357,6 +361,7 @@ fun TotalAmount(total: String) {
 fun ConfirmButton(
     isEnabled: Boolean,
     onClick: () -> Unit,
+    title: String,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -370,7 +375,7 @@ fun ConfirmButton(
     Button(
         onClick = onClick,
         enabled = isEnabled,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = colors,
         interactionSource = interactionSource,
         modifier = modifier
@@ -378,7 +383,7 @@ fun ConfirmButton(
             .height(52.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.confirm),
+            text = title,
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = gilroyFontFamily,
@@ -545,7 +550,7 @@ fun PromoCodeBottomSheet(onDismiss: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun BookingScreenPreview() {
-    BookingConfirmationScreen(viewModel = BookingViewModel())
+//    BookingConfirmationScreen(viewModel = BookingViewModel())
 }
 
 @Preview(showBackground = true)

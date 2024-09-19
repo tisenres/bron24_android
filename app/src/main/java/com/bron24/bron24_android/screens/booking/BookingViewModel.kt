@@ -18,7 +18,9 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class BookingViewModel @Inject constructor() : ViewModel() {
+class BookingViewModel @Inject constructor(
+    private val model: BookingModel
+) : ViewModel() {
     private val _selectedDate = MutableStateFlow<Long>(System.currentTimeMillis())
     val selectedDate: StateFlow<Long> = _selectedDate.asStateFlow()
 
@@ -45,6 +47,74 @@ class BookingViewModel @Inject constructor() : ViewModel() {
 
     private val _availableTimes = MutableStateFlow<List<Long>>(emptyList())
     val availableTimes: StateFlow<List<Long>> = _availableTimes.asStateFlow()
+
+    private val _bookingInfo = MutableStateFlow(BookingSuccessInfo("", "", ""))
+    val bookingInfo: StateFlow<BookingSuccessInfo> = _bookingInfo
+
+    private val _bookingSuccessInfo = MutableStateFlow(BookingSuccessInfo("", "", ""))
+    val bookingSuccessInfo: StateFlow<BookingSuccessInfo> = _bookingSuccessInfo.asStateFlow()
+
+    fun createBooking(venueId: Int, userId: String) {
+        val stadiumPart = _selectedStadiumPart.value
+        val date = _selectedDate.value
+        val time = _selectedTime.value
+
+        if (stadiumPart == null || time == null) {
+            _bookingState.value = BookingState.Error("Please select all required fields")
+            return
+        }
+
+        viewModelScope.launch {
+            _bookingState.value = BookingState.Loading
+            try {
+                // Simulate API call delay
+                delay(1000)
+
+                val booking = Booking(
+                    id = generateMockId(),
+                    venueId = venueId,
+                    userId = userId,
+                    startTime = date + time,
+                    endTime = date + time + 3600000, // Assuming 1 hour booking
+                    stadiumPart = stadiumPart,
+                    secondNumber = "",
+                    totalPrice = "727636723",
+                    fullName = "SJHSJHDHJSDJH",
+                    status = BookingStatus.PENDING,
+                    firstNumber = "27372737623",
+                    venueName = "SHJDJHSDHJHSJD",
+                    address = Address(5, "SDJUSUDYUYSD", "syysys", "yyyy"),
+                    date = date
+                )
+                _bookingState.value = BookingState.Success(booking)
+
+                // Update booking success info
+                updateBookingSuccessInfo(booking)
+            } catch (e: Exception) {
+                _bookingState.value = BookingState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    private fun updateBookingSuccessInfo(booking: Booking) {
+        _bookingSuccessInfo.value = BookingSuccessInfo(
+            queueNumber = booking.id,
+            venueName = booking.venueName,
+            dateTime = "${SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(booking.date)} ${SimpleDateFormat("HH:mm", Locale.getDefault()).format(booking.startTime)}"
+        )
+    }
+
+    fun loadBookingDetails(bookingId: String) {
+        viewModelScope.launch {
+            try {
+//                val bookingDetails = model.getBookingDetails(bookingId)
+//                updateBookingSuccessInfo(bookingDetails)
+            } catch (e: Exception) {
+                // Handle error
+                _bookingState.value = BookingState.Error("Failed to load booking details")
+            }
+        }
+    }
 
     private val _booking = MutableStateFlow(
         Booking(
@@ -87,45 +157,6 @@ class BookingViewModel @Inject constructor() : ViewModel() {
             54000000L, // 3:00 PM
             57600000L  // 4:00 PM
         )
-    }
-
-    fun createBooking(venueId: Int, userId: String) {
-        val stadiumPart = _selectedStadiumPart.value
-        val date = _selectedDate.value
-        val time = _selectedTime.value
-
-        if (stadiumPart == null || time == null) {
-            _bookingState.value = BookingState.Error("Please select all required fields")
-            return
-        }
-
-        viewModelScope.launch {
-            _bookingState.value = BookingState.Loading
-            try {
-                // Simulate API call delay
-                delay(1000)
-
-                val booking = Booking(
-                    id = generateMockId(),
-                    venueId = venueId,
-                    userId = userId,
-                    startTime = date + time,
-                    endTime = date + time + 3600000, // Assuming 1 hour booking
-                    stadiumPart = stadiumPart,
-                    secondNumber = "",
-                    totalPrice = "727636723",
-                    fullName = "SJHSJHDHJSDJH",
-                    status = BookingStatus.PENDING,
-                    firstNumber = "27372737623",
-                    venueName = "SHJDJHSDHJHSJD",
-                    address = Address(5, "SDJUSUDYUYSD", "syysys", "yyyy"),
-                    date = date
-                )
-                _bookingState.value = BookingState.Success(booking)
-            } catch (e: Exception) {
-                _bookingState.value = BookingState.Error(e.message ?: "Unknown error")
-            }
-        }
     }
 
     fun confirmBooking(booking: Booking) {
