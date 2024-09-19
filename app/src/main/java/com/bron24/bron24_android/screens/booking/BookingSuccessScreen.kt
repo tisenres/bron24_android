@@ -27,7 +27,8 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 fun BookingSuccessScreen(
 //    viewModel: BookingViewModel = hiltViewModel(),
     onMyOrdersClick: () -> Unit,
-    onMainPageClick: () -> Unit
+    onMainPageClick: () -> Unit,
+    onMapClick: () -> Unit
 ) {
 //    val bookingInfo by viewModel.bookingInfo.collectAsState()
     val bookingInfo = BookingSuccessInfo("63 65 82", "Bunyodkor kompleksi", "21.02.2024 9:00")
@@ -40,7 +41,7 @@ fun BookingSuccessScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 19.dp),
+                .padding(horizontal = 19.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.weight(1f))
@@ -68,7 +69,7 @@ fun BookingSuccessScreen(
 
             Spacer(modifier = Modifier.height(27.dp))
 
-            BookingInfoCard(bookingInfo)
+            BookingInfoCard(bookingInfo, onMapClick)
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -89,7 +90,7 @@ fun BookingSuccessScreen(
 }
 
 @Composable
-fun BookingInfoCard(bookingInfo: BookingSuccessInfo) {
+fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -97,85 +98,79 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo) {
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFA4ECC3))
     ) {
-
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
         ) {
-            Text(
-                text = "Your online queue number",
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    color = Color.Black,
-                    lineHeight = 20.sp,
-                ),
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            Text(
-                text = bookingInfo.queueNumber,
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp,
-                    color = Color.Black,
-                    lineHeight = 20.sp,
-                ),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Text(
-                text = bookingInfo.venueName,
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    color = Color.Black,
-                    lineHeight = 20.sp,
-                ),
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            Text(
-                text = bookingInfo.dateTime,
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    color = Color.Black,
-                    lineHeight = 20.sp,
-                ),
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 56.dp)  // Add padding to prevent text overlap with the button
+            ) {
+                Text(
+                    text = "Your online queue number",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                        color = Color.Black,
+                        lineHeight = 20.sp,
+                    ),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text(
+                    text = bookingInfo.queueNumber,
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 16.sp,
+                        color = Color.Black,
+                        lineHeight = 20.sp,
+                    ),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Text(
+                    text = bookingInfo.venueName,
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                        color = Color.Black,
+                        lineHeight = 20.sp,
+                    ),
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text(
+                    text = bookingInfo.dateTime,
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                        color = Color.Black,
+                        lineHeight = 20.sp,
+                    ),
+                )
+            }
             Box(
                 modifier = Modifier
+                    .align(Alignment.CenterEnd)
                     .size(44.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFFF6F6F6))
+                    .background(Color.White)
                     .clickable {
-//                        onMapClick(details?.latitude ?: 0.0, details?.longitude ?: 0.0)
+                        onMapClick
                     }
-                    .padding(10.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_map_cute),
                     contentDescription = "map_icon",
                     colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp)
                 )
             }
-//            Box(
-//                modifier = Modifier
-//                    .align(Alignment.End)
-//                    .clip(RoundedCornerShape(10.dp))
-//                    .background(Color.White)
-//                    .padding(10.dp)
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.ic_map_cute),
-//                    contentDescription = "Map",
-//                    tint = Color(0xFF32B768)
-//                )
-//            }
         }
     }
 }
@@ -205,8 +200,8 @@ fun MainPageButton(
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                lineHeight = 16.8.sp,
+                fontSize = 16.sp,
+                lineHeight = 32.sp,
             )
         )
     }
@@ -215,5 +210,5 @@ fun MainPageButton(
 @Preview(showBackground = true)
 @Composable
 private fun BookingScreenPreview() {
-    BookingSuccessScreen({}, {})
+    BookingSuccessScreen({}, {}, {})
 }
