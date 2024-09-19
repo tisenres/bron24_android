@@ -397,7 +397,7 @@ fun ConfirmButton(
 fun PaymentMethodsBottomSheet(onDismiss: () -> Unit) {
     ModalBottomSheetLayout(
         sheetContent = {
-            Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+            Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
                 Text(
                     text = "Payment methods",
                     style = TextStyle(
@@ -410,13 +410,14 @@ fun PaymentMethodsBottomSheet(onDismiss: () -> Unit) {
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                PaymentOption("Cash", R.drawable.cash_icon, isSelected = true)
+                PaymentOption("Cash", R.drawable.cash_pic, isSelected = true)
                 Spacer(modifier = Modifier.height(10.dp))
                 PaymentOption(
                     "UzCard **** **** **** 0961",
-                    R.drawable.cash_icon,
+                    R.drawable.uzcard,
                     isSelected = false
                 )
+                Spacer(modifier = Modifier.height(10.dp))
                 AddCardOption()
             }
         },
