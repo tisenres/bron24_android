@@ -39,7 +39,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
@@ -332,7 +331,9 @@ fun VenueFooter(venue: Venue) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_dollar),
                     contentDescription = "Price Icon",
-                    modifier = Modifier.size(14.dp)
+                    modifier = Modifier
+                        .size(14.dp)
+                        .align(Alignment.CenterVertically)
                 )
                 Text(
                     text = venue.pricePerHour + " " + stringResource(id = R.string.som_per_hour),
@@ -383,17 +384,38 @@ fun VenueFooter(venue: Venue) {
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
-    val venue = Venue(
-        venueId = 5,
-        venueName = "Test name LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG",
-        pricePerHour = "800000",
-        address = Address(
-            id = 6,
-            addressName = "Bunyodkor  LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONkochasi",
-            district = "Chilonzor",
-            closestMetroStation = "Novza",
-        ),
-        imageUrl = null,
-        distance = 0.0
-    )
+//    val venue = Venue(
+//        venueId = 5,
+//        venueName = "Test name LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG",
+//        pricePerHour = "800000",
+//        address = Address(
+//            id = 6,
+//            addressName = "Bunyodkor  LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONkochasi",
+//            district = "Chilonzor",
+//            closestMetroStation = "Novza",
+//        ),
+//        imageUrl = null,
+//        distance = 0.0
+//    )
+    Row(
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_dollar),
+            contentDescription = "Price Icon",
+            modifier = Modifier.size(14.dp).align(Alignment.CenterVertically)
+        )
+        Text(
+            text = "234545" + stringResource(id = R.string.som_per_hour),
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight(800),
+                fontSize = 14.sp,
+                color = Color(0xFF3C2E56),
+                lineHeight = 16.sp,
+            ),
+            modifier = Modifier.align(Alignment.Bottom)
+        )
+    }
 }

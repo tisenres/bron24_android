@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.screens.adssection
 
 import android.util.Log
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bron24.bron24_android.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AdsSection(modifier: Modifier = Modifier) {
@@ -28,8 +31,20 @@ fun AdsSection(modifier: Modifier = Modifier) {
         )
     }
     val pagerState = rememberPagerState(pageCount = { images.size })
+    val coroutineScope = rememberCoroutineScope()
 
-    // Ensure that confetti state is handled properly
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(10000)
+            coroutineScope.launch {
+                val nextPage = (pagerState.currentPage + 1) % images.size
+                pagerState.animateScrollToPage(
+                    page = nextPage,
+                    animationSpec = tween(durationMillis = 1000) // Slower animation (1 second)
+                )
+            }
+        }
+    }
 
     Box(modifier = modifier.fillMaxWidth()) {
         Column {
@@ -38,7 +53,6 @@ fun AdsSection(modifier: Modifier = Modifier) {
                 pagerState = pagerState,
             )
         }
-
     }
 }
 
@@ -46,7 +60,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
 fun AdsImageSection(images: List<Int>, pagerState: PagerState) {
     Column(
         modifier = Modifier
-            .height(180.dp)
+            .height(153.dp)
             .fillMaxWidth()
     ) {
         Box(
