@@ -125,8 +125,8 @@ fun VenueListingView(
 //                            )
 //                        )
 //                    }
-
-//                    SortRow(onSortClick = { sortExpanded = true })
+//
+                    SortRow(onSortClick = { sortExpanded = true })
                 }
             }
 

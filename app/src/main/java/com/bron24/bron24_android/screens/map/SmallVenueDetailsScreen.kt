@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
@@ -190,7 +191,7 @@ fun SmallDetailsContent(
         )
         Spacer(modifier = Modifier.height(12.dp))
         SmallHeaderSection(venueDetails, onCopyAddressClick)
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         SmallPricingSection(venueDetails)
     }
 }
@@ -203,9 +204,9 @@ fun SmallHeaderSection(venueDetails: VenueDetails?, onCopyAddressClick: () -> Un
             .padding(horizontal = 16.dp)
     ) {
         SmallTitleSection(venueDetails)
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(6.dp))
         AddressAndPhoneSection(venueDetails, onCopyAddressClick)
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(6.dp))
         SmallRatingSection(venueDetails)
     }
 }
@@ -395,9 +396,9 @@ fun SmallTitleSection(venueDetails: VenueDetails?) {
         style = TextStyle(
             fontFamily = gilroyFontFamily,
             fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             color = Color(0xFF3C2E56),
-            lineHeight = 24.sp,
+            lineHeight = 20.sp,
         ),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
@@ -410,8 +411,7 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
         SmallAddressRow(details, onCopyAddressClick)
         Spacer(modifier = Modifier.height(4.dp))
         AvailableSlots(details)
-        Spacer(modifier = Modifier.height(4.dp))
-        DistanceRow(details)
+//        DistanceRow(details)
     }
 }
 
@@ -423,13 +423,13 @@ fun AvailableSlots(details: VenueDetails?) {
     )
 }
 
-@Composable
-fun DistanceRow(details: VenueDetails?) {
-    InfoRow(
-        icon = R.drawable.mingcute_navigation_fill,
-        text = "2.3 km from you"
-    )
-}
+//@Composable
+//fun DistanceRow(details: VenueDetails?) {
+//    InfoRow(
+//        icon = R.drawable.mingcute_navigation_fill,
+//        text = "2.3 km from you"
+//    )
+//}
 
 @Composable
 fun InfoRow(icon: Int, text: String) {
@@ -484,19 +484,31 @@ fun SmallAddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "Copy",
+            text = "2.3 km from you",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
-                color = Color(0xFF0067FF),
+                color = Color(0xFF949494),
                 lineHeight = 18.sp,
-                textDecoration = TextDecoration.Underline,
             ),
-            modifier = Modifier
-                .clickable(onClick = onCopyClick)
-                .padding(start = 5.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
+//        Text(
+//            text = "Copy",
+//            style = TextStyle(
+//                fontFamily = gilroyFontFamily,
+//                fontWeight = FontWeight.Normal,
+//                fontSize = 12.sp,
+//                color = Color(0xFF0067FF),
+//                lineHeight = 18.sp,
+//                textDecoration = TextDecoration.Underline,
+//            ),
+//            modifier = Modifier
+//                .clickable(onClick = onCopyClick)
+//                .padding(start = 5.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
+//        )
     }
 }
 
@@ -564,7 +576,7 @@ fun SmallPricingSection(venueDetails: VenueDetails?) {
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .height(40.dp)
-                .width(157.dp)
+                .width(100.dp)
         ) {
             Text(
                 text = "Order",
@@ -630,4 +642,5 @@ fun shareVenueDetails(context: Context, details: VenueDetails?) {
 @Preview
 @Composable
 private fun VenueDetailsPreview() {
+    SmallVenueDetailsScreen(hiltViewModel(), {})
 }
