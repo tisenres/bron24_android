@@ -100,6 +100,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.helper.extension.DateTimeFormatter
+import com.bron24.bron24_android.helper.extension.DateTimeFormatter.formatTimeRange
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -200,7 +202,14 @@ fun VenueDetailsContent(
                     }
                 )
             }
-            item(key = "infrastructureSection") { InfrastructureSection(details) }
+            item(key = "infrastructureSection") {
+                InfrastructureSection(
+                    details = details?.copy(
+                        workingHoursFrom = DateTimeFormatter.formatISODateTimeToHourString(details.workingHoursFrom),
+                        workingHoursTill = DateTimeFormatter.formatISODateTimeToHourString(details.workingHoursTill)
+                    )
+                )
+            }
             item(key = "descriptionSection") { DescriptionSection(details) }
             item(key = "mapSection") { MapSection(details = details) }
             item(key = "spacer") {
@@ -841,7 +850,7 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
             }
             InfrastructureItem(venue.venueSurface.capitalize(), R.drawable.baseline_grass_24, onItemClick)
             InfrastructureItem(
-                "${venue.workingHoursFrom.drop(3)} - ${venue.workingHoursTill.drop(3)}",
+                "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
                 R.drawable.baseline_access_time_filled_24,
                 onItemClick
             )
