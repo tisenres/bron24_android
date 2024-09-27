@@ -1,6 +1,4 @@
-package com.bron24.bron24_android.screens.booking
-
-import com.bron24.bron24_android.domain.entity.booking.Booking
+package com.bron24.bron24_android.screens.booking.states
 
 sealed class BookingState {
     object Idle : BookingState()

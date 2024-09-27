@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking
+package com.bron24.bron24_android.screens.booking.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.screens.booking.states.BookingSuccessInfo
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable

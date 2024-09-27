@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking
+package com.bron24.bron24_android.screens.booking.screens
 
 import android.app.DatePickerDialog
 import android.os.Build
@@ -58,6 +58,8 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.DateItem
 import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
+import com.bron24.bron24_android.screens.booking.states.BookingState
+import com.bron24.bron24_android.screens.booking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat

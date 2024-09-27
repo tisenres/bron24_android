@@ -1,7 +1,6 @@
 package com.bron24.bron24_android.screens.main
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
@@ -37,7 +36,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.helper.util.presentation.components.BottomNavigationBar
-import com.bron24.bron24_android.screens.booking.BookingScreen
+import com.bron24.bron24_android.screens.booking.screens.BookingScreen
 import com.bron24.bron24_android.screens.booking.BookingViewModel
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily

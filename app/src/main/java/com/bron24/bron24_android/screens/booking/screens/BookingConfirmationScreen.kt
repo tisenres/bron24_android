@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking
+package com.bron24.bron24_android.screens.booking.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -44,6 +44,7 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter.formatDate
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter.formatTimeRange
+import com.bron24.bron24_android.screens.booking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
