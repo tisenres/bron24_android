@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.screens.main
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
@@ -45,11 +46,10 @@ import com.bron24.bron24_android.screens.searchfilter.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun MainAppScaffold() {
     val nestedNavController = rememberNavController()
-
     val shouldShowBottomBar = remember { mutableStateOf(true) }
 
     Scaffold(
@@ -69,7 +69,7 @@ fun MainAppScaffold() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun MainNavHost(
     navController: NavHostController,
@@ -78,7 +78,8 @@ fun MainNavHost(
 ) {
 
     var showBookingBottomSheet by remember { mutableStateOf(false) }
-    var currentVenueId by remember { mutableStateOf<Int?>(null) }
+    val (currentPricePerHour, setPricePerHour) = remember { mutableStateOf("") }
+    val (currentSectors, setSectors) = remember { mutableStateOf(emptyList<String>()) }
 
     NavHost(
         navController = navController,
@@ -188,14 +189,14 @@ fun MainNavHost(
             onDestinationChanged(Screen.VenueDetails.route)
             val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
             val viewModel: VenueDetailsViewModel = hiltViewModel()
-            var currentPricePerHour = ""
+
             VenueDetailsScreen(
                 viewModel = viewModel,
                 venueId = venueId,
                 onBackClick = { navController.popBackStack() },
-                onOrderClick = { venueId, sectors, pricePerHour  ->
-                    currentVenueId = venueId
-                    currentPricePerHour = pricePerHour
+                onOrderClick = { sectors, pricePerHour ->
+                    setPricePerHour(pricePerHour)
+                    setSectors(sectors)
                     showBookingBottomSheet = true
                 },
                 onMapClick = { latitude, longitude ->
@@ -203,16 +204,12 @@ fun MainNavHost(
                 }
             )
             if (showBookingBottomSheet) {
-                currentVenueId?.let { venueId ->
-                    viewModel.venueDetailsState.value.let { venueDetails ->
-                        BookingBottomSheet(
-                            venueId = venueId,
-                            sectors = listOf("A"),
-                            pricePerHour = currentPricePerHour,
-                            onDismiss = { showBookingBottomSheet = false }
-                        )
-                    }
-                }
+                BookingBottomSheet(
+                    venueId = venueId,
+                    sectors = currentSectors,
+                    pricePerHour = currentPricePerHour,
+                    onDismiss = { showBookingBottomSheet = false }
+                )
             }
         }
     }
@@ -221,7 +218,12 @@ fun MainNavHost(
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookingBottomSheet(venueId: Int, sectors: List<String>, pricePerHour: String, onDismiss: () -> Unit) {
+fun BookingBottomSheet(
+    venueId: Int,
+    sectors: List<String>,
+    pricePerHour: String,
+    onDismiss: () -> Unit
+) {
     val viewModel: BookingViewModel = hiltViewModel()
     val sheetState = rememberModalBottomSheetState()
 

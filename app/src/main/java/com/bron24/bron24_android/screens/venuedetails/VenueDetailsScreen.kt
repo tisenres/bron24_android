@@ -121,7 +121,7 @@ fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
     onBackClick: () -> Unit,
-    onOrderClick: (Int, List<String>, String) -> Unit,
+    onOrderClick: (List<String>, String) -> Unit,
     onMapClick: (Double, Double) -> Unit
 ) {
     LaunchedEffect(key1 = venueId) {
@@ -139,7 +139,7 @@ fun VenueDetailsScreen(
             onMapClick = onMapClick,
             onOrderClick = {
                 onOrderClick(
-                    state.venueDetails.venueId,
+//                    state.venueDetails.venueId,
                     state.venueDetails.sectors,
                     state.venueDetails.pricePerHour
                 )
