@@ -44,15 +44,6 @@ class VenueRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFirstVenuePicture(venueId: Int): String? = withContext(Dispatchers.IO) {
-        try {
-            apiService.getVenuePictures(venueId)?.firstOrNull()?.url
-        } catch (e: Exception) {
-            // Log the error if needed
-            null
-        }
-    }
-
     override suspend fun getVenuePictures(venueId: Int): List<String> = withContext(Dispatchers.IO) {
         try {
             apiService.getVenuePictures(venueId)?.map { it.url } ?: emptyList()
@@ -62,9 +53,9 @@ class VenueRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getVenueDetailsById(venueId: Int): VenueDetails? = withContext(Dispatchers.IO) {
+    override suspend fun getVenueDetailsById(venueId: Int, latitude: Double?, longitude: Double?): VenueDetails? = withContext(Dispatchers.IO) {
         try {
-            apiService.getVenueDetails(venueId)?.data?.toDomainModel()
+            apiService.getVenueDetails(venueId, latitude, longitude)?.data?.toDomainModel()
         } catch (e: Exception) {
             // Log the error if needed
             null

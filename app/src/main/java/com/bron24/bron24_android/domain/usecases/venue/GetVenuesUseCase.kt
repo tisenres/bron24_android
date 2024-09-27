@@ -35,11 +35,9 @@ class GetVenuesUseCase @Inject constructor(
                                 minPrice = minPrice,
                                 maxPrice = maxPrice,
                                 infrastructure = infrastructure,
-                                district = district
+                                district = district,
                             )
-                            emit(venues.map { venue ->
-                                venue.copy(imageUrl = repository.getFirstVenuePicture(venue.venueId))
-                            })
+                            emit(venues)
                         }
                     }
                     LocationPermissionState.DENIED -> {
@@ -53,9 +51,7 @@ class GetVenuesUseCase @Inject constructor(
                             infrastructure = infrastructure,
                             district = district
                         )
-                        emit(venues.map { venue ->
-                            venue.copy(imageUrl = repository.getFirstVenuePicture(venue.venueId))
-                        })
+                        emit(venues)
                     }
                 }
             }

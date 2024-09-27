@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.screens.main
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -23,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -43,8 +44,8 @@ import com.bron24.bron24_android.screens.map.YandexMapScreen
 import com.bron24.bron24_android.screens.searchfilter.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
-import java.util.Calendar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainAppScaffold() {
     val nestedNavController = rememberNavController()
@@ -68,6 +69,7 @@ fun MainAppScaffold() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainNavHost(
     navController: NavHostController,
@@ -115,10 +117,7 @@ fun MainNavHost(
             onDestinationChanged(Screen.HomePage.route)
             HomePage(navController)
         }
-//        composable(Screen.MapPage.route) {
-//            onDestinationChanged(Screen.MapPage.route)
-//            MapPage()
-//        }
+
         composable(
             route = Screen.MapPage.route,
             arguments = listOf(
@@ -131,7 +130,11 @@ fun MainNavHost(
             val latitude = backStackEntry.arguments?.getFloat("latitude") ?: 0f
             val longitude = backStackEntry.arguments?.getFloat("longitude") ?: 0f
             val selectedVenueId = backStackEntry.arguments?.getInt("selectedVenueId") ?: -1
-            MapPage(latitude = latitude.toDouble(), longitude = longitude.toDouble(), selectedVenueId = selectedVenueId)
+            MapPage(
+                latitude = latitude.toDouble(),
+                longitude = longitude.toDouble(),
+                selectedVenueId = selectedVenueId
+            )
         }
 
         composable(Screen.Filter.route) {
@@ -152,54 +155,11 @@ fun MainNavHost(
             onDestinationChanged(Screen.OrdersPage.route)
             OrdersPage()
         }
+
         composable(Screen.ProfilePage.route) {
             onDestinationChanged(Screen.ProfilePage.route)
             ProfilePage()
         }
-
-//        composable(
-//            route = "${Screen.MapPage.route}/{venueId}",
-//            arguments = listOf(navArgument("venueId") { type = NavType.IntType })
-//        ) { backStackEntry ->
-//            onDestinationChanged(Screen.MapPage.route)
-//            val venueId = backStackEntry.arguments?.getInt("venueId") ?: -1
-//            MapPage(selectedVenueId = venueId)
-//        }
-//        composable(
-//            route = Screen.VenueDetails.route,
-//            arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
-//            enterTransition = {
-//                fadeIn(
-//                    animationSpec = tween(
-//                        300, easing = LinearEasing
-//                    )
-//                ) + slideIntoContainer(
-//                    animationSpec = tween(100, easing = EaseIn),
-//                    towards = AnimatedContentTransitionScope.SlideDirection.Start
-//                )
-//            },
-//            exitTransition = {
-//                fadeOut(
-//                    animationSpec = tween(
-//                        300, easing = LinearEasing
-//                    )
-//                ) + slideOutOfContainer(
-//                    animationSpec = tween(100, easing = EaseOut),
-//                    towards = AnimatedContentTransitionScope.SlideDirection.End
-//                )
-//            }
-//        ) { backStackEntry ->
-//            onDestinationChanged(Screen.VenueDetails.route)
-//            val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
-//            val viewModel: VenueDetailsViewModel = hiltViewModel()
-//            VenueDetailsScreen(
-//                viewModel = viewModel,
-//                venueId = venueId,
-//                onBackClick = {
-//                    navController.popBackStack()
-//                },
-//            )
-//        }
 
         composable(
             route = Screen.VenueDetails.route,
@@ -233,7 +193,7 @@ fun MainNavHost(
                 viewModel = viewModel,
                 venueId = venueId,
                 onBackClick = { navController.popBackStack() },
-                onOrderClick = { pricePerHour ->
+                onOrderClick = { venueId, sectors, pricePerHour  ->
                     currentVenueId = venueId
                     currentPricePerHour = pricePerHour
                     showBookingBottomSheet = true
@@ -243,19 +203,25 @@ fun MainNavHost(
                 }
             )
             if (showBookingBottomSheet) {
-                BookingBottomSheet(
-                    venueId = currentVenueId ?: 0,
-                    onDismiss = { showBookingBottomSheet = false },
-                    pricePerHour = currentPricePerHour
-                )
+                currentVenueId?.let { venueId ->
+                    viewModel.venueDetailsState.value.let { venueDetails ->
+                        BookingBottomSheet(
+                            venueId = venueId,
+                            sectors = listOf("A"),
+                            pricePerHour = currentPricePerHour,
+                            onDismiss = { showBookingBottomSheet = false }
+                        )
+                    }
+                }
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit, pricePerHour: String) {
+fun BookingBottomSheet(venueId: Int, sectors: List<String>, pricePerHour: String, onDismiss: () -> Unit) {
     val viewModel: BookingViewModel = hiltViewModel()
     val sheetState = rememberModalBottomSheetState()
 
@@ -266,39 +232,15 @@ fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit, pricePerHour: String
     ) {
         BookingScreen(
             venueId = venueId,
+            sectors = sectors,
             pricePerHour = pricePerHour,
             viewModel = viewModel,
             onOrderClick = {
                 // Handle order confirmation
                 onDismiss()
-            }
+            },
         )
     }
-
-    // DatePicker setup
-//    val datePickerDialog = remember {
-//        DatePickerDialog(
-//            context,
-//            { _, year, month, dayOfMonth ->
-//                val calendar = Calendar.getInstance().apply {
-//                    set(year, month, dayOfMonth)
-//                }
-//                viewModel.selectDate(calendar.timeInMillis)
-//            },
-//            Calendar.getInstance().get(Calendar.YEAR),
-//            Calendar.getInstance().get(Calendar.MONTH),
-//            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-//        )
-//    }
-
-    // Observe changes to show DatePicker
-//    val showDatePicker by viewModel.showDatePicker.collectAsState()
-//    if (showDatePicker) {
-//        LaunchedEffect(Unit) {
-//            datePickerDialog.show()
-//            viewModel.onDatePickerShown()
-//        }
-//    }
 }
 
 @Composable

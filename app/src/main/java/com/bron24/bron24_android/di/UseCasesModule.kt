@@ -1,7 +1,6 @@
 package com.bron24.bron24_android.di
 
 import android.content.Context
-import com.bron24.bron24_android.data.local.db.VenueDao
 import com.bron24.bron24_android.data.local.preference.AppPreference
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
@@ -61,6 +60,16 @@ object UseCasesModule {
         locationRepository: LocationRepository
     ): CheckLocationPermissionUseCase {
         return CheckLocationPermissionUseCase(locationRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetVenueDetailsUseCase(
+        venueRepository: VenueRepository,
+        getCurrentLocationUseCase: GetCurrentLocationUseCase,
+        checkLocationPermissionUseCase: CheckLocationPermissionUseCase
+    ): GetVenueDetailsUseCase {
+        return GetVenueDetailsUseCase(venueRepository, getCurrentLocationUseCase, checkLocationPermissionUseCase)
     }
 
     @Provides
@@ -138,15 +147,23 @@ object UseCasesModule {
         return TokenRepositoryImpl(appPreference)
     }
 
-    @Module
-    @InstallIn(SingletonComponent::class)
-    object RepositoryModule {
-        @Provides
-        @Singleton
-        fun provideBookingRepository(apiService: BookingApiService): BookingRepository {
-            return BookingRepositoryImpl(apiService)
-        }
+    @Provides
+    @Singleton
+    fun provideBookingRepository(
+        bookingApiService: BookingApiService
+    ): BookingRepository {
+        return BookingRepositoryImpl(bookingApiService)
     }
+
+//    @Module
+//    @InstallIn(SingletonComponent::class)
+//    object RepositoryModule {
+//        @Provides
+//        @Singleton
+//        fun provideBookingRepository(apiService: BookingApiService): BookingRepository {
+//            return BookingRepositoryImpl(apiService)
+//        }
+//    }
 
     // Repositories - End
 }

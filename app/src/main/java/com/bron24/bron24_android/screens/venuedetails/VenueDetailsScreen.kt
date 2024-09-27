@@ -7,7 +7,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -101,7 +103,6 @@ import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter
-import com.bron24.bron24_android.helper.extension.DateTimeFormatter.formatTimeRange
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -114,33 +115,44 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
     onBackClick: () -> Unit,
-    onOrderClick: (String) -> Unit,
+    onOrderClick: (Int, List<String>, String) -> Unit,
     onMapClick: (Double, Double) -> Unit
 ) {
     LaunchedEffect(key1 = venueId) {
         viewModel.fetchVenueDetails(venueId)
     }
 
-    val venueDetails by viewModel.venueDetails.collectAsState()
-    val isLoading by remember { derivedStateOf { venueDetails == null } }
+    val venueDetailsState by viewModel.venueDetailsState.collectAsState()
 
-    if (isLoading) {
-        LoadingScreen()
-    } else {
-        VenueDetailsContent(
-            details = venueDetails,
+    when (val state = venueDetailsState) {
+        is VenueDetailsState.Loading -> LoadingScreen()
+        is VenueDetailsState.Success -> VenueDetailsContent(
+            details = state.venueDetails,
             onBackClick = onBackClick,
-            onFavoriteClick = {},
+            onFavoriteClick = { /* Implement favorite functionality */ },
             onMapClick = onMapClick,
-            onOrderClick = { venueDetails?.pricePerHour?.let { onOrderClick(it) } },
+            onOrderClick = {
+                onOrderClick(
+                    state.venueDetails.venueId,
+                    state.venueDetails.sectors,
+                    state.venueDetails.pricePerHour
+                )
+            },
         )
+        is VenueDetailsState.Error -> {
+            LoadingScreen()
+            ToastManager.showToast("Network error occurred", ToastType.ERROR)
+        }
+        is VenueDetailsState.Initial -> LoadingScreen() // Do nothing or show initial state
     }
 }
+
 
 @Composable
 fun LoadingScreen() {
@@ -156,6 +168,7 @@ fun LoadingScreen() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun VenueDetailsContent(
     details: VenueDetails?,
@@ -695,7 +708,7 @@ fun AvailableSlots(details: VenueDetails?) {
 fun DistanceRow(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.mingcute_navigation_fill,
-        text = "2.3 km from you"
+        text = String.format("%.1f", details?.distance) + " km"
     )
 }
 

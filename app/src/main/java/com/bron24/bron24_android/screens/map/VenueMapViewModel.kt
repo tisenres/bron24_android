@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.catch
 
 @HiltViewModel
 class VenueMapViewModel @Inject constructor(
@@ -37,6 +38,9 @@ class VenueMapViewModel @Inject constructor(
     private val _selectedVenueId = MutableStateFlow<Int?>(null)
     val selectedVenueId: StateFlow<Int?> = _selectedVenueId
 
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error
+
     init {
         fetchVenuesForMap()
         checkLocationPermission()
@@ -53,39 +57,51 @@ class VenueMapViewModel @Inject constructor(
 
     private fun fetchVenuesForMap() {
         viewModelScope.launch {
-            val venuesList = model.getVenuesCoordinatesUseCase()
+            val venuesList = model.getVenuesCoordinates()
             _venues.value = venuesList
         }
     }
 
     private fun updateCurrentLocation() {
         viewModelScope.launch {
-            model.getCurrentLocation().collect { location ->
-                _currentLocation.value = location
-                centerOnCurrentLocation()
-            }
+            model.getCurrentLocation()
+                .catch { e ->
+                    _error.value = "Error getting current location: ${e.message}"
+                    Log.e("VenueMapViewModel", "Error getting current location", e)
+                }
+                .collect { location ->
+                    _currentLocation.value = location
+                    centerOnCurrentLocation()
+                }
         }
     }
 
     private fun checkLocationPermission() {
         viewModelScope.launch {
-            model.checkLocationPermission().collect { permissionState ->
-                _locationPermissionState.value = permissionState
-                if (permissionState == LocationPermissionState.GRANTED) {
-                    updateCurrentLocation()
+            model.checkLocationPermission()
+                .catch { e ->
+                    _error.value = "Error checking location permission: ${e.message}"
+                    Log.e("VenueMapViewModel", "Error checking location permission", e)
                 }
-            }
+                .collect { permissionState ->
+                    _locationPermissionState.value = permissionState
+                    if (permissionState == LocationPermissionState.GRANTED) {
+                        updateCurrentLocation()
+                    }
+                }
         }
     }
 
-    private fun fetchVenueDetails() {
+    private fun fetchVenueDetails(venueId: Int) {
         viewModelScope.launch {
-            try {
-                val details = model.getVenueDetails(selectedVenueId.value ?: 0)
-                _venueDetails.value = details
-            } catch (e: Exception) {
-                Log.e("VenueDetailsViewModel", "Error fetching venue details", e)
-            }
+            model.getVenueDetails(venueId)
+                .catch { e ->
+                    _error.value = "Error fetching venue details: ${e.message}"
+                    Log.e("VenueMapViewModel", "Error fetching venue details", e)
+                }
+                .collect { details ->
+                    _venueDetails.value = details
+                }
         }
     }
 
@@ -127,12 +143,15 @@ class VenueMapViewModel @Inject constructor(
 
     fun selectVenue(venueId: Int) {
         _selectedVenueId.value = venueId
-        fetchVenueDetails()
+        fetchVenueDetails(venueId)
     }
 
     fun clearSelectedVenue() {
         _selectedVenueId.value = null
         _venueDetails.value = null
-        _venues.value = _venues.value
+    }
+
+    fun clearError() {
+        _error.value = null
     }
 }

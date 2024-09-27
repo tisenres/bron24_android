@@ -29,5 +29,7 @@ data class VenueDetailsDto(
     @SerializedName("updated_at") val updatedAt: String,
     @SerializedName("latitude") val latitude: String,
     @SerializedName("longitude") val longitude: String,
-    @SerializedName("sector_number") val sectorNumber: Int
+    @SerializedName("sector_number") val sectorNumber: Int,
+    @SerializedName("distance") val distance: Double,
+    @SerializedName("sectors") val sectors: List<String>
 )

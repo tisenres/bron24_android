@@ -484,7 +484,7 @@ fun SmallAddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "2.3 km from you",
+            text = String.format("%.1f", details?.distance) + " km",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,

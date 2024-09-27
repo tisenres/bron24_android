@@ -21,5 +21,7 @@ data class VenueDetails(
     val updatedAt: String,
     var imageUrls: List<String> = emptyList(),
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val distance: Double,
+    val sectors: List<String>
 )

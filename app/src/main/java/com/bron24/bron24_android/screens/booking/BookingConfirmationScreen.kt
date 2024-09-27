@@ -22,7 +22,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +48,7 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun BookingConfirmationScreen(viewModel: BookingViewModel) {
-    val bookingInfo by viewModel.booking.collectAsState()
+//    val bookingInfo by viewModel.booking.collectAsState()
     var showPaymentMethods by remember { mutableStateOf(false) }
     var showPromoCode by remember { mutableStateOf(false) }
 
@@ -66,13 +65,13 @@ fun BookingConfirmationScreen(viewModel: BookingViewModel) {
                 )
         ) {
             TopAppBar()
-            BookingInfoCard(bookingInfo)
+//            BookingInfoCard(bookingInfo)
             Spacer(modifier = Modifier.height(15.dp))
             PaymentMethodButton { showPaymentMethods = true }
             Spacer(modifier = Modifier.height(15.dp))
             PromoCodeButton { showPromoCode = true }
             Spacer(modifier = Modifier.height(15.dp))
-            TotalAmount(bookingInfo.totalPrice)
+//            TotalAmount(bookingInfo.totalPrice)
             Spacer(modifier = Modifier.weight(1f))
             ConfirmButton(
                 true,
@@ -90,7 +89,7 @@ fun BookingConfirmationScreen(viewModel: BookingViewModel) {
                 onDismiss = { showPromoCode = false },
                 onApply = { code ->
                     // Handle promo code application
-                    viewModel.applyPromoCode(code)
+//                    viewModel.applyPromoCode(code)
                     showPromoCode = false
                 }
             )

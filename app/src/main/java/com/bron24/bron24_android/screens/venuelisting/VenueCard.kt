@@ -156,7 +156,7 @@ fun VenueImageSection(venue: Venue, onFavoriteClick: () -> Unit) {
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(venue.imageUrl ?: "")
+                .data(venue.previewImage ?: "")
                 .placeholder(R.drawable.placeholder)
                 .scale(Scale.FILL)
                 .crossfade(true)

@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.data.network.interceptors
 
 import android.util.Log
+import com.bron24.bron24_android.di.NetworkModule
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import dagger.Lazy
@@ -79,30 +80,45 @@ class ErrorHandlingCallAdapterFactory(
             })
         }
 
+//        private fun handleFailure(call: Call<R>, t: Throwable, callback: Callback<R>) {
+//            CoroutineScope(Dispatchers.Main).launch {
+//                when (t) {
+//                    is UnknownHostException -> {
+//                        errorHandler.handleError(AppError.UnresolvedHostError)
+//                        callback.onResponse(call, Response.success(null))
+//                    }
+//                    is SocketTimeoutException -> {
+//                        errorHandler.handleError(AppError.TimeoutError)
+//                        callback.onResponse(call, Response.success(null))
+//                    }
+//                    is IOException -> {
+//                        errorHandler.handleError(AppError.NetworkError)
+//                        callback.onResponse(call, Response.success(null))
+//                    }
+//                    is HttpException -> {
+//                        errorHandler.handleError(AppError.HttpError(t.code(), t.message()))
+//                        callback.onResponse(call, Response.success(null))
+//                    }
+//                    else -> {
+//                        errorHandler.handleError(AppError.UnknownError(t.message ?: "Unknown error occurred"))
+//                        callback.onResponse(call, Response.success(null))
+//                    }
+//                }
+//            }
+//        }
+
         private fun handleFailure(call: Call<R>, t: Throwable, callback: Callback<R>) {
             CoroutineScope(Dispatchers.Main).launch {
-                when (t) {
-                    is UnknownHostException -> {
-                        errorHandler.handleError(AppError.UnresolvedHostError)
-                        callback.onResponse(call, Response.success(null))
-                    }
-                    is SocketTimeoutException -> {
-                        errorHandler.handleError(AppError.TimeoutError)
-                        callback.onResponse(call, Response.success(null))
-                    }
-                    is IOException -> {
-                        errorHandler.handleError(AppError.NetworkError)
-                        callback.onResponse(call, Response.success(null))
-                    }
-                    is HttpException -> {
-                        errorHandler.handleError(AppError.HttpError(t.code(), t.message()))
-                        callback.onResponse(call, Response.success(null))
-                    }
-                    else -> {
-                        errorHandler.handleError(AppError.UnknownError(t.message ?: "Unknown error occurred"))
-                        callback.onResponse(call, Response.success(null))
-                    }
+                val error = when (t) {
+                    is NoConnectivityException -> AppError.NoConnectivity
+                    is UnknownHostException -> AppError.UnresolvedHostError
+                    is SocketTimeoutException -> AppError.TimeoutError
+                    is IOException -> AppError.NetworkError
+                    is HttpException -> AppError.HttpError(t.code(), t.message())
+                    else -> AppError.UnknownError(t.message ?: "Unknown error occurred")
                 }
+                errorHandler.handleError(error)
+                callback.onResponse(call, Response.success(null))
             }
         }
 
@@ -163,10 +179,16 @@ class ErrorHandlingCallAdapterFactory(
         }
 
         private fun handleServerError(call: Call<R>, response: Response<R>, callback: Callback<R>) {
-            runBlocking {
-                errorHandler.handleError(AppError.HttpError(response.code(), response.message()))
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    Log.e("ErrorHandling", "Handling server error: ${response.code()} - ${response.message()}")
+                    errorHandler.handleError(AppError.HttpError(response.code(), response.message()))
+                    callback.onResponse(call, response)
+                } catch (e: Exception) {
+                    Log.e("ErrorHandling", "Exception during error handling: ${e.message}")
+                    callback.onFailure(call, e)
+                }
             }
-            callback.onResponse(call, response)
         }
 
         private fun handleUnknownError(call: Call<R>, response: Response<R>, callback: Callback<R>) {

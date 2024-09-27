@@ -6,6 +6,7 @@ import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.network.interceptors.ErrorHandler
 import com.bron24.bron24_android.data.network.interceptors.ErrorHandlingCallAdapterFactory
 import com.bron24.bron24_android.data.network.interceptors.HttpInterceptor
+import com.bron24.bron24_android.data.network.interceptors.NoConnectivityException
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import dagger.Lazy
@@ -17,6 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -39,6 +41,14 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
             .addInterceptor(logging)
+            .addNetworkInterceptor { chain ->
+                try {
+                    chain.proceed(chain.request())
+                } catch (e: IOException) {
+                    // Handle network errors
+                    throw NoConnectivityException()
+                }
+            }
             .build()
     }
 
@@ -90,13 +100,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthApiService(@Named("BaseRetrofit") retrofit: Retrofit): AuthApiService {
+    fun provideAuthApiService(@Named("ErrorHandlingRetrofit") retrofit: Retrofit): AuthApiService {
         return retrofit.create(AuthApiService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideBookingApiService(@Named("BaseRetrofit") retrofit: Retrofit): BookingApiService {
+    fun provideBookingApiService(@Named("ErrorHandlingRetrofit") retrofit: Retrofit): BookingApiService {
         return retrofit.create(BookingApiService::class.java)
     }
 }
