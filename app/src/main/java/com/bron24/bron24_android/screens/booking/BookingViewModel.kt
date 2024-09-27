@@ -1,9 +1,12 @@
 package com.bron24.bron24_android.screens.booking
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.domain.entity.booking.DateItem
+import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +17,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -24,53 +28,89 @@ class BookingViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow(System.currentTimeMillis())
     val selectedDate: StateFlow<Long> = _selectedDate.asStateFlow()
 
-    private val _selectedStadiumPart = MutableStateFlow<String?>(null)
-    val selectedStadiumPart: StateFlow<String?> = _selectedStadiumPart.asStateFlow()
+    private val _selectedSector = MutableStateFlow<Sector?>(null)
+    val selectedSector: StateFlow<Sector?> = _selectedSector.asStateFlow()
 
     private val _availableTimeSlots = MutableStateFlow<List<TimeSlot>>(emptyList())
     val availableTimeSlots: StateFlow<List<TimeSlot>> = _availableTimeSlots.asStateFlow()
 
-    private val _venueId = MutableStateFlow(0)
+    private val _availableDates = MutableStateFlow<List<DateItem>>(emptyList())
+    val availableDates: StateFlow<List<DateItem>> = _availableDates.asStateFlow()
 
-    fun initializeBooking(venueId: Int, sectors: List<String>) {
-        _venueId.value = venueId
-        if (sectors.isNotEmpty()) {
-            selectStadiumPart(sectors.first())
-        }
-        fetchAvailableTimeSlots()
-    }
+    private val _visibleMonthYear = MutableStateFlow("")
+    val visibleMonthYear: StateFlow<String> = _visibleMonthYear.asStateFlow()
+
+    private val _showDatePicker = MutableStateFlow(false)
+    val showDatePicker: StateFlow<Boolean> = _showDatePicker.asStateFlow()
+
+    private val _totalPrice = MutableStateFlow(0)
+    val totalPrice: StateFlow<Int> = _totalPrice.asStateFlow()
+
+    private val _getAvailableTimesState = MutableStateFlow<BookingState>(BookingState.Idle)
+    val getAvailableTimesState: StateFlow<BookingState> = _getAvailableTimesState.asStateFlow()
 
     fun selectDate(timestamp: Long) {
         _selectedDate.value = timestamp
-        fetchAvailableTimeSlots()
     }
 
-    fun selectStadiumPart(part: String) {
-        _selectedStadiumPart.value = part
-        fetchAvailableTimeSlots()
+    fun selectSector(sector: Sector) {
+        _selectedSector.value = sector
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    private fun fetchAvailableTimeSlots() {
+    fun getAvailableTimes(venueId: Int) {
         viewModelScope.launch {
-            val currentVenueId = _venueId.value
-            val date = _selectedDate.value
-            val sector = _selectedStadiumPart.value ?: return@launch
+            _getAvailableTimesState.value = BookingState.Loading // Set state to Loading
+            try {
+                val selectedLocalDate = LocalDate.ofInstant(
+                    Instant.ofEpochMilli(selectedDate.value),
+                    ZoneId.systemDefault()
+                )
+                val formattedDate = selectedLocalDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
-            if (currentVenueId == 0 || sector.isEmpty()) {
-                return@launch
+                val times = model.getAvailableTimeSlots(
+                    venueId = venueId,
+                    date = formattedDate,
+                    sector = selectedSector.value?.name ?: "X" // Default value or handle appropriately
+                )
+                _availableTimeSlots.value = times
+                _getAvailableTimesState.value = BookingState.Success // Update state to Success
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error fetching available times", e)
+                _availableTimeSlots.value = emptyList()
+                _getAvailableTimesState.value = BookingState.Error(e.message ?: "Unknown Error") // Update to Error state
             }
-
-            val formattedDate = formatDate(date)
-            val timeSlots = model.getAvailableTimeSlots(currentVenueId, formattedDate, sector)
-            _availableTimeSlots.value = timeSlots
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    private fun formatDate(timestamp: Long): String {
-        val instant = Instant.ofEpochMilli(timestamp)
-        val localDate = LocalDate.ofInstant(instant, ZoneId.systemDefault())
-        return localDate.format(DateTimeFormatter.ISO_LOCAL_DATE)
+    fun selectTimeSlot(timeSlot: TimeSlot) {
+        val updatedTimeSlots = _availableTimeSlots.value.map { slot ->
+            if (slot == timeSlot) {
+                slot.copy(isSelected = !slot.isSelected)
+            } else {
+                slot
+            }
+        }
+        _availableTimeSlots.value = updatedTimeSlots
+        calculateTotalPrice()
+    }
+
+    private fun calculateTotalPrice() {
+        val selectedTimeSlots = _availableTimeSlots.value.filter { it.isSelected }
+        val pricePerSlot = 100
+        _totalPrice.value = selectedTimeSlots.size * pricePerSlot
+    }
+
+    fun showDatePicker() {
+        _showDatePicker.value = true
+    }
+
+    fun onDatePickerShown() {
+        _showDatePicker.value = false
+    }
+
+    fun updateVisibleMonthYear(dateItem: DateItem) {
+        val localDate = LocalDate.ofInstant(Instant.ofEpochMilli(dateItem.timestamp), ZoneId.systemDefault())
+        val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
+        _visibleMonthYear.value = localDate.format(formatter)
     }
 }
