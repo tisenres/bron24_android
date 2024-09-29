@@ -44,11 +44,14 @@ class BookingViewModel @Inject constructor(
     private val _showDatePicker = MutableStateFlow(false)
     val showDatePicker: StateFlow<Boolean> = _showDatePicker.asStateFlow()
 
+    private val _getAvailableTimesState = MutableStateFlow<BookingState>(BookingState.Idle)
+    val getAvailableTimesState: StateFlow<BookingState> = _getAvailableTimesState.asStateFlow()
+
     private val _totalPrice = MutableStateFlow(0)
     val totalPrice: StateFlow<Int> = _totalPrice.asStateFlow()
 
-    private val _getAvailableTimesState = MutableStateFlow<BookingState>(BookingState.Idle)
-    val getAvailableTimesState: StateFlow<BookingState> = _getAvailableTimesState.asStateFlow()
+    private val _pricePerHour = MutableStateFlow(0)
+    val pricePerHour: StateFlow<Int> = _pricePerHour.asStateFlow()
 
     fun selectDate(timestamp: Long) {
         _selectedDate.value = timestamp
@@ -56,6 +59,10 @@ class BookingViewModel @Inject constructor(
 
     fun selectSector(sector: Sector) {
         _selectedSector.value = sector
+    }
+
+    fun setPricePerHour(price: Int) {
+        _pricePerHour.value = price
     }
 
     fun getAvailableTimes(venueId: Int) {
@@ -97,8 +104,8 @@ class BookingViewModel @Inject constructor(
 
     private fun calculateTotalPrice() {
         val selectedTimeSlots = _availableTimeSlots.value.filter { it.isSelected }
-        val pricePerSlot = 100
-        _totalPrice.value = selectedTimeSlots.size * pricePerSlot
+        val totalHours = selectedTimeSlots.size // Assuming each time slot is 1 hour
+        _totalPrice.value = totalHours * _pricePerHour.value
     }
 
     fun showDatePicker() {
@@ -113,5 +120,15 @@ class BookingViewModel @Inject constructor(
         val localDate = LocalDate.ofInstant(Instant.ofEpochMilli(dateItem.timestamp), ZoneId.systemDefault())
         val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
         _visibleMonthYear.value = localDate.format(formatter)
+    }
+
+    fun formatPrice(price: String): String {
+        return try {
+            val floatPrice = price.toFloat()
+            val intPrice = floatPrice.toInt()
+            String.format("%,d", intPrice).replace(",", " ")
+        } catch (e: NumberFormatException) {
+            "0" // Return "0" if parsing fails
+        }
     }
 }

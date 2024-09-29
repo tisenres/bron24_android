@@ -1,7 +1,7 @@
 package com.bron24.bron24_android.domain.entity.booking
 
 enum class Sector(val displayName: String) {
-    FULL_STADIUM("Full Stadium"),
+    X("Full Stadium"),
     A("Sector A"),
     B("Sector B"),
     C("Sector C"),

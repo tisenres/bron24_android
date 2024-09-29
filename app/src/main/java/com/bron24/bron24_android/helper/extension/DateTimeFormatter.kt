@@ -9,24 +9,18 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter as JavaDateTimeFormatter
 
 object DateTimeFormatter {
-    fun formatDate(timestamp: Long): String {
-        val sdf = SimpleDateFormat("d MMMM yyyy", Locale.getDefault())
-        return sdf.format(Date(timestamp))
-    }
+    private val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale.getDefault())
+    private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
-    fun formatTimeRange(start: Long, end: Long): String {
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return "${sdf.format(Date(start))} - ${sdf.format(Date(end))}"
-    }
+    fun formatDate(timestamp: Long): String = dateFormat.format(Date(timestamp))
+
+    fun formatTimeRange(start: Long, end: Long): String =
+        "${timeFormat.format(Date(start))} - ${timeFormat.format(Date(end))}"
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun formatISODateTimeToHourString(isoDateTime: String): String {
-        return try {
-            val dateTime = OffsetDateTime.parse(isoDateTime)
-            dateTime.format(JavaDateTimeFormatter.ofPattern("HH:mm"))
-        } catch (e: Exception) {
-            // If parsing fails, return the original string
-            isoDateTime
-        }
+    fun formatISODateTimeToHourString(isoDateTime: String): String = try {
+        OffsetDateTime.parse(isoDateTime).format(JavaDateTimeFormatter.ofPattern("HH:mm"))
+    } catch (e: Exception) {
+        isoDateTime
     }
 }

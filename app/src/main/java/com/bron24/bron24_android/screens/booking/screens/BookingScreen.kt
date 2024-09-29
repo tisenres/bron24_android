@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -77,19 +78,19 @@ fun BookingScreen(
 ) {
     val selectedDate by viewModel.selectedDate.collectAsState()
     val selectedSector by viewModel.selectedSector.collectAsState()
+    val totalPrice by viewModel.totalPrice.collectAsState()
+
+    val availableTimeSlots by viewModel.availableTimeSlots.collectAsState()
+
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
-    val totalPrice by viewModel.totalPrice.collectAsState()
     val getAvailableTimesState by viewModel.getAvailableTimesState.collectAsState()
-    val availableTimeSlots by viewModel.availableTimeSlots.collectAsState()
 
-    val sectorEnums = sectors.mapNotNull { sectorString ->
-        try {
-            Sector.valueOf(sectorString)
-        } catch (e: IllegalArgumentException) {
-            null // In case the string does not match any enum
-        }
+    val showDatePicker by viewModel.showDatePicker.collectAsState()
+
+    val sectorEnums = sectors.map { sectorString ->
+        Sector.valueOf(sectorString)
     }
 
     LaunchedEffect(Unit) {
@@ -97,9 +98,10 @@ fun BookingScreen(
         if (sectorEnums.isNotEmpty()) {
             viewModel.selectSector(sectorEnums.first())
         }
+        viewModel.setPricePerHour(pricePerHour.replace(" ", "").toInt())
     }
 
-    LaunchedEffect(key1 = venueId, key2 = selectedDate, key3 = selectedSector) {
+    LaunchedEffect(key1 = selectedDate, key2 = selectedSector) {
         viewModel.getAvailableTimes(venueId)
         Log.d("BookingScreen", "State after fetching: $getAvailableTimesState")
     }
@@ -141,7 +143,6 @@ fun BookingScreen(
         )
     }
 
-    // Booking state handling
     when (getAvailableTimesState) {
         is BookingState.Loading -> {
             CircularProgressIndicator(modifier = Modifier.fillMaxSize())
@@ -157,7 +158,6 @@ fun BookingScreen(
     }
 
     // DatePicker dialog handling
-    val showDatePicker by viewModel.showDatePicker.collectAsState()
     if (showDatePicker) {
         val currentDate = Calendar.getInstance()
         val maxDate = Calendar.getInstance().apply {
@@ -183,12 +183,18 @@ fun BookingScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StadiumPartSection(
-    sectors: List<Sector>,  // Update the type to List<Sector>
+    sectors: List<Sector>,
     selectedSector: Sector?,
     onSectorSelected: (Sector) -> Unit
 ) {
+
+    LaunchedEffect(Unit) {
+       Log.d("BookingScreen", "Sectors: $sectors")
+    }
+
     Column(
         modifier = Modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -205,13 +211,15 @@ fun StadiumPartSection(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Row(
+
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(19.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             sectors.forEach { sector ->
                 SectorButton(
-                    sectorName = sector.name, // Use the name of the enum
+                    sectorName = sector.displayName,
                     onClick = { onSectorSelected(sector) },
                     isSelected = sector == selectedSector
                 )
@@ -219,9 +227,6 @@ fun StadiumPartSection(
         }
     }
 }
-
-// Other functions remain unchanged
-// ...
 
 @Composable
 fun SectorButton(
@@ -234,6 +239,7 @@ fun SectorButton(
 
     Box(
         modifier = Modifier
+            .widthIn(min = 110.dp, max = 150.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
             .clickable(onClick = onClick)
@@ -328,7 +334,6 @@ fun DateSection(
         }
     }
 
-    // Center the initially selected date
     LaunchedEffect(dates) {
         val selectedIndex = dates.indexOfFirst { it.isSelected }
         if (selectedIndex != -1) {
