@@ -137,7 +137,7 @@ fun BookingScreen(
         }
 
         PricingSection(
-            totalPrice = totalPrice.toString(),
+            totalPrice = totalPrice,
             onOrderClick = onOrderClick,
             modifier = Modifier.align(Alignment.BottomCenter)
         )

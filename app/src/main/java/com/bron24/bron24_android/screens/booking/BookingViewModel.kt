@@ -47,8 +47,8 @@ class BookingViewModel @Inject constructor(
     private val _getAvailableTimesState = MutableStateFlow<BookingState>(BookingState.Idle)
     val getAvailableTimesState: StateFlow<BookingState> = _getAvailableTimesState.asStateFlow()
 
-    private val _totalPrice = MutableStateFlow(0)
-    val totalPrice: StateFlow<Int> = _totalPrice.asStateFlow()
+    private val _totalPrice = MutableStateFlow("")
+    val totalPrice: StateFlow<String> = _totalPrice.asStateFlow()
 
     private val _pricePerHour = MutableStateFlow(0)
     val pricePerHour: StateFlow<Int> = _pricePerHour.asStateFlow()
@@ -105,7 +105,7 @@ class BookingViewModel @Inject constructor(
     private fun calculateTotalPrice() {
         val selectedTimeSlots = _availableTimeSlots.value.filter { it.isSelected }
         val totalHours = selectedTimeSlots.size // Assuming each time slot is 1 hour
-        _totalPrice.value = totalHours * _pricePerHour.value
+        _totalPrice.value = formatPrice(totalHours * _pricePerHour.value)
     }
 
     fun showDatePicker() {
@@ -122,7 +122,7 @@ class BookingViewModel @Inject constructor(
         _visibleMonthYear.value = localDate.format(formatter)
     }
 
-    fun formatPrice(price: String): String {
+    fun formatPrice(price: Int): String {
         return try {
             val floatPrice = price.toFloat()
             val intPrice = floatPrice.toInt()
