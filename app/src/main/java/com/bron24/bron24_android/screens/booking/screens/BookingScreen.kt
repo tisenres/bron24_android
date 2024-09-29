@@ -99,6 +99,7 @@ fun BookingScreen(
             viewModel.selectSector(sectorEnums.first())
         }
         viewModel.setPricePerHour(pricePerHour.replace(" ", "").toInt())
+        viewModel.generateAvailableDates()
     }
 
     LaunchedEffect(key1 = selectedDate, key2 = selectedSector) {
@@ -116,7 +117,7 @@ fun BookingScreen(
             verticalArrangement = Arrangement.spacedBy(40.dp)
         ) {
             StadiumPartSection(
-                sectors = sectorEnums, // Send Sector enums directly
+                sectors = sectorEnums,
                 selectedSector = selectedSector,
                 onSectorSelected = { viewModel.selectSector(it) }
             )
@@ -268,7 +269,11 @@ fun DateSection(
     onVisibleDatesChanged: (DateItem) -> Unit,
     scrollState: ScrollState
 ) {
-//    val coroutineScope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        Log.d("BookingScreen", dates.toString())
+    }
 
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
         Row(
@@ -494,7 +499,7 @@ fun TimeSlotItem(
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
             .clickable(
-                enabled = timeSlot.isAvailable && !timeSlot.isSelected,
+                enabled = timeSlot.isAvailable,
                 onClick = onTimeSelected
             )
             .padding(vertical = 8.dp),

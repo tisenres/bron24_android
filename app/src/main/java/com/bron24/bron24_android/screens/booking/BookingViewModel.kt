@@ -14,10 +14,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
 
@@ -52,6 +54,8 @@ class BookingViewModel @Inject constructor(
 
     private val _pricePerHour = MutableStateFlow(0)
     val pricePerHour: StateFlow<Int> = _pricePerHour.asStateFlow()
+
+    private val selectedTimeSlots = mutableSetOf<TimeSlot>()
 
     fun selectDate(timestamp: Long) {
         _selectedDate.value = timestamp
@@ -90,14 +94,42 @@ class BookingViewModel @Inject constructor(
         }
     }
 
+    fun generateAvailableDates() {
+        val calendar = Calendar.getInstance()
+        val dateList = mutableListOf<DateItem>()
+
+        // Generate dates for the next 30 days
+        for (i in 0 until 30) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            val date = calendar.time
+
+            val dayOfWeek = SimpleDateFormat("EEEE", Locale.getDefault()).format(date)
+            val month = SimpleDateFormat("MMMM", Locale.getDefault()).format(date)
+            val year = SimpleDateFormat("yyyy", Locale.getDefault()).format(date).toInt()
+            val day = SimpleDateFormat("d", Locale.getDefault()).format(date).toInt()
+            val timestamp = date.time
+
+            dateList.add(DateItem(day, dayOfWeek, month, year, isSelected = false, timestamp = timestamp))
+        }
+
+        _availableDates.value = dateList
+    }
+
     fun selectTimeSlot(timeSlot: TimeSlot) {
-        val updatedTimeSlots = _availableTimeSlots.value.map { slot ->
-            if (slot == timeSlot) {
-                slot.copy(isSelected = !slot.isSelected)
+        val updatedTimeSlots = _availableTimeSlots.value.map {
+            if (it == timeSlot) {
+                val isSelected = !it.isSelected
+                if (isSelected) {
+                    selectedTimeSlots.add(it)
+                } else {
+                    selectedTimeSlots.remove(it)
+                }
+                it.copy(isSelected = isSelected)
             } else {
-                slot
+                it
             }
         }
+
         _availableTimeSlots.value = updatedTimeSlots
         calculateTotalPrice()
     }
