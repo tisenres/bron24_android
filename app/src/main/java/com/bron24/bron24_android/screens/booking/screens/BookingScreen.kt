@@ -45,7 +45,9 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -80,6 +82,8 @@ fun BookingScreen(
     val selectedDate by viewModel.selectedDate.collectAsState()
     val selectedSector by viewModel.selectedSector.collectAsState()
     val totalPrice by viewModel.totalPrice.collectAsState()
+
+    val selectedDateIndex by viewModel.selectedDateIndex.collectAsState()
 
     val availableTimeSlots by viewModel.availableTimeSlots.collectAsState()
 
@@ -128,7 +132,8 @@ fun BookingScreen(
                 onDateSelected = { timestamp -> viewModel.selectDate(timestamp) },
                 scrollState = scrollState,
                 onMonthClick = { viewModel.showDatePicker() },
-                onVisibleDatesChanged = {}
+                onVisibleDatesChanged = { dateItem -> viewModel.updateVisibleMonthYear(dateItem) },
+                selectedDateIndex = selectedDateIndex
             )
 
             AvailableTimesSection(
@@ -148,7 +153,7 @@ fun BookingScreen(
     if (showDatePicker) {
         val currentDate = Calendar.getInstance()
         val maxDate = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_YEAR, 29) // Max date is today + 29 days (30 days total)
+            add(Calendar.DAY_OF_YEAR, 29)
         }
 
         DatePickerDialog(
@@ -180,7 +185,7 @@ fun StadiumPartSection(
 ) {
 
     LaunchedEffect(Unit) {
-       Log.d("BookingScreen", "Sectors: $sectors")
+        Log.d("BookingScreen", "Sectors: $sectors")
     }
 
     Column(
@@ -254,18 +259,19 @@ fun DateSection(
     onDateSelected: (Long) -> Unit,
     onMonthClick: () -> Unit,
     onVisibleDatesChanged: (DateItem) -> Unit,
-    scrollState: ScrollState
+    scrollState: ScrollState,
+    selectedDateIndex: Int
 ) {
-    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        Log.d("BookingScreen", dates.toString())
-    }
-
-    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .padding(3.dp)
                 .clickable(onClick = onMonthClick),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -309,10 +315,12 @@ fun DateSection(
                 .fillMaxWidth()
                 .horizontalScroll(scrollState)
         ) {
-            dates.forEach { dateItem ->
+            dates.forEachIndexed { index, dateItem ->
                 DateItem(
                     dateItem = dateItem,
-                    onClick = { onDateSelected(dateItem.timestamp) },
+                    onClick = {
+                        onDateSelected(dateItem.timestamp)
+                    },
                     modifier = Modifier.onGloballyPositioned { coordinates ->
                         val isVisible = coordinates.boundsInRoot().let { bounds ->
                             bounds.left >= 0 && bounds.right <= coordinates.size.width
@@ -328,10 +336,20 @@ fun DateSection(
 
     LaunchedEffect(dates) {
         val selectedIndex = dates.indexOfFirst { it.isSelected }
+        Log.d("BookingScreen", selectedIndex.toString())
         if (selectedIndex != -1) {
-            scrollState.animateScrollTo(selectedIndex * (60 + 12) - 150)
+            scrollState.animateScrollTo(selectedIndex * 150)
         }
     }
+
+//    LaunchedEffect(selectedDateIndex) {
+//        if (selectedDateIndex != -1) {
+//            val scrollPosition = (selectedDateIndex * (60 + 12)).toFloat()
+//            val screenWidth = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() }
+//            val targetScrollPosition = scrollPosition - (screenWidth / 2) + (60 / 2)
+//            scrollState.animateScrollTo(targetScrollPosition.toInt())
+//        }
+//    }
 }
 
 @Composable
@@ -454,9 +472,14 @@ fun AvailableTimesSection(
             is BookingState.Loading -> {
                 LoadingScreen()
             }
+
             is BookingState.Error -> {
-                ToastManager.showToast("Error: ${(getAvailableTimesState).message}", ToastType.ERROR)
+                ToastManager.showToast(
+                    "Error: ${(getAvailableTimesState).message}",
+                    ToastType.ERROR
+                )
             }
+
             is BookingState.Success -> {
 
                 FlowRow(
@@ -473,9 +496,11 @@ fun AvailableTimesSection(
                 }
 
             }
+
             BookingState.Idle -> {
                 LoadingScreen()
             }
+
             BookingState.Cancelled -> {}
         }
     }
@@ -559,8 +584,50 @@ fun formatTimeSlot(startTime: Long, endTime: Long): String {
 @Preview(showBackground = true)
 @Composable
 private fun BookingScreenPreview() {
-//    BookingScreen(
-//        viewModel = hiltViewModel(),
-//        onOrderClick = {}
-//    )
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .clickable(onClick = { }),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "Date",
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 24.sp,
+                    color = Color(0xFF3C2E56),
+                    lineHeight = 28.sp,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.baseline_calendar_today_24),
+                contentDescription = "Calendar",
+                modifier = Modifier.size(16.dp),
+                colorFilter = ColorFilter.tint(Color(0xFF949494)),
+            )
+            Text(
+                "October 2024",
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color(0xFF949494),
+                    lineHeight = 20.sp,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(start = 7.dp)
+            )
+        }
+    }
 }

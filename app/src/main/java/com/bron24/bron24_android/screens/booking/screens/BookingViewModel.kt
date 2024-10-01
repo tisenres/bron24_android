@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
+import java.time.Month
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -168,12 +169,17 @@ class BookingViewModel @Inject constructor(
     }
 
     fun updateVisibleMonthYear(dateItem: DateItem) {
-        val localDate = LocalDate.ofInstant(Instant.ofEpochMilli(dateItem.timestamp), ZoneId.systemDefault())
+        val localDate = LocalDate.of(dateItem.year, getMonthNumber(dateItem.month), dateItem.day)
         val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
         _visibleMonthYear.value = localDate.format(formatter)
     }
 
-    fun formatPrice(price: Int): String {
+    private fun getMonthNumber(monthName: String): Int {
+        return Month.valueOf(monthName.uppercase()).value
+    }
+
+
+    private fun formatPrice(price: Int): String {
         return try {
             val floatPrice = price.toFloat()
             val intPrice = floatPrice.toInt()
