@@ -22,6 +22,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -62,19 +63,21 @@ class BookingViewModel @Inject constructor(
     private val selectedTimeSlots = mutableSetOf<TimeSlot>()
 
     fun selectDate(timestamp: Long) {
-        _selectedDate.value = timestamp
+        _selectedDate.value = roundToStartOfDay(timestamp)
         updateSelectedDate(timestamp)
+        Log.d("BookingViewModel", "Selected Date: ${_selectedDate.value}")
+        Log.d("BookingViewModel", "Selected Date Index: ${_selectedDateIndex.value}")
     }
 
     private fun updateSelectedDate(selectedTimestamp: Long) {
-        val updatedDates = _availableDates.value.mapIndexed { index, dateItem ->
-            val isSelected = dateItem.timestamp == selectedTimestamp
-            if (isSelected) {
-                _selectedDateIndex.value = index
-            }
+        val roundedTimestamp = roundToStartOfDay(selectedTimestamp)
+        val updatedDates = _availableDates.value.map { dateItem ->
+            val isSelected = roundToStartOfDay(dateItem.timestamp) == roundedTimestamp
             dateItem.copy(isSelected = isSelected)
         }
+
         _availableDates.value = updatedDates
+        _selectedDateIndex.value = updatedDates.indexOfFirst { it.isSelected }
     }
 
     fun selectSector(sector: Sector) {
@@ -112,27 +115,31 @@ class BookingViewModel @Inject constructor(
 
     fun generateAvailableDates() {
         val calendar = Calendar.getInstance()
-        val today = calendar.timeInMillis
+        val today = roundToStartOfDay(calendar.timeInMillis)
         val dateList = mutableListOf<DateItem>()
 
         for (i in 0 until 30) {
             val date = calendar.time
+            val roundedTimestamp = roundToStartOfDay(date.time)
 
             val dayOfWeek = SimpleDateFormat("EEEE", Locale.getDefault()).format(date)
             val month = SimpleDateFormat("MMMM", Locale.getDefault()).format(date)
             val year = SimpleDateFormat("yyyy", Locale.getDefault()).format(date).toInt()
             val day = SimpleDateFormat("d", Locale.getDefault()).format(date).toInt()
-            val timestamp = date.time
 
-            dateList.add(DateItem(day, dayOfWeek, month, year, isSelected = timestamp == _selectedDate.value, timestamp = timestamp))
+            dateList.add(DateItem(
+                day = day,
+                dayOfWeek = dayOfWeek,
+                month = month,
+                year = year,
+                isSelected = roundedTimestamp == today,
+                timestamp = roundedTimestamp
+            ))
 
             calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
 
         _availableDates.value = dateList
-        if (_selectedDate.value < today) {
-            selectDate(today)
-        }
     }
 
     fun selectTimeSlot(timeSlot: TimeSlot) {
@@ -181,7 +188,6 @@ class BookingViewModel @Inject constructor(
         return Month.valueOf(monthName.uppercase()).value
     }
 
-
     private fun formatPrice(price: Int): String {
         return try {
             val floatPrice = price.toFloat()
@@ -190,5 +196,15 @@ class BookingViewModel @Inject constructor(
         } catch (e: NumberFormatException) {
             "0" // Return "0" if parsing fails
         }
+    }
+
+    private fun roundToStartOfDay(timestamp: Long): Long {
+        val calendar = Calendar.getInstance(TimeZone.getDefault())
+        calendar.timeInMillis = timestamp
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
     }
 }

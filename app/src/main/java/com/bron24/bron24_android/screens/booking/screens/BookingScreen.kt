@@ -178,31 +178,6 @@ fun BookingScreen(
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
-
-//    if (showDatePicker) {
-//        val currentDate = Calendar.getInstance()
-//        val maxDate = Calendar.getInstance().apply {
-//            add(Calendar.DAY_OF_YEAR, 29)
-//        }
-//
-//        DatePickerDialog(
-//            context,
-//            { _, year, month, dayOfMonth ->
-//                currentDate.set(year, month, dayOfMonth)
-//                coroutineScope.launch {
-//                    viewModel.selectDate(currentDate.timeInMillis)
-//                }
-//            },
-//            currentDate.get(Calendar.YEAR),
-//            currentDate.get(Calendar.MONTH),
-//            currentDate.get(Calendar.DAY_OF_MONTH)
-//        ).apply {
-//            datePicker.minDate = System.currentTimeMillis() - 1000
-//            datePicker.maxDate = maxDate.timeInMillis
-//            setOnDismissListener { viewModel.onDatePickerShown() }
-//            show()
-//        }
-//    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -367,22 +342,31 @@ fun DateSection(
         }
     }
 
-    LaunchedEffect(dates) {
-        val selectedIndex = dates.indexOfFirst { it.isSelected }
-        Log.d("BookingScreen", selectedIndex.toString())
-        if (selectedIndex != -1) {
-            scrollState.animateScrollTo(selectedIndex * 150)
-        }
-    }
-
-//    LaunchedEffect(selectedDateIndex) {
-//        if (selectedDateIndex != -1) {
-//            val scrollPosition = (selectedDateIndex * (60 + 12)).toFloat()
-//            val screenWidth = with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() }
-//            val targetScrollPosition = scrollPosition - (screenWidth / 2) + (60 / 2)
-//            scrollState.animateScrollTo(targetScrollPosition.toInt())
+//    LaunchedEffect(dates) {
+//        val selectedIndex = dates.indexOfFirst { it.isSelected }
+//        Log.d("BookingScreen", selectedIndex.toString())
+//        if (selectedIndex != -1) {
+//            scrollState.animateScrollTo(selectedIndex * 150)
 //        }
 //    }
+
+    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+
+    LaunchedEffect(selectedDateIndex) {
+        if (selectedDateIndex != -1) {
+            val dateItemWidth = 60.dp
+            val dateItemSpacing = 12.dp
+            val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
+            val dateItemWidthPx = with(density) { dateItemWidth.toPx() }
+            val dateItemSpacingPx = with(density) { dateItemSpacing.toPx() }
+
+            val scrollPosition = selectedDateIndex * (dateItemWidthPx + dateItemSpacingPx)
+            val targetScrollPosition = (scrollPosition - (screenWidthPx / 2) + (dateItemWidthPx / 2)).toInt()
+
+            scrollState.animateScrollTo(targetScrollPosition)
+        }
+    }
 }
 
 @Composable
