@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking
+package com.bron24.bron24_android.screens.booking.screens
 
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.domain.usecases.booking.GetAvailableTimeSlotsUseCase

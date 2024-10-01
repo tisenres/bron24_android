@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking
+package com.bron24.bron24_android.screens.booking.screens
 
 import android.os.Build
 import android.util.Log
@@ -31,6 +31,9 @@ class BookingViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow(System.currentTimeMillis())
     val selectedDate: StateFlow<Long> = _selectedDate.asStateFlow()
 
+    private val _selectedDateIndex = MutableStateFlow(-1)
+    val selectedDateIndex: StateFlow<Int> = _selectedDateIndex.asStateFlow()
+
     private val _selectedSector = MutableStateFlow<Sector?>(null)
     val selectedSector: StateFlow<Sector?> = _selectedSector.asStateFlow()
 
@@ -49,7 +52,7 @@ class BookingViewModel @Inject constructor(
     private val _getAvailableTimesState = MutableStateFlow<BookingState>(BookingState.Idle)
     val getAvailableTimesState: StateFlow<BookingState> = _getAvailableTimesState.asStateFlow()
 
-    private val _totalPrice = MutableStateFlow("")
+    private val _totalPrice = MutableStateFlow("0")
     val totalPrice: StateFlow<String> = _totalPrice.asStateFlow()
 
     private val _pricePerHour = MutableStateFlow(0)
@@ -59,6 +62,18 @@ class BookingViewModel @Inject constructor(
 
     fun selectDate(timestamp: Long) {
         _selectedDate.value = timestamp
+        updateSelectedDate(timestamp)
+    }
+
+    private fun updateSelectedDate(selectedTimestamp: Long) {
+        val updatedDates = _availableDates.value.mapIndexed { index, dateItem ->
+            val isSelected = dateItem.timestamp == selectedTimestamp
+            if (isSelected) {
+                _selectedDateIndex.value = index
+            }
+            dateItem.copy(isSelected = isSelected)
+        }
+        _availableDates.value = updatedDates
     }
 
     fun selectSector(sector: Sector) {
@@ -96,11 +111,10 @@ class BookingViewModel @Inject constructor(
 
     fun generateAvailableDates() {
         val calendar = Calendar.getInstance()
+        val today = calendar.timeInMillis
         val dateList = mutableListOf<DateItem>()
 
-        // Generate dates for the next 30 days
         for (i in 0 until 30) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1)
             val date = calendar.time
 
             val dayOfWeek = SimpleDateFormat("EEEE", Locale.getDefault()).format(date)
@@ -109,10 +123,15 @@ class BookingViewModel @Inject constructor(
             val day = SimpleDateFormat("d", Locale.getDefault()).format(date).toInt()
             val timestamp = date.time
 
-            dateList.add(DateItem(day, dayOfWeek, month, year, isSelected = false, timestamp = timestamp))
+            dateList.add(DateItem(day, dayOfWeek, month, year, isSelected = timestamp == _selectedDate.value, timestamp = timestamp))
+
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
 
         _availableDates.value = dateList
+        if (_selectedDate.value < today) {
+            selectDate(today)
+        }
     }
 
     fun selectTimeSlot(timeSlot: TimeSlot) {

@@ -59,8 +59,9 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.DateItem
 import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.booking.states.BookingState
-import com.bron24.bron24_android.screens.booking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -104,7 +105,6 @@ fun BookingScreen(
 
     LaunchedEffect(key1 = selectedDate, key2 = selectedSector) {
         viewModel.getAvailableTimes(venueId)
-        Log.d("BookingScreen", "State after fetching: $getAvailableTimesState")
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -133,7 +133,8 @@ fun BookingScreen(
 
             AvailableTimesSection(
                 timeSlots = availableTimeSlots,
-                onTimeSelected = viewModel::selectTimeSlot
+                onTimeSelected = viewModel::selectTimeSlot,
+                getAvailableTimesState = getAvailableTimesState
             )
         }
 
@@ -144,25 +145,10 @@ fun BookingScreen(
         )
     }
 
-    when (getAvailableTimesState) {
-        is BookingState.Loading -> {
-            CircularProgressIndicator(modifier = Modifier.fillMaxSize())
-        }
-        is BookingState.Error -> {
-            Text("Error: ${(getAvailableTimesState as BookingState.Error).message}")
-        }
-        is BookingState.Success -> {
-            // Handle success (e.g., show success message or perform navigation)
-        }
-        BookingState.Idle -> {}
-        BookingState.Cancelled -> {}
-    }
-
-    // DatePicker dialog handling
     if (showDatePicker) {
         val currentDate = Calendar.getInstance()
         val maxDate = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+            add(Calendar.DAY_OF_YEAR, 29) // Max date is today + 29 days (30 days total)
         }
 
         DatePickerDialog(
@@ -177,6 +163,7 @@ fun BookingScreen(
             currentDate.get(Calendar.MONTH),
             currentDate.get(Calendar.DAY_OF_MONTH)
         ).apply {
+            datePicker.minDate = System.currentTimeMillis() - 1000
             datePicker.maxDate = maxDate.timeInMillis
             setOnDismissListener { viewModel.onDatePickerShown() }
             show()
@@ -364,7 +351,7 @@ fun DateItem(dateItem: DateItem, onClick: () -> Unit, modifier: Modifier) {
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Text(
-            text = dateItem.dayOfWeek,
+            text = dateItem.dayOfWeek.slice(0..2),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -443,8 +430,10 @@ fun PricingSection(
 @Composable
 fun AvailableTimesSection(
     timeSlots: List<TimeSlot>,
-    onTimeSelected: (TimeSlot) -> Unit
+    onTimeSelected: (TimeSlot) -> Unit,
+    getAvailableTimesState: BookingState
 ) {
+
     Column(
         modifier = Modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -461,17 +450,33 @@ fun AvailableTimesSection(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        FlowRow(
-            maxItemsInEachRow = 3,
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            timeSlots.forEach { timeSlot ->
-                TimeSlotItem(
-                    timeSlot = timeSlot,
-                    onTimeSelected = { onTimeSelected(timeSlot) }
-                )
+        when (getAvailableTimesState) {
+            is BookingState.Loading -> {
+                LoadingScreen()
             }
+            is BookingState.Error -> {
+                ToastManager.showToast("Error: ${(getAvailableTimesState).message}", ToastType.ERROR)
+            }
+            is BookingState.Success -> {
+
+                FlowRow(
+                    maxItemsInEachRow = 3,
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    timeSlots.forEach { timeSlot ->
+                        TimeSlotItem(
+                            timeSlot = timeSlot,
+                            onTimeSelected = { onTimeSelected(timeSlot) }
+                        )
+                    }
+                }
+
+            }
+            BookingState.Idle -> {
+                LoadingScreen()
+            }
+            BookingState.Cancelled -> {}
         }
     }
 }
@@ -505,7 +510,6 @@ fun TimeSlotItem(
             .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Assuming timeSlot.startTime and timeSlot.endTime are strings.
         val startTimeInMillis = parseTimeString(timeSlot.startTime)
         val endTimeInMillis = parseTimeString(timeSlot.endTime)
 
@@ -518,6 +522,20 @@ fun TimeSlotItem(
                 color = textColor,
                 lineHeight = 16.sp
             ),
+        )
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        CircularProgressIndicator(
+            color = Color(0xFF32B768),
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }

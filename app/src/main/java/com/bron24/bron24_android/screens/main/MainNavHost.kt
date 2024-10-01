@@ -37,7 +37,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.helper.util.presentation.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.booking.screens.BookingScreen
-import com.bron24.bron24_android.screens.booking.BookingViewModel
+import com.bron24.bron24_android.screens.booking.screens.BookingViewModel
+import com.bron24.bron24_android.screens.booking.screens.BookingConfirmationScreen
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.map.YandexMapScreen
@@ -207,9 +208,17 @@ fun MainNavHost(
                     venueId = venueId,
                     sectors = currentSectors,
                     pricePerHour = currentPricePerHour,
-                    onDismiss = { showBookingBottomSheet = false }
+                    onDismiss = { showBookingBottomSheet = false },
+                    navController = navController
                 )
             }
+        }
+
+        composable(Screen.BookingConfirmationScreen.route) {
+            onDestinationChanged(Screen.BookingConfirmationScreen.route)
+            BookingConfirmationScreen(
+                viewModel = hiltViewModel()
+            )
         }
     }
 }
@@ -221,7 +230,8 @@ fun BookingBottomSheet(
     venueId: Int,
     sectors: List<String>,
     pricePerHour: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    navController: NavHostController
 ) {
     val viewModel: BookingViewModel = hiltViewModel()
     val sheetState = rememberModalBottomSheetState()
@@ -237,8 +247,7 @@ fun BookingBottomSheet(
             pricePerHour = pricePerHour,
             viewModel = viewModel,
             onOrderClick = {
-                // Handle order confirmation
-                onDismiss()
+                navController.navigate(Screen.BookingConfirmationScreen.route)
             },
         )
     }
