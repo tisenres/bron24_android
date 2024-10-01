@@ -98,6 +98,34 @@ fun BookingScreen(
         Sector.valueOf(sectorString)
     }
 
+    LaunchedEffect(showDatePicker) {
+        if (showDatePicker) {
+            val currentDate = Calendar.getInstance()
+            val maxDate = Calendar.getInstance().apply {
+                add(Calendar.DAY_OF_YEAR, 29)
+            }
+
+            val datePickerDialog = DatePickerDialog(
+                context,
+                { _, year, month, dayOfMonth ->
+                    currentDate.set(year, month, dayOfMonth)
+                    viewModel.selectDate(currentDate.timeInMillis)
+                    viewModel.onDatePickerDismissed()
+                },
+                currentDate.get(Calendar.YEAR),
+                currentDate.get(Calendar.MONTH),
+                currentDate.get(Calendar.DAY_OF_MONTH)
+            ).apply {
+                datePicker.minDate = System.currentTimeMillis() - 1000
+                datePicker.maxDate = maxDate.timeInMillis
+                setOnDismissListener { viewModel.onDatePickerDismissed() }
+            }
+
+            datePickerDialog.show()
+            Log.d("BookingScreen", "DatePicker shown")
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.selectDate(System.currentTimeMillis())
         if (sectorEnums.isNotEmpty()) {
@@ -131,7 +159,8 @@ fun BookingScreen(
                 visibleMonthYear = viewModel.visibleMonthYear.collectAsState().value,
                 onDateSelected = { timestamp -> viewModel.selectDate(timestamp) },
                 scrollState = scrollState,
-                onMonthClick = { viewModel.showDatePicker() },
+                onMonthClick = {
+                    viewModel.showDatePicker() },
                 onVisibleDatesChanged = { dateItem -> viewModel.updateVisibleMonthYear(dateItem) },
                 selectedDateIndex = selectedDateIndex
             )
@@ -150,30 +179,30 @@ fun BookingScreen(
         )
     }
 
-    if (showDatePicker) {
-        val currentDate = Calendar.getInstance()
-        val maxDate = Calendar.getInstance().apply {
-            add(Calendar.DAY_OF_YEAR, 29)
-        }
-
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                currentDate.set(year, month, dayOfMonth)
-                coroutineScope.launch {
-                    viewModel.selectDate(currentDate.timeInMillis)
-                }
-            },
-            currentDate.get(Calendar.YEAR),
-            currentDate.get(Calendar.MONTH),
-            currentDate.get(Calendar.DAY_OF_MONTH)
-        ).apply {
-            datePicker.minDate = System.currentTimeMillis() - 1000
-            datePicker.maxDate = maxDate.timeInMillis
-            setOnDismissListener { viewModel.onDatePickerShown() }
-            show()
-        }
-    }
+//    if (showDatePicker) {
+//        val currentDate = Calendar.getInstance()
+//        val maxDate = Calendar.getInstance().apply {
+//            add(Calendar.DAY_OF_YEAR, 29)
+//        }
+//
+//        DatePickerDialog(
+//            context,
+//            { _, year, month, dayOfMonth ->
+//                currentDate.set(year, month, dayOfMonth)
+//                coroutineScope.launch {
+//                    viewModel.selectDate(currentDate.timeInMillis)
+//                }
+//            },
+//            currentDate.get(Calendar.YEAR),
+//            currentDate.get(Calendar.MONTH),
+//            currentDate.get(Calendar.DAY_OF_MONTH)
+//        ).apply {
+//            datePicker.minDate = System.currentTimeMillis() - 1000
+//            datePicker.maxDate = maxDate.timeInMillis
+//            setOnDismissListener { viewModel.onDatePickerShown() }
+//            show()
+//        }
+//    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -272,7 +301,11 @@ fun DateSection(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
                 .padding(3.dp)
-                .clickable(onClick = onMonthClick),
+                .clickable(
+                    onClick = {
+                        Log.d("DateSection", "Month clicked")
+                        onMonthClick()
+                    }),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

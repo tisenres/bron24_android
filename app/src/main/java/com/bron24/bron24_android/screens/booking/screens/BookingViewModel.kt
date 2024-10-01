@@ -161,12 +161,15 @@ class BookingViewModel @Inject constructor(
     }
 
     fun showDatePicker() {
+        Log.d("BookingViewModel", "showDatePicker called")
         _showDatePicker.value = true
     }
 
-    fun onDatePickerShown() {
+    fun onDatePickerDismissed() {
+        Log.d("BookingViewModel", "onDatePickerDismissed called")
         _showDatePicker.value = false
     }
+
 
     fun updateVisibleMonthYear(dateItem: DateItem) {
         val localDate = LocalDate.of(dateItem.year, getMonthNumber(dateItem.month), dateItem.day)
