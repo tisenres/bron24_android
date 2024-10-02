@@ -33,7 +33,7 @@ class BookingConfirmationViewModel @Inject constructor(
     ) {
         _isLoading.value = true
         val formattedTimeSlots: List<String> = timeSlots.map { timeSlot ->
-            "${formatTime(timeSlot.startTime)} - ${formatTime(timeSlot.endTime)}"
+            "${formatTime(timeSlot.startTime)}-${formatTime(timeSlot.endTime)}"
         }
         try {
             val bookingDetails =

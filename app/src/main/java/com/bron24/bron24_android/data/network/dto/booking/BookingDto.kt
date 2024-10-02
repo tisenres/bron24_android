@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class RequestBookingDto(
     @SerializedName("user") val user: String,
     @SerializedName("venue_id") val venueId: Int,
-    @SerializedName("bookingDate") val bookingDate: String,
+    @SerializedName("booking_date") val bookingDate: String,
     @SerializedName("time_slot") val timeSlot: List<String>,
     @SerializedName("sector") val sector: String,
     @SerializedName("status") val status: String = "INPROCESS",

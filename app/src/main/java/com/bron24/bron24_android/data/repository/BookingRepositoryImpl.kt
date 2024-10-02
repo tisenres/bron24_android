@@ -30,7 +30,7 @@ class BookingRepositoryImpl @Inject constructor(
         timeSlots: List<String>
     ): Booking {
         val request = RequestBookingDto(
-            user = "998000000000",
+            user = "998901881625",
             venueId = venueId,
             bookingDate = date,
             sector = sector,
