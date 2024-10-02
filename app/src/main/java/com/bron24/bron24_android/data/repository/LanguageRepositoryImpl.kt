@@ -13,7 +13,7 @@ class LanguageRepositoryImpl @Inject constructor(
         Language("uz", "O`zbek"),
         Language("ru", "Russian"),
         Language("en", "English")
-        )
+    )
 
     override fun getAvailableLanguages(): List<Language> {
         return availableLanguages

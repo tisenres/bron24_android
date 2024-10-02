@@ -30,7 +30,6 @@ class VenueRepositoryImpl @Inject constructor(
                 minPrice, maxPrice, infrastructure, district
             )?.data?.map { it.toDomainModel() } ?: emptyList()
         } catch (e: Exception) {
-            // Log the error if needed
             emptyList()
         }
     }
@@ -39,7 +38,6 @@ class VenueRepositoryImpl @Inject constructor(
         try {
             apiService.getVenuesCoordinates()?.map { it.toDomainModel() } ?: emptyList()
         } catch (e: Exception) {
-            // Log the error if needed
             emptyList()
         }
     }
@@ -48,7 +46,6 @@ class VenueRepositoryImpl @Inject constructor(
         try {
             apiService.getVenuePictures(venueId)?.map { it.url } ?: emptyList()
         } catch (e: Exception) {
-            // Log the error if needed
             emptyList()
         }
     }
@@ -57,7 +54,6 @@ class VenueRepositoryImpl @Inject constructor(
         try {
             apiService.getVenueDetails(venueId, latitude, longitude)?.data?.toDomainModel()
         } catch (e: Exception) {
-            // Log the error if needed
             null
         }
     }

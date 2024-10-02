@@ -17,4 +17,10 @@ interface BookingApiService {
         @Body request: RequestBookingDto,
         @Query("book") book: Boolean = false
     ): ResponseBookingDto
+
+    @POST("api/v1/booking/book/")
+    suspend fun finishBooking(
+        @Body request: RequestBookingDto,
+        @Query("book") book: Boolean = true
+    ): ResponseBookingDto
 }

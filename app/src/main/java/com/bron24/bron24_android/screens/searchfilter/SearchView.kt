@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +33,14 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 
 @Composable
-fun SearchView(modifier: Modifier = Modifier, navController: NavController) {
+fun SearchView(
+    viewModel: SearchViewModel,
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
+
+    val firstName by viewModel.firstName.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -43,7 +52,7 @@ fun SearchView(modifier: Modifier = Modifier, navController: NavController) {
             .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        ProfileRow()
+        ProfileRow(firstName ?: "John")
         SearchRow(onFilterClick = {
             navController.navigate(Screen.Filter.route)
         })
@@ -51,7 +60,7 @@ fun SearchView(modifier: Modifier = Modifier, navController: NavController) {
 }
 
 @Composable
-fun ProfileRow() {
+fun ProfileRow(firstName: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -69,7 +78,7 @@ fun ProfileRow() {
             )
             Spacer(modifier = Modifier.width(15.dp))
             Column {
-                val helloText = stringResource(id = R.string.hello) + ", John!"
+                val helloText = stringResource(id = R.string.hello) + ", $firstName!"
                 Text(
                     text = helloText,
                     style = TextStyle(

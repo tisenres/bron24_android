@@ -17,4 +17,12 @@ class PreferencesRepositoryImpl @Inject constructor(
     override fun setOnboardingCompleted(screen: OnboardingScreen, completed: Boolean) {
         appPreference.setOnboardingCompleted(screen.screenName, completed)
     }
+
+    override fun saveUserData(phoneNumber: String, firstName: String, lastName: String) {
+        appPreference.saveUserData(phoneNumber, firstName, lastName)
+    }
+
+    override fun getUserPhoneNumber(): String {
+        return appPreference.getUserPhoneNumber()
+    }
 }

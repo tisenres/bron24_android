@@ -2,8 +2,8 @@ package com.bron24.bron24_android.data.local.preference
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.bron24.bron24_android.domain.entity.user.User
 
-//private const val IS_ONBOARDING_COMPLETED = "is_onboarding_completed"
 private const val SELECTED_LANGUAGE = "selected_language"
 private const val TOKEN_KEY = "auth_token"
 private const val REFRESH_TOKEN_KEY = "refresh_token"
@@ -49,5 +49,29 @@ class AppPreference(context: Context) {
             .remove(TOKEN_KEY)
             .remove(REFRESH_TOKEN_KEY)
             .apply()
+    }
+
+    fun saveUserData(phoneNumber: String, firstName: String, lastName: String) {
+        preferences.edit()
+            .putString("phone_number", phoneNumber)
+            .putString("first_name", firstName)
+            .putString("last_name", lastName)
+            .apply()
+    }
+
+    fun getUserPhoneNumber(): String {
+        preferences.getString("phone_number", "")?.let {
+            return it
+        } ?: run {
+            return ""
+        }
+    }
+
+    fun getPersonalUserData(): User {
+        return User(
+            preferences.getString("first_name", "") ?: "",
+            preferences.getString("last_name", "") ?: "",
+            preferences.getString("phone_number", "") ?: ""
+        )
     }
 }

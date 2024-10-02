@@ -24,13 +24,14 @@ class BookingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createBooking(
+        phoneNumber: String,
         venueId: Int,
         date: String,
         sector: String,
         timeSlots: List<String>
     ): Booking {
         val request = RequestBookingDto(
-            user = "998901881625",
+            user = phoneNumber,
             venueId = venueId,
             bookingDate = date,
             sector = sector,
