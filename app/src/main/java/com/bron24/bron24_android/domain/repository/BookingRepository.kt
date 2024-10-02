@@ -5,5 +5,5 @@ import com.bron24.bron24_android.domain.entity.booking.Booking
 
 interface BookingRepository {
     suspend fun getAvailableTimes(venueId: Int, date: String, sector: String): AvailableTimesResponse
-    suspend fun createBooking(phoneNumber: String, venueId: Int, date: String, sector: String, timeSlots: List<String>): Booking
+    suspend fun createBooking(booking: Booking): Booking
 }

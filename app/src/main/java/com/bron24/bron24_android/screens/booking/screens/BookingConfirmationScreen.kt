@@ -1,7 +1,6 @@
 package com.bron24.bron24_android.screens.booking.screens
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -89,7 +88,7 @@ fun BookingConfirmationScreen(
                     Spacer(modifier = Modifier.height(15.dp))
                     PromoCodeButton { showPromoCode = true }
                     Spacer(modifier = Modifier.height(15.dp))
-                    TotalAmount(it.cost)
+//                    TotalAmount(it.cost)
                     Spacer(modifier = Modifier.weight(1f))
                     ConfirmButton(
                         isEnabled = true,
@@ -156,7 +155,7 @@ fun BookingInfoCard(booking: Booking) {
     ) {
         Column(modifier = Modifier.padding(vertical = 15.dp)) {
             VenueInfo(
-                booking.userName, "TEST",
+                booking.firstName ?: "", "TEST",
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             Divider(modifier = Modifier.padding(vertical = 15.dp))

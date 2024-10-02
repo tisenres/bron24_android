@@ -2,6 +2,7 @@ package com.bron24.bron24_android.data.local.preference
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.user.User
 
 private const val SELECTED_LANGUAGE = "selected_language"
@@ -73,5 +74,12 @@ class AppPreference(context: Context) {
             preferences.getString("last_name", "") ?: "",
             preferences.getString("phone_number", "") ?: ""
         )
+    }
+
+    fun saveBooking(booking: Booking) {
+        preferences
+            .edit()
+            .putString("booking", booking.toString())
+            .apply()
     }
 }

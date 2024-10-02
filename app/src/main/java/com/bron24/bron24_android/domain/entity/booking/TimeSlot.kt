@@ -4,5 +4,6 @@ data class TimeSlot(
     val startTime: String,
     val endTime: String,
     val isAvailable: Boolean = true,
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
+    val hours: Int? = 1
 )
