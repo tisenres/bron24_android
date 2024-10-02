@@ -507,7 +507,7 @@ fun AvailableTimesSection(
                 FlowRow(
                     maxItemsInEachRow = 3,
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     timeSlots.forEach { timeSlot ->
                         TimeSlotItem(

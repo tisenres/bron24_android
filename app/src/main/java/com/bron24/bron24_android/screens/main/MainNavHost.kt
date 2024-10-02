@@ -65,7 +65,8 @@ fun MainAppScaffold() {
             navController = nestedNavController,
             modifier = Modifier.padding(paddingValues),
             onDestinationChanged = { destination ->
-                shouldShowBottomBar.value = destination != Screen.VenueDetails.route
+                shouldShowBottomBar.value = destination != Screen.VenueDetails.route &&
+                        destination != Screen.BookingConfirmationScreen.route
             }
         )
     }

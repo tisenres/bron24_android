@@ -57,14 +57,14 @@ fun BookingConfirmationScreen(
     timeSlots: List<TimeSlot>
 ) {
 
-//    var bookingInfo by remember { mutableStateOf(Booking()) }
-
-//    LaunchedEffect(venueId, date, sector, timeSlots) {
-//        bookingInfo = viewModel.getBookingInfo(venueId, date, sector, timeSlots)
-//    }
+    var bookingInfo by remember { mutableStateOf(Booking()) }
 
     LaunchedEffect(Unit) {
         Log.d("BookingConfirmationScreen", "viewModel - $viewModel, venueId - $venueId, date - $date, sector - $sector, timeSlots - $timeSlots")
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getBookingInfo(venueId, date, sector, timeSlots)
     }
 
     var showPaymentMethods by remember { mutableStateOf(false) }
@@ -83,13 +83,13 @@ fun BookingConfirmationScreen(
                 )
         ) {
             TopAppBar()
-//            BookingInfoCard(bookingInfo)
+            BookingInfoCard(bookingInfo)
             Spacer(modifier = Modifier.height(15.dp))
             PaymentMethodButton { showPaymentMethods = true }
             Spacer(modifier = Modifier.height(15.dp))
             PromoCodeButton { showPromoCode = true }
             Spacer(modifier = Modifier.height(15.dp))
-//            TotalAmount(bookingInfo.totalPrice)
+            TotalAmount(bookingInfo.totalPrice)
             Spacer(modifier = Modifier.weight(1f))
             ConfirmButton(
                 true,
@@ -151,7 +151,7 @@ fun BookingInfoCard(booking: Booking) {
     ) {
         Column(modifier = Modifier.padding(vertical = 15.dp)) {
             VenueInfo(
-                booking.venueName, booking.address.toString(),
+                booking.userName, "TEST",
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             Divider(modifier = Modifier.padding(vertical = 15.dp))
