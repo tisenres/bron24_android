@@ -1,6 +1,8 @@
 package com.bron24.bron24_android.screens.booking.screens
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -44,10 +46,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
-import com.bron24.bron24_android.helper.extension.DateTimeFormatter.formatDate
-import com.bron24.bron24_android.helper.extension.DateTimeFormatter.formatTimeRange
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun BookingConfirmationScreen(
     viewModel: BookingConfirmationViewModel,
@@ -56,46 +57,50 @@ fun BookingConfirmationScreen(
     sector: String,
     timeSlots: List<TimeSlot>
 ) {
+    var bookingInfo by remember { mutableStateOf(null) }
+    var showPaymentMethods by remember { mutableStateOf(false) }
+    var showPromoCode by remember { mutableStateOf(false) }
 
-    var bookingInfo by remember { mutableStateOf(Booking()) }
+    val booking by viewModel.booking.collectAsState() // Collecting booking state from ViewModel
+    val isLoading by remember { viewModel.isLoading } // Observing loading state
 
-    LaunchedEffect(Unit) {
-        Log.d("BookingConfirmationScreen", "viewModel - $viewModel, venueId - $venueId, date - $date, sector - $sector, timeSlots - $timeSlots")
-    }
-
+    // Fetch booking information when screen is launched
     LaunchedEffect(Unit) {
         viewModel.getBookingInfo(venueId, date, sector, timeSlots)
     }
 
-    var showPaymentMethods by remember { mutableStateOf(false) }
-    var showPromoCode by remember { mutableStateOf(false) }
-
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(
-                    start = 24.dp,
-                    end = 24.dp,
-                    bottom = 24.dp,
-                    top = 10.dp
-                )
-        ) {
-            TopAppBar()
-            BookingInfoCard(bookingInfo)
-            Spacer(modifier = Modifier.height(15.dp))
-            PaymentMethodButton { showPaymentMethods = true }
-            Spacer(modifier = Modifier.height(15.dp))
-            PromoCodeButton { showPromoCode = true }
-            Spacer(modifier = Modifier.height(15.dp))
-            TotalAmount(bookingInfo.totalPrice)
-            Spacer(modifier = Modifier.weight(1f))
-            ConfirmButton(
-                true,
-                onClick = { /* Handle confirm button click */ },
-                title = stringResource(id = R.string.confirm)
-            )
+        if (isLoading) {
+            // Display a loading indicator while fetching booking info
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(start = 24.dp, end = 24.dp, bottom = 24.dp, top = 10.dp)
+            ) {
+                TopAppBar()
+                booking?.let {
+                    // Update UI with fetched booking info
+                    BookingInfoCard(it)
+                    Spacer(modifier = Modifier.height(15.dp))
+                    PaymentMethodButton { showPaymentMethods = true }
+                    Spacer(modifier = Modifier.height(15.dp))
+                    PromoCodeButton { showPromoCode = true }
+                    Spacer(modifier = Modifier.height(15.dp))
+                    TotalAmount(it.cost)
+                    Spacer(modifier = Modifier.weight(1f))
+                    ConfirmButton(
+                        isEnabled = true,
+                        onClick = { /* Handle confirm button click */ },
+                        title = stringResource(id = R.string.confirm)
+                    )
+                } ?: run {
+                    // Handle case where booking is null (e.g., error or no data)
+                    Text("Failed to load booking information", color = Color.Red)
+                }
+            }
         }
 
         if (showPaymentMethods) {
@@ -107,7 +112,7 @@ fun BookingConfirmationScreen(
                 onDismiss = { showPromoCode = false },
                 onApply = { code ->
                     // Handle promo code application
-//                    viewModel.applyPromoCode(code)
+                    // viewModel.applyPromoCode(code)
                     showPromoCode = false
                 }
             )
@@ -156,19 +161,19 @@ fun BookingInfoCard(booking: Booking) {
             )
             Divider(modifier = Modifier.padding(vertical = 15.dp))
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                BookingDetail("DATE", formatDate(booking.date))
+//                BookingDetail("DATE", formatDate(booking.date))
                 Spacer(modifier = Modifier.height(15.dp))
-                BookingDetail("TIME", formatTimeRange(booking.startTime, booking.endTime))
+//                BookingDetail("TIME", formatTimeRange(booking.startTime, booking.endTime))
                 Spacer(modifier = Modifier.height(15.dp))
-                BookingDetail("STADIUM PART", booking.stadiumPart)
+//                BookingDetail("STADIUM PART", booking.stadiumPart)
             }
             Divider(modifier = Modifier.padding(vertical = 15.dp))
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                BookingDetail("FULL NAME", booking.fullName)
+//                BookingDetail("FULL NAME", booking.fullName)
                 Spacer(modifier = Modifier.height(15.dp))
-                BookingDetail("FIRST NUMBER", booking.firstNumber)
+//                BookingDetail("FIRST NUMBER", booking.firstNumber)
                 Spacer(modifier = Modifier.height(15.dp))
-                booking.secondNumber?.let { BookingDetail("SECOND NUMBER", it) }
+//                booking.secondNumber?.let { BookingDetail("SECOND NUMBER", it) }
             }
 
         }
@@ -418,7 +423,7 @@ fun PromoCodeButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun TotalAmount(total: String) {
+fun TotalAmount(total: Double) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -435,7 +440,7 @@ fun TotalAmount(total: String) {
             modifier = Modifier.align(Alignment.CenterVertically)
         )
         Text(
-            total,
+            total.toString(),
             fontSize = 18.sp,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,

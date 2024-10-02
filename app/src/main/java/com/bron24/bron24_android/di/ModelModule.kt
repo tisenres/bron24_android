@@ -3,11 +3,13 @@ package com.bron24.bron24_android.di
 import com.bron24.bron24_android.domain.usecases.auth.AuthenticateUserUseCase
 import com.bron24.bron24_android.domain.usecases.auth.RequestOTPUseCase
 import com.bron24.bron24_android.domain.usecases.auth.VerifyOTPUseCase
+import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
 import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
 import com.bron24.bron24_android.domain.usecases.venue.*
 import com.bron24.bron24_android.helper.util.LocaleManager
 import com.bron24.bron24_android.screens.auth.AuthModel
+import com.bron24.bron24_android.screens.booking.screens.BookingConfirmationModel
 import com.bron24.bron24_android.screens.language.LanguageModel
 import com.bron24.bron24_android.screens.location.LocationModel
 import com.bron24.bron24_android.screens.map.VenueMapModel
@@ -85,5 +87,13 @@ object ModelModule {
             verifyOTPUseCase,
             authenticateUserUseCase
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideBookingConfirmationModel(
+        createBookingUseCase: CreateBookingUseCase
+    ): BookingConfirmationModel {
+        return BookingConfirmationModel(createBookingUseCase)
     }
 }
