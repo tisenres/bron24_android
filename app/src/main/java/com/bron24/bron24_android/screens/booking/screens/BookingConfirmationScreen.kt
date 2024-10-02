@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.booking.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,13 +43,30 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.Booking
+import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter.formatDate
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter.formatTimeRange
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
-fun BookingConfirmationScreen(viewModel: BookingViewModel) {
-//    val bookingInfo by viewModel.booking.collectAsState()
+fun BookingConfirmationScreen(
+    viewModel: BookingConfirmationViewModel,
+    venueId: Int,
+    date: String,
+    sector: String,
+    timeSlots: List<TimeSlot>
+) {
+
+//    var bookingInfo by remember { mutableStateOf(Booking()) }
+
+//    LaunchedEffect(venueId, date, sector, timeSlots) {
+//        bookingInfo = viewModel.getBookingInfo(venueId, date, sector, timeSlots)
+//    }
+
+    LaunchedEffect(Unit) {
+        Log.d("BookingConfirmationScreen", "viewModel - $viewModel, venueId - $venueId, date - $date, sector - $sector, timeSlots - $timeSlots")
+    }
+
     var showPaymentMethods by remember { mutableStateOf(false) }
     var showPromoCode by remember { mutableStateOf(false) }
 

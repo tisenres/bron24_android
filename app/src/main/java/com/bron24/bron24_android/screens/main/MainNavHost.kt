@@ -35,6 +35,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.presentation.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.booking.screens.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.BookingViewModel
@@ -45,6 +46,7 @@ import com.bron24.bron24_android.screens.map.YandexMapScreen
 import com.bron24.bron24_android.screens.searchfilter.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
+import com.google.gson.Gson
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
@@ -214,10 +216,31 @@ fun MainNavHost(
             }
         }
 
-        composable(Screen.BookingConfirmationScreen.route) {
+        composable(
+            route = Screen.BookingConfirmationScreen.route,
+            arguments = listOf(
+                navArgument("venueId") { type = NavType.IntType },
+                navArgument("date") { type = NavType.StringType },
+                navArgument("sector") { type = NavType.StringType },
+                navArgument("timeSlots") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
             onDestinationChanged(Screen.BookingConfirmationScreen.route)
+
+            val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            val sector = backStackEntry.arguments?.getString("sector") ?: ""
+
+            // Retrieve and parse the timeSlots JSON string
+            val timeSlotsJson = backStackEntry.arguments?.getString("timeSlots") ?: ""
+            val timeSlots = Gson().fromJson(timeSlotsJson, Array<TimeSlot>::class.java).toList()
+
             BookingConfirmationScreen(
-                viewModel = hiltViewModel()
+                viewModel = hiltViewModel(),
+                venueId = venueId,
+                date = date,
+                sector = sector,
+                timeSlots = timeSlots
             )
         }
     }
@@ -246,8 +269,11 @@ fun BookingBottomSheet(
             sectors = sectors,
             pricePerHour = pricePerHour,
             viewModel = viewModel,
-            onOrderClick = {
-                navController.navigate(Screen.BookingConfirmationScreen.route)
+            onOrderClick = { venueId, date, sector, timeSlots ->
+                val timeSlotsJson = Gson().toJson(timeSlots)
+                navController.navigate("bookingConfirmationScreen?venueId=$venueId&date=$date&sector=$sector&timeSlots=$timeSlotsJson")
+
+//                navController.navigate("bookingConfirmationScreen?venueId=$venueId&date=$date&sector=$sector&timeSlots=$timeSlots")
             },
         )
     }

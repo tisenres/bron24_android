@@ -60,7 +60,7 @@ class BookingViewModel @Inject constructor(
     private val _pricePerHour = MutableStateFlow(0)
     val pricePerHour: StateFlow<Int> = _pricePerHour.asStateFlow()
 
-    private val selectedTimeSlots = mutableSetOf<TimeSlot>()
+    val selectedTimeSlots = mutableSetOf<TimeSlot>()
 
     fun selectDate(timestamp: Long) {
         _selectedDate.value = roundToStartOfDay(timestamp)
@@ -158,6 +158,7 @@ class BookingViewModel @Inject constructor(
         }
 
         _availableTimeSlots.value = updatedTimeSlots
+        Log.d("BookingViewModel", selectedTimeSlots.toString())
         calculateTotalPrice()
     }
 
@@ -176,7 +177,6 @@ class BookingViewModel @Inject constructor(
         Log.d("BookingViewModel", "onDatePickerDismissed called")
         _showDatePicker.value = false
     }
-
 
     fun updateVisibleMonthYear(dateItem: DateItem) {
         val localDate = LocalDate.of(dateItem.year, getMonthNumber(dateItem.month), dateItem.day)

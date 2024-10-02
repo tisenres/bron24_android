@@ -65,8 +65,10 @@ import com.bron24.bron24_android.helper.util.presentation.components.toast.Toast
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
@@ -77,8 +79,9 @@ fun BookingScreen(
     venueId: Int,
     sectors: List<String>,
     pricePerHour: String,
-    onOrderClick: () -> Unit
+    onOrderClick: (Int, String, String, List<TimeSlot>) -> Unit
 ) {
+
     val selectedDate by viewModel.selectedDate.collectAsState()
     val selectedSector by viewModel.selectedSector.collectAsState()
     val totalPrice by viewModel.totalPrice.collectAsState()
@@ -88,7 +91,6 @@ fun BookingScreen(
     val availableTimeSlots by viewModel.availableTimeSlots.collectAsState()
 
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     val getAvailableTimesState by viewModel.getAvailableTimesState.collectAsState()
 
@@ -160,7 +162,8 @@ fun BookingScreen(
                 onDateSelected = { timestamp -> viewModel.selectDate(timestamp) },
                 scrollState = scrollState,
                 onMonthClick = {
-                    viewModel.showDatePicker() },
+                    viewModel.showDatePicker()
+                },
                 onVisibleDatesChanged = { dateItem -> viewModel.updateVisibleMonthYear(dateItem) },
                 selectedDateIndex = selectedDateIndex
             )
@@ -174,7 +177,16 @@ fun BookingScreen(
 
         PricingSection(
             totalPrice = totalPrice,
-            onOrderClick = onOrderClick,
+            onOrderClick = {
+                onOrderClick(
+                    venueId,
+                    millisToDate(selectedDate),
+                    selectedSector?.name ?: "X",
+                    viewModel.selectedTimeSlots.toList()
+                )
+                Log.d("BookingScreen", viewModel.selectedTimeSlots.toList().toString())
+
+            },
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
@@ -342,14 +354,6 @@ fun DateSection(
         }
     }
 
-//    LaunchedEffect(dates) {
-//        val selectedIndex = dates.indexOfFirst { it.isSelected }
-//        Log.d("BookingScreen", selectedIndex.toString())
-//        if (selectedIndex != -1) {
-//            scrollState.animateScrollTo(selectedIndex * 150)
-//        }
-//    }
-
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
 
@@ -362,7 +366,8 @@ fun DateSection(
             val dateItemSpacingPx = with(density) { dateItemSpacing.toPx() }
 
             val scrollPosition = selectedDateIndex * (dateItemWidthPx + dateItemSpacingPx)
-            val targetScrollPosition = (scrollPosition - (screenWidthPx / 2) + (dateItemWidthPx / 2)).toInt()
+            val targetScrollPosition =
+                (scrollPosition - (screenWidthPx / 2) + (dateItemWidthPx / 2)).toInt()
 
             scrollState.animateScrollTo(targetScrollPosition)
         }
@@ -596,6 +601,20 @@ fun LayoutCoordinates.findChildBounds(parent: LayoutCoordinates, key: String): R
 fun formatTimeSlot(startTime: Long, endTime: Long): String {
     val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
     return "${dateFormat.format(startTime)} - ${dateFormat.format(endTime)}"
+}
+
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+fun millisToDate(timeMillis: Long): String {
+    // Convert millis to LocalDate
+    val date = Instant.ofEpochMilli(timeMillis)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+
+    // Define the date format
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    // Format the LocalDate to the string
+    return date.format(formatter)
 }
 
 @Preview(showBackground = true)
