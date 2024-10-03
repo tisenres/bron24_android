@@ -60,14 +60,13 @@ class BookingViewModel @Inject constructor(
     private val _pricePerHour = MutableStateFlow(0)
     val pricePerHour: StateFlow<Int> = _pricePerHour.asStateFlow()
 
-//    val selectedTimeSlots = mutableSetOf<TimeSlot>()
-
     private val _selectedTimeSlots = MutableStateFlow<Set<TimeSlot>>(emptySet())
     val selectedTimeSlots: StateFlow<Set<TimeSlot>> = _selectedTimeSlots.asStateFlow()
 
     fun selectDate(timestamp: Long) {
         _selectedDate.value = roundToStartOfDay(timestamp)
         updateSelectedDate(timestamp)
+        updateVisibleMonthYear(timestamp)
         Log.d("BookingViewModel", "Selected Date: ${_selectedDate.value}")
         Log.d("BookingViewModel", "Selected Date Index: ${_selectedDateIndex.value}")
     }
@@ -161,11 +160,6 @@ class BookingViewModel @Inject constructor(
         calculateTotalPrice()
     }
 
-//        _availableTimeSlots.value = updatedTimeSlots
-//        Log.d("BookingViewModel", selectedTimeSlots.toString())
-//        calculateTotalPrice()
-//    }
-
     private fun calculateTotalPrice() {
         val totalHours = _selectedTimeSlots.value.size // Assuming each time slot is 1 hour
         _totalPrice.value = formatPrice(totalHours * _pricePerHour.value)
@@ -181,10 +175,13 @@ class BookingViewModel @Inject constructor(
         _showDatePicker.value = false
     }
 
-    fun updateVisibleMonthYear(dateItem: DateItem) {
-        val localDate = LocalDate.of(dateItem.year, getMonthNumber(dateItem.month), dateItem.day)
+    private fun updateVisibleMonthYear(timestamp: Long) {
         val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
-        _visibleMonthYear.value = localDate.format(formatter)
+        val instant = Instant.ofEpochMilli(timestamp)
+        val localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate()
+        val formattedDate = localDate.format(formatter)
+        Log.d("BookingViewModel", "Updating visible month year to: $formattedDate")
+        _visibleMonthYear.value = formattedDate
     }
 
     private fun getMonthNumber(monthName: String): Int {

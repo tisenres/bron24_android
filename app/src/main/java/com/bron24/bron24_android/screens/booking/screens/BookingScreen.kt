@@ -96,6 +96,7 @@ fun BookingScreen(
     val scrollState = rememberScrollState()
     val getAvailableTimesState by viewModel.getAvailableTimesState.collectAsState()
     val selectedTimeSlots by viewModel.selectedTimeSlots.collectAsState()
+    val visibleMonthYear by viewModel.visibleMonthYear.collectAsState()
 
     val showDatePicker by viewModel.showDatePicker.collectAsState()
 
@@ -167,13 +168,13 @@ fun BookingScreen(
 
             DateSection(
                 dates = viewModel.availableDates.collectAsState().value,
-                visibleMonthYear = viewModel.visibleMonthYear.collectAsState().value,
+                visibleMonthYear = visibleMonthYear,
                 onDateSelected = { timestamp -> viewModel.selectDate(timestamp) },
                 scrollState = scrollState,
                 onMonthClick = {
                     viewModel.showDatePicker()
                 },
-                onVisibleDatesChanged = { dateItem -> viewModel.updateVisibleMonthYear(dateItem) },
+//                onVisibleDatesChanged = { dateItem -> viewModel.updateVisibleMonthYear(dateItem) },
                 selectedDateIndex = selectedDateIndex
             )
 
@@ -282,7 +283,7 @@ fun DateSection(
     visibleMonthYear: String,
     onDateSelected: (Long) -> Unit,
     onMonthClick: () -> Unit,
-    onVisibleDatesChanged: (DateItem) -> Unit,
+//    onVisibleDatesChanged: (DateItem) -> Unit,
     scrollState: ScrollState,
     selectedDateIndex: Int
 ) {
@@ -353,9 +354,9 @@ fun DateSection(
                         val isVisible = coordinates.boundsInRoot().let { bounds ->
                             bounds.left >= 0 && bounds.right <= coordinates.size.width
                         }
-                        if (isVisible) {
-                            onVisibleDatesChanged(dateItem)
-                        }
+//                        if (isVisible) {
+//                            onVisibleDatesChanged(dateItem)
+//                        }
                     }
                 )
             }
