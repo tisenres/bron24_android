@@ -35,7 +35,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -86,20 +89,24 @@ fun BookingScreen(
     val selectedDate by viewModel.selectedDate.collectAsState()
     val selectedSector by viewModel.selectedSector.collectAsState()
     val totalPrice by viewModel.totalPrice.collectAsState()
-
     val selectedDateIndex by viewModel.selectedDateIndex.collectAsState()
-
-//    val availableTimeSlots by viewModel.availableTimeSlots.collectAsState()
-    val availableTimeSlots = emptyList<TimeSlot>()
+    val availableTimeSlots by viewModel.availableTimeSlots.collectAsState()
 
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     val getAvailableTimesState by viewModel.getAvailableTimesState.collectAsState()
+    val selectedTimeSlots by viewModel.selectedTimeSlots.collectAsState()
 
     val showDatePicker by viewModel.showDatePicker.collectAsState()
 
+    var isOrderEnabled by remember { mutableStateOf(false) }
+
     val sectorEnums = sectors.map { sectorString ->
         Sector.valueOf(sectorString)
+    }
+
+    LaunchedEffect(selectedTimeSlots) {
+        isOrderEnabled = selectedTimeSlots.isNotEmpty()
     }
 
     LaunchedEffect(showDatePicker) {
@@ -184,12 +191,11 @@ fun BookingScreen(
                     venueId,
                     millisToDate(selectedDate),
                     selectedSector?.name ?: "X",
-                    viewModel.selectedTimeSlots.toList()
+                    selectedTimeSlots.toList()
                 )
-                Log.d("BookingScreen", viewModel.selectedTimeSlots.toList().toString())
-
             },
-            modifier = Modifier.align(Alignment.BottomCenter)
+            modifier = Modifier.align(Alignment.BottomCenter),
+            isOrderEnabled = isOrderEnabled
         )
     }
 }
@@ -419,7 +425,8 @@ fun DateItem(dateItem: DateItem, onClick: () -> Unit, modifier: Modifier) {
 fun PricingSection(
     totalPrice: String,
     onOrderClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isOrderEnabled: Boolean
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         HorizontalDivider(
@@ -436,7 +443,7 @@ fun PricingSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "$totalPrice ${stringResource(id = R.string.som_per_hour)}",
+                text = "$totalPrice ${stringResource(id = R.string.som)}",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.ExtraBold,
@@ -447,11 +454,17 @@ fun PricingSection(
             )
             Button(
                 onClick = onOrderClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isOrderEnabled) Color(0xff32b768) else Color(0xFFE4E4E4),
+                    contentColor = Color.White,
+                    disabledContainerColor = Color(0xFFE4E4E4),
+                    disabledContentColor = Color.Gray
+                ),
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
                     .height(47.dp)
-                    .width(157.dp)
+                    .width(157.dp),
+                enabled = isOrderEnabled
             ) {
                 Text(
                     text = "Order",
@@ -459,7 +472,6 @@ fun PricingSection(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
                         fontSize = 14.sp,
-                        color = Color.White,
                         lineHeight = 16.8.sp,
                     )
                 )
@@ -495,12 +507,14 @@ fun AvailableTimesSection(
             is BookingState.Loading -> {
                 LoadingScreen()
             }
+
             is BookingState.Error -> {
                 ToastManager.showToast(
                     "Error: ${(getAvailableTimesState).message}",
                     ToastType.ERROR
                 )
             }
+
             is BookingState.Success -> {
                 if (timeSlots.isEmpty()) {
                     EmptyTimeSlots()
@@ -519,9 +533,11 @@ fun AvailableTimesSection(
                     }
                 }
             }
+
             BookingState.Idle -> {
                 LoadingScreen()
             }
+
             BookingState.Cancelled -> {}
         }
     }

@@ -60,7 +60,10 @@ class BookingViewModel @Inject constructor(
     private val _pricePerHour = MutableStateFlow(0)
     val pricePerHour: StateFlow<Int> = _pricePerHour.asStateFlow()
 
-    val selectedTimeSlots = mutableSetOf<TimeSlot>()
+//    val selectedTimeSlots = mutableSetOf<TimeSlot>()
+
+    private val _selectedTimeSlots = MutableStateFlow<Set<TimeSlot>>(emptySet())
+    val selectedTimeSlots: StateFlow<Set<TimeSlot>> = _selectedTimeSlots.asStateFlow()
 
     fun selectDate(timestamp: Long) {
         _selectedDate.value = roundToStartOfDay(timestamp)
@@ -145,26 +148,26 @@ class BookingViewModel @Inject constructor(
     fun selectTimeSlot(timeSlot: TimeSlot) {
         val updatedTimeSlots = _availableTimeSlots.value.map {
             if (it == timeSlot) {
-                val isSelected = !it.isSelected
-                if (isSelected) {
-                    selectedTimeSlots.add(it)
-                } else {
-                    selectedTimeSlots.remove(it)
-                }
-                it.copy(isSelected = isSelected)
+                it.copy(isSelected = !it.isSelected)
             } else {
                 it
             }
         }
 
         _availableTimeSlots.value = updatedTimeSlots
-        Log.d("BookingViewModel", selectedTimeSlots.toString())
+
+        _selectedTimeSlots.value = updatedTimeSlots.filter { it.isSelected }.toSet()
+
         calculateTotalPrice()
     }
 
+//        _availableTimeSlots.value = updatedTimeSlots
+//        Log.d("BookingViewModel", selectedTimeSlots.toString())
+//        calculateTotalPrice()
+//    }
+
     private fun calculateTotalPrice() {
-        val selectedTimeSlots = _availableTimeSlots.value.filter { it.isSelected }
-        val totalHours = selectedTimeSlots.size // Assuming each time slot is 1 hour
+        val totalHours = _selectedTimeSlots.value.size // Assuming each time slot is 1 hour
         _totalPrice.value = formatPrice(totalHours * _pricePerHour.value)
     }
 
