@@ -52,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -88,7 +89,8 @@ fun BookingScreen(
 
     val selectedDateIndex by viewModel.selectedDateIndex.collectAsState()
 
-    val availableTimeSlots by viewModel.availableTimeSlots.collectAsState()
+//    val availableTimeSlots by viewModel.availableTimeSlots.collectAsState()
+    val availableTimeSlots = emptyList<TimeSlot>()
 
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -473,7 +475,6 @@ fun AvailableTimesSection(
     onTimeSelected: (TimeSlot) -> Unit,
     getAvailableTimesState: BookingState
 ) {
-
     Column(
         modifier = Modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -494,37 +495,62 @@ fun AvailableTimesSection(
             is BookingState.Loading -> {
                 LoadingScreen()
             }
-
             is BookingState.Error -> {
                 ToastManager.showToast(
                     "Error: ${(getAvailableTimesState).message}",
                     ToastType.ERROR
                 )
             }
-
             is BookingState.Success -> {
-
-                FlowRow(
-                    maxItemsInEachRow = 3,
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    timeSlots.forEach { timeSlot ->
-                        TimeSlotItem(
-                            timeSlot = timeSlot,
-                            onTimeSelected = { onTimeSelected(timeSlot) }
-                        )
+                if (timeSlots.isEmpty()) {
+                    EmptyTimeSlots()
+                } else {
+                    FlowRow(
+                        maxItemsInEachRow = 3,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        timeSlots.forEach { timeSlot ->
+                            TimeSlotItem(
+                                timeSlot = timeSlot,
+                                onTimeSelected = { onTimeSelected(timeSlot) }
+                            )
+                        }
                     }
                 }
-
             }
-
             BookingState.Idle -> {
                 LoadingScreen()
             }
-
             BookingState.Cancelled -> {}
         }
+    }
+}
+
+@Composable
+fun EmptyTimeSlots() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 70.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.sad_ball), // Make sure to add this icon to your drawables
+            contentDescription = "No available time slots",
+            modifier = Modifier.size(120.dp)
+        )
+        Text(
+            text = "No available time slots for this date",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
+                color = Color(0xFF949494),
+                textAlign = TextAlign.Center
+            )
+        )
     }
 }
 
