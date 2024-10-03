@@ -33,7 +33,7 @@ fun BottomNavigationBar(navController: NavController) {
             .fillMaxWidth()
             .height(72.dp)
             .background(Color.White),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         val items = listOf(

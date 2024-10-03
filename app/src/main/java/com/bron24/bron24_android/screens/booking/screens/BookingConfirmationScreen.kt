@@ -56,12 +56,11 @@ fun BookingConfirmationScreen(
     sector: String,
     timeSlots: List<TimeSlot>
 ) {
-    var bookingInfo by remember { mutableStateOf(null) }
     var showPaymentMethods by remember { mutableStateOf(false) }
     var showPromoCode by remember { mutableStateOf(false) }
 
-    val booking by viewModel.booking.collectAsState() // Collecting booking state from ViewModel
-    val isLoading by remember { viewModel.isLoading } // Observing loading state
+    val booking by viewModel.booking.collectAsState()
+    val isLoading by remember { viewModel.isLoading }
 
     // Fetch booking information when screen is launched
     LaunchedEffect(Unit) {
@@ -70,7 +69,6 @@ fun BookingConfirmationScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isLoading) {
-            // Display a loading indicator while fetching booking info
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         } else {
             Column(
@@ -81,14 +79,13 @@ fun BookingConfirmationScreen(
             ) {
                 TopAppBar()
                 booking?.let {
-                    // Update UI with fetched booking info
                     BookingInfoCard(it)
                     Spacer(modifier = Modifier.height(15.dp))
                     PaymentMethodButton { showPaymentMethods = true }
                     Spacer(modifier = Modifier.height(15.dp))
                     PromoCodeButton { showPromoCode = true }
                     Spacer(modifier = Modifier.height(15.dp))
-//                    TotalAmount(it.cost)
+                    TotalAmount(it.cost ?: 0)
                     Spacer(modifier = Modifier.weight(1f))
                     ConfirmButton(
                         isEnabled = true,
@@ -155,31 +152,102 @@ fun BookingInfoCard(booking: Booking) {
     ) {
         Column(modifier = Modifier.padding(vertical = 15.dp)) {
             VenueInfo(
-                booking.firstName ?: "", "TEST",
+                booking.venueName ?: "", booking.venueAddress ?: "",
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             Divider(modifier = Modifier.padding(vertical = 15.dp))
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-//                BookingDetail("DATE", formatDate(booking.date))
+                BookingDetail("DATE", booking.bookingDate)
                 Spacer(modifier = Modifier.height(15.dp))
-//                BookingDetail("TIME", formatTimeRange(booking.startTime, booking.endTime))
+
+                // Add TimeSlots Column
+                Text(
+                    text = "TIME",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        color = Color(0xFF949494),
+                        lineHeight = 20.sp
+                    )
+                )
+                Column {
+                    booking.timeSlots.forEach { timeSlot ->
+                        TimeSlotItem(timeSlot)
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(15.dp))
-//                BookingDetail("STADIUM PART", booking.stadiumPart)
+                BookingDetail(
+                    "STADIUM PART",
+                    when (booking.sector) {
+                        "X" -> "Full Stadium"
+                        else -> "Sector ${booking.sector}"
+                    }
+                )
             }
             Divider(modifier = Modifier.padding(vertical = 15.dp))
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-//                BookingDetail("FULL NAME", booking.fullName)
+                BookingDetail("FULL NAME", booking.firstName + " " + booking.lastName)
                 Spacer(modifier = Modifier.height(15.dp))
-//                BookingDetail("FIRST NUMBER", booking.firstNumber)
+                BookingDetail("FIRST NUMBER", booking.phoneNumber)
                 Spacer(modifier = Modifier.height(15.dp))
-//                booking.secondNumber?.let { BookingDetail("SECOND NUMBER", it) }
+                SecondNumberField()
             }
-
         }
-
     }
 }
 
+@Composable
+fun SecondNumberField() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "SECOND NUMBER",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+                color = Color(0xFF949494),
+                lineHeight = 20.sp,
+            )
+        )
+        Text(
+            text = "+998927372376",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                color = Color.Black,
+                lineHeight = 20.sp,
+            )
+        )
+    }
+}
+
+@Composable
+fun TimeSlotItem(timeSlot: TimeSlot) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = timeSlot.startTime + "-" + timeSlot.endTime,
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                color = Color.Black,
+                lineHeight = 20.sp
+            )
+        )
+    }
+}
 
 @Composable
 fun VenueInfo(venue: String, address: String, modifier: Modifier) {
@@ -206,7 +274,7 @@ fun VenueInfo(venue: String, address: String, modifier: Modifier) {
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = "Mustaqillik maydoni, Chilanzar, Tashkent",
+                text = address,
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Medium,
@@ -422,7 +490,7 @@ fun PromoCodeButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun TotalAmount(total: Double) {
+fun TotalAmount(total: Int) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -507,11 +575,11 @@ fun PaymentMethodsBottomSheet(onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.height(20.dp))
                 PaymentOption("Cash", R.drawable.cash_pic, isSelected = true)
                 Spacer(modifier = Modifier.height(10.dp))
-                PaymentOption(
-                    "UzCard **** **** **** 0961",
-                    R.drawable.uzcard,
-                    isSelected = false
-                )
+//                PaymentOption(
+//                    "UzCard **** **** **** 0961",
+//                    R.drawable.uzcard,
+//                    isSelected = false
+//                )
                 Spacer(modifier = Modifier.height(10.dp))
                 AddCardOption()
             }
