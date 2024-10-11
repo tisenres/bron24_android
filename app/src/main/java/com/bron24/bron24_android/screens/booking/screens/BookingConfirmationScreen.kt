@@ -52,6 +52,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
@@ -118,7 +119,7 @@ fun BookingConfirmationScreen(
                     PaymentMethodButton { showPaymentMethods = true }
                     Spacer(modifier = Modifier.height(15.dp))
                     PromoCodeButton { showPromoCode = true }
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
                     TotalAmount(it.cost)
                     Spacer(modifier = Modifier.weight(1f))
                     ConfirmButton(
@@ -266,7 +267,8 @@ fun BookingInfoCard(
                         )
                     )
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                        verticalArrangement = Arrangement.spacedBy(5.dp),
+                        horizontalAlignment = Alignment.End
                     ) {
                         booking.timeSlots.forEach { timeSlot ->
                             Text(
@@ -280,8 +282,10 @@ fun BookingInfoCard(
                                     fontSize = 14.sp,
                                     color = Color.Black,
                                     lineHeight = 20.sp
-                                )
+                                ),
+//                                textAlign = TextAlign.End
                             )
+
                         }
                     }
                 }
@@ -321,22 +325,20 @@ fun SecondNumberField(
     onValueChange: (String) -> Unit,
     viewModel: BookingConfirmationViewModel
 ) {
-    // Handle the state of the TextField input, removing the +998 prefix in the UI but keeping it for logic.
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = value.removePrefix("+998"))) }
 
-    // Effect to synchronize the UI state with the passed value
     LaunchedEffect(value) {
         textFieldValue = textFieldValue.copy(
             text = value.removePrefix("+998"),
-            selection = TextRange(value.length)  // Ensure cursor stays at the end
+            selection = TextRange(value.length)
         )
     }
 
-    // Box surrounding the input to create the background and padding as per design
     Row(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = "SECOND NUMBER",
@@ -349,53 +351,61 @@ fun SecondNumberField(
             ),
             modifier = Modifier.align(Alignment.CenterVertically)
         )
-        Row(
+        Box(
             modifier = Modifier
-                .border(width = 1.dp, color = Color(0xFFD1D1D1), shape = RoundedCornerShape(2.dp))
-                .padding(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Display "+998" prefix
-            Text(
-                text = "+998",
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    lineHeight = 20.sp
+                .height(40.dp) // Match the height of the first number field
+                .border(
+                    width = 1.dp,
+                    color = Color(0xFFD1D1D1),
+                    shape = RoundedCornerShape(4.dp)
                 )
-            )
-
-            Spacer(modifier = Modifier.width(3.dp))
-
-            BasicTextField(
-                value = textFieldValue,
-                onValueChange = { newValue ->
-                    val digitsOnly = newValue.text.filter { it.isDigit() }
-                    if (digitsOnly.length <= 9) {
-                        val fullNumber = "+998$digitsOnly"
-                        textFieldValue = newValue.copy(
-                            text = digitsOnly,
-                            selection = TextRange(digitsOnly.length)  // Ensure cursor follows the text
-                        )
-                        onValueChange(fullNumber)
-                        viewModel.updatePhoneNumber(fullNumber)
-                    }
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                ),
-                visualTransformation = PhoneNumberVisualTransformation(),
-                singleLine = true,
-                textStyle = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    lineHeight = 20.sp
-                ),
-            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "+998",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp,
+                        color = Color.Black,
+                        lineHeight = 20.sp
+                    )
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                BasicTextField(
+                    value = textFieldValue,
+                    onValueChange = { newValue ->
+                        val digitsOnly = newValue.text.filter { it.isDigit() }
+                        if (digitsOnly.length <= 9) {
+                            val fullNumber = "+998$digitsOnly"
+                            textFieldValue = newValue.copy(
+                                text = digitsOnly,
+                                selection = TextRange(digitsOnly.length)
+                            )
+                            onValueChange(fullNumber)
+                            viewModel.updatePhoneNumber(fullNumber)
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    visualTransformation = PhoneNumberVisualTransformation(),
+                    singleLine = true,
+                    textStyle = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp,
+                        color = Color.Black,
+                        lineHeight = 20.sp
+                    ),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .align(Alignment.CenterVertically)
+                )
+            }
         }
     }
 }
@@ -463,7 +473,8 @@ fun BookingDetail(label: String, value: String) {
                 fontSize = 14.sp,
                 color = Color.Black,
                 lineHeight = 20.sp,
-            )
+            ),
+            textAlign = TextAlign.End
         )
     }
 }
@@ -643,7 +654,9 @@ fun PromoCodeButton(onClick: () -> Unit) {
 @Composable
 fun TotalAmount(total: String) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
