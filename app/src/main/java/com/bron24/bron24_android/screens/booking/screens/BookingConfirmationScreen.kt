@@ -36,6 +36,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -336,9 +337,10 @@ fun SecondNumberField(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = "SECOND NUMBER",
@@ -349,21 +351,22 @@ fun SecondNumberField(
                 color = Color(0xFF949494),
                 lineHeight = 20.sp,
             ),
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier.padding(bottom = 4.dp)
         )
         Box(
             modifier = Modifier
-                .height(40.dp) // Match the height of the first number field
+                .width(140.dp)
+                .height(40.dp)
                 .border(
                     width = 1.dp,
                     color = Color(0xFFD1D1D1),
-                    shape = RoundedCornerShape(4.dp)
+                    shape = RoundedCornerShape(8.dp)
                 )
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(horizontal = 8.dp),
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -402,7 +405,7 @@ fun SecondNumberField(
                         lineHeight = 20.sp
                     ),
                     modifier = Modifier
-                        .fillMaxHeight()
+                        .weight(1f)
                         .align(Alignment.CenterVertically)
                 )
             }
