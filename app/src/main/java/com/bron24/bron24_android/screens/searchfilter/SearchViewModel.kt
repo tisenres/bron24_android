@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.searchfilter
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.bron24.bron24_android.domain.entity.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,5 +26,6 @@ class SearchViewModel @Inject constructor(
     private fun getPersonalUserData() {
         _personalUserData.value = searchModel.getPersonalUserData()
         _firstName.value = _personalUserData.value?.firstName
+        Log.d("SearchViewModel", firstName.value ?: "")
     }
 }

@@ -11,6 +11,6 @@ data class Booking(
     var venueName: String? = "",
     var venueAddress: String? = "",
     var totalHours: Int? = 0,
-    var cost: Int? = 0,
+    var cost: String = "",
     val status: BookingStatus = BookingStatus.INPROCESS
 )

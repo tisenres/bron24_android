@@ -10,8 +10,8 @@ import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +25,6 @@ class BookingConfirmationViewModel @Inject constructor(
     private val _isLoading = mutableStateOf(false)
     val isLoading get() = _isLoading
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     suspend fun getBookingInfo(
         venueId: Int,
         date: String,
@@ -43,5 +42,30 @@ class BookingConfirmationViewModel @Inject constructor(
             _isLoading.value = false
             Log.d("BookingConfirmationViewModel", booking.value.toString())
         }
+    }
+
+    fun formatDate(inputDate: String): String {
+        // Define the input and output date formats
+        val inputFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormatter = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+
+        // Parse the input date and format it to the desired output
+        val parsedDate = inputFormatter.parse(inputDate)
+        return outputFormatter.format(parsedDate)
+    }
+
+    fun formatTimeSlot(startTime: String, endTime: String): String {
+        // Define the input format that includes hours, minutes, and seconds
+        val inputFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+
+        // Define the output format that includes only hours and minutes
+        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+        // Parse the start and end time strings
+        val parsedStartTime = inputFormat.parse(startTime)
+        val parsedEndTime = inputFormat.parse(endTime)
+
+        // Format the parsed times to the desired output format
+        return "${outputFormat.format(parsedStartTime!!)} - ${outputFormat.format(parsedEndTime!!)}"
     }
 }

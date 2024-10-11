@@ -2,6 +2,7 @@ package com.bron24.bron24_android.data.local.preference
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.user.User
 
@@ -53,6 +54,8 @@ class AppPreference(context: Context) {
     }
 
     fun saveUserData(phoneNumber: String, firstName: String, lastName: String) {
+        Log.d("UserRepositoryImpl", "first_name: $firstName")
+
         preferences.edit()
             .putString("phone_number", phoneNumber)
             .putString("first_name", firstName)
@@ -69,6 +72,7 @@ class AppPreference(context: Context) {
     }
 
     fun getPersonalUserData(): User {
+        Log.d("UserRepositoryImpl", "first_name: ${preferences.getString("first_name", "")}")
         return User(
             preferences.getString("first_name", "") ?: "",
             preferences.getString("last_name", "") ?: "",

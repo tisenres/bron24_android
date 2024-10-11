@@ -1,9 +1,7 @@
 package com.bron24.bron24_android.screens.booking.screens
 
 import android.app.DatePickerDialog
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -37,7 +35,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,13 +67,9 @@ import com.bron24.bron24_android.helper.util.presentation.components.toast.Toast
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun BookingScreen(
     viewModel: BookingViewModel = hiltViewModel(),
@@ -648,18 +641,19 @@ fun formatTimeSlot(startTime: Long, endTime: Long): String {
     return "${dateFormat.format(startTime)} - ${dateFormat.format(endTime)}"
 }
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 fun millisToDate(timeMillis: Long): String {
-    // Convert millis to LocalDate
-    val date = Instant.ofEpochMilli(timeMillis)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
+    // Create a Calendar instance and set the time in milliseconds
+    val calendar = Calendar.getInstance().apply {
+        timeInMillis = timeMillis
+    }
 
-    // Define the date format
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    // Convert Calendar to LocalDate
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH) + 1  // Calendar.MONTH is 0-based
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-    // Format the LocalDate to the string
-    return date.format(formatter)
+    // Format the date manually
+    return String.format("%04d-%02d-%02d", year, month, day)
 }
 
 @Preview(showBackground = true)

@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.dto.booking.AvailableTimesRequestDto
 import com.bron24.bron24_android.data.network.dto.booking.RequestBookingDto
+import com.bron24.bron24_android.data.network.mappers.formatPrice
 import com.bron24.bron24_android.data.network.mappers.formatTime
 import com.bron24.bron24_android.data.network.mappers.toDomain
 import com.bron24.bron24_android.domain.entity.booking.AvailableTimesResponse
@@ -28,7 +29,6 @@ class BookingRepositoryImpl @Inject constructor(
         return response.toDomain()
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override suspend fun createBooking(
         booking: Booking
     ): Booking {
@@ -47,13 +47,17 @@ class BookingRepositoryImpl @Inject constructor(
         currentBooking = booking
         val response = bookingApiService.startBooking(bookingRequest)
 
+        if (!response.success) {
+            throw Exception("Failed to create booking")
+        }
+
         currentBooking.apply {
             firstName = response.data.user.firstName
             lastName = response.data.user.lastName
             venueName = response.data.venue.venueName
             venueAddress = response.data.venue.venueAddress
             totalHours = response.data.hours
-            cost = response.data.cost
+            cost = formatPrice(response.data.cost.toString())
         }
 
         return currentBooking

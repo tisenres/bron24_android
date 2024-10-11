@@ -20,10 +20,12 @@ class CreateBookingUseCase @Inject constructor(
             sector = sector,
             timeSlots = timeSlots,
         )
-
-        val currentBooking = bookingRepository.createBooking(booking)
-        preferencesRepository.saveBooking(currentBooking)
-
-        return currentBooking
+        try {
+            val currentBooking = bookingRepository.createBooking(booking)
+            preferencesRepository.saveBooking(currentBooking)
+            return currentBooking
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }

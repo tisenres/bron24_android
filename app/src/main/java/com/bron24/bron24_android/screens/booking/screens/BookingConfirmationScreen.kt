@@ -1,7 +1,8 @@
 package com.bron24.bron24_android.screens.booking.screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,33 +35,51 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.RadioButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun BookingConfirmationScreen(
     viewModel: BookingConfirmationViewModel,
     venueId: Int,
     date: String,
     sector: String,
-    timeSlots: List<TimeSlot>
+    timeSlots: List<TimeSlot>,
+    onOrderClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     var showPaymentMethods by remember { mutableStateOf(false) }
     var showPromoCode by remember { mutableStateOf(false) }
 
     val booking by viewModel.booking.collectAsState()
     val isLoading by remember { viewModel.isLoading }
+
+    val scrollState = rememberLazyListState()
+    val context = LocalContext.current
+    val toolbarHeight = 48.dp
+
+    val toolbarVisible by remember {
+        derivedStateOf {
+            scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
+        }
+    }
 
     // Fetch booking information when screen is launched
     LaunchedEffect(Unit) {
@@ -77,19 +96,27 @@ fun BookingConfirmationScreen(
                     .background(Color.White)
                     .padding(start = 24.dp, end = 24.dp, bottom = 24.dp, top = 10.dp)
             ) {
-                TopAppBar()
+                AnimatedToolbar(
+                    visible = toolbarVisible,
+                    title = "Booking information",
+                    onBackClick = onBackClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(toolbarHeight)
+                        .zIndex(1f)
+                )
                 booking?.let {
-                    BookingInfoCard(it)
+                    BookingInfoCard(viewModel, it)
                     Spacer(modifier = Modifier.height(15.dp))
                     PaymentMethodButton { showPaymentMethods = true }
                     Spacer(modifier = Modifier.height(15.dp))
                     PromoCodeButton { showPromoCode = true }
                     Spacer(modifier = Modifier.height(15.dp))
-                    TotalAmount(it.cost ?: 0)
+                    TotalAmount(it.cost)
                     Spacer(modifier = Modifier.weight(1f))
                     ConfirmButton(
                         isEnabled = true,
-                        onClick = { /* Handle confirm button click */ },
+                        onClick = onOrderClick,
                         title = stringResource(id = R.string.confirm)
                     )
                 } ?: run {
@@ -116,36 +143,87 @@ fun BookingConfirmationScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
+private fun AnimatedToolbar(
+    visible: Boolean,
+    title: String?,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+        modifier = modifier
     ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = "Back",
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(14.dp))
-        Text(
-            text = "Booking information",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 18.sp,
-                color = Color.Black,
-                lineHeight = 20.sp,
+        androidx.compose.material3.TopAppBar(
+            title = {
+                Box(
+                    modifier = Modifier.fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = title ?: "Unknown field",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color(0xFF3C2E56),
+                            lineHeight = 22.sp,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            },
+            navigationIcon = {
+                androidx.compose.material3.IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White,
+                titleContentColor = Color(0xFF3C2E56),
+                navigationIconContentColor = Color(0xFF3C2E56)
             )
         )
     }
 }
 
+//@Composable
+//fun TopAppBar() {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 16.dp),
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        Icon(
+//            imageVector = Icons.Default.ArrowBack,
+//            contentDescription = "Back",
+//            modifier = Modifier.size(24.dp)
+//        )
+//        Spacer(modifier = Modifier.width(14.dp))
+//        Text(
+//            text = "Booking information",
+//            style = TextStyle(
+//                fontFamily = gilroyFontFamily,
+//                fontWeight = FontWeight.ExtraBold,
+//                fontSize = 18.sp,
+//                color = Color.Black,
+//                lineHeight = 20.sp,
+//            )
+//        )
+//    }
+//}
+
 @Composable
-fun BookingInfoCard(booking: Booking) {
-    Card(
+fun BookingInfoCard(viewModel: BookingConfirmationViewModel, booking: Booking) {
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp))
@@ -157,23 +235,43 @@ fun BookingInfoCard(booking: Booking) {
             )
             Divider(modifier = Modifier.padding(vertical = 15.dp))
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                BookingDetail("DATE", booking.bookingDate)
+                BookingDetail("DATE", viewModel.formatDate(booking.bookingDate))
                 Spacer(modifier = Modifier.height(15.dp))
 
                 // Add TimeSlots Column
-                Text(
-                    text = "TIME",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp,
-                        color = Color(0xFF949494),
-                        lineHeight = 20.sp
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "TIME",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp,
+                            color = Color(0xFF949494),
+                            lineHeight = 20.sp
+                        )
                     )
-                )
-                Column {
-                    booking.timeSlots.forEach { timeSlot ->
-                        TimeSlotItem(timeSlot)
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        booking.timeSlots.forEach { timeSlot ->
+                            Text(
+                                text = viewModel.formatTimeSlot(
+                                    timeSlot.startTime,
+                                    timeSlot.endTime
+                                ),
+                                style = TextStyle(
+                                    fontFamily = gilroyFontFamily,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp,
+                                    color = Color.Black,
+                                    lineHeight = 20.sp
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -229,24 +327,17 @@ fun SecondNumberField() {
 }
 
 @Composable
-fun TimeSlotItem(timeSlot: TimeSlot) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 5.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = timeSlot.startTime + "-" + timeSlot.endTime,
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                color = Color.Black,
-                lineHeight = 20.sp
-            )
+fun TimeSlotItem(viewModel: BookingConfirmationViewModel, timeSlot: TimeSlot) {
+    Text(
+        text = viewModel.formatTimeSlot(timeSlot.startTime, timeSlot.endTime),
+        style = TextStyle(
+            fontFamily = gilroyFontFamily,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            color = Color.Black,
+            lineHeight = 20.sp
         )
-    }
+    )
 }
 
 @Composable
@@ -267,9 +358,9 @@ fun VenueInfo(venue: String, address: String, modifier: Modifier) {
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp,
+                    fontSize = 18.sp,
                     color = Color.Black,
-                    lineHeight = 20.sp,
+                    lineHeight = 22.sp,
                 )
             )
             Spacer(modifier = Modifier.height(2.dp))
@@ -278,7 +369,7 @@ fun VenueInfo(venue: String, address: String, modifier: Modifier) {
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 10.sp,
+                    fontSize = 12.sp,
                     color = Color(0xFF949494),
                     lineHeight = 16.sp,
                 )
@@ -354,7 +445,7 @@ fun PaymentMethodButton(onClick: () -> Unit) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         color = Color.Black,
                         lineHeight = 20.sp,
                     )
@@ -473,7 +564,7 @@ fun PromoCodeButton(onClick: () -> Unit) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         color = Color.Black,
                         lineHeight = 20.sp,
                     )
@@ -490,7 +581,7 @@ fun PromoCodeButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun TotalAmount(total: Int) {
+fun TotalAmount(total: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -507,7 +598,7 @@ fun TotalAmount(total: Int) {
             modifier = Modifier.align(Alignment.CenterVertically)
         )
         Text(
-            total.toString(),
+            "$total ${stringResource(id = R.string.som)}",
             fontSize = 18.sp,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,

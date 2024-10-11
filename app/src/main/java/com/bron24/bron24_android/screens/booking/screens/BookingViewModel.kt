@@ -25,7 +25,6 @@ import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @HiltViewModel
 class BookingViewModel @Inject constructor(
     private val model: BookingModel
@@ -94,17 +93,23 @@ class BookingViewModel @Inject constructor(
         viewModelScope.launch {
             _getAvailableTimesState.value = BookingState.Loading // Set state to Loading
             try {
-                val selectedLocalDate = LocalDate.ofInstant(
-                    Instant.ofEpochMilli(selectedDate.value),
-                    ZoneId.systemDefault()
-                )
-                val formattedDate = selectedLocalDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                // Use Calendar to convert timestamp to a date
+                val calendar = Calendar.getInstance().apply {
+                    timeInMillis = selectedDate.value
+                }
 
+                // Use SimpleDateFormat to format the date
+                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val formattedDate = formatter.format(calendar.time)
+
+                // Fetch available time slots
                 val times = model.getAvailableTimeSlots(
                     venueId = venueId,
                     date = formattedDate,
                     sector = selectedSector.value?.name ?: "X" // Default value or handle appropriately
                 )
+
+                // Update the state with the available time slots
                 _availableTimeSlots.value = times
                 _getAvailableTimesState.value = BookingState.Success // Update state to Success
             } catch (e: Exception) {
@@ -176,10 +181,18 @@ class BookingViewModel @Inject constructor(
     }
 
     private fun updateVisibleMonthYear(timestamp: Long) {
-        val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
-        val instant = Instant.ofEpochMilli(timestamp)
-        val localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate()
-        val formattedDate = localDate.format(formatter)
+        // Use SimpleDateFormat to format the date to "MMMM yyyy"
+        val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
+
+        // Create a Calendar instance and set the time in milliseconds
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = timestamp
+        }
+
+        // Format the calendar's time
+        val formattedDate = formatter.format(calendar.time)
+
+        // Log and update the visible month and year
         Log.d("BookingViewModel", "Updating visible month year to: $formattedDate")
         _visibleMonthYear.value = formattedDate
     }

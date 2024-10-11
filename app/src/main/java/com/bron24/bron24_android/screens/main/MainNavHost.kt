@@ -48,7 +48,6 @@ import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import com.google.gson.Gson
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun MainAppScaffold() {
     val nestedNavController = rememberNavController()
@@ -72,7 +71,6 @@ fun MainAppScaffold() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun MainNavHost(
     navController: NavHostController,
@@ -241,13 +239,16 @@ fun MainNavHost(
                 venueId = venueId,
                 date = date,
                 sector = sector,
-                timeSlots = timeSlots
+                timeSlots = timeSlots,
+                onOrderClick = {
+
+                } ,
+                onBackClick = { navController.popBackStack() },
             )
         }
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingBottomSheet(
@@ -273,8 +274,6 @@ fun BookingBottomSheet(
             onOrderClick = { venueId, date, sector, timeSlots ->
                 val timeSlotsJson = Gson().toJson(timeSlots)
                 navController.navigate("bookingConfirmationScreen?venueId=$venueId&date=$date&sector=$sector&timeSlots=$timeSlotsJson")
-
-//                navController.navigate("bookingConfirmationScreen?venueId=$venueId&date=$date&sector=$sector&timeSlots=$timeSlots")
             },
         )
     }

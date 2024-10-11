@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.repository
 
+import android.util.Log
 import com.bron24.bron24_android.data.network.mappers.toDomainModel
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.domain.entity.venue.Venue
@@ -9,6 +10,8 @@ import com.bron24.bron24_android.domain.repository.VenueRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
+private const val TAG = "VenueRepositoryImpl"
 
 class VenueRepositoryImpl @Inject constructor(
     private val apiService: VenueApiService
@@ -25,6 +28,7 @@ class VenueRepositoryImpl @Inject constructor(
         district: String?
     ): List<Venue> = withContext(Dispatchers.IO) {
         try {
+            Log.d(TAG, "Start fetching venues")
             apiService.getVenues(
                 latitude, longitude, sort, availableTime,
                 minPrice, maxPrice, infrastructure, district
