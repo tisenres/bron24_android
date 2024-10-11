@@ -203,32 +203,32 @@ private fun AnimatedToolbar(
     }
 }
 
-//@Composable
-//fun TopAppBar() {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(vertical = 16.dp),
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Icon(
-//            imageVector = Icons.Default.ArrowBack,
-//            contentDescription = "Back",
-//            modifier = Modifier.size(24.dp)
-//        )
-//        Spacer(modifier = Modifier.width(14.dp))
-//        Text(
-//            text = "Booking information",
-//            style = TextStyle(
-//                fontFamily = gilroyFontFamily,
-//                fontWeight = FontWeight.ExtraBold,
-//                fontSize = 18.sp,
-//                color = Color.Black,
-//                lineHeight = 20.sp,
-//            )
-//        )
-//    }
-//}
+@Composable
+fun TopAppBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Back",
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(14.dp))
+        Text(
+            text = "Booking information",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 18.sp,
+                color = Color.Black,
+                lineHeight = 20.sp,
+            )
+        )
+    }
+}
 
 @Composable
 fun BookingInfoCard(
@@ -249,6 +249,9 @@ fun BookingInfoCard(
             Divider(modifier = Modifier.padding(vertical = 15.dp))
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 BookingDetail("DATE", viewModel.formatDate(booking.bookingDate))
+                Spacer(modifier = Modifier.height(15.dp))
+
+                BookingDetail("TOTAL HOURS", (booking.totalHours.toString() + " hours"))
                 Spacer(modifier = Modifier.height(15.dp))
 
                 // Add TimeSlots Column
@@ -338,7 +341,7 @@ fun SecondNumberField(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
