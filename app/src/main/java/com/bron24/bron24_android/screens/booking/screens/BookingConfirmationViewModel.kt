@@ -9,6 +9,7 @@ import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -24,6 +25,12 @@ class BookingConfirmationViewModel @Inject constructor(
 
     private val _isLoading = mutableStateOf(false)
     val isLoading get() = _isLoading
+
+    private val _secondPhoneNumber = MutableStateFlow("")
+    val secondPhoneNumber: StateFlow<String> get() = _secondPhoneNumber
+
+    private val _isPhoneNumberValid = MutableStateFlow(false)
+    val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
 
     suspend fun getBookingInfo(
         venueId: Int,
@@ -67,5 +74,15 @@ class BookingConfirmationViewModel @Inject constructor(
 
         // Format the parsed times to the desired output format
         return "${outputFormat.format(parsedStartTime!!)} - ${outputFormat.format(parsedEndTime!!)}"
+    }
+
+    fun updatePhoneNumber(phone: String) {
+        _secondPhoneNumber.value = phone
+        _isPhoneNumberValid.value = isValidUzbekPhoneNumber(phone)
+    }
+
+    private fun isValidUzbekPhoneNumber(phone: String): Boolean {
+        val regex = "^\\+998[0-9]{9}$".toRegex()
+        return regex.matches(phone)
     }
 }

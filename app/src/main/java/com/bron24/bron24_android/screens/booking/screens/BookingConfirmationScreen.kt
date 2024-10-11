@@ -37,6 +37,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.RadioButtonDefaults
@@ -46,13 +48,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
+import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -70,6 +76,7 @@ fun BookingConfirmationScreen(
 
     val booking by viewModel.booking.collectAsState()
     val isLoading by remember { viewModel.isLoading }
+    val secondPhoneNumber by viewModel.secondPhoneNumber.collectAsState()
 
     val scrollState = rememberLazyListState()
     val context = LocalContext.current
@@ -106,7 +113,7 @@ fun BookingConfirmationScreen(
                         .zIndex(1f)
                 )
                 booking?.let {
-                    BookingInfoCard(viewModel, it)
+                    BookingInfoCard(viewModel, it, secondPhoneNumber)
                     Spacer(modifier = Modifier.height(15.dp))
                     PaymentMethodButton { showPaymentMethods = true }
                     Spacer(modifier = Modifier.height(15.dp))
@@ -222,7 +229,11 @@ private fun AnimatedToolbar(
 //}
 
 @Composable
-fun BookingInfoCard(viewModel: BookingConfirmationViewModel, booking: Booking) {
+fun BookingInfoCard(
+    viewModel: BookingConfirmationViewModel,
+    booking: Booking,
+    secondPhoneNumber: String
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -288,20 +299,44 @@ fun BookingInfoCard(viewModel: BookingConfirmationViewModel, booking: Booking) {
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 BookingDetail("FULL NAME", booking.firstName + " " + booking.lastName)
                 Spacer(modifier = Modifier.height(15.dp))
-                BookingDetail("FIRST NUMBER", booking.phoneNumber)
+                BookingDetail("FIRST NUMBER", formatWithSpansPhoneNumber(booking.phoneNumber))
                 Spacer(modifier = Modifier.height(15.dp))
-                SecondNumberField()
+                SecondNumberField(
+                    value = secondPhoneNumber,
+                    onValueChange = { newValue ->
+                        if (newValue.startsWith("+998")) {
+                            viewModel.updatePhoneNumber(newValue)
+                        }
+                    },
+                    viewModel = viewModel
+                )
             }
         }
     }
 }
 
 @Composable
-fun SecondNumberField() {
+fun SecondNumberField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    viewModel: BookingConfirmationViewModel
+) {
+    // Handle the state of the TextField input, removing the +998 prefix in the UI but keeping it for logic.
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(text = value.removePrefix("+998"))) }
+
+    // Effect to synchronize the UI state with the passed value
+    LaunchedEffect(value) {
+        textFieldValue = textFieldValue.copy(
+            text = value.removePrefix("+998"),
+            selection = TextRange(value.length)  // Ensure cursor stays at the end
+        )
+    }
+
+    // Box surrounding the input to create the background and padding as per design
     Row(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = "SECOND NUMBER",
@@ -311,33 +346,58 @@ fun SecondNumberField() {
                 fontSize = 12.sp,
                 color = Color(0xFF949494),
                 lineHeight = 20.sp,
-            )
+            ),
+            modifier = Modifier.align(Alignment.CenterVertically)
         )
-        Text(
-            text = "+998927372376",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                color = Color.Black,
-                lineHeight = 20.sp,
+        Row(
+            modifier = Modifier
+                .border(width = 1.dp, color = Color(0xFFD1D1D1), shape = RoundedCornerShape(2.dp))
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Display "+998" prefix
+            Text(
+                text = "+998",
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    lineHeight = 20.sp
+                )
             )
-        )
-    }
-}
 
-@Composable
-fun TimeSlotItem(viewModel: BookingConfirmationViewModel, timeSlot: TimeSlot) {
-    Text(
-        text = viewModel.formatTimeSlot(timeSlot.startTime, timeSlot.endTime),
-        style = TextStyle(
-            fontFamily = gilroyFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            color = Color.Black,
-            lineHeight = 20.sp
-        )
-    )
+            Spacer(modifier = Modifier.width(3.dp))
+
+            BasicTextField(
+                value = textFieldValue,
+                onValueChange = { newValue ->
+                    val digitsOnly = newValue.text.filter { it.isDigit() }
+                    if (digitsOnly.length <= 9) {
+                        val fullNumber = "+998$digitsOnly"
+                        textFieldValue = newValue.copy(
+                            text = digitsOnly,
+                            selection = TextRange(digitsOnly.length)  // Ensure cursor follows the text
+                        )
+                        onValueChange(fullNumber)
+                        viewModel.updatePhoneNumber(fullNumber)
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                ),
+                visualTransformation = PhoneNumberVisualTransformation(),
+                singleLine = true,
+                textStyle = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    lineHeight = 20.sp
+                ),
+            )
+        }
+    }
 }
 
 @Composable
@@ -825,6 +885,15 @@ private fun PaymentPreview() {
         Spacer(modifier = Modifier.height(10.dp))
         AddCardOption()
     }
+}
+
+fun formatWithSpansPhoneNumber(phoneNumber: String): String {
+    val countryCode = "+998"
+    val part1 = phoneNumber.substring(3, 5)
+    val part2 = phoneNumber.substring(5, 8)
+    val part3 = phoneNumber.substring(8, 10)
+    val part4 = phoneNumber.substring(10, 12)
+    return "$countryCode $part1 $part2 $part3 $part4"
 }
 
 @Preview(showBackground = true)
