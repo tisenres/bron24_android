@@ -5,12 +5,16 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -84,5 +88,19 @@ class BookingConfirmationViewModel @Inject constructor(
     private fun isValidUzbekPhoneNumber(phone: String): Boolean {
         val regex = "^\\+998[0-9]{9}$".toRegex()
         return regex.matches(phone)
+    }
+
+    fun confirmBooking() {
+
+        viewModelScope.launch {
+            val success = model.confirmBooking()
+
+            if (success) {
+                ToastManager.showToast("Booking confirmed", ToastType.SUCCESS)
+                Log.d("Bookedsuccesfully", "Booking confirmed")
+            } else {
+                ToastManager.showToast("Booking confirmation failed", ToastType.ERROR)
+            }
+        }
     }
 }

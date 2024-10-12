@@ -1,13 +1,13 @@
 package com.bron24.bron24_android.data.repository
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.util.Log
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.dto.booking.AvailableTimesRequestDto
 import com.bron24.bron24_android.data.network.dto.booking.RequestBookingDto
 import com.bron24.bron24_android.data.network.mappers.formatPrice
 import com.bron24.bron24_android.data.network.mappers.formatTime
 import com.bron24.bron24_android.data.network.mappers.toDomain
+import com.bron24.bron24_android.data.network.mappers.toNetworkModel
 import com.bron24.bron24_android.domain.entity.booking.AvailableTimesResponse
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.repository.BookingRepository
@@ -47,9 +47,9 @@ class BookingRepositoryImpl @Inject constructor(
         currentBooking = booking
         val response = bookingApiService.startBooking(bookingRequest)
 
-        if (!response.success) {
-            throw Exception("Failed to create booking")
-        }
+//        if (!response.success) {
+//            throw Exception("Failed to create booking")
+//        }
 
         currentBooking.apply {
             firstName = response.data.user.firstName
@@ -61,5 +61,11 @@ class BookingRepositoryImpl @Inject constructor(
         }
 
         return currentBooking
+    }
+
+    override suspend fun confirmBooking(booking: Booking): Boolean {
+        val response = bookingApiService.finishBooking(booking.toNetworkModel())
+
+       return response.success
     }
 }

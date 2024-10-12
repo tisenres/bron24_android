@@ -9,4 +9,5 @@ interface PreferencesRepository {
     fun saveUserData(phoneNumber: String, firstName: String, lastName: String)
     fun getUserPhoneNumber(): String
     fun saveBooking(booking: Booking)
+    fun getBooking(): Booking?
 }

@@ -240,9 +240,6 @@ fun MainNavHost(
                 date = date,
                 sector = sector,
                 timeSlots = timeSlots,
-                onOrderClick = {
-
-                } ,
                 onBackClick = { navController.popBackStack() },
             )
         }

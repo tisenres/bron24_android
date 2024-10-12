@@ -3,6 +3,7 @@ package com.bron24.bron24_android.di
 import com.bron24.bron24_android.domain.usecases.auth.AuthenticateUserUseCase
 import com.bron24.bron24_android.domain.usecases.auth.RequestOTPUseCase
 import com.bron24.bron24_android.domain.usecases.auth.VerifyOTPUseCase
+import com.bron24.bron24_android.domain.usecases.booking.ConfirmBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
 import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
@@ -92,8 +93,9 @@ object ModelModule {
     @Provides
     @Singleton
     fun provideBookingConfirmationModel(
-        createBookingUseCase: CreateBookingUseCase
+        createBookingUseCase: CreateBookingUseCase,
+        confirmBookingUseCase: ConfirmBookingUseCase
     ): BookingConfirmationModel {
-        return BookingConfirmationModel(createBookingUseCase)
+        return BookingConfirmationModel(createBookingUseCase, confirmBookingUseCase)
     }
 }

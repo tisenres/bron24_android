@@ -36,7 +36,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -70,7 +69,6 @@ fun BookingConfirmationScreen(
     date: String,
     sector: String,
     timeSlots: List<TimeSlot>,
-    onOrderClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     var showPaymentMethods by remember { mutableStateOf(false) }
@@ -125,7 +123,9 @@ fun BookingConfirmationScreen(
                     Spacer(modifier = Modifier.weight(1f))
                     ConfirmButton(
                         isEnabled = true,
-                        onClick = onOrderClick,
+                        onClick = {
+                            viewModel.confirmBooking()
+                        },
                         title = stringResource(id = R.string.confirm)
                     )
                 } ?: run {
@@ -914,35 +914,3 @@ fun formatWithSpansPhoneNumber(phoneNumber: String): String {
     val part4 = phoneNumber.substring(10, 12)
     return "$countryCode $part1 $part2 $part3 $part4"
 }
-
-@Preview(showBackground = true)
-@Composable
-private fun PromocodePreview() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
-    ) {
-        Text(
-            "Enter promo code",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = Color.Black,
-                lineHeight = 22.sp,
-            ),
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-//        OutlinedTextField(
-//            value = "sdjhjshdjhsd",
-//            onValueChange = { promoCode = it },
-//            label = { Text("Promo code") },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(bottom = 16.dp)
-//        )
-//        ConfirmButton(isEnabled = true, onClick = {}, title = "Apply")
-    }
-}
-

@@ -30,4 +30,8 @@ class PreferencesRepositoryImpl @Inject constructor(
     override fun saveBooking(booking: Booking) {
         appPreference.saveBooking(booking)
     }
+
+    override fun getBooking(): Booking? {
+        return appPreference.getBooking()
+    }
 }

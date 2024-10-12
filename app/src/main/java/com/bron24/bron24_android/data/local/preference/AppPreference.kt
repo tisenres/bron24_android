@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.user.User
+import com.google.gson.Gson
 
 private const val SELECTED_LANGUAGE = "selected_language"
 private const val TOKEN_KEY = "auth_token"
@@ -14,6 +15,8 @@ class AppPreference(context: Context) {
 
     private val preferences: SharedPreferences =
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+    private val gson = Gson()
 
     fun getSelectedLanguage(): String? {
         return preferences.getString(SELECTED_LANGUAGE, null)
@@ -81,9 +84,19 @@ class AppPreference(context: Context) {
     }
 
     fun saveBooking(booking: Booking) {
+        val bookingJson = gson.toJson(booking)
         preferences
             .edit()
-            .putString("booking", booking.toString())
+            .putString("booking", bookingJson)
             .apply()
+    }
+
+    fun getBooking(): Booking? {
+        val bookingJson = preferences.getString("booking", null)
+        return if (bookingJson != null) {
+            gson.fromJson(bookingJson, Booking::class.java)
+        } else {
+            null
+        }
     }
 }

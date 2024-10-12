@@ -16,6 +16,7 @@ import com.bron24.bron24_android.domain.usecases.auth.*
 import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
 import com.bron24.bron24_android.domain.repository.*
+import com.bron24.bron24_android.domain.usecases.booking.ConfirmBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.GetBookingDetailsUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
@@ -108,6 +109,14 @@ object UseCasesModule {
         preferencesRepository: PreferencesRepository
     ): CreateBookingUseCase {
         return CreateBookingUseCase(bookingRepository, preferencesRepository)
+    }
+
+    @Provides
+    fun provideConfirmBookingUseCase(
+        bookingRepository: BookingRepository,
+        preferencesRepository: PreferencesRepository
+    ): ConfirmBookingUseCase {
+        return ConfirmBookingUseCase(bookingRepository, preferencesRepository)
     }
 
 
