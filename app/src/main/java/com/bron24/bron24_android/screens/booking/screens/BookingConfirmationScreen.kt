@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.booking.screens
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -69,6 +70,7 @@ fun BookingConfirmationScreen(
     date: String,
     sector: String,
     timeSlots: List<TimeSlot>,
+    onConfirmClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     var showPaymentMethods by remember { mutableStateOf(false) }
@@ -77,6 +79,7 @@ fun BookingConfirmationScreen(
     val booking by viewModel.booking.collectAsState()
     val isLoading by remember { viewModel.isLoading }
     val secondPhoneNumber by viewModel.secondPhoneNumber.collectAsState()
+    val isBookingConfirmed by viewModel.isBookingConfirmed.collectAsState()
 
     val scrollState = rememberLazyListState()
     val context = LocalContext.current
@@ -91,6 +94,11 @@ fun BookingConfirmationScreen(
     // Fetch booking information when screen is launched
     LaunchedEffect(Unit) {
         viewModel.getBookingInfo(venueId, date, sector, timeSlots)
+    }
+
+    LaunchedEffect(isBookingConfirmed) {
+//        onConfirmClick(booking.bookingDate, booking.timeSlots)
+        Log.d("BookingConfirmationScreen", "Booking confirmed: $isBookingConfirmed")
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -272,7 +280,7 @@ fun BookingInfoCard(
                     )
                     Column(
                         verticalArrangement = Arrangement.spacedBy(5.dp),
-                        horizontalAlignment = Alignment.End
+                        horizontalAlignment = Alignment.Start
                     ) {
                         booking.timeSlots.forEach { timeSlot ->
                             Text(

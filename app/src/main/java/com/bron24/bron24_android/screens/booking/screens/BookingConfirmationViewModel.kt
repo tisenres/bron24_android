@@ -33,6 +33,9 @@ class BookingConfirmationViewModel @Inject constructor(
     private val _secondPhoneNumber = MutableStateFlow("")
     val secondPhoneNumber: StateFlow<String> get() = _secondPhoneNumber
 
+    private val _isBookingConfirmed = MutableStateFlow<Boolean?>(null)
+    val isBookingConfirmed: StateFlow<Boolean?> get() = _isBookingConfirmed
+
     private val _isPhoneNumberValid = MutableStateFlow(false)
     val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
 
@@ -91,15 +94,16 @@ class BookingConfirmationViewModel @Inject constructor(
     }
 
     fun confirmBooking() {
-
         viewModelScope.launch {
             val success = model.confirmBooking()
 
             if (success) {
                 ToastManager.showToast("Booking confirmed", ToastType.SUCCESS)
+                _isBookingConfirmed.value = true
                 Log.d("Bookedsuccesfully", "Booking confirmed")
             } else {
                 ToastManager.showToast("Booking confirmation failed", ToastType.ERROR)
+                _isBookingConfirmed.value = false
             }
         }
     }

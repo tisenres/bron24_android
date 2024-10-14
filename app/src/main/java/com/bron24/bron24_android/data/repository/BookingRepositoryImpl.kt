@@ -52,10 +52,10 @@ class BookingRepositoryImpl @Inject constructor(
 //        }
 
         currentBooking.apply {
-            firstName = response.data.user.firstName
-            lastName = response.data.user.lastName
-            venueName = response.data.venue.venueName
-            venueAddress = response.data.venue.venueAddress
+            firstName = response.data.user?.firstName
+            lastName = response.data.user?.lastName
+            venueName = response.data.venue?.venueName
+            venueAddress = response.data.venue?.venueAddress
             totalHours = response.data.hours
             cost = formatPrice(response.data.cost.toString())
         }

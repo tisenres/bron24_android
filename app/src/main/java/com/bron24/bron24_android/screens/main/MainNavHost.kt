@@ -241,6 +241,9 @@ fun MainNavHost(
                 sector = sector,
                 timeSlots = timeSlots,
                 onBackClick = { navController.popBackStack() },
+                onConfirmClick = {
+
+                }
             )
         }
     }
