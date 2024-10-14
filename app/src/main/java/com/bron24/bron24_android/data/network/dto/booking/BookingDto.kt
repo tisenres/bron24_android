@@ -19,6 +19,7 @@ data class ResponseBookingDto(
 
 data class BookingData(
     @SerializedName("user") val user: User?,
+    @SerializedName("order_id") val orderId: String?,
     @SerializedName("venue_id") val venue: Venue?,
     @SerializedName("time_slot") val timeSlots: List<TimeSlot>,
     @SerializedName("cost") val cost: Int?,

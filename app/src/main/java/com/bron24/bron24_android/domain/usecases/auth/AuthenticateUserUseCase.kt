@@ -15,6 +15,7 @@ class AuthenticateUserUseCase @Inject constructor(
 ) {
 
     suspend fun execute(user: User, userExists: Boolean): AuthResponse {
+
         val response = if (userExists) {
             authRepository.loginUser(user)
         } else {
@@ -23,7 +24,7 @@ class AuthenticateUserUseCase @Inject constructor(
         if (response.accessToken.isNotBlank() && response.refreshToken.isNotBlank()) {
             tokenRepository.saveTokens(response.accessToken, response.refreshToken)
             preferencesRepository.setOnboardingCompleted(OnboardingScreen.AUTHENTICATION, true)
-            preferencesRepository.saveUserData(user.phoneNumber, user.firstName, user.lastName)
+            preferencesRepository.saveUserData(user.phoneNumber, response.firstName, response.lastName)
         }
         return response
     }

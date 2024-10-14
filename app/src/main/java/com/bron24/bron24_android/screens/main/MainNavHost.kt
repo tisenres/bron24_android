@@ -1,7 +1,5 @@
 package com.bron24.bron24_android.screens.main
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -40,6 +38,7 @@ import com.bron24.bron24_android.helper.util.presentation.components.BottomNavig
 import com.bron24.bron24_android.screens.booking.screens.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.BookingViewModel
 import com.bron24.bron24_android.screens.booking.screens.BookingConfirmationScreen
+import com.bron24.bron24_android.screens.booking.screens.BookingSuccessScreen
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.map.YandexMapScreen
@@ -66,6 +65,7 @@ fun MainAppScaffold() {
             onDestinationChanged = { destination ->
                 shouldShowBottomBar.value = destination != Screen.VenueDetails.route &&
                         destination != Screen.BookingConfirmationScreen.route
+                        && destination != Screen.BookingSuccessScreen.route
             }
         )
     }
@@ -241,9 +241,44 @@ fun MainNavHost(
                 sector = sector,
                 timeSlots = timeSlots,
                 onBackClick = { navController.popBackStack() },
-                onConfirmClick = {
+                onConfirmClick = { orderId, venueName, dateOut, sectorOut, timeSlotsOut ->
+                    val timeSlotsJsonOut = Gson().toJson(timeSlotsOut)
+                    navController.navigate("bookingSuccessScreen?orderId=${orderId}&venueName=${venueName}&date=${dateOut}&sector=${sectorOut}&timeSlots=${timeSlotsJsonOut}")
+                },
+            )
+        }
 
-                }
+        composable(
+            route = Screen.BookingSuccessScreen.route,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.IntType },
+                navArgument("venueName") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType },
+                navArgument("sector") { type = NavType.StringType },
+                navArgument("timeSlots") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            onDestinationChanged(Screen.BookingSuccessScreen.route)
+
+            val orderId = backStackEntry.arguments?.getInt("orderId") ?: 0
+            val venueName = backStackEntry.arguments?.getString("venueName") ?: ""
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            val sector = backStackEntry.arguments?.getString("sector") ?: ""
+
+            // Retrieve and parse the timeSlots JSON string
+            val timeSlotsJson = backStackEntry.arguments?.getString("timeSlots") ?: ""
+            val timeSlots = Gson().fromJson(timeSlotsJson, Array<TimeSlot>::class.java).toList()
+
+            BookingSuccessScreen(
+                viewModel = hiltViewModel(),
+                orderId = orderId,
+                venueName = venueName,
+                date = date,
+                sector = sector,
+                timeSlots = timeSlots,
+                onMyOrdersClick = { navController.popBackStack() },
+                onMainPageClick = { navController.popBackStack() },
+                onMapClick = { }
             )
         }
     }

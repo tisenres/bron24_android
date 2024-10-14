@@ -1,8 +1,6 @@
 package com.bron24.bron24_android.screens.booking.screens
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -95,12 +93,11 @@ class BookingConfirmationViewModel @Inject constructor(
 
     fun confirmBooking() {
         viewModelScope.launch {
-            val success = model.confirmBooking()
+            val orderId = model.confirmBooking()
 
-            if (success) {
+            if (orderId != null) {
                 ToastManager.showToast("Booking confirmed", ToastType.SUCCESS)
                 _isBookingConfirmed.value = true
-                Log.d("Bookedsuccesfully", "Booking confirmed")
             } else {
                 ToastManager.showToast("Booking confirmation failed", ToastType.ERROR)
                 _isBookingConfirmed.value = false

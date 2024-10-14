@@ -64,5 +64,7 @@ fun AuthResponseDto.toDomainEntity(): AuthResponse {
     return AuthResponse(
         accessToken = data?.accessToken ?: "",
         refreshToken = data?.refreshToken ?: "",
+        firstName = data?.user?.firstName ?: "",
+        lastName = data?.user?.lastName ?: "",
     )
 }

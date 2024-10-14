@@ -2,6 +2,7 @@ package com.bron24.bron24_android.domain.entity.booking
 
 data class Booking(
     val venueId: Int,
+    var orderId: Int,
     val phoneNumber: String,
     val bookingDate: String,
     val sector: String,

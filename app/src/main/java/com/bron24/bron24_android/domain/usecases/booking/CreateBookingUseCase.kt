@@ -14,6 +14,7 @@ class CreateBookingUseCase @Inject constructor(
         val phoneNumber = preferencesRepository.getUserPhoneNumber()
 
         val booking = Booking(
+            orderId = 0,
             phoneNumber = phoneNumber,
             venueId = venueId,
             bookingDate = date,

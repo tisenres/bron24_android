@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.data.repository
 
-import android.util.Log
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.dto.booking.AvailableTimesRequestDto
 import com.bron24.bron24_android.data.network.dto.booking.RequestBookingDto
@@ -58,6 +57,7 @@ class BookingRepositoryImpl @Inject constructor(
             venueAddress = response.data.venue?.venueAddress
             totalHours = response.data.hours
             cost = formatPrice(response.data.cost.toString())
+            orderId = response.data.orderId?.toIntOrNull() ?: 0
         }
 
         return currentBooking

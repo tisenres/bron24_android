@@ -49,10 +49,6 @@ fun UserDataInputScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(Unit) {
-        keyboardController?.hide()
-        focusManager.clearFocus()
-    }
 
     Column(
         modifier = Modifier
@@ -254,6 +250,8 @@ fun ConfirmButtonUser(
     onSignUpVerified: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     val authState by authViewModel.authState.collectAsState()
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -261,6 +259,8 @@ fun ConfirmButtonUser(
 
     Button(
         onClick = {
+            keyboardController?.hide()
+            focusManager.clearFocus()
             onClick()
         },
         colors = ButtonDefaults.buttonColors(
@@ -290,11 +290,9 @@ fun ConfirmButtonUser(
             is AuthState.Authenticated -> {
                 onSignUpVerified()
             }
-
             is AuthState.Error -> {
-
+                // Handle error state if necessary
             }
-
             else -> {
                 // Handle other states if necessary
             }

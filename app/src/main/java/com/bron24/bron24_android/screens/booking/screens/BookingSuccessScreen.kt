@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,22 +20,31 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.screens.booking.states.BookingSuccessInfo
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun BookingSuccessScreen(
-//    viewModel: BookingViewModel = hiltViewModel(),
+    viewModel: BookingSuccessViewModel = hiltViewModel(),
+    orderId: Int,
+    venueName: String,
+    date: String,
+    sector: String,
+    timeSlots: List<TimeSlot>,
     onMyOrdersClick: () -> Unit,
     onMainPageClick: () -> Unit,
     onMapClick: () -> Unit
 ) {
-//    val bookingInfo by viewModel.bookingInfo.collectAsState()
-    val bookingInfo = BookingSuccessInfo("63 65 82", "Bunyodkor kompleksi", "21.02.2024 9:00")
+    val bookingInfo by viewModel.bookingInfo.collectAsState()
+
+    LaunchedEffect (Unit) {
+        viewModel.initBookingInfo(orderId, venueName, date, sector, timeSlots)
+    }
 
     Box(
         modifier = Modifier
@@ -70,7 +82,7 @@ fun BookingSuccessScreen(
 
             Spacer(modifier = Modifier.height(27.dp))
 
-            BookingInfoCard(bookingInfo, onMapClick)
+            BookingInfoCard(bookingInfo ?: BookingSuccessInfo(0, "", "", emptyList(), ""), onMapClick)
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -110,7 +122,7 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
                     .padding(end = 56.dp)  // Add padding to prevent text overlap with the button
             ) {
                 Text(
-                    text = "Your online queue number",
+                    text = "Your order number",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -121,7 +133,7 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                    text = bookingInfo.queueNumber,
+                    text = bookingInfo.orderId.toString(),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.ExtraBold,
@@ -143,7 +155,7 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                    text = bookingInfo.dateTime,
+                    text = bookingInfo.date,
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -208,8 +220,7 @@ fun MainPageButton(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun BookingScreenPreview() {
-    BookingSuccessScreen({}, {}, {})
-}
+//@Preview(showBackground = true)
+//@Composable
+//private fun BookingScreenPreview() {
+//}

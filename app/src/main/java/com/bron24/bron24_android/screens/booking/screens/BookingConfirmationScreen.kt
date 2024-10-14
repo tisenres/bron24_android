@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.booking.screens
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -70,7 +69,7 @@ fun BookingConfirmationScreen(
     date: String,
     sector: String,
     timeSlots: List<TimeSlot>,
-    onConfirmClick: () -> Unit,
+    onConfirmClick: (orderId: Int, venueName: String, date: String, sector: String, timeSlots: List<TimeSlot>) -> Unit,
     onBackClick: () -> Unit
 ) {
     var showPaymentMethods by remember { mutableStateOf(false) }
@@ -91,14 +90,20 @@ fun BookingConfirmationScreen(
         }
     }
 
-    // Fetch booking information when screen is launched
     LaunchedEffect(Unit) {
         viewModel.getBookingInfo(venueId, date, sector, timeSlots)
     }
 
     LaunchedEffect(isBookingConfirmed) {
-//        onConfirmClick(booking.bookingDate, booking.timeSlots)
-        Log.d("BookingConfirmationScreen", "Booking confirmed: $isBookingConfirmed")
+        if (isBookingConfirmed == true && booking != null) {
+            onConfirmClick(
+                booking!!.orderId,
+                booking!!.venueName ?: "",
+                booking!!.bookingDate,
+                booking!!.sector,
+                booking!!.timeSlots
+            )
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
