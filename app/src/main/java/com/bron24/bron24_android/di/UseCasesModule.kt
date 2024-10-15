@@ -4,11 +4,13 @@ import android.content.Context
 import com.bron24.bron24_android.data.local.preference.AppPreference
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
+import com.bron24.bron24_android.data.network.apiservices.OrdersApi
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.repository.AuthRepositoryImpl
 import com.bron24.bron24_android.data.repository.BookingRepositoryImpl
 import com.bron24.bron24_android.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
+import com.bron24.bron24_android.data.repository.OrdersRepositoryImpl
 import com.bron24.bron24_android.data.repository.TokenRepositoryImpl
 import com.bron24.bron24_android.data.repository.UserRepositoryImpl
 import com.bron24.bron24_android.data.repository.VenueRepositoryImpl
@@ -178,6 +180,14 @@ object UseCasesModule {
         bookingApiService: BookingApiService
     ): BookingRepository {
         return BookingRepositoryImpl(bookingApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrdersRepository(
+        ordersApi: OrdersApi
+    ): OrdersRepository {
+        return OrdersRepositoryImpl(ordersApi)
     }
 
 //    @Module
