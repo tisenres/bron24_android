@@ -2,6 +2,7 @@ package com.bron24.bron24_android.di
 
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
+import com.bron24.bron24_android.data.network.apiservices.OrdersApi
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.network.interceptors.ErrorHandler
 import com.bron24.bron24_android.data.network.interceptors.ErrorHandlingCallAdapterFactory
@@ -108,5 +109,11 @@ object NetworkModule {
     @Singleton
     fun provideBookingApiService(@Named("ErrorHandlingRetrofit") retrofit: Retrofit): BookingApiService {
         return retrofit.create(BookingApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrdersApi(@Named("ErrorHandlingRetrofit") retrofit: Retrofit): OrdersApi {
+        return retrofit.create(OrdersApi::class.java)
     }
 }
