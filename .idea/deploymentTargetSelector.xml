@@ -38,10 +38,10 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="InfrastructureItemDetailsPreview">
+      <SelectionState runConfigName="BookingScreenPreview (1)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="BookingScreenPreview (1)">
+      <SelectionState runConfigName="ProfilePreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
