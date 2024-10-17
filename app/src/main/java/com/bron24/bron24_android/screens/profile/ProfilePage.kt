@@ -9,21 +9,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,37 +41,68 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.user.User
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
+import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePage(
     modifier: Modifier = Modifier,
-//    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
+
+    val profileState by viewModel.profileState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getPersonalUserData()
+    }
+
+    when (val state = profileState) {
+        is ProfileState.Loading -> {
+            // Show a loading indicator
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is ProfileState.Success -> {
+            val user = state.user
+            // Proceed to display the UI with user data
+            ProfileContent(user, modifier)
+        }
+        is ProfileState.Initial -> {
+            // Optionally, show an initial state or nothing
+        }
+
+        is ProfileState.Error -> {
+            ToastManager.showToast(type = ToastType.ERROR, message = "Unable to load user data")
+        }
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProfileContent(user: User, modifier: Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
     ) {
-        val scrollState = rememberLazyListState()
-//        val context = LocalContext.current
-//        val toolbarHeight = 40.dp
-//
-//        val toolbarVisible by remember {
-//            derivedStateOf {
-//                scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
-//            }
-//        }
 
         TopAppBar(
             title = {
                 Box(
                     modifier = Modifier
-                        .fillMaxHeight()
+                        .height(40.dp)
                         .padding(horizontal = 15.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -78,7 +113,7 @@ fun ProfilePage(
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 24.sp,
                             color = Color.Black,
-                            lineHeight = 30.sp,
+                            lineHeight = 25.sp,
                         ),
                     )
                 }
@@ -98,25 +133,24 @@ fun ProfilePage(
                 .padding(top = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            ProfileContentTop()
+            ProfileContentTop(user)
 
-            ProfileInfoSection()
+            ProfileInfoSection(user)
 
             Spacer(modifier = Modifier.height(14.dp))
-
 
             ProfileAccountAction(title = "Change password", {})
             Spacer(modifier = Modifier.height(14.dp))
             ProfileAccountAction(title = "Logout", {})
             Spacer(modifier = Modifier.height(14.dp))
             ProfileAccountAction(title = "Delete account", {})
-
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
 
 @Composable
-fun ProfileContentTop() {
+fun ProfileContentTop(user: User) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,7 +194,7 @@ fun ProfileContentTop() {
 
             // Profile Name (Cristiano Ronaldo)
             Text(
-                text = "Cristiano Ronaldo",
+                text = user.firstName + " " + user.lastName,
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -201,7 +235,7 @@ fun ProfileContentTop() {
 }
 
 @Composable
-fun ProfileInfoSection() {
+fun ProfileInfoSection(user: User) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -243,9 +277,9 @@ fun ProfileInfoSection() {
                 .fillMaxWidth()
                 .padding(horizontal = 15.dp, vertical = 18.dp)
         ) {
-            ProfileInfoItem(label = "Full name", value = "Cristiano Ronaldo")
+            ProfileInfoItem(label = "Full name", value = user.firstName + " " + user.lastName)
             Spacer(modifier = Modifier.height(10.dp))
-            ProfileInfoItem(label = "Phone number", value = "+998 97 777 07 07")
+            ProfileInfoItem(label = "Phone number", value = user.phoneNumber)
         }
     }
 }
