@@ -24,7 +24,11 @@ class AuthenticateUserUseCase @Inject constructor(
         if (response.accessToken.isNotBlank() && response.refreshToken.isNotBlank()) {
             tokenRepository.saveTokens(response.accessToken, response.refreshToken)
             preferencesRepository.setOnboardingCompleted(OnboardingScreen.AUTHENTICATION, true)
-            preferencesRepository.saveUserData(user.phoneNumber, response.firstName, response.lastName)
+            if (response.firstName.isNotBlank() && response.lastName.isNotBlank()) {
+                preferencesRepository.saveUserData(user.phoneNumber, response.firstName, response.lastName)
+            } else {
+                preferencesRepository.saveUserData(user.phoneNumber, user.firstName, user.lastName)
+            }
         }
         return response
     }
