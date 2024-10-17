@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -49,7 +51,6 @@ import com.bron24.bron24_android.helper.util.presentation.components.toast.Toast
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePage(
     modifier: Modifier = Modifier,
@@ -72,11 +73,13 @@ fun ProfilePage(
                 CircularProgressIndicator()
             }
         }
+
         is ProfileState.Success -> {
             val user = state.user
             // Proceed to display the UI with user data
             ProfileContent(user, modifier)
         }
+
         is ProfileState.Initial -> {
             // Optionally, show an initial state or nothing
         }
@@ -92,86 +95,39 @@ fun ProfilePage(
 @Composable
 fun ProfileContent(user: User, modifier: Modifier) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
+            .verticalScroll(rememberScrollState())
     ) {
 
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(Color.White)
-        ) {
+        Text(
+            text = "Profile",
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 28.sp,
+                color = Color.Black,
+                lineHeight = 30.sp,
+            ),
+            modifier = Modifier.padding(horizontal = 26.dp, vertical = 16.dp)
+        )
 
-//            TopAppBar(
-//                modifier = Modifier.height(60.dp), // Adjust the height as needed
-//                title = {
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxHeight()
-//                            .padding(horizontal = 24.dp),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Text(
-//                            text = "Profile",
-//                            style = TextStyle(
-//                                fontFamily = gilroyFontFamily,
-//                                fontWeight = FontWeight.ExtraBold,
-//                                fontSize = 28.sp,
-//                                color = Color.Black,
-//                                lineHeight = 30.sp,
-//                            ),
-//                        )
-//                    }
-//                },
-//                colors = TopAppBarDefaults.topAppBarColors(
-//                    containerColor = Color.White,
-//                    titleContentColor = Color.Black,
-//                )
-//            )
+        Spacer(modifier = Modifier.height(14.dp))
 
+        ProfileContentTop(user)
 
+        ProfileInfoSection(user)
 
-            Column(
-                modifier = Modifier
-//                .clip(RoundedCornerShape(50.dp))
-                    .fillMaxWidth()
-//                .weight(1f)
-//                .background(Color.White, shape = RoundedCornerShape(50.dp))
-                    .padding(top = 16.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
+        Spacer(modifier = Modifier.height(14.dp))
 
-                Text(
-                    text = "Profile",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 24.sp,
-                        color = Color.Black,
-                        lineHeight = 30.sp,
-                    ),
-                    modifier = Modifier.padding(horizontal = 25.dp, vertical = 12.dp)
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                ProfileContentTop(user)
-
-                ProfileInfoSection(user)
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                ProfileAccountAction(title = "Change password", {})
-                Spacer(modifier = Modifier.height(14.dp))
-                ProfileAccountAction(title = "Log out", {})
-                Spacer(modifier = Modifier.height(14.dp))
-                ProfileAccountAction(title = "Delete account", {})
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-        }
+        ProfileAccountAction(title = "Change password", {})
+        Spacer(modifier = Modifier.height(14.dp))
+        ProfileAccountAction(title = "Log out", {})
+        Spacer(modifier = Modifier.height(14.dp))
+        ProfileAccountAction(title = "Delete account", {})
+        Spacer(modifier = Modifier.height(20.dp))
     }
 }
 
@@ -230,32 +186,6 @@ fun ProfileContentTop(user: User) {
                 )
             )
 
-//            Spacer(modifier = Modifier.height(8.dp))
-
-            // Edit Profile Row with Icon
-//            Row(
-//                horizontalArrangement = Arrangement.Center,
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//            ) {
-//                Image(
-//                    painter = painterResource(id = R.drawable.edit_icon),
-//                    contentDescription = "Edit",
-//                    modifier = Modifier.size(16.dp)
-//                )
-//                Spacer(modifier = Modifier.width(6.dp))
-//                Text(
-//                    text = "Edit Profile",
-//                    style = TextStyle(
-//                        fontFamily = gilroyFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 16.sp, // Edit profile text size
-//                        color = Color.White,
-//                        lineHeight = 20.sp
-//                    )
-//                )
-//            }
         }
     }
 }
@@ -311,7 +241,10 @@ fun ProfileInfoSection(user: User) {
         ) {
             ProfileInfoItem(label = "Full name", value = user.firstName + " " + user.lastName)
             Spacer(modifier = Modifier.height(10.dp))
-            ProfileInfoItem(label = "Phone number", value = user.phoneNumber)
+            ProfileInfoItem(
+                label = "Phone number",
+                value = formatWithSpansPhoneNumber(user.phoneNumber)
+            )
         }
     }
 }
@@ -355,11 +288,15 @@ fun ProfileAccountAction(title: String, onActionClick: () -> Unit) {
             .fillMaxWidth()
             .padding(horizontal = 28.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
+            .clickable {
+                onActionClick()
+            }
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 15.dp)
+                .padding(15.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = title,
@@ -371,8 +308,24 @@ fun ProfileAccountAction(title: String, onActionClick: () -> Unit) {
                     lineHeight = 20.sp,
                 ),
             )
+
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_right),
+                contentDescription = "Perform action",
+                modifier = Modifier.size(15.dp),
+                tint = Color.Black
+            )
         }
     }
+}
+
+fun formatWithSpansPhoneNumber(phoneNumber: String): String {
+    val countryCode = "+998"
+    val part1 = phoneNumber.substring(3, 5)
+    val part2 = phoneNumber.substring(5, 8)
+    val part3 = phoneNumber.substring(8, 10)
+    val part4 = phoneNumber.substring(10, 12)
+    return "$countryCode $part1 $part2 $part3 $part4"
 }
 
 @Preview(widthDp = 390, heightDp = 794)

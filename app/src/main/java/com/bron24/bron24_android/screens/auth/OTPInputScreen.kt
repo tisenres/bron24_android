@@ -26,13 +26,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,6 +74,7 @@ fun OTPInputScreen(
     var resendCounter by remember { mutableIntStateOf(90) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     var isVerifying by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -88,6 +97,11 @@ fun OTPInputScreen(
 //        focusRequester.requestFocus()
 //        keyboardController?.show()
 //    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
 
 
     Scaffold { paddingValues ->
@@ -226,10 +240,13 @@ fun OTPInputScreen(
                     is AuthState.Loading -> {
                         isVerifying = true
                     }
-
                     is AuthState.OTPVerified -> {
                         isVerifying = false
                         if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
+                            // Clear focus and hide keyboard
+                            focusManager.clearFocus()
+                            keyboardController?.hide()
+
                             ToastManager.showToast("OTP verified successfully", ToastType.SUCCESS)
                             if ((authState as AuthState.OTPVerified).userExists) {
                                 onUserLogIn()
@@ -242,11 +259,10 @@ fun OTPInputScreen(
                                 ToastType.ERROR
                             )
                             otp = ""
-//                            focusRequester.requestFocus()
-//                            keyboardController?.show()
+                            focusRequester.requestFocus()
+                            keyboardController?.show()
                         }
                     }
-
                     is AuthState.Error -> {
                         isVerifying = false
                         ToastManager.showToast(
@@ -254,7 +270,6 @@ fun OTPInputScreen(
                             ToastType.ERROR
                         )
                     }
-
                     else -> {
                         isVerifying = false
                     }
