@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,8 +37,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -136,17 +135,22 @@ fun ProfileContentTop() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White) // Main background for the profile screen
+            .background(Color.White)
     ) {
-        // Create the diagonal green stripe based on the specifications you shared
+        // Adjusted the offset values to move the stripe lower and partially off-screen
         Box(
             modifier = Modifier
-                .width(527.dp) // Set width as shown in your layout screenshot (527.1px ≈ 527dp)
-                .height(190.dp) // Set height as shown in your layout screenshot (190px ≈ 190dp)
-                .rotate(-13.45f) // Rotate to 13.45 degrees
-                .background(Color(0xFF32B768)) // Green color as per the screenshot
-                .offset(x = (-83).dp, y = 216.dp) // Use negative X offset and positive Y offset for positioning
-                .align(Alignment.Center)
+                .fillMaxWidth()
+                .height(190.dp) // Adjust height as needed
+                .align(Alignment.TopCenter)
+                .graphicsLayer {
+                    rotationZ = -13.45f // Rotate the stripe
+                    // Translate to position the stripe lower
+                    translationY = 140.dp.toPx() // Move it down by 150dp
+                    // Expand beyond screen borders horizontally
+                    scaleX = 2f // Double the width
+                }
+                .background(Color(0xFF32B768))
         )
 
         // Column for profile details (image, name, edit profile)
@@ -161,7 +165,7 @@ fun ProfileContentTop() {
                 painter = rememberAsyncImagePainter(model = R.drawable.ball_pic),
                 contentDescription = "profile_image",
                 modifier = Modifier
-                    .size(120.dp) // Large image size
+                    .size(150.dp) // Large image size
                     .clip(CircleShape)
                     .border(5.dp, Color.White, CircleShape), // Optional white border
                 contentScale = ContentScale.Crop
