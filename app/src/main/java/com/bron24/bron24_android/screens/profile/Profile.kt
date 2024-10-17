@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
@@ -48,8 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
@@ -116,7 +116,14 @@ fun Profile(
 
             ProfileInfoSection()
 
-            ProfileAccountActions()
+            Spacer(modifier = Modifier.height(14.dp))
+
+
+            ProfileAccountAction(title = "Change password", {})
+            Spacer(modifier = Modifier.height(14.dp))
+            ProfileAccountAction(title = "Logout", {})
+            Spacer(modifier = Modifier.height(14.dp))
+            ProfileAccountAction(title = "Delete account", {})
 
         }
     }
@@ -132,27 +139,35 @@ fun ProfileContentTop() {
             .background(Color(0xFF32B768))
             .padding(bottom = 99.dp)
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data("https://i.imgur.com/1tMFzp8.png")
-                .placeholder(R.drawable.placeholder)
-                .crossfade(true)
-                .build(),
-            contentDescription = "Profile Image",
-            contentScale = ContentScale.Crop,
+        Image(
+            painter = rememberAsyncImagePainter(model = R.drawable.ball_pic), // Optimized with Coil
+            contentDescription = "profile_image",
             modifier = Modifier
-                .padding(horizontal = 122.dp)
-                .size(150.dp)
+                .size(50.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
         )
+//        AsyncImage(
+//            model = ImageRequest.Builder(LocalContext.current)
+//                .data("https://i.imgur.com/1tMFzp8.png")
+//                .placeholder(R.drawable.placeholder)
+//                .crossfade(true)
+//                .build(),
+//            contentDescription = "Profile Image",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .padding(horizontal = 122.dp)
+//                .size(150.dp)
+//        )
         Spacer(modifier = Modifier.height(13.dp))
         Text(
             text = "Cristiano Ronaldo",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 18.sp,
+                fontSize = 20.sp,
                 color = Color.White,
-                lineHeight = 20.sp,
+                lineHeight = 22.sp,
             ),
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -163,8 +178,9 @@ fun ProfileContentTop() {
                 .fillMaxWidth()
         ) {
             Image(
-                painter = painterResource(id = R.drawable.baseline_edit_24),
+                painter = painterResource(id = R.drawable.edit_icon),
                 contentDescription = "Edit",
+                modifier = Modifier.size(14.dp)
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
@@ -237,7 +253,7 @@ fun ProfileInfoSection() {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(horizontal = 28.dp, vertical = 24.dp)
+            .padding(horizontal = 30.dp, vertical = 24.dp)
             .fillMaxWidth()
     ) {
         Text(
@@ -255,7 +271,7 @@ fun ProfileInfoSection() {
             fontSize = 16.sp,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,
                 color = Color(0xFF636363),
                 lineHeight = 20.sp,
@@ -264,16 +280,21 @@ fun ProfileInfoSection() {
         )
     }
 
-    Column(
+    Box(
         modifier = Modifier
-            .padding(horizontal = 19.dp)
-            .border(1.dp, Color(0xFFD9D9D9), RoundedCornerShape(5.dp))
             .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 18.dp)
+            .padding(horizontal = 28.dp)
+            .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
     ) {
-        ProfileInfoItem(label = "Full name", value = "Cristiano Ronaldo")
-        Spacer(modifier = Modifier.height(10.dp))
-        ProfileInfoItem(label = "Phone number", value = "+998 97 777 07 07")
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp , vertical = 18.dp)
+        ) {
+            ProfileInfoItem(label = "Full name", value = "Cristiano Ronaldo")
+            Spacer(modifier = Modifier.height(10.dp))
+            ProfileInfoItem(label = "Phone number", value = "+998 97 777 07 07")
+        }
     }
 }
 
@@ -299,7 +320,7 @@ fun ProfileInfoItem(label: String, value: String) {
             text = value,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 color = Color.Black,
                 lineHeight = 20.sp,
@@ -309,42 +330,53 @@ fun ProfileInfoItem(label: String, value: String) {
 }
 
 @Composable
-fun ProfileAccountActions() {
-    Column(
+fun ProfileAccountAction(title: String, onActionClick: () -> Unit) {
+
+    Box(
         modifier = Modifier
-            .padding(horizontal = 19.dp, vertical = 14.dp)
-            .border(1.dp, Color(0xFFD9D9D9), RoundedCornerShape(5.dp))
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 24.dp)
+        .fillMaxWidth()
+        .padding(horizontal = 28.dp)
+        .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
     ) {
-        ProfileActionButton(text = "Change password")
-        Spacer(modifier = Modifier.height(10.dp))
-        ProfileActionButton(text = "Logout")
-        Spacer(modifier = Modifier.height(10.dp))
-        ProfileActionButton(text = "Delete account")
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 15.dp)
+        ) {
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    lineHeight = 20.sp,
+                ),
+            )
+        }
     }
 }
 
-@Composable
-fun ProfileActionButton(text: String) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = text,
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
-                color = Color.Black,
-                lineHeight = 20.sp,
-            ),
-        )
-    }
-}
+//@Composable
+//fun ProfileActionButton(text: String) {
+//    Row(
+//        horizontalArrangement = Arrangement.SpaceBetween,
+//        verticalAlignment = Alignment.CenterVertically,
+//        modifier = Modifier
+//            .fillMaxWidth()
+//    ) {
+//        Text(
+//            text = text,
+//            style = TextStyle(
+//                fontFamily = gilroyFontFamily,
+//                fontWeight = FontWeight.Medium,
+//                fontSize = 14.sp,
+//                color = Color.Black,
+//                lineHeight = 20.sp,
+//            ),
+//        )
+//    }
+//}
 
 @Preview(widthDp = 390, heightDp = 794)
 @Composable
