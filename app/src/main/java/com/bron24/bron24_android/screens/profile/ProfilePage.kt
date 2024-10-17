@@ -141,7 +141,7 @@ fun ProfileContent(user: User, modifier: Modifier) {
 
             ProfileAccountAction(title = "Change password", {})
             Spacer(modifier = Modifier.height(14.dp))
-            ProfileAccountAction(title = "Logout", {})
+            ProfileAccountAction(title = "Log out", {})
             Spacer(modifier = Modifier.height(14.dp))
             ProfileAccountAction(title = "Delete account", {})
             Spacer(modifier = Modifier.height(20.dp))
