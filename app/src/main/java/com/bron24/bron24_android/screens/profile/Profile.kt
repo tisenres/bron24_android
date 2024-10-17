@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -131,68 +133,80 @@ fun Profile(
 
 @Composable
 fun ProfileContentTop() {
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF32B768))
-            .padding(bottom = 99.dp)
+            .background(Color.White) // Main background for the profile screen
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(model = R.drawable.ball_pic), // Optimized with Coil
-            contentDescription = "profile_image",
+        // Create the diagonal green stripe based on the specifications you shared
+        Box(
             modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
+                .width(527.dp) // Set width as shown in your layout screenshot (527.1px ≈ 527dp)
+                .height(190.dp) // Set height as shown in your layout screenshot (190px ≈ 190dp)
+                .rotate(-13.45f) // Rotate to 13.45 degrees
+                .background(Color(0xFF32B768)) // Green color as per the screenshot
+                .offset(x = (-83).dp, y = 216.dp) // Use negative X offset and positive Y offset for positioning
+                .align(Alignment.Center)
         )
-//        AsyncImage(
-//            model = ImageRequest.Builder(LocalContext.current)
-//                .data("https://i.imgur.com/1tMFzp8.png")
-//                .placeholder(R.drawable.placeholder)
-//                .crossfade(true)
-//                .build(),
-//            contentDescription = "Profile Image",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .padding(horizontal = 122.dp)
-//                .size(150.dp)
-//        )
-        Spacer(modifier = Modifier.height(13.dp))
-        Text(
-            text = "Cristiano Ronaldo",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 20.sp,
-                color = Color.White,
-                lineHeight = 22.sp,
-            ),
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
+
+        // Column for profile details (image, name, edit profile)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 80.dp, bottom = 99.dp) // Adjust padding based on your needs
         ) {
+            // Profile Image (large, centered)
             Image(
-                painter = painterResource(id = R.drawable.edit_icon),
-                contentDescription = "Edit",
-                modifier = Modifier.size(14.dp)
+                painter = rememberAsyncImagePainter(model = R.drawable.ball_pic),
+                contentDescription = "profile_image",
+                modifier = Modifier
+                    .size(120.dp) // Large image size
+                    .clip(CircleShape)
+                    .border(5.dp, Color.White, CircleShape), // Optional white border
+                contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.width(5.dp))
+
+            Spacer(modifier = Modifier.height(13.dp))
+
+            // Profile Name (Cristiano Ronaldo)
             Text(
-                text = "Edit Profile",
+                text = "Cristiano Ronaldo",
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = 24.sp, // Larger text for better visibility
                     color = Color.White,
-                    lineHeight = 20.sp,
-                ),
+                    lineHeight = 30.sp,
+                )
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Edit Profile Row with Icon
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.edit_icon),
+                    contentDescription = "Edit",
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Edit Profile",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp, // Edit profile text size
+                        color = Color.White,
+                        lineHeight = 20.sp
+                    )
+                )
+            }
         }
     }
 }
@@ -289,7 +303,7 @@ fun ProfileInfoSection() {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 15.dp , vertical = 18.dp)
+                .padding(horizontal = 15.dp, vertical = 18.dp)
         ) {
             ProfileInfoItem(label = "Full name", value = "Cristiano Ronaldo")
             Spacer(modifier = Modifier.height(10.dp))
@@ -334,9 +348,9 @@ fun ProfileAccountAction(title: String, onActionClick: () -> Unit) {
 
     Box(
         modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 28.dp)
-        .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
+            .fillMaxWidth()
+            .padding(horizontal = 28.dp)
+            .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
     ) {
         Column(
             modifier = Modifier
@@ -356,27 +370,6 @@ fun ProfileAccountAction(title: String, onActionClick: () -> Unit) {
         }
     }
 }
-
-//@Composable
-//fun ProfileActionButton(text: String) {
-//    Row(
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        verticalAlignment = Alignment.CenterVertically,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//    ) {
-//        Text(
-//            text = text,
-//            style = TextStyle(
-//                fontFamily = gilroyFontFamily,
-//                fontWeight = FontWeight.Medium,
-//                fontSize = 14.sp,
-//                color = Color.Black,
-//                lineHeight = 20.sp,
-//            ),
-//        )
-//    }
-//}
 
 @Preview(widthDp = 390, heightDp = 794)
 @Composable
