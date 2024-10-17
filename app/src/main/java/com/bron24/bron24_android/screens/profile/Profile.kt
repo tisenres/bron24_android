@@ -1,8 +1,5 @@
 package com.bron24.bron24_android.screens.profile
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,11 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -45,18 +38,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(
-    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -65,11 +56,9 @@ fun Profile(
             .fillMaxHeight()
             .background(Color.White)
     ) {
-        // Scrollable Profile Content
-
         val scrollState = rememberLazyListState()
         val context = LocalContext.current
-        val toolbarHeight = 48.dp
+        val toolbarHeight = 40.dp
 
         val toolbarVisible by remember {
             derivedStateOf {
@@ -77,33 +66,32 @@ fun Profile(
             }
         }
 
-        AnimatedToolbar(
-            visible = toolbarVisible,
-            title = "User Profile",
-            onBackClick = onBackClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(toolbarHeight)
-                .zIndex(1f)
+        TopAppBar(
+            title = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(horizontal = 20.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Profile",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 28.sp,
+                            color = Color.Black,
+                            lineHeight = 30.sp,
+                        ),
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White,
+                titleContentColor = Color.Black,
+            )
         )
 
-//        Box(
-//            modifier = Modifier
-//                .clip(RoundedCornerShape(50.dp))
-//                .fillMaxWidth()
-//                .weight(1f)
-//                .background(Color.White, shape = RoundedCornerShape(50.dp))
-//                .padding(top = 16.dp)
-//                .verticalScroll(rememberScrollState())
-//        ) {
-//            ProfileContentTop()
-//
-//            ProfileInfoSection()
-//
-//            ProfileAccountActions()
-//
-//        }
-//
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(50.dp))
@@ -215,56 +203,56 @@ fun ProfileContentTop() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AnimatedToolbar(
-    visible: Boolean,
-    title: String?,
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(),
-        exit = fadeOut(),
-        modifier = modifier
-    ) {
-        TopAppBar(
-            title = {
-                Box(
-                    modifier = Modifier.fillMaxHeight(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    androidx.compose.material3.Text(
-                        text = title ?: "Unknown field",
-                        style = TextStyle(
-                            fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color(0xFF3C2E56),
-                            lineHeight = 22.sp,
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            },
-            navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back"
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.White,
-                titleContentColor = Color(0xFF3C2E56),
-                navigationIconContentColor = Color(0xFF3C2E56)
-            )
-        )
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//private fun AnimatedToolbar(
+//    visible: Boolean,
+//    title: String?,
+//    onBackClick: () -> Unit,
+//    modifier: Modifier = Modifier
+//) {
+//    AnimatedVisibility(
+//        visible = visible,
+//        enter = fadeIn(),
+//        exit = fadeOut(),
+//        modifier = modifier
+//    ) {
+//        TopAppBar(
+//            title = {
+//                Box(
+//                    modifier = Modifier.fillMaxHeight(),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    androidx.compose.material3.Text(
+//                        text = title ?: "Unknown field",
+//                        style = TextStyle(
+//                            fontFamily = gilroyFontFamily,
+//                            fontWeight = FontWeight.Bold,
+//                            fontSize = 18.sp,
+//                            color = Color(0xFF3C2E56),
+//                            lineHeight = 22.sp,
+//                        ),
+//                        maxLines = 1,
+//                        overflow = TextOverflow.Ellipsis,
+//                    )
+//                }
+//            },
+//            navigationIcon = {
+//                IconButton(onClick = onBackClick) {
+//                    Icon(
+//                        imageVector = Icons.Default.ArrowBack,
+//                        contentDescription = "Back"
+//                    )
+//                }
+//            },
+//            colors = TopAppBarDefaults.topAppBarColors(
+//                containerColor = Color.White,
+//                titleContentColor = Color(0xFF3C2E56),
+//                navigationIconContentColor = Color(0xFF3C2E56)
+//            )
+//        )
+//    }
+//}
 
 @Composable
 fun ProfileInfoSection() {
@@ -378,5 +366,5 @@ fun ProfileAccountAction(title: String, onActionClick: () -> Unit) {
 @Preview(widthDp = 390, heightDp = 794)
 @Composable
 fun ProfilePreview() {
-    Profile({})
+    Profile()
 }
