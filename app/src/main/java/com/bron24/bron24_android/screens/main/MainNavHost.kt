@@ -42,6 +42,7 @@ import com.bron24.bron24_android.screens.booking.screens.BookingSuccessScreen
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.map.YandexMapScreen
+import com.bron24.bron24_android.screens.profile.ProfilePage
 import com.bron24.bron24_android.screens.searchfilter.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
@@ -310,27 +311,6 @@ fun BookingBottomSheet(
                 val timeSlotsJson = Gson().toJson(timeSlots)
                 navController.navigate("bookingConfirmationScreen?venueId=$venueId&date=$date&sector=$sector&timeSlots=$timeSlotsJson")
             },
-        )
-    }
-}
-
-@Composable
-fun ProfilePage() {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(
-            text = "Profile Page",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                color = Color(0xFF32B768),
-                lineHeight = 30.sp,
-            ),
-            modifier = Modifier.align(
-                Alignment.Center
-            )
         )
     }
 }

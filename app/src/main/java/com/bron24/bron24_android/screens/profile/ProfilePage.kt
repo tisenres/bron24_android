@@ -24,16 +24,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -47,8 +43,9 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(
-    modifier: Modifier = Modifier
+fun ProfilePage(
+    modifier: Modifier = Modifier,
+//    viewModel: ProfileViewModel = hiltViewModel()
 ) {
     Column(
         modifier = modifier
@@ -57,21 +54,21 @@ fun Profile(
             .background(Color.White)
     ) {
         val scrollState = rememberLazyListState()
-        val context = LocalContext.current
-        val toolbarHeight = 40.dp
-
-        val toolbarVisible by remember {
-            derivedStateOf {
-                scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
-            }
-        }
+//        val context = LocalContext.current
+//        val toolbarHeight = 40.dp
+//
+//        val toolbarVisible by remember {
+//            derivedStateOf {
+//                scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
+//            }
+//        }
 
         TopAppBar(
             title = {
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .padding(horizontal = 20.dp),
+                        .padding(horizontal = 15.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -79,7 +76,7 @@ fun Profile(
                         style = TextStyle(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.ExtraBold,
-                            fontSize = 28.sp,
+                            fontSize = 24.sp,
                             color = Color.Black,
                             lineHeight = 30.sp,
                         ),
@@ -94,10 +91,10 @@ fun Profile(
 
         Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(50.dp))
+//                .clip(RoundedCornerShape(50.dp))
                 .fillMaxWidth()
-                .weight(1f)
-                .background(Color.White, shape = RoundedCornerShape(50.dp))
+//                .weight(1f)
+//                .background(Color.White, shape = RoundedCornerShape(50.dp))
                 .padding(top = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -134,7 +131,7 @@ fun ProfileContentTop() {
                 .graphicsLayer {
                     rotationZ = -13.45f // Rotate the stripe
                     // Translate to position the stripe lower
-                    translationY = 140.dp.toPx() // Move it down by 150dp
+                    translationY = 90.dp.toPx() // Move it down by 150dp
                     // Expand beyond screen borders horizontally
                     scaleX = 2f // Double the width
                 }
@@ -146,7 +143,7 @@ fun ProfileContentTop() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 80.dp, bottom = 99.dp) // Adjust padding based on your needs
+                .padding(top = 20.dp, bottom = 99.dp) // Adjust padding based on your needs
         ) {
             // Profile Image (large, centered)
             Image(
@@ -202,57 +199,6 @@ fun ProfileContentTop() {
         }
     }
 }
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//private fun AnimatedToolbar(
-//    visible: Boolean,
-//    title: String?,
-//    onBackClick: () -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    AnimatedVisibility(
-//        visible = visible,
-//        enter = fadeIn(),
-//        exit = fadeOut(),
-//        modifier = modifier
-//    ) {
-//        TopAppBar(
-//            title = {
-//                Box(
-//                    modifier = Modifier.fillMaxHeight(),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    androidx.compose.material3.Text(
-//                        text = title ?: "Unknown field",
-//                        style = TextStyle(
-//                            fontFamily = gilroyFontFamily,
-//                            fontWeight = FontWeight.Bold,
-//                            fontSize = 18.sp,
-//                            color = Color(0xFF3C2E56),
-//                            lineHeight = 22.sp,
-//                        ),
-//                        maxLines = 1,
-//                        overflow = TextOverflow.Ellipsis,
-//                    )
-//                }
-//            },
-//            navigationIcon = {
-//                IconButton(onClick = onBackClick) {
-//                    Icon(
-//                        imageVector = Icons.Default.ArrowBack,
-//                        contentDescription = "Back"
-//                    )
-//                }
-//            },
-//            colors = TopAppBarDefaults.topAppBarColors(
-//                containerColor = Color.White,
-//                titleContentColor = Color(0xFF3C2E56),
-//                navigationIconContentColor = Color(0xFF3C2E56)
-//            )
-//        )
-//    }
-//}
 
 @Composable
 fun ProfileInfoSection() {
@@ -366,5 +312,5 @@ fun ProfileAccountAction(title: String, onActionClick: () -> Unit) {
 @Preview(widthDp = 390, heightDp = 794)
 @Composable
 fun ProfilePreview() {
-    Profile()
+    ProfilePage()
 }
