@@ -3,6 +3,8 @@ package com.bron24.bron24_android.screens.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,19 +23,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -98,53 +98,79 @@ fun ProfileContent(user: User, modifier: Modifier) {
             .background(Color.White)
     ) {
 
-        TopAppBar(
-            title = {
-                Box(
-                    modifier = Modifier
-                        .height(40.dp)
-                        .padding(horizontal = 15.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Profile",
-                        style = TextStyle(
-                            fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 24.sp,
-                            color = Color.Black,
-                            lineHeight = 25.sp,
-                        ),
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.White,
-                titleContentColor = Color.Black,
-            )
-        )
-
         Column(
-            modifier = Modifier
-//                .clip(RoundedCornerShape(50.dp))
+            modifier = modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
+                .background(Color.White)
+        ) {
+
+//            TopAppBar(
+//                modifier = Modifier.height(60.dp), // Adjust the height as needed
+//                title = {
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxHeight()
+//                            .padding(horizontal = 24.dp),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        Text(
+//                            text = "Profile",
+//                            style = TextStyle(
+//                                fontFamily = gilroyFontFamily,
+//                                fontWeight = FontWeight.ExtraBold,
+//                                fontSize = 28.sp,
+//                                color = Color.Black,
+//                                lineHeight = 30.sp,
+//                            ),
+//                        )
+//                    }
+//                },
+//                colors = TopAppBarDefaults.topAppBarColors(
+//                    containerColor = Color.White,
+//                    titleContentColor = Color.Black,
+//                )
+//            )
+
+
+
+            Column(
+                modifier = Modifier
+//                .clip(RoundedCornerShape(50.dp))
+                    .fillMaxWidth()
 //                .weight(1f)
 //                .background(Color.White, shape = RoundedCornerShape(50.dp))
-                .padding(top = 16.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
-            ProfileContentTop(user)
+                    .padding(top = 16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
 
-            ProfileInfoSection(user)
+                Text(
+                    text = "Profile",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 24.sp,
+                        color = Color.Black,
+                        lineHeight = 30.sp,
+                    ),
+                    modifier = Modifier.padding(horizontal = 25.dp, vertical = 12.dp)
+                )
 
-            Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
-            ProfileAccountAction(title = "Change password", {})
-            Spacer(modifier = Modifier.height(14.dp))
-            ProfileAccountAction(title = "Log out", {})
-            Spacer(modifier = Modifier.height(14.dp))
-            ProfileAccountAction(title = "Delete account", {})
-            Spacer(modifier = Modifier.height(20.dp))
+                ProfileContentTop(user)
+
+                ProfileInfoSection(user)
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                ProfileAccountAction(title = "Change password", {})
+                Spacer(modifier = Modifier.height(14.dp))
+                ProfileAccountAction(title = "Log out", {})
+                Spacer(modifier = Modifier.height(14.dp))
+                ProfileAccountAction(title = "Delete account", {})
+                Spacer(modifier = Modifier.height(20.dp))
+            }
         }
     }
 }
@@ -165,7 +191,7 @@ fun ProfileContentTop(user: User) {
                 .graphicsLayer {
                     rotationZ = -13.45f // Rotate the stripe
                     // Translate to position the stripe lower
-                    translationY = 90.dp.toPx() // Move it down by 150dp
+                    translationY = 65.dp.toPx() // Move it down by 150dp
                     // Expand beyond screen borders horizontally
                     scaleX = 2f // Double the width
                 }
@@ -198,38 +224,38 @@ fun ProfileContentTop(user: User) {
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp, // Larger text for better visibility
+                    fontSize = 26.sp, // Larger text for better visibility
                     color = Color.White,
                     lineHeight = 30.sp,
                 )
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+//            Spacer(modifier = Modifier.height(8.dp))
 
             // Edit Profile Row with Icon
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.edit_icon),
-                    contentDescription = "Edit",
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "Edit Profile",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp, // Edit profile text size
-                        color = Color.White,
-                        lineHeight = 20.sp
-                    )
-                )
-            }
+//            Row(
+//                horizontalArrangement = Arrangement.Center,
+//                verticalAlignment = Alignment.CenterVertically,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//            ) {
+//                Image(
+//                    painter = painterResource(id = R.drawable.edit_icon),
+//                    contentDescription = "Edit",
+//                    modifier = Modifier.size(16.dp)
+//                )
+//                Spacer(modifier = Modifier.width(6.dp))
+//                Text(
+//                    text = "Edit Profile",
+//                    style = TextStyle(
+//                        fontFamily = gilroyFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 16.sp, // Edit profile text size
+//                        color = Color.White,
+//                        lineHeight = 20.sp
+//                    )
+//                )
+//            }
         }
     }
 }
@@ -252,6 +278,7 @@ fun ProfileInfoSection(user: User) {
                 lineHeight = 20.sp,
             ),
         )
+
         Text(
             text = "Edit Profile",
             fontSize = 16.sp,
@@ -263,6 +290,11 @@ fun ProfileInfoSection(user: User) {
                 lineHeight = 20.sp,
                 textDecoration = TextDecoration.Underline
             ),
+            modifier = Modifier.clickable(
+                onClick = { /* Handle Edit Profile click */ },
+                indication = ripple(),
+                interactionSource = remember { MutableInteractionSource() }
+            )
         )
     }
 
