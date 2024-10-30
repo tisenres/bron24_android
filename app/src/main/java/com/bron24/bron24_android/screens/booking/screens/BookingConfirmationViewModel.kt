@@ -66,20 +66,20 @@ class BookingConfirmationViewModel @Inject constructor(
         return outputFormatter.format(parsedDate)
     }
 
-    fun formatTimeSlot(startTime: String, endTime: String): String {
-        // Define the input format that includes hours, minutes, and seconds
-        val inputFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-
-        // Define the output format that includes only hours and minutes
-        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-
-        // Parse the start and end time strings
-        val parsedStartTime = inputFormat.parse(startTime)
-        val parsedEndTime = inputFormat.parse(endTime)
-
-        // Format the parsed times to the desired output format
-        return "${outputFormat.format(parsedStartTime!!)} - ${outputFormat.format(parsedEndTime!!)}"
-    }
+//    fun formatTimeSlot(startTime: String, endTime: String): String {
+//         Define the input format that includes hours, minutes, and seconds
+//        val inputFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+//
+//         Define the output format that includes only hours and minutes
+//        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+//
+//         Parse the start and end time strings
+//        val parsedStartTime = inputFormat.parse(startTime)
+//        val parsedEndTime = inputFormat.parse(endTime)
+//
+//         Format the parsed times to the desired output format
+//        return "${outputFormat.format(parsedStartTime!!)} - ${outputFormat.format(parsedEndTime!!)}"
+//    }
 
     fun updatePhoneNumber(phone: String) {
         _secondPhoneNumber.value = phone

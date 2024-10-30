@@ -4,7 +4,6 @@ import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.dto.booking.AvailableTimesRequestDto
 import com.bron24.bron24_android.data.network.dto.booking.RequestBookingDto
 import com.bron24.bron24_android.data.network.mappers.formatPrice
-import com.bron24.bron24_android.data.network.mappers.formatTime
 import com.bron24.bron24_android.data.network.mappers.toDomain
 import com.bron24.bron24_android.data.network.mappers.toNetworkModel
 import com.bron24.bron24_android.domain.entity.booking.AvailableTimesResponse
@@ -33,7 +32,7 @@ class BookingRepositoryImpl @Inject constructor(
     ): Booking {
 
         val formattedTimeSlots: List<String> = booking.timeSlots.map { timeSlot ->
-            "${formatTime(timeSlot.startTime)}-${formatTime(timeSlot.endTime)}"
+            "${timeSlot.startTime}-${timeSlot.endTime}"
         }
 
         val bookingRequest = RequestBookingDto(
@@ -57,7 +56,7 @@ class BookingRepositoryImpl @Inject constructor(
             venueAddress = response.data.venue?.venueAddress
             totalHours = response.data.hours
             cost = formatPrice(response.data.cost.toString())
-            orderId = response.data.orderId?.toIntOrNull() ?: 0
+            orderIds = response.data.orderIds
         }
 
         return currentBooking

@@ -66,9 +66,7 @@ import com.bron24.bron24_android.helper.util.presentation.components.toast.Toast
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 @Composable
 fun BookingScreen(
@@ -595,11 +593,14 @@ fun TimeSlotItem(
             .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-        val startTimeInMillis = parseTimeString(timeSlot.startTime)
-        val endTimeInMillis = parseTimeString(timeSlot.endTime)
+//        val startTimeInMillis = parseTimeString(timeSlot.startTime)
+//        val endTimeInMillis = parseTimeString(timeSlot.endTime)
+        val startTimeInMillis = timeSlot.startTime
+        val endTimeInMillis = timeSlot.endTime
 
         Text(
-            text = formatTimeSlot(startTimeInMillis, endTimeInMillis),
+//            text = formatTimeSlot(startTimeInMillis, endTimeInMillis),
+            text = "$startTimeInMillis - $endTimeInMillis",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -625,21 +626,21 @@ fun LoadingScreen() {
     }
 }
 
-fun parseTimeString(time: String): Long {
-    // Parse "HH:mm:ss" to milliseconds since epoch
-    val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-    val date = timeFormat.parse(time) ?: throw IllegalArgumentException("Invalid time format")
-    return date.time
-}
+//fun parseTimeString(time: String): Long {
+//     Parse "HH:mm:ss" to milliseconds since epoch
+//    val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+//    val date = timeFormat.parse(time) ?: throw IllegalArgumentException("Invalid time format")
+//    return date.time
+//}
 
 fun LayoutCoordinates.findChildBounds(parent: LayoutCoordinates, key: String): Rect {
     return this.boundsInRoot()
 }
 
-fun formatTimeSlot(startTime: Long, endTime: Long): String {
-    val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return "${dateFormat.format(startTime)} - ${dateFormat.format(endTime)}"
-}
+//fun formatTimeSlot(startTime: String, endTime: String): String {
+//    val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+//    return "${dateFormat.format(startTime.toLong())} - ${dateFormat.format(endTime.toLong())}"
+//}
 
 fun millisToDate(timeMillis: Long): String {
     // Create a Calendar instance and set the time in milliseconds
