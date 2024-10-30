@@ -18,7 +18,7 @@ class BookingSuccessViewModel @Inject constructor(
     val bookingInfo: StateFlow<BookingSuccessInfo?> get() = _bookingInfo.asStateFlow()
 
     fun initBookingInfo(
-        orderId: Int,
+        orderId: String,
         venueName: String,
         date: String,
         sector: String,

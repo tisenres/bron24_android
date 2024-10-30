@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -249,6 +250,7 @@ fun MainNavHost(
             )
         }
 
+        // Inside your MainNavHost Composable
         composable(
             route = Screen.BookingSuccessScreen.route,
             arguments = listOf(
@@ -261,7 +263,7 @@ fun MainNavHost(
         ) { backStackEntry ->
             onDestinationChanged(Screen.BookingSuccessScreen.route)
 
-            val orderId = backStackEntry.arguments?.getInt("orderId") ?: 0
+            val orderId = backStackEntry.arguments?.getString("orderId") ?: ""
             val venueName = backStackEntry.arguments?.getString("venueName") ?: ""
             val date = backStackEntry.arguments?.getString("date") ?: ""
             val sector = backStackEntry.arguments?.getString("sector") ?: ""
@@ -270,6 +272,13 @@ fun MainNavHost(
             val timeSlotsJson = backStackEntry.arguments?.getString("timeSlots") ?: ""
             val timeSlots = Gson().fromJson(timeSlotsJson, Array<TimeSlot>::class.java).toList()
 
+            // Add BackHandler here
+            BackHandler {
+                navController.navigate(Screen.HomePage.route) {
+                    popUpTo(Screen.HomePage.route) { inclusive = false }
+                }
+            }
+
             BookingSuccessScreen(
                 viewModel = hiltViewModel(),
                 orderId = orderId,
@@ -277,9 +286,18 @@ fun MainNavHost(
                 date = date,
                 sector = sector,
                 timeSlots = timeSlots,
-                onMyOrdersClick = { navController.popBackStack() },
-                onMainPageClick = { navController.popBackStack() },
-                onMapClick = { }
+                onMyOrdersClick = {
+                    navController.navigate(Screen.OrdersPage.route) {
+                        popUpTo(Screen.HomePage.route) { inclusive = false }
+                    }
+                },
+                onMainPageClick = {
+                    navController.navigate(Screen.HomePage.route) {
+                        popUpTo(Screen.HomePage.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onMapClick = { },
             )
         }
     }
