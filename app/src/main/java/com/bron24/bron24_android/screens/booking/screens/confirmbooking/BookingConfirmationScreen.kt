@@ -53,6 +53,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -63,6 +64,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -87,7 +89,7 @@ fun BookingConfirmationScreen(
     var showPromoCode by remember { mutableStateOf(false) }
 
     // State variables for selected payment method and promo code
-    var selectedPaymentMethod by remember { mutableStateOf<String?>(null) }
+    var selectedPaymentMethod by remember { mutableStateOf("Cash") }
     var appliedPromoCode by remember { mutableStateOf<String?>(null) }
 
     val booking by viewModel.booking.collectAsState()
@@ -703,7 +705,7 @@ fun PaymentMethodsBottomSheet(
     onDismiss: () -> Unit,
     onPaymentMethodSelected: (String) -> Unit
 ) {
-    val paymentMethods = listOf("Cash", "UzCard **** **** **** 0961")
+    val paymentMethods = listOf("Cash")
     var selectedMethod by remember { mutableStateOf("Cash") }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -754,14 +756,14 @@ fun PaymentOption(title: String, iconRes: Int, isSelected: Boolean, onClick: () 
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp))
-            .background(if (isSelected) Color(0xFFE8F5E9) else Color.White)
+            .background(Color.White)
             .clickable(onClick = onClick)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .padding(start = 16.dp, end = 5.dp),
+                .padding(start = 16.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -783,11 +785,10 @@ fun PaymentOption(title: String, iconRes: Int, isSelected: Boolean, onClick: () 
             Spacer(modifier = Modifier.weight(1f))
             RadioButton(
                 selected = isSelected,
-                onClick = null, // null since the whole row is clickable
+                onClick = {},
                 colors = RadioButtonDefaults.colors(
-//                    selectedColor = Color(0xFF32B768),
-//                    unselectedColor = Color.Gray,
-//                    disabledColor = Color.LightGray
+                    selectedColor = Color(0xFF32B768),
+                    unselectedColor = Color.Gray
                 )
             )
         }
@@ -800,7 +801,8 @@ fun AddCardOption() {
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp))
-            .clickable { /* Handle add card action */ }
+            .clip(RoundedCornerShape(15.dp))
+            .background(Color(0xFFE3E3E3))
     ) {
         Row(
             modifier = Modifier
@@ -816,7 +818,7 @@ fun AddCardOption() {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = "Add card", style = TextStyle(
+                text = "Add card (not available)", style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
@@ -852,29 +854,38 @@ fun PromoCodeBottomSheet(
         sheetState = sheetState,
         containerColor = Color.White
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Enter promo code",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = gilroyFontFamily
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            BasicTextField(
-                value = promoCode,
-                onValueChange = { promoCode = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                    .padding(8.dp),
-                textStyle = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontSize = 16.sp,
-                    color = Color.Black
-                ),
-                singleLine = true
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+        Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp)) {
+            Box {
+                BasicTextField(
+                    value = promoCode,
+                    onValueChange = { promoCode = it.uppercase() },  // Automatically uppercase the input
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp,  Color(0xFFC0C0C0), RoundedCornerShape(10.dp))
+                        .padding(16.dp),
+                    textStyle = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontSize = 16.sp,
+                        color = Color.Black
+                    ),
+                    singleLine = true
+                )
+
+                if (promoCode.isEmpty()) {
+                    Text(
+                        text = "Enter Promo Code",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            color = Color(0xFFC0C0C0)
+                        ),
+                        modifier = Modifier
+                            .padding(start = 16.dp, top = 16.dp)  // Padding to align with BasicTextField text
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(13.dp))
             ConfirmButton(
                 isEnabled = promoCode.isNotBlank(),
                 onClick = {
@@ -900,4 +911,10 @@ fun formatWithSpansPhoneNumber(phoneNumber: String): String {
     } else {
         phoneNumber
     }
+}
+
+@Preview
+@Composable
+fun ConfirmButtonPreview() {
+    AddCardOption()
 }
