@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,19 +26,18 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -93,7 +91,9 @@ fun BookingConfirmationScreen(
     var appliedPromoCode by remember { mutableStateOf<String?>(null) }
 
     val booking by viewModel.booking.collectAsState()
-    val isLoading by remember { viewModel.isLoading }
+    val isLoading by viewModel.isLoading.collectAsState()
+
+//    val isLoading by remember { viewModel.isLoading }
     val secondPhoneNumber by viewModel.secondPhoneNumber.collectAsState()
     val isBookingConfirmed by viewModel.isBookingConfirmed.collectAsState()
 
@@ -107,7 +107,7 @@ fun BookingConfirmationScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(venueId, date, sector, timeSlots) {
         viewModel.getBookingInfo(venueId, date, sector, timeSlots)
     }
 
@@ -144,10 +144,10 @@ fun BookingConfirmationScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 24.dp, top = 10.dp),
+                    .padding(start = 24.dp, end = 24.dp, bottom = 100.dp, top = 10.dp), // Adjust bottom padding
                 state = scrollState
             ) {
-                item(key = "bookingInfoSection") {
+                item {
                     booking?.let {
                         BookingInfoCard(viewModel, it, secondPhoneNumber)
                         Spacer(modifier = Modifier.height(15.dp))
@@ -166,21 +166,26 @@ fun BookingConfirmationScreen(
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         TotalAmount(it.cost)
-//                        Spacer(modifier = Modifier.weight(1f))
                         Spacer(modifier = Modifier.height(20.dp))
-                        ConfirmButton(
-                            isEnabled = selectedPaymentMethod != null,
-                            onClick = {
-                                viewModel.confirmBooking()
-                            },
-                            title = stringResource(id = R.string.confirm)
-                        )
                     } ?: run {
                         // Handle case where booking is null (e.g., error or no data)
                         Text("Failed to load booking information", color = Color.Red)
                     }
                 }
             }
+
+            // Place the ConfirmButton at the bottom
+            ConfirmButton(
+                isEnabled = selectedPaymentMethod != null,
+                onClick = {
+                    viewModel.confirmBooking()
+                },
+                title = stringResource(id = R.string.confirm),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(24.dp)
+            )
         }
     }
 
@@ -224,25 +229,21 @@ private fun AnimatedToolbar(
         exit = fadeOut(),
         modifier = modifier
     ) {
-        TopAppBar(
+        // Use CenterAlignedTopAppBar for center alignment
+        androidx.compose.material3.CenterAlignedTopAppBar(
             title = {
-                Box(
-                    modifier = Modifier.fillMaxHeight(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = title ?: "Unknown field",
-                        style = TextStyle(
-                            fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color(0xFF3C2E56),
-                            lineHeight = 22.sp,
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
+                Text(
+                    text = title ?: "Unknown field",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 22.sp,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
@@ -252,7 +253,7 @@ private fun AnimatedToolbar(
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 containerColor = Color.White,
                 titleContentColor = Color(0xFF3C2E56),
                 navigationIconContentColor = Color(0xFF3C2E56)
@@ -277,7 +278,11 @@ fun BookingInfoCard(
                 booking.venueName ?: "", booking.venueAddress ?: "",
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
-            Divider(modifier = Modifier.padding(vertical = 15.dp))
+            HorizontalDivider(
+                color = Color.LightGray,
+                thickness = 1.dp,
+                modifier = Modifier.padding(vertical = 15.dp)
+            )
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 BookingDetail("DATE", viewModel.formatDate(booking.bookingDate))
                 Spacer(modifier = Modifier.height(15.dp))
@@ -329,7 +334,12 @@ fun BookingInfoCard(
                     }
                 )
             }
-            Divider(modifier = Modifier.padding(vertical = 15.dp))
+            HorizontalDivider(
+                color = Color.LightGray,
+                thickness = 1.dp,
+                modifier = Modifier.padding(vertical = 15.dp)
+            )
+
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 BookingDetail("FULL NAME", booking.firstName + " " + booking.lastName)
                 Spacer(modifier = Modifier.height(15.dp))
@@ -769,13 +779,12 @@ fun PaymentOption(title: String, iconRes: Int, isSelected: Boolean, onClick: () 
             Spacer(modifier = Modifier.weight(1f))
             androidx.compose.material3.RadioButton(
                 selected = isSelected,
-                onClick = null,
-//                colors = RadioButtonDefaults.colors(
-
+                onClick = null, // null since the whole row is clickable
+                colors = androidx.compose.material3.RadioButtonDefaults.colors(
 //                    selectedColor = Color(0xFF32B768),
 //                    unselectedColor = Color.Gray,
 //                    disabledColor = Color.LightGray
-//                )
+                )
             )
         }
     }

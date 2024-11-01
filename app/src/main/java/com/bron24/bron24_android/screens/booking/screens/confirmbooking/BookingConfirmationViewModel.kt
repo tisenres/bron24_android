@@ -1,7 +1,6 @@
 package com.bron24.bron24_android.screens.booking.screens.confirmbooking
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.booking.Booking
@@ -25,7 +24,7 @@ class BookingConfirmationViewModel @Inject constructor(
     private val _booking = MutableStateFlow<Booking?>(null)
     val booking = _booking.asStateFlow()
 
-    private val _isLoading = mutableStateOf(false)
+    private val _isLoading = MutableStateFlow(false)
     val isLoading get() = _isLoading
 
     private val _secondPhoneNumber = MutableStateFlow("")
