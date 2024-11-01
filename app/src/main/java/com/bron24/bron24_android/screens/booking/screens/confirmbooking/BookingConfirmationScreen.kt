@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking.screens
+package com.bron24.bron24_android.screens.booking.screens.confirmbooking
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -7,6 +7,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,35 +22,34 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.RadioButton
-import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,17 +64,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.profile.formatWithSpansPhoneNumber
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingConfirmationScreen(
     viewModel: BookingConfirmationViewModel,
@@ -88,17 +88,24 @@ fun BookingConfirmationScreen(
     var showPaymentMethods by remember { mutableStateOf(false) }
     var showPromoCode by remember { mutableStateOf(false) }
 
-    // Add state variables to track if the bottom sheets have been opened
-    var hasOpenedPaymentMethods by remember { mutableStateOf(false) }
-    var hasOpenedPromoCode by remember { mutableStateOf(false) }
+    // State variables for selected payment method and promo code
+    var selectedPaymentMethod by remember { mutableStateOf<String?>(null) }
+    var appliedPromoCode by remember { mutableStateOf<String?>(null) }
 
     val booking by viewModel.booking.collectAsState()
     val isLoading by remember { viewModel.isLoading }
     val secondPhoneNumber by viewModel.secondPhoneNumber.collectAsState()
     val isBookingConfirmed by viewModel.isBookingConfirmed.collectAsState()
 
-    val scrollState = rememberScrollState()
+    val scrollState = rememberLazyListState()
     val context = LocalContext.current
+    val toolbarHeight = 48.dp
+
+    val toolbarVisible by remember {
+        derivedStateOf {
+            scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getBookingInfo(venueId, date, sector, timeSlots)
@@ -116,117 +123,91 @@ fun BookingConfirmationScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            androidx.compose.material3.TopAppBar(
-                title = {
-                    Text(
-                        text = "Booking information",
-                        style = TextStyle(
-                            fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 18.sp,
-                            color = Color.Black,
-                            lineHeight = 22.sp,
-                        )
-                    )
-                },
-                navigationIcon = {
-                    androidx.compose.material3.IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color(0xFF3C2E56),
-                    navigationIconContentColor = Color(0xFF3C2E56)
-                )
-            )
-        },
-        content = { innerPadding ->
-            Box(
+    AnimatedToolbar(
+        visible = toolbarVisible,
+        title = "Booking information",
+        onBackClick = onBackClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(toolbarHeight)
+            .zIndex(1f)
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        } else {
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
+                    .padding(start = 24.dp, end = 24.dp, bottom = 24.dp, top = 10.dp),
+                state = scrollState
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(scrollState)
-                            .padding(innerPadding)
-                            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp, top = 10.dp)
-                    ) {
-                        booking?.let {
-                            BookingInfoCard(viewModel, it, secondPhoneNumber)
-                            Spacer(modifier = Modifier.height(15.dp))
-                            // Disable the button if the bottom sheet has been opened
-                            PaymentMethodButton(
-                                enabled = !hasOpenedPaymentMethods,
-                                onClick = {
-                                    if (!hasOpenedPaymentMethods) {
-                                        showPaymentMethods = true
-                                    }
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(15.dp))
-
-                            // Disable the button if the bottom sheet has been opened
-                            PromoCodeButton(
-                                enabled = !hasOpenedPromoCode,
-                                onClick = {
-                                    if (!hasOpenedPromoCode) {
-                                        showPromoCode = true
-                                    }
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(20.dp))
-                            TotalAmount(it.cost)
-                            Spacer(modifier = Modifier.weight(1f))
-                            Spacer(modifier = Modifier.height(20.dp))
-                            ConfirmButton(
-                                isEnabled = true,
-                                onClick = {
-                                    viewModel.confirmBooking()
-                                },
-                                title = stringResource(id = R.string.confirm)
-                            )
-                        } ?: run {
-                            // Handle case where booking is null (e.g., error or no data)
-                            Text("Failed to load booking information", color = Color.Red)
-                        }
+                item(key = "bookingInfoSection") {
+                    booking?.let {
+                        BookingInfoCard(viewModel, it, secondPhoneNumber)
+                        Spacer(modifier = Modifier.height(15.dp))
+                        PaymentMethodButton(
+                            selectedPaymentMethod = selectedPaymentMethod,
+                            onClick = {
+                                showPaymentMethods = true
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(15.dp))
+                        PromoCodeButton(
+                            appliedPromoCode = appliedPromoCode,
+                            onClick = {
+                                showPromoCode = true
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        TotalAmount(it.cost)
+//                        Spacer(modifier = Modifier.weight(1f))
+                        Spacer(modifier = Modifier.height(20.dp))
+                        ConfirmButton(
+                            isEnabled = selectedPaymentMethod != null,
+                            onClick = {
+                                viewModel.confirmBooking()
+                            },
+                            title = stringResource(id = R.string.confirm)
+                        )
+                    } ?: run {
+                        // Handle case where booking is null (e.g., error or no data)
+                        Text("Failed to load booking information", color = Color.Red)
                     }
-                }
-
-                if (showPaymentMethods) {
-                    PaymentMethodsBottomSheet {
-                        showPaymentMethods = false
-                        hasOpenedPaymentMethods = true // Set the flag to true
-                    }
-                }
-
-                if (showPromoCode) {
-                    PromoCodeBottomSheet(
-                        onDismiss = {
-                            showPromoCode = false
-                            hasOpenedPromoCode = true // Set the flag to true
-                        },
-                        onApply = { code ->
-                            // Handle promo code application
-                            // viewModel.applyPromoCode(code)
-                            showPromoCode = false
-                            hasOpenedPromoCode = true // Set the flag to true
-                        }
-                    )
                 }
             }
         }
-    )
+    }
+
+    // Show the bottom sheets using ModalBottomSheet from material3
+    if (showPaymentMethods) {
+        PaymentMethodsBottomSheet(
+            onDismiss = {
+                showPaymentMethods = false
+            },
+            onPaymentMethodSelected = { method ->
+                selectedPaymentMethod = method
+                showPaymentMethods = false
+            }
+        )
+    }
+
+    if (showPromoCode) {
+        PromoCodeBottomSheet(
+            onDismiss = {
+                showPromoCode = false
+            },
+            onApply = { code ->
+                appliedPromoCode = code
+                showPromoCode = false
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -243,7 +224,7 @@ private fun AnimatedToolbar(
         exit = fadeOut(),
         modifier = modifier
     ) {
-        androidx.compose.material3.TopAppBar(
+        TopAppBar(
             title = {
                 Box(
                     modifier = Modifier.fillMaxHeight(),
@@ -264,7 +245,7 @@ private fun AnimatedToolbar(
                 }
             },
             navigationIcon = {
-                androidx.compose.material3.IconButton(onClick = onBackClick) {
+                IconButton(onClick = onBackClick) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back"
@@ -334,9 +315,7 @@ fun BookingInfoCard(
                                     color = Color.Black,
                                     lineHeight = 20.sp
                                 ),
-//                                textAlign = TextAlign.End
                             )
-
                         }
                     }
                 }
@@ -533,10 +512,9 @@ fun BookingDetail(label: String, value: String) {
 }
 
 @Composable
-fun PaymentMethodButton(enabled: Boolean, onClick: () -> Unit) {
+fun PaymentMethodButton(selectedPaymentMethod: String?, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        enabled = enabled, // Use the 'enabled' parameter
         modifier = Modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
@@ -558,7 +536,7 @@ fun PaymentMethodButton(enabled: Boolean, onClick: () -> Unit) {
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_payment_24),
-                        contentDescription = "Cash",
+                        contentDescription = "Payment",
                         modifier = Modifier
                             .padding(5.dp)
                             .align(Alignment.Center)
@@ -566,12 +544,12 @@ fun PaymentMethodButton(enabled: Boolean, onClick: () -> Unit) {
                 }
                 Spacer(modifier = Modifier.width(17.dp))
                 Text(
-                    if (enabled) "Choose Payment" else "Payment Selected",
+                    selectedPaymentMethod ?: "Choose Payment",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
-                        color = if (enabled) Color.Black else Color.Gray,
+                        color = Color.Black,
                         lineHeight = 20.sp,
                     )
                 )
@@ -580,17 +558,16 @@ fun PaymentMethodButton(enabled: Boolean, onClick: () -> Unit) {
                 modifier = Modifier.size(26.dp),
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Choose",
-                tint = if (enabled) Color.Black else Color.Gray
+                tint = Color.Black
             )
         }
     }
 }
 
 @Composable
-fun PromoCodeButton(enabled: Boolean, onClick: () -> Unit) {
+fun PromoCodeButton(appliedPromoCode: String?, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        enabled = enabled, // Use the 'enabled' parameter
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
         shape = RoundedCornerShape(15.dp),
@@ -618,12 +595,12 @@ fun PromoCodeButton(enabled: Boolean, onClick: () -> Unit) {
                 }
                 Spacer(modifier = Modifier.width(17.dp))
                 Text(
-                    if (enabled) "Enter promo code" else "Promo Code Applied",
+                    appliedPromoCode ?: "Enter promo code",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
-                        color = if (enabled) Color.Black else Color.Gray,
+                        color = Color.Black,
                         lineHeight = 20.sp,
                     )
                 )
@@ -632,63 +609,11 @@ fun PromoCodeButton(enabled: Boolean, onClick: () -> Unit) {
                 modifier = Modifier.size(26.dp),
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Choose",
-                tint = if (enabled) Color.Black else Color.Gray
+                tint = Color.Black
             )
         }
     }
 }
-
-//@Composable
-//fun PromoCodeButton(onClick: () -> Unit) {
-//    Button(
-//        onClick = onClick,
-//        modifier = Modifier.fillMaxWidth(),
-//        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-//        shape = RoundedCornerShape(15.dp),
-//        border = BorderStroke(1.dp, Color.LightGray),
-//        contentPadding = PaddingValues(start = 15.dp, end = 20.dp, top = 21.dp, bottom = 21.dp)
-//    ) {
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            Row(verticalAlignment = Alignment.CenterVertically) {
-//                Box(
-//                    modifier = Modifier
-//                        .size(38.dp)
-//                        .border(1.dp, Color(0xFFD9D9D9), RoundedCornerShape(10.dp))
-//                ) {
-//                    Image(
-//                        painter = painterResource(id = R.drawable.promo_code),
-//                        contentDescription = "Promo Code",
-//                        modifier = Modifier
-//                            .padding(5.dp)
-//                            .align(Alignment.Center)
-//                    )
-//                }
-//                Spacer(modifier = Modifier.width(17.dp))
-//                Text(
-//                    "Enter promo code",
-//                    style = TextStyle(
-//                        fontFamily = gilroyFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 16.sp,
-//                        color = Color.Black,
-//                        lineHeight = 20.sp,
-//                    )
-//                )
-//            }
-//            Icon(
-//                modifier = Modifier.size(26.dp),
-//                imageVector = Icons.Default.KeyboardArrowRight,
-//                contentDescription = "Choose",
-//                tint = Color.Black
-//            )
-//        }
-//    }
-//}
-//
 
 @Composable
 fun TotalAmount(total: String) {
@@ -759,55 +684,64 @@ fun ConfirmButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentMethodsBottomSheet(onDismiss: () -> Unit) {
-    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
-
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetContent = {
-            Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
-                Text(
-                    text = "Payment methods",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = Color.Black,
-                        lineHeight = 20.sp,
-                    ),
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                PaymentOption("Cash", R.drawable.cash_pic, isSelected = true)
-                Spacer(modifier = Modifier.height(10.dp))
-//                PaymentOption(
-//                    "UzCard **** **** **** 0961",
-//                    R.drawable.uzcard,
-//                    isSelected = false
-//                )
-                Spacer(modifier = Modifier.height(10.dp))
-                AddCardOption()
-            }
-        },
-        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        scrimColor = Color.Black.copy(alpha = 0.5f),
-        content = {}
+fun PaymentMethodsBottomSheet(
+    onDismiss: () -> Unit,
+    onPaymentMethodSelected: (String) -> Unit
+) {
+    val paymentMethods = listOf("Cash", "UzCard **** **** **** 0961")
+    var selectedMethod by remember { mutableStateOf("Cash") }
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
     )
+    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(sheetState) {
-        if (sheetState.currentValue != ModalBottomSheetValue.Expanded) {
-            onDismiss()
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+    ) {
+        Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
+            Text(
+                text = "Payment methods",
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.Black,
+                    lineHeight = 20.sp,
+                ),
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            paymentMethods.forEach { method ->
+                PaymentOption(
+                    title = method,
+                    iconRes = if (method == "Cash") R.drawable.cash_pic else R.drawable.uzcard,
+                    isSelected = selectedMethod == method,
+                    onClick = {
+                        selectedMethod = method
+                        onPaymentMethodSelected(method)
+                        coroutineScope.launch {
+                            sheetState.hide()
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+            AddCardOption()
         }
     }
 }
 
 @Composable
-fun PaymentOption(title: String, iconRes: Int, isSelected: Boolean) {
+fun PaymentOption(title: String, iconRes: Int, isSelected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp)),
+            .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp))
+            .background(if (isSelected) Color(0xFFE8F5E9) else Color.White)
+            .clickable(onClick = onClick)
     ) {
         Row(
             modifier = Modifier
@@ -833,14 +767,15 @@ fun PaymentOption(title: String, iconRes: Int, isSelected: Boolean) {
                 ),
             )
             Spacer(modifier = Modifier.weight(1f))
-            RadioButton(
+            androidx.compose.material3.RadioButton(
                 selected = isSelected,
-                onClick = { },
-                colors = RadioButtonDefaults.colors(
-                    selectedColor = Color(0xFF32B768),
-                    unselectedColor = Color.Gray,
-                    disabledColor = Color.LightGray
-                )
+                onClick = null,
+//                colors = RadioButtonDefaults.colors(
+
+//                    selectedColor = Color(0xFF32B768),
+//                    unselectedColor = Color.Gray,
+//                    disabledColor = Color.LightGray
+//                )
             )
         }
     }
@@ -852,6 +787,7 @@ fun AddCardOption() {
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, Color.LightGray, RoundedCornerShape(15.dp))
+            .clickable { /* Handle add card action */ }
     ) {
         Row(
             modifier = Modifier
@@ -886,73 +822,56 @@ fun AddCardOption() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PromoCodeBottomSheet(
     onDismiss: () -> Unit,
     onApply: (String) -> Unit
 ) {
     var promoCode by remember { mutableStateOf("") }
-    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded)
-
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetContent = {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Enter promo code", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = promoCode,
-                    onValueChange = { promoCode = it },
-                    label = { Text("Promo code") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                ConfirmButton(isEnabled = true, onClick = {}, title = "Apply")
-            }
-        },
-        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        scrimColor = Color.Black.copy(alpha = 0.5f),
-        content = {}
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
     )
+    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(sheetState) {
-        if (sheetState.currentValue != ModalBottomSheetValue.Expanded) {
-            onDismiss()
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun BookingScreenPreview() {
-//    BookingConfirmationScreen(viewModel = BookingViewModel())
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PaymentPreview() {
-    Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
-        Text(
-            text = "Payment methods",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Enter promo code",
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = Color.Black,
-                lineHeight = 20.sp,
-            ),
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        PaymentOption("Cash", R.drawable.cash_pic, isSelected = true)
-        Spacer(modifier = Modifier.height(10.dp))
-        PaymentOption(
-            "UzCard **** **** **** 0961",
-            R.drawable.uzcard,
-            isSelected = false
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        AddCardOption()
+                fontFamily = gilroyFontFamily
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            BasicTextField(
+                value = promoCode,
+                onValueChange = { promoCode = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                    .padding(8.dp),
+                textStyle = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontSize = 16.sp,
+                    color = Color.Black
+                ),
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            ConfirmButton(
+                isEnabled = promoCode.isNotBlank(),
+                onClick = {
+                    onApply(promoCode)
+                    coroutineScope.launch {
+                        sheetState.hide()
+                    }
+                },
+                title = "Apply"
+            )
+        }
     }
 }
 

@@ -36,10 +36,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.presentation.components.BottomNavigationBar
-import com.bron24.bron24_android.screens.booking.screens.BookingScreen
-import com.bron24.bron24_android.screens.booking.screens.BookingViewModel
-import com.bron24.bron24_android.screens.booking.screens.BookingConfirmationScreen
-import com.bron24.bron24_android.screens.booking.screens.BookingSuccessScreen
+import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
+import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingConfirmationScreen
+import com.bron24.bron24_android.screens.booking.screens.finishbooking.BookingSuccessScreen
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.map.YandexMapScreen

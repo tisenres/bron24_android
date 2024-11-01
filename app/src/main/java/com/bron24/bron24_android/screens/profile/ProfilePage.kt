@@ -107,9 +107,9 @@ fun ProfileContent(user: User, modifier: Modifier) {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 28.sp,
+                fontSize = 18.sp,
                 color = Color.Black,
-                lineHeight = 30.sp,
+                lineHeight = 22.sp,
             ),
             modifier = Modifier.padding(horizontal = 26.dp, vertical = 16.dp)
         )

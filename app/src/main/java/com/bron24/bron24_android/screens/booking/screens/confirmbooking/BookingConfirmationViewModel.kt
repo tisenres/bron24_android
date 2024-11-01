@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking.screens
+package com.bron24.bron24_android.screens.booking.screens.confirmbooking
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf

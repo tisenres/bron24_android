@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking.screens
+package com.bron24.bron24_android.screens.booking.screens.finishbooking
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.ConfirmButton
 import com.bron24.bron24_android.screens.booking.states.BookingSuccessInfo
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 

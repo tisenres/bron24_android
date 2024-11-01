@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking.screens
+package com.bron24.bron24_android.screens.booking.screens.finishbooking
 
 import androidx.lifecycle.ViewModel
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot

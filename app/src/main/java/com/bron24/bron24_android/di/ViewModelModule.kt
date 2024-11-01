@@ -1,14 +1,6 @@
 package com.bron24.bron24_android.di
 
-import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
 import com.bron24.bron24_android.domain.usecases.onboarding.OnboardingUseCase
-import com.bron24.bron24_android.screens.auth.AuthModel
-import com.bron24.bron24_android.screens.auth.AuthViewModel
-import com.bron24.bron24_android.screens.booking.screens.BookingConfirmationModel
-import com.bron24.bron24_android.screens.booking.screens.BookingConfirmationViewModel
-import com.bron24.bron24_android.screens.cityselection.domain.usecases.GetAvailableCitiesUseCase
-import com.bron24.bron24_android.screens.cityselection.domain.usecases.UpdateSelectedCityUseCase
-import com.bron24.bron24_android.screens.cityselection.presentation.CityViewModel
 import com.bron24.bron24_android.screens.home.HomeViewModel
 import com.bron24.bron24_android.screens.language.LanguageModel
 import com.bron24.bron24_android.screens.language.LanguageViewModel
@@ -35,18 +27,6 @@ object ViewModelModule {
         languageModel: LanguageModel
     ): LanguageViewModel {
         return LanguageViewModel(languageModel)
-    }
-
-    @Provides
-    @ActivityScoped
-    fun provideCityViewModel(
-        getAvailableCitiesUseCase: GetAvailableCitiesUseCase,
-        updateSelectedCityUseCase: UpdateSelectedCityUseCase
-    ): CityViewModel {
-        return CityViewModel(
-            getAvailableCitiesUseCase,
-            updateSelectedCityUseCase
-        )
     }
 
     @Provides

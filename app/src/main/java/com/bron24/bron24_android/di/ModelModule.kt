@@ -10,7 +10,7 @@ import com.bron24.bron24_android.domain.usecases.location.*
 import com.bron24.bron24_android.domain.usecases.venue.*
 import com.bron24.bron24_android.helper.util.LocaleManager
 import com.bron24.bron24_android.screens.auth.AuthModel
-import com.bron24.bron24_android.screens.booking.screens.BookingConfirmationModel
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingConfirmationModel
 import com.bron24.bron24_android.screens.language.LanguageModel
 import com.bron24.bron24_android.screens.location.LocationModel
 import com.bron24.bron24_android.screens.map.VenueMapModel

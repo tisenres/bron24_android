@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.booking.screens
+package com.bron24.bron24_android.screens.booking.screens.startbooking
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
