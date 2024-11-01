@@ -7,7 +7,6 @@ import com.bron24.bron24_android.data.network.dto.venue.VenueCoordinatesDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDetailsDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueOwnerDto
-import com.bron24.bron24_android.data.network.dto.venue.VenueResponseDto
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.City
 import com.bron24.bron24_android.domain.entity.venue.Infrastructure
@@ -15,12 +14,13 @@ import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.entity.venue.VenueOwner
+import com.bron24.bron24_android.helper.extension.formatPrice
 
 fun VenueDto.toDomainModel(): Venue {
     return Venue(
         venueId = venueId,
         venueName = venueName,
-        pricePerHour = formatPrice(pricePerHour),
+        pricePerHour = pricePerHour.formatPrice(),
         address = address.toDomainModel(),
         distance = distance,
         previewImage = previewImage
@@ -84,7 +84,7 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         venueSurface = venueSurface,
         peopleCapacity = peopleCapacity,
         sportType = sportType,
-        pricePerHour = formatPrice(pricePerHour),
+        pricePerHour = pricePerHour.formatPrice(),
         description = description,
         workingHoursFrom = workingHoursFrom,
         workingHoursTill = workingHoursTill,
@@ -100,12 +100,12 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
     )
 }
 
-fun formatPrice(price: String): String {
-    return try {
-        val floatPrice = price.toFloat()
-        val intPrice = floatPrice.toInt()
-        String.format("%,d", intPrice).replace(",", " ")
-    } catch (e: NumberFormatException) {
-        "0" // Return "0" if parsing fails
-    }
-}
+//fun formatPrice(price: String): String {
+//    return try {
+//        val floatPrice = price.toFloat()
+//        val intPrice = floatPrice.toInt()
+//        String.format("%,d", intPrice).replace(",", " ")
+//    } catch (e: NumberFormatException) {
+//        "0" // Return "0" if parsing fails
+//    }
+//}

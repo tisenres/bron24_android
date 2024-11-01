@@ -71,8 +71,9 @@ import androidx.compose.ui.zIndex
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
-import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
+import com.bron24.bron24_android.helper.extension.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.bron24.bron24_android.screens.profile.formatWithSpansPhoneNumber
 import kotlinx.coroutines.launch
 
 @Composable
@@ -900,18 +901,18 @@ fun PromoCodeBottomSheet(
     }
 }
 
-fun formatWithSpansPhoneNumber(phoneNumber: String): String {
-    val countryCode = "+998"
-    return if (phoneNumber.length >= 12) {
-        val part1 = phoneNumber.substring(3, 5)
-        val part2 = phoneNumber.substring(5, 8)
-        val part3 = phoneNumber.substring(8, 10)
-        val part4 = phoneNumber.substring(10, 12)
-        "$countryCode $part1 $part2 $part3 $part4"
-    } else {
-        phoneNumber
-    }
-}
+//fun formatWithSpansPhoneNumber(phoneNumber: String): String {
+//    val countryCode = "+998"
+//    return if (phoneNumber.length >= 12) {
+//        val part1 = phoneNumber.substring(3, 5)
+//        val part2 = phoneNumber.substring(5, 8)
+//        val part3 = phoneNumber.substring(8, 10)
+//        val part4 = phoneNumber.substring(10, 12)
+//        "$countryCode $part1 $part2 $part3 $part4"
+//    } else {
+//        phoneNumber
+//    }
+//}
 
 @Preview
 @Composable

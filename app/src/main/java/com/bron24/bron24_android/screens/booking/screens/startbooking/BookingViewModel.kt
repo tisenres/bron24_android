@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.booking.DateItem
 import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
+import com.bron24.bron24_android.helper.extension.formatPrice
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -161,7 +162,7 @@ class BookingViewModel @Inject constructor(
 
     private fun calculateTotalPrice() {
         val totalHours = _selectedTimeSlots.value.size // Assuming each time slot is 1 hour
-        _totalPrice.value = formatPrice(totalHours * _pricePerHour.value)
+        _totalPrice.value = (totalHours * _pricePerHour.value).toString().formatPrice()
     }
 
     fun showDatePicker() {
@@ -195,15 +196,15 @@ class BookingViewModel @Inject constructor(
         return Month.valueOf(monthName.uppercase()).value
     }
 
-    private fun formatPrice(price: Int): String {
-        return try {
-            val floatPrice = price.toFloat()
-            val intPrice = floatPrice.toInt()
-            String.format("%,d", intPrice).replace(",", " ")
-        } catch (e: NumberFormatException) {
-            "0" // Return "0" if parsing fails
-        }
-    }
+//    private fun formatPrice(price: Int): String {
+//        return try {
+//            val floatPrice = price.toFloat()
+//            val intPrice = floatPrice.toInt()
+//            String.format("%,d", intPrice).replace(",", " ")
+//        } catch (e: NumberFormatException) {
+//            "0" // Return "0" if parsing fails
+//        }
+//    }
 
     private fun roundToStartOfDay(timestamp: Long): Long {
         val calendar = Calendar.getInstance(TimeZone.getDefault())

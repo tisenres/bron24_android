@@ -29,25 +29,7 @@ fun Booking.toNetworkModel(): RequestBookingDto {
         venueId = venueId,
         bookingDate = bookingDate,
         sector = sector,
-//        timeSlot = timeSlots.map { "${formatTime(it.startTime)}-${formatTime(it.endTime)}" },
         timeSlot = timeSlots.map { "${it.startTime}-${it.endTime}" },
         status = BookingStatus.INPROCESS.name
     )
 }
-
-fun TimeSlot.toTimeSlot() = TimeSlot(
-    startTime = this.startTime,
-    endTime = this.endTime,
-    isAvailable = this.isAvailable,
-    isSelected = this.isSelected
-)
-
-//fun formatTime(time: String): String {
-//     Define the input and output time formats
-//    val inputFormatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-//    val outputFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-//
-//     Parse the input time and format it to the desired output
-//    val parsedTime = inputFormatter.parse(time)
-//    return outputFormatter.format(parsedTime)
-//}
