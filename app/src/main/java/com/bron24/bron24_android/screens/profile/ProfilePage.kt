@@ -20,10 +20,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,7 +90,6 @@ fun ProfilePage(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileContent(user: User, modifier: Modifier) {
     Column(
@@ -102,19 +100,7 @@ fun ProfileContent(user: User, modifier: Modifier) {
             .verticalScroll(rememberScrollState())
     ) {
 
-        Text(
-            text = "Profile",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 18.sp,
-                color = Color.Black,
-                lineHeight = 22.sp,
-            ),
-            modifier = Modifier.padding(horizontal = 26.dp, vertical = 16.dp)
-        )
-
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         ProfileContentTop(user)
 
@@ -122,7 +108,7 @@ fun ProfileContent(user: User, modifier: Modifier) {
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        ProfileAccountAction(title = "Change password", {})
+        ProfileAccountAction(title = "Favourite stadiums", {})
         Spacer(modifier = Modifier.height(14.dp))
         ProfileAccountAction(title = "Log out", {})
         Spacer(modifier = Modifier.height(14.dp))

@@ -177,7 +177,7 @@ fun BookingConfirmationScreen(
 
             // Place the ConfirmButton at the bottom
             ConfirmButton(
-                isEnabled = selectedPaymentMethod != null,
+                isEnabled = true,
                 onClick = {
                     viewModel.confirmBooking()
                 },

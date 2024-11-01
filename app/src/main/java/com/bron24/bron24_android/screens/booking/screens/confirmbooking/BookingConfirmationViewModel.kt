@@ -36,6 +36,13 @@ class BookingConfirmationViewModel @Inject constructor(
     private val _isPhoneNumberValid = MutableStateFlow(false)
     val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
 
+    // New StateFlows for promo code and total amount
+    private val _appliedPromoCode = MutableStateFlow<String?>(null)
+    val appliedPromoCode: StateFlow<String?> = _appliedPromoCode.asStateFlow()
+
+    private val _totalAmount = MutableStateFlow<String>("")
+    val totalAmount: StateFlow<String> = _totalAmount.asStateFlow()
+
     suspend fun getBookingInfo(
         venueId: Int,
         date: String,
@@ -64,21 +71,6 @@ class BookingConfirmationViewModel @Inject constructor(
         val parsedDate = inputFormatter.parse(inputDate)
         return outputFormatter.format(parsedDate)
     }
-
-//    fun formatTimeSlot(startTime: String, endTime: String): String {
-//         Define the input format that includes hours, minutes, and seconds
-//        val inputFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-//
-//         Define the output format that includes only hours and minutes
-//        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-//
-//         Parse the start and end time strings
-//        val parsedStartTime = inputFormat.parse(startTime)
-//        val parsedEndTime = inputFormat.parse(endTime)
-//
-//         Format the parsed times to the desired output format
-//        return "${outputFormat.format(parsedStartTime!!)} - ${outputFormat.format(parsedEndTime!!)}"
-//    }
 
     fun updatePhoneNumber(phone: String) {
         _secondPhoneNumber.value = phone
