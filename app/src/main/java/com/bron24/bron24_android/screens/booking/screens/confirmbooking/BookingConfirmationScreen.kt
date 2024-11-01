@@ -37,13 +37,15 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +54,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -70,7 +71,6 @@ import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.screens.profile.formatWithSpansPhoneNumber
 import kotlinx.coroutines.launch
 
 @Composable
@@ -92,20 +92,13 @@ fun BookingConfirmationScreen(
 
     val booking by viewModel.booking.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-
-//    val isLoading by remember { viewModel.isLoading }
     val secondPhoneNumber by viewModel.secondPhoneNumber.collectAsState()
     val isBookingConfirmed by viewModel.isBookingConfirmed.collectAsState()
 
     val scrollState = rememberLazyListState()
-    val context = LocalContext.current
-    val toolbarHeight = 48.dp
 
-    val toolbarVisible by remember {
-        derivedStateOf {
-            scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
-        }
-    }
+    // Since we want the toolbar to always be visible, we can set toolbarVisible to true
+    val toolbarVisible = true
 
     LaunchedEffect(venueId, date, sector, timeSlots) {
         viewModel.getBookingInfo(venueId, date, sector, timeSlots)
@@ -123,28 +116,34 @@ fun BookingConfirmationScreen(
         }
     }
 
-    AnimatedToolbar(
-        visible = toolbarVisible,
-        title = "Booking information",
-        onBackClick = onBackClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(toolbarHeight)
-            .zIndex(1f)
-    )
-
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
+        // Place AnimatedToolbar at the top with height of 40 dp
+        AnimatedToolbar(
+            visible = toolbarVisible,
+            title = "Booking information",
+            onBackClick = onBackClick,
+            modifier = Modifier
+                .fillMaxWidth()
+//                .height(50.dp)
+                .zIndex(1f)
+        )
+
         if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         } else {
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 100.dp, top = 10.dp), // Adjust bottom padding
+                    .weight(1f)
+                    .padding(start = 24.dp, end = 24.dp),
                 state = scrollState
             ) {
                 item {
@@ -183,7 +182,6 @@ fun BookingConfirmationScreen(
                 title = stringResource(id = R.string.confirm),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
                     .padding(24.dp)
             )
         }
@@ -223,27 +221,32 @@ private fun AnimatedToolbar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Since we set visible to true, the toolbar will always be visible
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(),
         exit = fadeOut(),
         modifier = modifier
     ) {
-        // Use CenterAlignedTopAppBar for center alignment
-        androidx.compose.material3.CenterAlignedTopAppBar(
+        TopAppBar(
             title = {
-                Text(
-                    text = title ?: "Unknown field",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = Color(0xFF3C2E56),
-                        lineHeight = 22.sp,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Box(
+                    modifier = Modifier.height(46.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = title ?: "Unknown field",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color(0xFF000000),
+                            lineHeight = 22.sp,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
@@ -253,10 +256,10 @@ private fun AnimatedToolbar(
                     )
                 }
             },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.White,
-                titleContentColor = Color(0xFF3C2E56),
-                navigationIconContentColor = Color(0xFF3C2E56)
+                titleContentColor = Color(0xFF000000),
+                navigationIconContentColor = Color(0xFF000000)
             )
         )
     }
@@ -279,9 +282,9 @@ fun BookingInfoCard(
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             HorizontalDivider(
-                color = Color.LightGray,
+                modifier = Modifier.padding(vertical = 15.dp),
                 thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 15.dp)
+                color = Color.LightGray
             )
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 BookingDetail("DATE", viewModel.formatDate(booking.bookingDate))
@@ -710,6 +713,7 @@ fun PaymentMethodsBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
+        containerColor = Color.White
     ) {
         Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
             Text(
@@ -777,10 +781,10 @@ fun PaymentOption(title: String, iconRes: Int, isSelected: Boolean, onClick: () 
                 ),
             )
             Spacer(modifier = Modifier.weight(1f))
-            androidx.compose.material3.RadioButton(
+            RadioButton(
                 selected = isSelected,
                 onClick = null, // null since the whole row is clickable
-                colors = androidx.compose.material3.RadioButtonDefaults.colors(
+                colors = RadioButtonDefaults.colors(
 //                    selectedColor = Color(0xFF32B768),
 //                    unselectedColor = Color.Gray,
 //                    disabledColor = Color.LightGray
@@ -846,6 +850,7 @@ fun PromoCodeBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
+        containerColor = Color.White
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -886,9 +891,13 @@ fun PromoCodeBottomSheet(
 
 fun formatWithSpansPhoneNumber(phoneNumber: String): String {
     val countryCode = "+998"
-    val part1 = phoneNumber.substring(3, 5)
-    val part2 = phoneNumber.substring(5, 8)
-    val part3 = phoneNumber.substring(8, 10)
-    val part4 = phoneNumber.substring(10, 12)
-    return "$countryCode $part1 $part2 $part3 $part4"
+    return if (phoneNumber.length >= 12) {
+        val part1 = phoneNumber.substring(3, 5)
+        val part2 = phoneNumber.substring(5, 8)
+        val part3 = phoneNumber.substring(8, 10)
+        val part4 = phoneNumber.substring(10, 12)
+        "$countryCode $part1 $part2 $part3 $part4"
+    } else {
+        phoneNumber
+    }
 }
