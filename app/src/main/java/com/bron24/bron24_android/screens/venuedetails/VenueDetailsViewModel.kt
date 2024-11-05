@@ -9,24 +9,34 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.catch
 
 @HiltViewModel
 class VenueDetailsViewModel @Inject constructor(
     private val model: VenueDetailsModel
 ) : ViewModel() {
 
-    private val _venueDetails = MutableStateFlow<VenueDetails?>(null)
-    val venueDetails: StateFlow<VenueDetails?> = _venueDetails
+    private val _venueDetailsState = MutableStateFlow<VenueDetailsState>(VenueDetailsState.Initial)
+    val venueDetailsState: StateFlow<VenueDetailsState> = _venueDetailsState
 
     fun fetchVenueDetails(venueId: Int) {
         viewModelScope.launch {
-            try {
-                val details = model.getVenueDetails(venueId)
-                _venueDetails.value = details
-            } catch (e: Exception) {
-                // Handle error (e.g., show error message)
-                Log.e("VenueDetailsViewModel", "Error fetching venue details", e)
-            }
+            _venueDetailsState.value = VenueDetailsState.Loading
+            model.getVenueDetails(venueId)
+                .catch { e ->
+                    Log.e("VenueDetailsViewModel", "Error fetching venue details", e)
+                    _venueDetailsState.value = VenueDetailsState.Error(e.message ?: "Unknown error occurred")
+                }
+                .collect { details ->
+                    _venueDetailsState.value = VenueDetailsState.Success(details)
+                }
         }
     }
+}
+
+sealed class VenueDetailsState {
+    object Initial : VenueDetailsState()
+    object Loading : VenueDetailsState()
+    data class Success(val venueDetails: VenueDetails) : VenueDetailsState()
+    data class Error(val message: String) : VenueDetailsState()
 }

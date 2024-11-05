@@ -123,11 +123,11 @@ class AuthRepositoryImpl @Inject constructor(
             401 -> {
                 Log.d("AuthRepository", "401 error")
                 handleRefreshFailure()
-                AuthResponse("", "")
+                AuthResponse("", "", "", "")
             }
             else -> {
                 Log.d("AuthRepository", "Unexpected error: ${e.code()}")
-                AuthResponse("", "")
+                AuthResponse("", "", "", "")
             }
         }
     }

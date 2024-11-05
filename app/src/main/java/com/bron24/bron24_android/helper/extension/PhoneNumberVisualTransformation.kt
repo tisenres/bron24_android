@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.helper.util
+package com.bron24.bron24_android.helper.extension
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping

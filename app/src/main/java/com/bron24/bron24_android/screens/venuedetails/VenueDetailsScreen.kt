@@ -99,11 +99,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.venue.Address
-import com.bron24.bron24_android.domain.entity.venue.City
-import com.bron24.bron24_android.domain.entity.venue.Infrastructure
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.domain.entity.venue.VenueOwner
+import com.bron24.bron24_android.helper.extension.DateTimeFormatter
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -121,28 +118,38 @@ fun VenueDetailsScreen(
     viewModel: VenueDetailsViewModel,
     venueId: Int,
     onBackClick: () -> Unit,
-    onOrderClick: () -> Unit,
+    onOrderClick: (List<String>, String) -> Unit,
     onMapClick: (Double, Double) -> Unit
 ) {
     LaunchedEffect(key1 = venueId) {
         viewModel.fetchVenueDetails(venueId)
     }
 
-    val venueDetails by viewModel.venueDetails.collectAsState()
-    val isLoading by remember { derivedStateOf { venueDetails == null } }
+    val venueDetailsState by viewModel.venueDetailsState.collectAsState()
 
-    if (isLoading) {
-        LoadingScreen()
-    } else {
-        VenueDetailsContent(
-            details = venueDetails,
+    when (val state = venueDetailsState) {
+        is VenueDetailsState.Loading -> LoadingScreen()
+        is VenueDetailsState.Success -> VenueDetailsContent(
+            details = state.venueDetails,
             onBackClick = onBackClick,
-            onFavoriteClick = {},
+            onFavoriteClick = { /* Implement favorite functionality */ },
             onMapClick = onMapClick,
-            onOrderClick = onOrderClick,
+            onOrderClick = {
+                onOrderClick(
+//                    state.venueDetails.venueId,
+                    state.venueDetails.sectors,
+                    state.venueDetails.pricePerHour
+                )
+            },
         )
+        is VenueDetailsState.Error -> {
+            LoadingScreen()
+            ToastManager.showToast("Network error occurred", ToastType.ERROR)
+        }
+        is VenueDetailsState.Initial -> LoadingScreen() // Do nothing or show initial state
     }
 }
+
 
 @Composable
 fun LoadingScreen() {
@@ -204,7 +211,14 @@ fun VenueDetailsContent(
                     }
                 )
             }
-            item(key = "infrastructureSection") { InfrastructureSection(details) }
+            item(key = "infrastructureSection") {
+                InfrastructureSection(
+                    details = details?.copy(
+                        workingHoursFrom = DateTimeFormatter.formatISODateTimeToHourString(details.workingHoursFrom),
+                        workingHoursTill = DateTimeFormatter.formatISODateTimeToHourString(details.workingHoursTill)
+                    )
+                )
+            }
             item(key = "descriptionSection") { DescriptionSection(details) }
             item(key = "mapSection") { MapSection(details = details) }
             item(key = "spacer") {
@@ -690,7 +704,7 @@ fun AvailableSlots(details: VenueDetails?) {
 fun DistanceRow(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.mingcute_navigation_fill,
-        text = "2.3 km from you"
+        text = String.format("%.1f", details?.distance) + " km"
     )
 }
 
@@ -845,7 +859,7 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
             }
             InfrastructureItem(venue.venueSurface.capitalize(), R.drawable.baseline_grass_24, onItemClick)
             InfrastructureItem(
-                "${venue.workingHoursFrom.drop(3)} - ${venue.workingHoursTill.drop(3)}",
+                "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
                 R.drawable.baseline_access_time_filled_24,
                 onItemClick
             )

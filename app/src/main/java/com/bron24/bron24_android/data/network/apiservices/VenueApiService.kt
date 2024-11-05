@@ -28,5 +28,9 @@ interface VenueApiService {
     suspend fun getVenuePictures(@Path("id") id: Int): List<PictureDto>?
 
     @GET("api/v1/venues/{id}/")
-    suspend fun getVenueDetails(@Path("id") id: Int): VenueDetailsResponseDto?
+    suspend fun getVenueDetails(
+        @Path("id") id: Int,
+        @Query("lat") latitude: Double? = null,
+        @Query("lon") longitude: Double? = null
+    ): VenueDetailsResponseDto?
 }

@@ -6,5 +6,5 @@ data class Venue(
     val pricePerHour: String,
     val address: Address,
     val distance: Double,
-    val imageUrl: String?
+    val previewImage: String?
 )

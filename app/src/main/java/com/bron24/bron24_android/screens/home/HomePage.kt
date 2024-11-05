@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.searchfilter.SearchView
@@ -39,8 +40,9 @@ fun HomePage(navController: NavController) {
                 .fillMaxSize()
         ) {
             SearchView(
+                viewModel = hiltViewModel(),
                 modifier = Modifier.fillMaxWidth(),
-                navController
+                navController = navController,
             )
 
             VenueListingView(

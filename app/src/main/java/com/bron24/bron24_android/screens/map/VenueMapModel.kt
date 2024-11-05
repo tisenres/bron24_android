@@ -11,6 +11,7 @@ import com.bron24.bron24_android.domain.usecases.venue.GetVenuesCoordinatesUseCa
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+
 class VenueMapModel @Inject constructor(
     private val getVenuesCoordinatesUseCase: GetVenuesCoordinatesUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
@@ -26,11 +27,11 @@ class VenueMapModel @Inject constructor(
         return checkLocationPermissionUseCase.execute()
     }
 
-    suspend fun getVenuesCoordinatesUseCase(): List<VenueCoordinates> {
+    suspend fun getVenuesCoordinates(): List<VenueCoordinates> {
         return getVenuesCoordinatesUseCase.execute()
     }
 
-    suspend fun getVenueDetails(venueId: Int): VenueDetails? {
+    fun getVenueDetails(venueId: Int): Flow<VenueDetails> {
         return getVenueDetailsUseCase.execute(venueId)
     }
 }

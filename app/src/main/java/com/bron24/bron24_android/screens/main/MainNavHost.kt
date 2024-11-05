@@ -1,6 +1,6 @@
 package com.bron24.bron24_android.screens.main
 
-import android.app.DatePickerDialog
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -17,8 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -37,21 +34,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.presentation.components.BottomNavigationBar
-import com.bron24.bron24_android.screens.booking.BookingScreen
-import com.bron24.bron24_android.screens.booking.BookingViewModel
+import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
+import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingConfirmationScreen
+import com.bron24.bron24_android.screens.booking.screens.finishbooking.BookingSuccessScreen
 import com.bron24.bron24_android.screens.home.HomePage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.map.YandexMapScreen
+import com.bron24.bron24_android.screens.profile.ProfilePage
 import com.bron24.bron24_android.screens.searchfilter.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
-import java.util.Calendar
+import com.google.gson.Gson
 
 @Composable
 fun MainAppScaffold() {
     val nestedNavController = rememberNavController()
-
     val shouldShowBottomBar = remember { mutableStateOf(true) }
 
     Scaffold(
@@ -65,7 +65,9 @@ fun MainAppScaffold() {
             navController = nestedNavController,
             modifier = Modifier.padding(paddingValues),
             onDestinationChanged = { destination ->
-                shouldShowBottomBar.value = destination != Screen.VenueDetails.route
+                shouldShowBottomBar.value = destination != Screen.VenueDetails.route &&
+                        destination != Screen.BookingConfirmationScreen.route
+                        && destination != Screen.BookingSuccessScreen.route
             }
         )
     }
@@ -79,7 +81,8 @@ fun MainNavHost(
 ) {
 
     var showBookingBottomSheet by remember { mutableStateOf(false) }
-    var currentVenueId by remember { mutableStateOf<Int?>(null) }
+    val (currentPricePerHour, setPricePerHour) = remember { mutableStateOf("") }
+    val (currentSectors, setSectors) = remember { mutableStateOf(emptyList<String>()) }
 
     NavHost(
         navController = navController,
@@ -118,10 +121,7 @@ fun MainNavHost(
             onDestinationChanged(Screen.HomePage.route)
             HomePage(navController)
         }
-//        composable(Screen.MapPage.route) {
-//            onDestinationChanged(Screen.MapPage.route)
-//            MapPage()
-//        }
+
         composable(
             route = Screen.MapPage.route,
             arguments = listOf(
@@ -134,7 +134,11 @@ fun MainNavHost(
             val latitude = backStackEntry.arguments?.getFloat("latitude") ?: 0f
             val longitude = backStackEntry.arguments?.getFloat("longitude") ?: 0f
             val selectedVenueId = backStackEntry.arguments?.getInt("selectedVenueId") ?: -1
-            MapPage(latitude = latitude.toDouble(), longitude = longitude.toDouble(), selectedVenueId = selectedVenueId)
+            MapPage(
+                latitude = latitude.toDouble(),
+                longitude = longitude.toDouble(),
+                selectedVenueId = selectedVenueId
+            )
         }
 
         composable(Screen.Filter.route) {
@@ -155,54 +159,11 @@ fun MainNavHost(
             onDestinationChanged(Screen.OrdersPage.route)
             OrdersPage()
         }
+
         composable(Screen.ProfilePage.route) {
             onDestinationChanged(Screen.ProfilePage.route)
             ProfilePage()
         }
-
-//        composable(
-//            route = "${Screen.MapPage.route}/{venueId}",
-//            arguments = listOf(navArgument("venueId") { type = NavType.IntType })
-//        ) { backStackEntry ->
-//            onDestinationChanged(Screen.MapPage.route)
-//            val venueId = backStackEntry.arguments?.getInt("venueId") ?: -1
-//            MapPage(selectedVenueId = venueId)
-//        }
-//        composable(
-//            route = Screen.VenueDetails.route,
-//            arguments = listOf(navArgument("venueId") { type = NavType.IntType }),
-//            enterTransition = {
-//                fadeIn(
-//                    animationSpec = tween(
-//                        300, easing = LinearEasing
-//                    )
-//                ) + slideIntoContainer(
-//                    animationSpec = tween(100, easing = EaseIn),
-//                    towards = AnimatedContentTransitionScope.SlideDirection.Start
-//                )
-//            },
-//            exitTransition = {
-//                fadeOut(
-//                    animationSpec = tween(
-//                        300, easing = LinearEasing
-//                    )
-//                ) + slideOutOfContainer(
-//                    animationSpec = tween(100, easing = EaseOut),
-//                    towards = AnimatedContentTransitionScope.SlideDirection.End
-//                )
-//            }
-//        ) { backStackEntry ->
-//            onDestinationChanged(Screen.VenueDetails.route)
-//            val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
-//            val viewModel: VenueDetailsViewModel = hiltViewModel()
-//            VenueDetailsScreen(
-//                viewModel = viewModel,
-//                venueId = venueId,
-//                onBackClick = {
-//                    navController.popBackStack()
-//                },
-//            )
-//        }
 
         composable(
             route = Screen.VenueDetails.route,
@@ -231,12 +192,14 @@ fun MainNavHost(
             onDestinationChanged(Screen.VenueDetails.route)
             val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
             val viewModel: VenueDetailsViewModel = hiltViewModel()
+
             VenueDetailsScreen(
                 viewModel = viewModel,
                 venueId = venueId,
                 onBackClick = { navController.popBackStack() },
-                onOrderClick = {
-                    currentVenueId = venueId
+                onOrderClick = { sectors, pricePerHour ->
+                    setPricePerHour(pricePerHour)
+                    setSectors(sectors)
                     showBookingBottomSheet = true
                 },
                 onMapClick = { latitude, longitude ->
@@ -245,19 +208,111 @@ fun MainNavHost(
             )
             if (showBookingBottomSheet) {
                 BookingBottomSheet(
-                    venueId = currentVenueId ?: 0,
-                    onDismiss = { showBookingBottomSheet = false }
+                    venueId = venueId,
+                    sectors = currentSectors,
+                    pricePerHour = currentPricePerHour,
+                    onDismiss = { showBookingBottomSheet = false },
+                    navController = navController
                 )
             }
+        }
+
+        composable(
+            route = Screen.BookingConfirmationScreen.route,
+            arguments = listOf(
+                navArgument("venueId") { type = NavType.IntType },
+                navArgument("date") { type = NavType.StringType },
+                navArgument("sector") { type = NavType.StringType },
+                navArgument("timeSlots") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            onDestinationChanged(Screen.BookingConfirmationScreen.route)
+
+            val venueId = backStackEntry.arguments?.getInt("venueId") ?: 0
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            val sector = backStackEntry.arguments?.getString("sector") ?: ""
+
+            // Retrieve and parse the timeSlots JSON string
+            val timeSlotsJson = backStackEntry.arguments?.getString("timeSlots") ?: ""
+            val timeSlots = Gson().fromJson(timeSlotsJson, Array<TimeSlot>::class.java).toList()
+
+            BookingConfirmationScreen(
+                viewModel = hiltViewModel(),
+                venueId = venueId,
+                date = date,
+                sector = sector,
+                timeSlots = timeSlots,
+                onBackClick = { navController.popBackStack() },
+                onConfirmClick = { orderId, venueName, dateOut, sectorOut, timeSlotsOut ->
+                    val timeSlotsJsonOut = Gson().toJson(timeSlotsOut)
+                    navController.navigate("bookingSuccessScreen?orderId=${orderId}&venueName=${venueName}&date=${dateOut}&sector=${sectorOut}&timeSlots=${timeSlotsJsonOut}")
+                },
+            )
+        }
+
+        // Inside your MainNavHost Composable
+        composable(
+            route = Screen.BookingSuccessScreen.route,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.IntType },
+                navArgument("venueName") { type = NavType.StringType },
+                navArgument("date") { type = NavType.StringType },
+                navArgument("sector") { type = NavType.StringType },
+                navArgument("timeSlots") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            onDestinationChanged(Screen.BookingSuccessScreen.route)
+
+            val orderId = backStackEntry.arguments?.getString("orderId") ?: ""
+            val venueName = backStackEntry.arguments?.getString("venueName") ?: ""
+            val date = backStackEntry.arguments?.getString("date") ?: ""
+            val sector = backStackEntry.arguments?.getString("sector") ?: ""
+
+            // Retrieve and parse the timeSlots JSON string
+            val timeSlotsJson = backStackEntry.arguments?.getString("timeSlots") ?: ""
+            val timeSlots = Gson().fromJson(timeSlotsJson, Array<TimeSlot>::class.java).toList()
+
+            // Add BackHandler here
+            BackHandler {
+                navController.navigate(Screen.HomePage.route) {
+                    popUpTo(Screen.HomePage.route) { inclusive = false }
+                }
+            }
+
+            BookingSuccessScreen(
+                viewModel = hiltViewModel(),
+                orderId = orderId,
+                venueName = venueName,
+                date = date,
+                sector = sector,
+                timeSlots = timeSlots,
+                onMyOrdersClick = {
+                    navController.navigate(Screen.OrdersPage.route) {
+                        popUpTo(Screen.HomePage.route) { inclusive = false }
+                    }
+                },
+                onMainPageClick = {
+                    navController.navigate(Screen.HomePage.route) {
+                        popUpTo(Screen.HomePage.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onMapClick = { },
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit) {
+fun BookingBottomSheet(
+    venueId: Int,
+    sectors: List<String>,
+    pricePerHour: String,
+    onDismiss: () -> Unit,
+    navController: NavHostController
+) {
     val viewModel: BookingViewModel = hiltViewModel()
-    val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
@@ -266,57 +321,14 @@ fun BookingBottomSheet(venueId: Int, onDismiss: () -> Unit) {
         containerColor = Color.White
     ) {
         BookingScreen(
+            venueId = venueId,
+            sectors = sectors,
+            pricePerHour = pricePerHour,
             viewModel = viewModel,
-            onOrderClick = {
-                // Handle order confirmation
-                onDismiss()
-            }
-        )
-    }
-
-    // DatePicker setup
-    val datePickerDialog = remember {
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                val calendar = Calendar.getInstance().apply {
-                    set(year, month, dayOfMonth)
-                }
-                viewModel.selectDate(calendar.timeInMillis)
+            onOrderClick = { venueId, date, sector, timeSlots ->
+                val timeSlotsJson = Gson().toJson(timeSlots)
+                navController.navigate("bookingConfirmationScreen?venueId=$venueId&date=$date&sector=$sector&timeSlots=$timeSlotsJson")
             },
-            Calendar.getInstance().get(Calendar.YEAR),
-            Calendar.getInstance().get(Calendar.MONTH),
-            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-        )
-    }
-
-    // Observe changes to show DatePicker
-    val showDatePicker by viewModel.showDatePicker.collectAsState()
-    if (showDatePicker) {
-        LaunchedEffect(Unit) {
-            datePickerDialog.show()
-            viewModel.onDatePickerShown()
-        }
-    }
-}
-
-@Composable
-fun ProfilePage() {
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(
-            text = "Profile Page",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                color = Color(0xFF32B768),
-                lineHeight = 30.sp,
-            ),
-            modifier = Modifier.align(
-                Alignment.Center
-            )
         )
     }
 }

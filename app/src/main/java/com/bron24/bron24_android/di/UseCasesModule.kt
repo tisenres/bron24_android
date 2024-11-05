@@ -1,21 +1,24 @@
 package com.bron24.bron24_android.di
 
 import android.content.Context
-import com.bron24.bron24_android.data.local.db.VenueDao
 import com.bron24.bron24_android.data.local.preference.AppPreference
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
+import com.bron24.bron24_android.data.network.apiservices.OrdersApi
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.repository.AuthRepositoryImpl
 import com.bron24.bron24_android.data.repository.BookingRepositoryImpl
 import com.bron24.bron24_android.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
+import com.bron24.bron24_android.data.repository.OrdersRepositoryImpl
 import com.bron24.bron24_android.data.repository.TokenRepositoryImpl
+import com.bron24.bron24_android.data.repository.UserRepositoryImpl
 import com.bron24.bron24_android.data.repository.VenueRepositoryImpl
 import com.bron24.bron24_android.domain.usecases.auth.*
 import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
 import com.bron24.bron24_android.domain.repository.*
+import com.bron24.bron24_android.domain.usecases.booking.ConfirmBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.GetBookingDetailsUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
@@ -65,6 +68,20 @@ object UseCasesModule {
 
     @Provides
     @Singleton
+    fun provideGetVenueDetailsUseCase(
+        venueRepository: VenueRepository,
+        getCurrentLocationUseCase: GetCurrentLocationUseCase,
+        checkLocationPermissionUseCase: CheckLocationPermissionUseCase
+    ): GetVenueDetailsUseCase {
+        return GetVenueDetailsUseCase(
+            venueRepository,
+            getCurrentLocationUseCase,
+            checkLocationPermissionUseCase
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provideGetCurrentLocationUseCase(
         repository: LocationRepository
     ): GetCurrentLocationUseCase {
@@ -89,8 +106,19 @@ object UseCasesModule {
     }
 
     @Provides
-    fun provideCreateBookingUseCase(repository: BookingRepository): CreateBookingUseCase {
-        return CreateBookingUseCase(repository)
+    fun provideCreateBookingUseCase(
+        bookingRepository: BookingRepository,
+        preferencesRepository: PreferencesRepository
+    ): CreateBookingUseCase {
+        return CreateBookingUseCase(bookingRepository, preferencesRepository)
+    }
+
+    @Provides
+    fun provideConfirmBookingUseCase(
+        bookingRepository: BookingRepository,
+        preferencesRepository: PreferencesRepository
+    ): ConfirmBookingUseCase {
+        return ConfirmBookingUseCase(bookingRepository, preferencesRepository)
     }
 
 
@@ -123,6 +151,14 @@ object UseCasesModule {
 
     @Provides
     @Singleton
+    fun provideUserRepository(
+        appPreference: AppPreference
+    ): UserRepository {
+        return UserRepositoryImpl(appPreference)
+    }
+
+    @Provides
+    @Singleton
     fun bindLocationRepository(
         @ApplicationContext context: Context,
         permissionChecker: PermissionChecker
@@ -138,15 +174,31 @@ object UseCasesModule {
         return TokenRepositoryImpl(appPreference)
     }
 
-    @Module
-    @InstallIn(SingletonComponent::class)
-    object RepositoryModule {
-        @Provides
-        @Singleton
-        fun provideBookingRepository(apiService: BookingApiService): BookingRepository {
-            return BookingRepositoryImpl(apiService)
-        }
+    @Provides
+    @Singleton
+    fun provideBookingRepository(
+        bookingApiService: BookingApiService
+    ): BookingRepository {
+        return BookingRepositoryImpl(bookingApiService)
     }
+
+    @Provides
+    @Singleton
+    fun provideOrdersRepository(
+        ordersApi: OrdersApi
+    ): OrdersRepository {
+        return OrdersRepositoryImpl(ordersApi)
+    }
+
+//    @Module
+//    @InstallIn(SingletonComponent::class)
+//    object RepositoryModule {
+//        @Provides
+//        @Singleton
+//        fun provideBookingRepository(apiService: BookingApiService): BookingRepository {
+//            return BookingRepositoryImpl(apiService)
+//        }
+//    }
 
     // Repositories - End
 }

@@ -3,7 +3,10 @@ package com.bron24.bron24_android.data.network.interceptors
 import android.util.Log
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Singleton
 
 sealed class AppError {
@@ -14,21 +17,27 @@ sealed class AppError {
     data object TimeoutError : AppError()
     data class ParseError(val message: String) : AppError()
     data object UnresolvedHostError : AppError()
+    data object NoConnectivity : AppError()
 }
+
+class NoConnectivityException : IOException("No network available, please check your WiFi or Data connection")
 
 @Singleton
 class ErrorHandler {
     private val _errorFlow = MutableSharedFlow<AppError>()
 
-    suspend fun handleError(error: AppError) {
-        _errorFlow.emit(error)
-        showErrorToast(error)
-        logError(error)
+    fun handleError(error: AppError) {
+        MainScope().launch {
+            _errorFlow.emit(error)
+            showErrorToast(error)
+            logError(error)
+        }
     }
 
     private fun showErrorToast(error: AppError) {
         val message = when (error) {
             is AppError.NetworkError -> "No internet connection. Please check your connection and try again."
+            is AppError.NoConnectivity -> "No network available. Please check your WiFi or Data connection."
             is AppError.HttpError -> when (error.code) {
                 401 -> "Unauthorized. Please log in again."
                 403 -> "Access forbidden. You don't have permission to access this resource."
@@ -39,10 +48,10 @@ class ErrorHandler {
                 else -> "An error occurred: ${error.code} - ${error.message}"
             }
             is AppError.UnknownError -> "An unexpected error occurred: ${error.message}"
-            AppError.ServerUnavailableError -> "The server is currently unavailable. Please try again later."
-            AppError.TimeoutError -> "The request timed out. Please check your connection and try again."
+            is AppError.ServerUnavailableError -> "The server is currently unavailable. Please try again later."
+            is AppError.TimeoutError -> "The request timed out. Please check your connection and try again."
             is AppError.ParseError -> "An error occurred while processing the data: ${error.message}"
-            AppError.UnresolvedHostError -> "Unable to resolve host. Please check your connection and try again."
+            is AppError.UnresolvedHostError -> "Unable to resolve host. Please check your connection and try again."
         }
         Log.e("Error_handled", message)
         ToastManager.showToast(message, ToastType.ERROR)
@@ -53,10 +62,11 @@ class ErrorHandler {
             is AppError.NetworkError -> "Network Error"
             is AppError.HttpError -> "HTTP Error: ${error.code} - ${error.message}"
             is AppError.UnknownError -> "Unknown Error: ${error.message}"
-            AppError.ServerUnavailableError -> "Server Unavailable Error"
-            AppError.TimeoutError -> "Timeout Error"
+            is AppError.ServerUnavailableError -> "Server Unavailable Error"
+            is AppError.TimeoutError -> "Timeout Error"
+            is AppError.NoConnectivity -> "No Internet Connection"
             is AppError.ParseError -> "Parse Error: ${error.message}"
-            AppError.UnresolvedHostError -> "Unresolved Host Error"
+            is AppError.UnresolvedHostError -> "Unresolved Host Error"
         }
         Log.e("AppError", logMessage)
     }

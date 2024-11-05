@@ -1,7 +1,5 @@
 package com.bron24.bron24_android.screens.venuelisting
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -10,12 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -32,19 +25,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.adssection.AdsSection
-
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
-import com.bron24.bron24_android.screens.main.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,28 +93,7 @@ fun VenueListingView(
                         ),
                         modifier = Modifier.weight(1f)
                     )
-//                    Box(
-//                        modifier = Modifier
-//                            .clip(RoundedCornerShape(8.dp)) // Rounded corners for the box
-//                            .background(Color.Gray.copy(alpha = 0.1f)) // Transparent gray background
-//                            .clickable {
-//                                sortExpanded = true
-//                            }
-//                            .padding(horizontal = 10.dp, vertical = 6.dp) // Padding to give some space around the text
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.sort_by),
-//                            style = TextStyle(
-//                                fontFamily = interFontFamily,
-//                                fontWeight = FontWeight(600),
-//                                fontSize = 14.sp,
-//                                lineHeight = 19.sp,
-//                                color = Color(0xFF32B768) // Accent color for the text
-//                            )
-//                        )
-//                    }
-
-//                    SortRow(onSortClick = { sortExpanded = true })
+                    SortRow(onSortClick = { sortExpanded = true })
                 }
             }
 
@@ -142,10 +109,6 @@ fun VenueListingView(
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
-//            items(venues, key = { it.venueId }) { venue ->
-//                VenueCard(venue = venue, isLoading = false, navController = navController)
-//                Spacer(modifier = Modifier.height(20.dp))
-//            }
         }
     }
 
@@ -205,7 +168,6 @@ fun SortRow(onSortClick: () -> Unit) {
                 interactionSource = interactionSource,
                 indication = ripple()
             ),
-//            .padding(4.dp), // Add some padding inside the ripple area
         horizontalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Icon(

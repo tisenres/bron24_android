@@ -1,18 +1,26 @@
 package com.bron24.bron24_android.data.network.apiservices
 
-import com.bron24.bron24_android.data.network.dto.booking.BookingDto
+import com.bron24.bron24_android.data.network.dto.booking.AvailableTimesRequestDto
+import com.bron24.bron24_android.data.network.dto.booking.AvailableTimesResponseDto
+import com.bron24.bron24_android.data.network.dto.booking.RequestBookingDto
+import com.bron24.bron24_android.data.network.dto.booking.ResponseBookingDto
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface BookingApiService {
-    @POST("bookings")
-    suspend fun createBooking(@Body bookingDto: BookingDto): BookingDto
+    @POST("api/v1/booking/available/")
+    suspend fun getAvailableTimes(@Body request: AvailableTimesRequestDto): AvailableTimesResponseDto
 
-    @GET("bookings/{bookingId}")
-    suspend fun getBookingById(@Path("bookingId") bookingId: String): BookingDto
+    @POST("api/v1/booking/book/")
+    suspend fun startBooking(
+        @Body request: RequestBookingDto,
+        @Query("book") book: Boolean = false
+    ): ResponseBookingDto
 
-    @POST("bookings/{bookingId}/cancel")
-    suspend fun cancelBooking(@Path("bookingId") bookingId: String)
+    @POST("api/v1/booking/book/")
+    suspend fun finishBooking(
+        @Body request: RequestBookingDto,
+        @Query("book") book: Boolean = true
+    ): ResponseBookingDto
 }

@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.domain.usecases.venue
 
+import android.util.Log
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.repository.VenueRepository
@@ -8,6 +9,8 @@ import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseC
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+
+private const val TAG = "GetVenuesUseCase"
 
 class GetVenuesUseCase @Inject constructor(
     private val repository: VenueRepository,
@@ -26,6 +29,8 @@ class GetVenuesUseCase @Inject constructor(
             checkLocationPermissionUseCase.execute().collect { permissionState ->
                 when (permissionState) {
                     LocationPermissionState.GRANTED -> {
+                        Log.d(TAG, "Start fetching venues with permission")
+
                         getCurrentLocationUseCase.execute().collect { location ->
                             val venues = repository.getVenues(
                                 latitude = location.latitude,
@@ -35,14 +40,13 @@ class GetVenuesUseCase @Inject constructor(
                                 minPrice = minPrice,
                                 maxPrice = maxPrice,
                                 infrastructure = infrastructure,
-                                district = district
+                                district = district,
                             )
-                            emit(venues.map { venue ->
-                                venue.copy(imageUrl = repository.getFirstVenuePicture(venue.venueId))
-                            })
+                            emit(venues)
                         }
                     }
                     LocationPermissionState.DENIED -> {
+                        Log.d(TAG, "Start fetching venues with NO permission")
                         val venues = repository.getVenues(
                             latitude = null,
                             longitude = null,
@@ -53,9 +57,7 @@ class GetVenuesUseCase @Inject constructor(
                             infrastructure = infrastructure,
                             district = district
                         )
-                        emit(venues.map { venue ->
-                            venue.copy(imageUrl = repository.getFirstVenuePicture(venue.venueId))
-                        })
+                        emit(venues)
                     }
                 }
             }
