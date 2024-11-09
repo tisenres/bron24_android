@@ -57,6 +57,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -123,6 +124,25 @@ dependencies {
     kaptTest(libs.hiltCompiler)
 
     implementation(libs.konfetti.compose)
+
+
+
+    debugImplementation(libs.pluto)
+    releaseImplementation(libs.pluto.no.op)
+    debugImplementation(libs.pluto.network)
+    releaseImplementation(libs.pluto.network.no.op)
+    debugImplementation(libs.pluto.network.interceptor.okhttp)
+    releaseImplementation(libs.pluto.network.interceptor.okhttp.no.op)
+    debugImplementation(libs.pluto.exceptions)
+    releaseImplementation(libs.pluto.exceptions.no.op)
+    debugImplementation(libs.pluto.logger)
+    releaseImplementation(libs.pluto.logger.no.op)
+    debugImplementation(libs.pluto.preferences)
+    releaseImplementation(libs.pluto.preferences.no.op)
+    debugImplementation(libs.pluto.layout.inspector)
+    releaseImplementation(libs.pluto.layout.inspector.no.op)
+
+    implementation(libs.timber)
 }
 
 kapt {

@@ -101,10 +101,15 @@ fun PhoneNumberInputScreen(
                         )
                     }
 
-                    else -> ToastManager.showToast(
-                        "Failed to request OTP. Please try again later.",
-                        ToastType.ERROR
-                    )
+                    else -> {
+                        // TODO: remove when fix otpreq 404 bug
+                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
+
+                        ToastManager.showToast(
+                            "Failed to request OTP. Please try again later.",
+                            ToastType.ERROR
+                        )
+                    }
                 }
             }
 
@@ -124,9 +129,10 @@ fun PhoneNumberInputScreen(
         }
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .height(74.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .height(74.dp)
     ) {
         Column(
             modifier = Modifier

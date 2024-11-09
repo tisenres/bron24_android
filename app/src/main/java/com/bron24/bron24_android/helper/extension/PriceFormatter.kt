@@ -9,3 +9,7 @@ fun String.formatPrice(): String {
         "0" // Return "0" if parsing fails
     }
 }
+
+fun String.priceToInt(): Int {
+    return this.replace("\\s".toRegex(), "").toInt()
+}

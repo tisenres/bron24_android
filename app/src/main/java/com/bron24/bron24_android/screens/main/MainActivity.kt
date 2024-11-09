@@ -1,25 +1,26 @@
 package com.bron24.bron24_android.screens.main
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
-import com.yandex.mapkit.MapKitFactory
-import dagger.hilt.android.AndroidEntryPoint
 import com.bron24.bron24_android.helper.util.LocaleManager
 import com.bron24.bron24_android.helper.util.NetworkConnection
 import com.bron24.bron24_android.helper.util.presentation.AuthEvent
@@ -27,8 +28,11 @@ import com.bron24.bron24_android.helper.util.presentation.GlobalAuthEventBus
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ObserveToast
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
-import com.bron24.bron24_android.screens.auth.AuthState
+import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
+import com.yandex.mapkit.MapKitFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -42,6 +46,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapKitFactory.initialize(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkNotificationPermission()
+        }
         setContent {
             val viewModelStoreOwner = this as ViewModelStoreOwner
             navController = rememberNavController()
@@ -110,6 +117,34 @@ class MainActivity : ComponentActivity() {
         runOnUiThread {
             navController.navigate(Screen.PhoneNumberInput.route) {
                 popUpTo(navController.graph.startDestinationId) { inclusive = true }
+            }
+        }
+    }
+
+
+    private val requestNotificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) Timber.tag("Permission").d("Notification Permission granted")
+            else Timber.tag("Permission").w("Notification Permission denied")
+        }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkNotificationPermission() {
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // make your action here
+            }
+
+            shouldShowRequestPermissionRationale(permission) -> {
+//                showPermissionRationaleDialog()
+            }
+
+            else -> {
+                requestNotificationPermission.launch(permission)
             }
         }
     }
