@@ -42,7 +42,8 @@ class AppPreference(context: Context) {
     }
 
     fun getAccessToken(): String? {
-        return preferences.getString(TOKEN_KEY, null)
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MTE2OTczLCJpYXQiOjE3MzE1MjQ5NzMsImp0aSI6IjhkNjE2MzczZGU2NzRkYmE5ZmIzZTNiNzA3OGViNzQ3IiwidXNlcl9pZCI6M30.4jXCc42UIzXcxgS_4Owsa9BgXt0M1Wn5BlqF06zZ6eg"
+//        return preferences.getString(TOKEN_KEY, null)
     }
 
     fun getRefreshToken(): String? {

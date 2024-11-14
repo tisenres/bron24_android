@@ -12,7 +12,7 @@ class GetOrdersUseCase @Inject constructor(
 ) {
     suspend fun execute(): Flow<List<Order>> {
         return repository.getOrders().map { dtoList ->
-            dtoList.toDomainModel() // Use the mapper to convert DTO to domain model
+            dtoList.data.toDomainModel() // Use the mapper to convert DTO to domain model
         }
     }
 }

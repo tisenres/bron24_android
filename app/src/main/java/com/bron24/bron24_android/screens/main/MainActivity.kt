@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
 //            networkConnection = NetworkConnection(applicationContext)
 
             CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
-                Bron24_androidTheme {
+                Bron24_androidTheme(darkTheme = false) {
                     val mainViewModel: MainViewModel = hiltViewModel()
                     OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
                     ObserveToast()
