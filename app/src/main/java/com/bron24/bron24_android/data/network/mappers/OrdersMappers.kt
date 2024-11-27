@@ -2,6 +2,7 @@ package com.bron24.bron24_android.data.network.mappers
 
 import com.bron24.bron24_android.data.network.dto.orders.OrderDto
 import com.bron24.bron24_android.domain.entity.order.Order
+import com.bron24.bron24_android.domain.entity.order.OrderAddress
 import com.bron24.bron24_android.domain.entity.order.OrderStatus
 import com.bron24.bron24_android.domain.entity.order.TimeSlot
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter
@@ -11,6 +12,7 @@ fun OrderDto.toDomainModel(): Order {
     return Order(
         id = this.id,
         venueName = this.venueName ?: "Venue Name",
+        venueId = this.venueId,
         timeSlot = TimeSlot(
             startTime = DateTimeFormatter.formatISODateTimeToHourString(this.timeSlot.startTime),
             endTime = DateTimeFormatter.formatISODateTimeToHourString(this.timeSlot.endTime),
@@ -29,8 +31,15 @@ fun OrderDto.toDomainModel(): Order {
         phoneNumber1 = this.phoneNumber1,
         phoneNumber2 = this.phoneNumber2,
         orderId = this.orderId,
-        address = this.address.addressName,
-        previewImage = this.previewImage
+        address = OrderAddress(
+            id = this.address.id,
+            addressName = this.address.addressName,
+            district = this.address.district,
+            closestMetroStation = this.address.closestMetroStation
+        ),
+        previewImage = this.previewImage,
+        lat = this.latitude,
+        lon = this.longitude
     )
 }
 

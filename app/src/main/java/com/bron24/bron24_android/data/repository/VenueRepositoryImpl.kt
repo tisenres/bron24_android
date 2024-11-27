@@ -9,6 +9,7 @@ import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.repository.VenueRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 private const val TAG = "VenueRepositoryImpl"
@@ -28,7 +29,7 @@ class VenueRepositoryImpl @Inject constructor(
         district: String?
     ): List<Venue> = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "Start fetching venues")
+            Timber.tag(TAG).d("Start fetching venues")
             apiService.getVenues(
                 latitude, longitude, sort, availableTime,
                 minPrice, maxPrice, infrastructure, district

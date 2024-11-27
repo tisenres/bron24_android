@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.Order
+import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.Purple
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -112,7 +113,10 @@ fun OrdersPage(viewModel: OrdersViewModel = hiltViewModel(), navController: NavH
                         orders = selectedOrders,
                         state = selectedListState,
                         onClick = { order ->
-                            // Handle order click
+                            navController.navigate(
+                                Screen.OrderDetails.route
+                                    .replace("{orderId}", order.id.toString())
+                            )
                         }
                     )
                 }

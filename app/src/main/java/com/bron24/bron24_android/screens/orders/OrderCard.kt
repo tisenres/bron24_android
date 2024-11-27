@@ -96,7 +96,7 @@ private fun OrderContent(order: Order) {
             time = " ${order.timeSlot.startTime} - ${order.timeSlot.endTime}"
         )
         Spacer(modifier = Modifier.height(5.dp))
-        OrderAddress(address = order.address)
+        OrderAddress(address = order.address.addressName)
         Spacer(modifier = Modifier.height(7.dp))
         OrderStatus(status = order.status)
     }

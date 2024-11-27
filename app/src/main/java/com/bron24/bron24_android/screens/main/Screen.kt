@@ -15,5 +15,6 @@ sealed class Screen(val route: String) {
     object BookingSuccessScreen : Screen("bookingSuccessScreen?orderId={orderId}&venueName={venueName}&date={date}&sector={sector}&timeSlots={timeSlots}")
     object MapPage : Screen("mapPage?latitude={latitude}&longitude={longitude}&selectedVenueId={selectedVenueId}")
     object OrdersPage : Screen("ordersPage")
+    object OrderDetails : Screen("orderDetails/{orderId}")
     object ProfilePage : Screen("profilePage")
 }

@@ -128,7 +128,7 @@ fun VenueDetailsScreen(
     val venueDetailsState by viewModel.venueDetailsState.collectAsState()
 
     when (val state = venueDetailsState) {
-        is VenueDetailsState.Loading -> LoadingScreen()
+        VenueDetailsState.Loading -> LoadingScreen()
         is VenueDetailsState.Success -> VenueDetailsContent(
             details = state.venueDetails,
             onBackClick = onBackClick,
@@ -142,11 +142,13 @@ fun VenueDetailsScreen(
                 )
             },
         )
+
         is VenueDetailsState.Error -> {
             LoadingScreen()
             ToastManager.showToast("Network error occurred", ToastType.ERROR)
         }
-        is VenueDetailsState.Initial -> LoadingScreen() // Do nothing or show initial state
+
+        VenueDetailsState.Initial -> LoadingScreen() // Do nothing or show initial state
     }
 }
 
@@ -297,7 +299,7 @@ private fun AnimatedToolbar(
     }
 }
 
-fun copyAddressToClipboard(context: Context, address: String?) {
+private fun copyAddressToClipboard(context: Context, address: String?) {
     if (address.isNullOrBlank()) {
         ToastManager.showToast(
             "No address available to copy",
@@ -386,7 +388,11 @@ fun SectionTitle(text: String) {
 }
 
 @Composable
-fun HeaderSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit, onCopyAddressClick: () -> Unit) {
+fun HeaderSection(
+    details: VenueDetails?,
+    onMapClick: (Double, Double) -> Unit,
+    onCopyAddressClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -833,7 +839,11 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         details?.let { venue ->
-            InfrastructureItem(venue.venueType.capitalize(), R.drawable.baseline_stadium_24, onItemClick)
+            InfrastructureItem(
+                venue.venueType.capitalize(),
+                R.drawable.baseline_stadium_24,
+                onItemClick
+            )
             InfrastructureItem(
                 "${venue.peopleCapacity} players",
                 R.drawable.game_icons_soccer_kick,
@@ -857,7 +867,11 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
                     InfrastructureItem("Parking", R.drawable.baseline_local_parking_24, onItemClick)
                 }
             }
-            InfrastructureItem(venue.venueSurface.capitalize(), R.drawable.baseline_grass_24, onItemClick)
+            InfrastructureItem(
+                venue.venueSurface.capitalize(),
+                R.drawable.baseline_grass_24,
+                onItemClick
+            )
             InfrastructureItem(
                 "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
                 R.drawable.baseline_access_time_filled_24,
@@ -1001,10 +1015,12 @@ fun MapSection(details: VenueDetails?) {
                     mapKit.onStart()
                     mapView?.onStart()
                 }
+
                 Lifecycle.Event.ON_STOP -> {
                     mapView?.onStop()
                     mapKit.onStop()
                 }
+
                 else -> {}
             }
         }
@@ -1124,14 +1140,19 @@ fun MapSection(details: VenueDetails?) {
                 .matchParentSize()
                 .clickable {
                     details?.let { venue ->
-                        openMapWithOptions(context, venue.latitude, venue.longitude, venue.venueName)
+                        openMapWithOptions(
+                            context,
+                            venue.latitude,
+                            venue.longitude,
+                            venue.venueName
+                        )
                     }
                 }
         )
     }
 }
 
-fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
+private fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
     val width = (drawable.intrinsicWidth * scaleFactor).toInt()
     val height = (drawable.intrinsicHeight * scaleFactor).toInt()
     return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
@@ -1141,7 +1162,7 @@ fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap
     }
 }
 
-fun openMapWithOptions(context: Context, latitude: Double, longitude: Double, venueName: String) {
+private fun openMapWithOptions(context: Context, latitude: Double, longitude: Double, venueName: String) {
     val encodedName = Uri.encode(venueName)
     val uriString = "geo:$latitude,$longitude?q=$latitude,$longitude($encodedName)"
     val geoUri = Uri.parse(uriString)
@@ -1155,13 +1176,14 @@ fun openMapWithOptions(context: Context, latitude: Double, longitude: Double, ve
         context.startActivity(chooserIntent)
     } else {
         // If no map apps are installed, open in browser
-        val browserUri = Uri.parse("https://www.openstreetmap.org/?mlat=$latitude&mlon=$longitude#map=15/$latitude/$longitude")
+        val browserUri =
+            Uri.parse("https://www.openstreetmap.org/?mlat=$latitude&mlon=$longitude#map=15/$latitude/$longitude")
         val browserIntent = Intent(Intent.ACTION_VIEW, browserUri)
         context.startActivity(browserIntent)
     }
 }
 
-fun navigateToMapApp(context: Context, latitude: Double, longitude: Double, venueName: String) {
+private fun navigateToMapApp(context: Context, latitude: Double, longitude: Double, venueName: String) {
     val gmmIntentUri = Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude($venueName)")
     val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
     mapIntent.setPackage("com.google.android.apps.maps")
@@ -1178,7 +1200,7 @@ fun navigateToMapApp(context: Context, latitude: Double, longitude: Double, venu
 }
 
 @Composable
-fun MapDetails(details: VenueDetails?) {
+private fun MapDetails(details: VenueDetails?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1210,7 +1232,7 @@ fun MapDetails(details: VenueDetails?) {
 }
 
 @Composable
-fun DistanceInfo(icon: Int, text: String, tintColor: Color) {
+private fun DistanceInfo(icon: Int, text: String, tintColor: Color) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)

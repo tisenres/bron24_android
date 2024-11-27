@@ -6,6 +6,7 @@ import androidx.annotation.Keep
 data class Order(
     val id: Long,
     val venueName: String,
+    val venueId: Int,
     val timeSlot: TimeSlot,
     val bookingDate: String,
     val sector: String,
@@ -16,8 +17,11 @@ data class Order(
     val phoneNumber1: String,
     val phoneNumber2: String?,
     val orderId: String,
-    val address: String,
-    val previewImage: String
+    val address: OrderAddress,
+    val previewImage: String,
+    var images: List<String>? = null,
+    val lat: Double,
+    val lon: Double
 )
 
 @Keep
@@ -31,4 +35,12 @@ data class TimeSlot(
 enum class OrderStatus {
     IN_PROCESS, COMPLETED, CANCELLED
 }
+
+@Keep
+data class OrderAddress(
+    val id: Int,
+    val addressName: String,
+    val district: String,
+    val closestMetroStation: String
+)
 

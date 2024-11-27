@@ -47,6 +47,7 @@ class OrdersViewModel @Inject constructor(
                         if (ordersList.isEmpty()) UiState.Empty else UiState.Success(ordersList)
                 }
             } catch (e: Exception) {
+                _orders.value = UiState.Empty
             }
         }
     }
