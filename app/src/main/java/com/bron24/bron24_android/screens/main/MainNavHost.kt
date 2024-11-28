@@ -39,6 +39,7 @@ import com.bron24.bron24_android.screens.orderdetails.OrderDetailsPage
 import com.bron24.bron24_android.screens.orders.OrdersPage
 import com.bron24.bron24_android.screens.profile.ProfilePage
 import com.bron24.bron24_android.screens.searchfilter.FilterScreen
+import com.bron24.bron24_android.screens.searchfilter.SearchPage
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import com.google.gson.Gson
@@ -304,6 +305,9 @@ fun MainNavHost(
             val orderId = backStackEntry.arguments?.getLong("orderId") ?: 0
 
             OrderDetailsPage(orderId = orderId, navController = navController)
+        }
+        composable(route = Screen.SearchPage.route) {
+            SearchPage(viewModel = hiltViewModel(), navController = navController)
         }
     }
 }
