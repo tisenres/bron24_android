@@ -47,4 +47,7 @@
     <string name="get_started">Let\'s go</string>
     <string name="sort_by">Sort by</string>
     <string name="filter">Filter</string>
+    <string name="recommendations">Recommend</string>
+    <string name="confirm">Confirm</string>
+    <string name="som">soʻm</string>
 </resources>

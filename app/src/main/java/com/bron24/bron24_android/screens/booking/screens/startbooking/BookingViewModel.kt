@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.booking.screens.startbooking
 
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -101,7 +102,8 @@ class BookingViewModel @Inject constructor(
                 val times = model.getAvailableTimeSlots(
                     venueId = venueId,
                     date = formattedDate,
-                    sector = selectedSector.value?.name ?: "X" // Default value or handle appropriately
+                    sector = selectedSector.value?.name
+                        ?: "X" // Default value or handle appropriately
                 )
 
                 // Update the state with the available time slots
@@ -110,7 +112,8 @@ class BookingViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("ViewModel", "Error fetching available times", e)
                 _availableTimeSlots.value = emptyList()
-                _getAvailableTimesState.value = BookingState.Error(e.message ?: "Unknown Error") // Update to Error state
+                _getAvailableTimesState.value =
+                    BookingState.Error(e.message ?: "Unknown Error") // Update to Error state
             }
         }
     }
@@ -129,14 +132,16 @@ class BookingViewModel @Inject constructor(
             val year = SimpleDateFormat("yyyy", Locale.getDefault()).format(date).toInt()
             val day = SimpleDateFormat("d", Locale.getDefault()).format(date).toInt()
 
-            dateList.add(DateItem(
-                day = day,
-                dayOfWeek = dayOfWeek,
-                month = month,
-                year = year,
-                isSelected = roundedTimestamp == today,
-                timestamp = roundedTimestamp
-            ))
+            dateList.add(
+                DateItem(
+                    day = day,
+                    dayOfWeek = dayOfWeek,
+                    month = month,
+                    year = year,
+                    isSelected = roundedTimestamp == today,
+                    timestamp = roundedTimestamp
+                )
+            )
 
             calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
@@ -193,7 +198,11 @@ class BookingViewModel @Inject constructor(
     }
 
     private fun getMonthNumber(monthName: String): Int {
-        return Month.valueOf(monthName.uppercase()).value
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Month.valueOf(monthName.uppercase()).value
+        } else {
+            Month.valueOf(monthName.uppercase()).ordinal + 1
+        }
     }
 
 //    private fun formatPrice(price: Int): String {

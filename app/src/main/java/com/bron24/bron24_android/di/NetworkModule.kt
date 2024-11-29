@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.di
 
+import com.bron24.bron24_android.BuildConfig
 import com.bron24.bron24_android.data.network.apiservices.AuthApiService
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.apiservices.OrdersApi
@@ -10,6 +11,7 @@ import com.bron24.bron24_android.data.network.interceptors.HttpInterceptor
 import com.bron24.bron24_android.data.network.interceptors.NoConnectivityException
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
+import com.pluto.plugins.network.okhttp.PlutoOkhttpInterceptor
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
@@ -41,13 +43,17 @@ object NetworkModule {
 
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
-            .addInterceptor(logging)
             .addNetworkInterceptor { chain ->
                 try {
                     chain.proceed(chain.request())
                 } catch (e: IOException) {
                     // Handle network errors
                     throw NoConnectivityException()
+                }
+            }.apply {
+                if (BuildConfig.DEBUG) {
+                    addInterceptor(logging)
+                    addInterceptor(PlutoOkhttpInterceptor)
                 }
             }
             .build()

@@ -31,6 +31,8 @@ mapsCompose = "6.1.1"
 yandexMaps = "4.6.1-lite"
 morflyCompose = "0.1.0"
 com-google-devtools-ksp = "2.0.20-1.0.24"
+pluto = "2.2.2"
+timber = "5.0.1"
 
 [libraries]
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
@@ -73,6 +75,24 @@ play-services-maps = { group = "com.google.android.gms", name = "play-services-m
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
 yandex-maps = { group = "com.yandex.android", name = "maps.mobile", version.ref = "yandexMaps" }
 morfly-compose = { group = "io.morfly.compose", name = "advanced-bottomsheet-material3", version.ref = "morflyCompose" }
+
+pluto = { group = "com.plutolib", name = "pluto", version.ref = "pluto" }
+pluto-no-op = { group = "com.plutolib", name = "pluto-no-op", version.ref = "pluto" }
+pluto-network = { group = "com.plutolib.plugins", name = "network", version.ref = "pluto" }
+pluto-network-no-op = { group = "com.plutolib.plugins", name = "network-no-op", version.ref = "pluto" }
+pluto-exceptions = { group = "com.plutolib.plugins", name = "exceptions", version.ref = "pluto" }
+pluto-exceptions-no-op = { group = "com.plutolib.plugins", name = "exceptions-no-op", version.ref = "pluto" }
+pluto-logger = { group = "com.plutolib.plugins", name = "logger", version.ref = "pluto" }
+pluto-logger-no-op = { group = "com.plutolib.plugins", name = "logger-no-op", version.ref = "pluto" }
+pluto-preferences = { group = "com.plutolib.plugins", name = "preferences", version.ref = "pluto" }
+pluto-preferences-no-op = { group = "com.plutolib.plugins", name = "preferences-no-op", version.ref = "pluto" }
+pluto-layout-inspector = { group = "com.plutolib.plugins", name = "layout-inspector", version.ref = "pluto" }
+pluto-layout-inspector-no-op = { group = "com.plutolib.plugins", name = "layout-inspector-no-op", version.ref = "pluto" }
+pluto-network-interceptor-okhttp = { group = "com.plutolib.plugins", name = "network-interceptor-okhttp", version.ref = "pluto" }
+pluto-network-interceptor-okhttp-no-op = { group = "com.plutolib.plugins", name = "network-interceptor-okhttp-no-op", version.ref = "pluto" }
+
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

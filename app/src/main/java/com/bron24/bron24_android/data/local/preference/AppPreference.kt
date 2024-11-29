@@ -2,10 +2,11 @@ package com.bron24.bron24_android.data.local.preference
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.user.User
 import com.google.gson.Gson
+
+import timber.log.Timber
 
 private const val SELECTED_LANGUAGE = "selected_language"
 private const val TOKEN_KEY = "auth_token"
@@ -42,6 +43,8 @@ class AppPreference(context: Context) {
     }
 
     fun getAccessToken(): String? {
+//         TODO: test token
+//        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM1MjA2ODQwLCJpYXQiOjE3MzI2MTQ4NDAsImp0aSI6IjgyMTY5ODVkNmVhZjRkZjQ5ZDhmYjhhZDllNTMwOWY4IiwidXNlcl9pZCI6M30.Vrgi8_JVToR9uqnl6RuNJJmsmYZs2ReKTe7igx69NHs"
         return preferences.getString(TOKEN_KEY, null)
     }
 
@@ -57,7 +60,7 @@ class AppPreference(context: Context) {
     }
 
     fun saveUserData(phoneNumber: String, firstName: String, lastName: String) {
-        Log.d("UserRepositoryImpl", "first_name: $firstName")
+        Timber.tag("UserRepositoryImpl").d("first_name: %s", firstName)
 
         preferences.edit()
             .putString("phone_number", phoneNumber)
@@ -75,7 +78,8 @@ class AppPreference(context: Context) {
     }
 
     fun getPersonalUserData(): User {
-        Log.d("UserRepositoryImpl", "first_name: ${preferences.getString("first_name", "")}")
+        Timber.tag("UserRepositoryImpl")
+            .d("first_name: %s", preferences.getString("first_name", ""))
         return User(
             preferences.getString("first_name", "") ?: "",
             preferences.getString("last_name", "") ?: "",

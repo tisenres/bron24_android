@@ -2,6 +2,11 @@ package com.bron24.bron24_android.screens.main.theme
 
 import androidx.compose.ui.graphics.Color
 
+val PrimaryColor = Color(0xFF32B768)
+val SecondaryColor = Color(0xFF4D7CFE)
+val TertiaryColor = Color(0xFF2C9A63)
+
+
 val GreenNormal = Color(0xFF3DDA7E)
 val Green = Color(0xFF32B768)
 val GreenPressed = Color(0xFF1FBC4B)

@@ -3,9 +3,23 @@ package com.bron24.bron24_android.screens.orders
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -15,52 +29,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.order.Order
+import com.bron24.bron24_android.domain.entity.order.OrderStatus
 
-data class OrderDetails(
-    val id: String,
-    val venueName: String,
-    val sector: String,
-    val date: String,
-    val time: String,
-    val price: String,
-    val address: String,
-    val status: OrderStatus,
-    val imageRes: Int
-)
-
-enum class OrderStatus {
-    IN_PROCESS, COMPLETED, CANCELLED
-}
 
 @Composable
-fun OrderCard(order: OrderDetails, modifier: Modifier = Modifier) {
+fun OrderCard(order: Order, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color(0xFFD9D9D9)),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = modifier
-            .width(342.dp)
-            .height(252.dp)
+        modifier = modifier,
+        onClick = onClick
     ) {
         Column {
-            OrderImage(imageRes = order.imageRes)
+            OrderImage(imageUrl = order.previewImage)
             OrderContent(order = order)
         }
     }
 }
 
 @Composable
-private fun OrderImage(imageRes: Int) {
+private fun OrderImage(imageUrl: String) {
+    val model = ImageRequest.Builder(LocalContext.current)
+        .data(imageUrl)
+        .placeholder(R.drawable.placeholder)
+        .build()
     Image(
-        painter = painterResource(id = imageRes),
+        painter = rememberAsyncImagePainter(model),
         contentDescription = "Venue image",
         contentScale = ContentScale.Crop,
         modifier = Modifier
@@ -71,22 +79,25 @@ private fun OrderImage(imageRes: Int) {
 }
 
 @Composable
-private fun OrderContent(order: OrderDetails) {
+private fun OrderContent(order: Order) {
     Column(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize()
     ) {
         OrderHeader(venueName = order.venueName, sector = order.sector)
-        Spacer(modifier = Modifier.height(17.dp))
-        OrderId(id = order.id)
+        Spacer(modifier = Modifier.height(2.dp))
+        OrderId(id = order.id.toString())
+        Spacer(modifier = Modifier.height(10.dp))
+        OrderPrice(price = order.cost)
         Spacer(modifier = Modifier.height(5.dp))
-        OrderPrice(price = order.price)
+        OrderDateTime(
+            date = order.bookingDate,
+            time = " ${order.timeSlot.startTime} - ${order.timeSlot.endTime}"
+        )
         Spacer(modifier = Modifier.height(5.dp))
-        OrderDateTime(date = order.date, time = order.time)
-        Spacer(modifier = Modifier.height(5.dp))
-        OrderAddress(address = order.address)
-        Spacer(modifier = Modifier.weight(1f))
+        OrderAddress(address = order.address.addressName)
+        Spacer(modifier = Modifier.height(7.dp))
         OrderStatus(status = order.status)
     }
 }
@@ -100,11 +111,16 @@ private fun OrderHeader(venueName: String, sector: String) {
     ) {
         Text(
             text = "$venueName, $sector",
-            style = TextStyle(fontSize = 14.sp, color = Color(0xFF3C2E56), fontWeight = FontWeight.Bold)
+            style = TextStyle(
+                fontSize = 14.sp,
+                color = Color(0xFF3C2E56),
+                fontWeight = FontWeight.Bold
+            )
         )
+
         Icon(
-            painter = painterResource(id = R.drawable.promo_code),
-            contentDescription = "Menu",
+            Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = "ArrowRight",
             modifier = Modifier.size(17.dp)
         )
     }
@@ -122,14 +138,15 @@ private fun OrderId(id: String) {
 private fun OrderPrice(price: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
-            painter = painterResource(id = R.drawable.promo_code),
+            painter = painterResource(id = R.drawable.icon_cost),
             contentDescription = "Price",
             tint = Color(0xFF999999),
             modifier = Modifier.size(10.dp)
         )
         Spacer(modifier = Modifier.width(4.dp))
+
         Text(
-            text = price,
+            text = price + " ${stringResource(R.string.som)}",
             style = TextStyle(fontSize = 10.sp, color = Color(0xFF949494))
         )
     }
@@ -137,16 +154,17 @@ private fun OrderPrice(price: String) {
 
 @Composable
 private fun OrderDateTime(date: String, time: String) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
         OrderInfoItem(
-            icon = R.drawable.promo_code,
+            icon = R.drawable.baseline_calendar_today_24,
             text = date,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
         )
+        Spacer(modifier = Modifier.width(8.dp))
         OrderInfoItem(
-            icon = R.drawable.promo_code,
+            icon = R.drawable.baseline_access_time_filled_24,
             text = time,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
         )
     }
 }
@@ -175,7 +193,7 @@ private fun OrderInfoItem(icon: Int, text: String, modifier: Modifier = Modifier
 private fun OrderAddress(address: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
-            painter = painterResource(id = R.drawable.promo_code),
+            painter = painterResource(id = R.drawable.baseline_location_pin_24),
             contentDescription = "Location",
             tint = Color(0xFF949494),
             modifier = Modifier.size(10.dp)
@@ -193,15 +211,15 @@ private fun OrderStatus(status: OrderStatus) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
-                .size(12.dp)
+                .size(10.dp)
                 .background(getStatusColor(status), CircleShape)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.promo_code),
+                getStatusIcon(status),
                 contentDescription = "Status",
                 tint = Color.White,
                 modifier = Modifier
-                    .size(6.dp)
+                    .size(9.dp)
                     .align(Alignment.Center)
             )
         }
@@ -221,27 +239,18 @@ private fun getStatusColor(status: OrderStatus): Color {
     }
 }
 
+private fun getStatusIcon(status: OrderStatus): ImageVector {
+    return when (status) {
+        OrderStatus.IN_PROCESS -> Icons.Default.Check
+        OrderStatus.COMPLETED -> Icons.Default.Close
+        OrderStatus.CANCELLED -> Icons.Default.Close
+    }
+}
+
 private fun getStatusText(status: OrderStatus): String {
     return when (status) {
         OrderStatus.IN_PROCESS -> "In process"
         OrderStatus.COMPLETED -> "Completed"
         OrderStatus.CANCELLED -> "Cancelled"
     }
-}
-
-@Preview(widthDp = 342, heightDp = 252)
-@Composable
-private fun OrderCardPreview() {
-    val sampleOrder = OrderDetails(
-        id = "636582",
-        venueName = "Bunyodkor kompleksi",
-        sector = "Sector A",
-        date = "21.02.2024",
-        time = "9:00 - 10:00",
-        price = "50 000 sum",
-        address = "Mustaqillik maydoni, Chilanzar, Tashkent",
-        status = OrderStatus.IN_PROCESS,
-        imageRes = R.drawable.promo_code
-    )
-    OrderCard(order = sampleOrder)
 }

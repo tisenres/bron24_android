@@ -8,24 +8,25 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Black,
-    secondary = White,
-    tertiary = Green,
+    primary = PrimaryColor,
+    secondary = SecondaryColor,
+    tertiary = TertiaryColor,
     surface = Purple,
     outline = GrayRegular,
     background = GrayDark
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = White,
-    secondary = Black,
-    tertiary = Green,
+    primary = PrimaryColor,
+    secondary = SecondaryColor,
+    tertiary = TertiaryColor,
     surface = White,
     outline = GreenLight,
-    background = GrayLighter
+    background = Color.White
 )
 
 @Composable
@@ -39,6 +40,7 @@ fun Bron24_androidTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
+
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

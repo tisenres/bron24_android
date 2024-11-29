@@ -60,9 +60,14 @@ fun SearchView(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ProfileRow(firstName ?: "John")
-        SearchRow(onFilterClick = {
-            navController.navigate(Screen.Filter.route)
-        })
+        SearchRow(
+            onSearchClick = {
+                navController.navigate(Screen.SearchPage.route)
+            },
+            onFilterClick = {
+                navController.navigate(Screen.Filter.route)
+            },
+        )
     }
 }
 
@@ -103,7 +108,7 @@ fun ProfileRow(firstName: String) {
 }
 
 @Composable
-fun SearchRow(onFilterClick: () -> Unit) {
+fun SearchRow(onSearchClick: () -> Unit, onFilterClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -122,8 +127,7 @@ fun SearchRow(onFilterClick: () -> Unit) {
                 )
                 .height(40.dp)
                 .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
-                .clickable {
-                }
+                .clickable { onSearchClick.invoke() }
                 .padding(horizontal = 10.dp, vertical = 10.dp)
         ) {
             Image(
@@ -151,8 +155,8 @@ fun SearchRow(onFilterClick: () -> Unit) {
                 .clip(RoundedCornerShape(5.dp))
                 .background(color = Color.White)
                 .clickable {
-//                    onFilterClick()
-                           },
+                    onFilterClick()
+                },
             contentAlignment = Alignment.Center
         ) {
             Image(

@@ -1,7 +1,6 @@
 package com.bron24.bron24_android.data.network.interceptors
 
 import android.util.Log
-import com.bron24.bron24_android.di.NetworkModule
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import dagger.Lazy
@@ -10,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Request
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Timeout
 import retrofit2.Call
 import retrofit2.CallAdapter
@@ -36,7 +36,12 @@ class ErrorHandlingCallAdapterFactory(
     ): CallAdapter<*, *>? {
         if (getRawType(returnType) != Call::class.java) return null
         val responseType = getParameterUpperBound(0, returnType as ParameterizedType)
-        return ErrorHandlingCallAdapter<Any>(responseType, authRepository, tokenRepository, errorHandler)
+        return ErrorHandlingCallAdapter<Any>(
+            responseType,
+            authRepository,
+            tokenRepository,
+            errorHandler
+        )
     }
 
     private class ErrorHandlingCallAdapter<R>(
@@ -68,6 +73,7 @@ class ErrorHandlingCallAdapterFactory(
                         401 -> CoroutineScope(Dispatchers.IO).launch {
                             handleUnauthorized(call, callback)
                         }
+
                         in 400..499 -> handleClientError(call, response, callback)
                         in 500..599 -> handleServerError(call, response, callback)
                         else -> handleUnknownError(call, response, callback)
@@ -135,7 +141,12 @@ class ErrorHandlingCallAdapterFactory(
             } catch (e: IOException) {
                 handleNetworkErrorSync(e)
             } catch (e: Exception) {
-                handleUnknownErrorSync(Response.error(500, okhttp3.ResponseBody.create(null, "Unknown error occurred")))
+                handleUnknownErrorSync(
+                    Response.error(
+                        500,
+                        "Unknown error occurred".toResponseBody(null)
+                    )
+                )
             }
         }
 
@@ -146,7 +157,11 @@ class ErrorHandlingCallAdapterFactory(
                     try {
                         authRepository.get().refreshAndSaveTokens(refreshToken)
                     } catch (e: Exception) {
-                        errorHandler.handleError(AppError.UnknownError(e.message ?: "Token refresh failed"))
+                        errorHandler.handleError(
+                            AppError.UnknownError(
+                                e.message ?: "Token refresh failed"
+                            )
+                        )
                         false
                     }
                 }
@@ -156,19 +171,30 @@ class ErrorHandlingCallAdapterFactory(
                 } else {
                     authRepository.get().handleRefreshFailure()
                     errorHandler.handleError(AppError.HttpError(401, "Unauthorized"))
-                    callback.onResponse(call, Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized")))
+                    callback.onResponse(
+                        call,
+                        Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
+                    )
                 }
             } else {
                 authRepository.get().handleRefreshFailure()
                 errorHandler.handleError(AppError.HttpError(401, "Unauthorized"))
-                callback.onResponse(call, Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized")))
+                callback.onResponse(
+                    call,
+                    Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
+                )
             }
         }
 
         private fun handleClientError(call: Call<R>, response: Response<R>, callback: Callback<R>) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    errorHandler.handleError(AppError.HttpError(response.code(), response.message()))
+                    errorHandler.handleError(
+                        AppError.HttpError(
+                            response.code(),
+                            response.message()
+                        )
+                    )
                     callback.onResponse(call, response)
                 } catch (e: Exception) {
                     // Log the exception to understand what's going wrong
@@ -181,8 +207,16 @@ class ErrorHandlingCallAdapterFactory(
         private fun handleServerError(call: Call<R>, response: Response<R>, callback: Callback<R>) {
             CoroutineScope(Dispatchers.Main).launch {
                 try {
-                    Log.e("ErrorHandling", "Handling server error: ${response.code()} - ${response.message()}")
-                    errorHandler.handleError(AppError.HttpError(response.code(), response.message()))
+                    Log.e(
+                        "ErrorHandling",
+                        "Handling server error: ${response.code()} - ${response.message()}"
+                    )
+                    errorHandler.handleError(
+                        AppError.HttpError(
+                            response.code(),
+                            response.message()
+                        )
+                    )
                     callback.onResponse(call, response)
                 } catch (e: Exception) {
                     Log.e("ErrorHandling", "Exception during error handling: ${e.message}")
@@ -191,7 +225,11 @@ class ErrorHandlingCallAdapterFactory(
             }
         }
 
-        private fun handleUnknownError(call: Call<R>, response: Response<R>, callback: Callback<R>) {
+        private fun handleUnknownError(
+            call: Call<R>,
+            response: Response<R>,
+            callback: Callback<R>
+        ) {
             runBlocking {
                 errorHandler.handleError(AppError.UnknownError(response.message()))
             }
@@ -216,7 +254,11 @@ class ErrorHandlingCallAdapterFactory(
                     try {
                         authRepository.get().refreshAndSaveTokens(refreshToken)
                     } catch (e: Exception) {
-                        errorHandler.handleError(AppError.UnknownError(e.message ?: "Token refresh failed"))
+                        errorHandler.handleError(
+                            AppError.UnknownError(
+                                e.message ?: "Token refresh failed"
+                            )
+                        )
                         false
                     }
                 }
@@ -224,7 +266,14 @@ class ErrorHandlingCallAdapterFactory(
                     clone().execute()
                 } else {
                     authRepository.get().handleRefreshFailure()
-                    runBlocking { errorHandler.handleError(AppError.HttpError(401, "Unauthorized")) }
+                    runBlocking {
+                        errorHandler.handleError(
+                            AppError.HttpError(
+                                401,
+                                "Unauthorized"
+                            )
+                        )
+                    }
                     Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
                 }
             } else {
@@ -262,7 +311,9 @@ class ErrorHandlingCallAdapterFactory(
             return Response.error(500, okhttp3.ResponseBody.create(null, "Network error occurred"))
         }
 
-        override fun clone() = ErrorHandlingCall(delegate.clone(), authRepository, tokenRepository, errorHandler)
+        override fun clone() =
+            ErrorHandlingCall(delegate.clone(), authRepository, tokenRepository, errorHandler)
+
         override fun isExecuted() = delegate.isExecuted
         override fun cancel() = delegate.cancel()
         override fun isCanceled() = delegate.isCanceled
