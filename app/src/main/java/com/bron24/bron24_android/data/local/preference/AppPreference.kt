@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.user.User
 import com.google.gson.Gson
+
 import timber.log.Timber
 
 private const val SELECTED_LANGUAGE = "selected_language"
@@ -42,9 +43,9 @@ class AppPreference(context: Context) {
     }
 
     fun getAccessToken(): String? {
-        // TODO: test token
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM1MjA2ODQwLCJpYXQiOjE3MzI2MTQ4NDAsImp0aSI6IjgyMTY5ODVkNmVhZjRkZjQ5ZDhmYjhhZDllNTMwOWY4IiwidXNlcl9pZCI6M30.Vrgi8_JVToR9uqnl6RuNJJmsmYZs2ReKTe7igx69NHs"
-//        return preferences.getString(TOKEN_KEY, null)
+//         TODO: test token
+//        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM1MjA2ODQwLCJpYXQiOjE3MzI2MTQ4NDAsImp0aSI6IjgyMTY5ODVkNmVhZjRkZjQ5ZDhmYjhhZDllNTMwOWY4IiwidXNlcl9pZCI6M30.Vrgi8_JVToR9uqnl6RuNJJmsmYZs2ReKTe7igx69NHs"
+        return preferences.getString(TOKEN_KEY, null)
     }
 
     fun getRefreshToken(): String? {
