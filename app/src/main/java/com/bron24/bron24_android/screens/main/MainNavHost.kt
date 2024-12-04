@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.main
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
@@ -21,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -34,14 +36,16 @@ import com.bron24.bron24_android.screens.booking.screens.finishbooking.BookingSu
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.home.HomePage
+import com.bron24.bron24_android.screens.home.HomeViewModel
 import com.bron24.bron24_android.screens.map.YandexMapScreen
 import com.bron24.bron24_android.screens.orderdetails.OrderDetailsPage
 import com.bron24.bron24_android.screens.orders.OrdersPage
 import com.bron24.bron24_android.screens.profile.ProfilePage
-import com.bron24.bron24_android.screens.searchfilter.FilterScreen
 import com.bron24.bron24_android.screens.searchfilter.SearchPage
+import com.bron24.bron24_android.screens.searchfilter.filter_screen.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
+import com.bron24.bron24_android.screens.venuelisting.filterCallback
 import com.google.gson.Gson
 
 @Composable
@@ -144,7 +148,10 @@ fun MainNavHost(
                 onApplyFilter = { filterOptions ->
                     // Handle the applied filter
                     // You might want to pass this back to your ViewModel
-                    navController.popBackStack()
+                    filterCallback(filterOptions)
+                    Log.d("SSS", "MainNavHost: filter call")
+//                    navController.previousBackStackEntry?.savedStateHandle?.set("filterResult", filterOptions)
+                    navController.popBackStack(Screen.VenueDetails.route,inclusive = true)
                 },
                 onDismiss = {
                     navController.popBackStack()

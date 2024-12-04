@@ -1,5 +1,12 @@
 package com.bron24.bron24_android.screens.profile
 
+import android.annotation.SuppressLint
+import android.os.Build
+import android.view.View
+import android.widget.Toast
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,306 +23,287 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.Icon
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.user.User
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.helper.util.formatPhoneNumber
+import com.bron24.bron24_android.helper.util.presentation.components.items.CustomAppBar
+import com.bron24.bron24_android.helper.util.presentation.components.items.ItemEditProfile
+import com.bron24.bron24_android.helper.util.presentation.components.items.ItemProfileTask
+import com.bron24.bron24_android.screens.main.theme.Black
+import com.bron24.bron24_android.screens.main.theme.Black17
+import com.bron24.bron24_android.screens.main.theme.Success
+import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.skydoves.orbital.Orbital
+import com.skydoves.orbital.animateBounds
+import com.skydoves.orbital.rememberMovableContentOf
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
+
+@SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun ProfilePage(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
-
-    val profileState by viewModel.profileState.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.getPersonalUserData()
+    viewModel.initData()
+    val context = LocalContext.current
+    var state = viewModel.collectAsState()
+    viewModel.collectSideEffect {
+        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
     }
-
-    when (val state = profileState) {
-        is ProfileState.Loading -> {
-            // Show a loading indicator
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-
-        is ProfileState.Success -> {
-            val user = state.user
-            // Proceed to display the UI with user data
-            ProfileContent(user, modifier)
-        }
-
-        is ProfileState.Initial -> {
-            // Optionally, show an initial state or nothing
-        }
-
-        is ProfileState.Error -> {
-            ToastManager.showToast(type = ToastType.ERROR, message = "Unable to load user data")
-        }
-    }
-
-}
-
-@Composable
-fun ProfileContent(user: User, modifier: Modifier) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color.White)
-            .verticalScroll(rememberScrollState())
+            .fillMaxSize()
+            .background(color = White)
     ) {
+        CustomAppBar(
+            title = "Profile",
+            startIcons = {
+                IconButton(
+                    onClick = {
 
-        Spacer(modifier = Modifier.height(30.dp))
-
-        ProfileContentTop(user)
-
-        ProfileInfoSection(user)
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        ProfileAccountAction(title = "Favourite stadiums", {})
-        Spacer(modifier = Modifier.height(14.dp))
-        ProfileAccountAction(title = "Log out", {})
-        Spacer(modifier = Modifier.height(14.dp))
-        ProfileAccountAction(title = "Delete account", {})
-        Spacer(modifier = Modifier.height(20.dp))
-    }
-}
-
-@Composable
-fun ProfileContentTop(user: User) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
-        // Adjusted the offset values to move the stripe lower and partially off-screen
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(190.dp) // Adjust height as needed
-                .align(Alignment.TopCenter)
-                .graphicsLayer {
-                    rotationZ = -13.45f // Rotate the stripe
-                    // Translate to position the stripe lower
-                    translationY = 65.dp.toPx() // Move it down by 150dp
-                    // Expand beyond screen borders horizontally
-                    scaleX = 2f // Double the width
+                    },
+                    Modifier
+                        .size(28.dp)
+                        .clip(CircleShape),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "icons",
+                        tint = Black17,
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
-                .background(Color(0xFF32B768))
+            },
+            actions = {
+                ItemEditProfile {
+
+                }
+            }
         )
 
-        // Column for profile details (image, name, edit profile)
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 99.dp) // Adjust padding based on your needs
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
-            // Profile Image (large, centered)
-            Image(
-                painter = rememberAsyncImagePainter(model = R.drawable.ball_pic),
-                contentDescription = "profile_image",
+            Box(
                 modifier = Modifier
-                    .size(150.dp) // Large image size
-                    .clip(CircleShape)
-                    .border(5.dp, Color.White, CircleShape), // Optional white border
-                contentScale = ContentScale.Crop
+                    .fillMaxWidth()
+                    .height(280.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.avatar),
+                    contentDescription = "icon",
+                    modifier = Modifier.align(Alignment.BottomStart),
+                    contentScale = ContentScale.Crop,
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                        .align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .size(110.dp)
+                            .clip(shape = CircleShape)
+                            .border(
+                                brush = Brush.linearGradient(
+                                    start = Offset(0f, 0f),
+                                    colors = listOf(White, Color(0xff2D6544)),
+                                    end = Offset(0f, Float.POSITIVE_INFINITY)
+                                ),
+                                shape = CircleShape,
+                                width = 5.dp
+                            )
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ball_pic),
+                            contentDescription = "img",
+                            modifier = Modifier
+                                .size(110.dp)
+                                .align(Alignment.Center),
+                            contentScale = ContentScale.Crop
+
+                        )
+                    }
+                    Text(
+                        text = "${state.value.user?.firstName} ${state.value.user?.lastName}",
+                        modifier = Modifier.padding(bottom = 60.dp),
+                        color = Black,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            Text(
+                text = "Profile",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = gilroyFontFamily,
+                modifier = Modifier.padding(horizontal = 20.dp)
+
+            )
+            ItemProfileTask(
+                text = "${state.value.user?.firstName} ${state.value.user?.lastName}",
+                startIcons = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_profile),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+            ItemProfileTask(
+                text = state.value.user?.phoneNumber?.formatPhoneNumber()?:"",
+                startIcons = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_phone),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+            ItemProfileTask(
+                text = "Change Language",
+                startIcons = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_language),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+            ItemProfileTask(
+                text = "Favorites",
+                startIcons = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_favorite),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+            Text(
+                text = "Support",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = gilroyFontFamily,
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 16.dp)
             )
 
-            Spacer(modifier = Modifier.height(13.dp))
+            ItemProfileTask(
+                text = "Help",
+                startIcons = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_help),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+            ItemProfileTask(
+                text = "About Us",
+                startIcons = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_info),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            )
+            ItemProfileTask(
+                text = "Add Venue",
+                startIcons = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_add),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            )
+//            Spacer(modifier = Modifier
+//                .height(40.dp)
+//                .background(color = Color.White))
+            Row(modifier = Modifier
+                .padding(vertical = 32.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(
+                    interactionSource = MutableInteractionSource(),
+                    indication = null
+                ) { }
+                .border(width = 2.dp, color = Color.Red, shape = RoundedCornerShape(8.dp))
+                .padding(horizontal = 40.dp, vertical = 10.dp)
 
-            // Profile Name (Cristiano Ronaldo)
-            Text(
-                text = user.firstName + " " + user.lastName,
-                style = TextStyle(
+                .align(Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_logout),
+                    contentDescription = "icon",
+                    tint = Color.Red
+                )
+                Text(
+                    text = "Logout",
+                    fontSize = 14.sp,
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 26.sp, // Larger text for better visibility
-                    color = Color.White,
-                    lineHeight = 30.sp,
+                    color = Color.Red,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
-            )
-
-        }
-    }
-}
-
-@Composable
-fun ProfileInfoSection(user: User) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .padding(horizontal = 30.dp, vertical = 24.dp)
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = "About",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = Color.Black,
-                lineHeight = 20.sp,
-            ),
-        )
-
-        Text(
-            text = "Edit Profile",
-            fontSize = 16.sp,
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 16.sp,
-                color = Color(0xFF636363),
-                lineHeight = 20.sp,
-                textDecoration = TextDecoration.Underline
-            ),
-            modifier = Modifier.clickable(
-                onClick = { /* Handle Edit Profile click */ },
-                indication = ripple(),
-                interactionSource = remember { MutableInteractionSource() }
-            )
-        )
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 28.dp)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 18.dp)
-        ) {
-            ProfileInfoItem(label = "Full name", value = user.firstName + " " + user.lastName)
-            Spacer(modifier = Modifier.height(10.dp))
-            ProfileInfoItem(
-                label = "Phone number",
-                value = formatWithSpansPhoneNumber(user.phoneNumber)
-            )
-        }
-    }
-}
-
-@Composable
-fun ProfileInfoItem(label: String, value: String) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = label,
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
-                color = Color.Black,
-                lineHeight = 20.sp,
-            ),
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = value,
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = Color.Black,
-                lineHeight = 20.sp,
-            )
-        )
-    }
-}
-
-@Composable
-fun ProfileAccountAction(title: String, onActionClick: () -> Unit) {
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 28.dp)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
-            .clickable {
-                onActionClick()
             }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = title,
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    lineHeight = 20.sp,
-                ),
-            )
-
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_right),
-                contentDescription = "Perform action",
-                modifier = Modifier.size(15.dp),
-                tint = Color.Black
-            )
         }
     }
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(Color.White, darkIcons = true)
 }
-
-fun formatWithSpansPhoneNumber(phoneNumber: String): String {
-    val countryCode = "+998"
-    val part1 = phoneNumber.substring(3, 5)
-    val part2 = phoneNumber.substring(5, 8)
-    val part3 = phoneNumber.substring(8, 10)
-    val part4 = phoneNumber.substring(10, 12)
-    return "$countryCode $part1 $part2 $part3 $part4"
-}
-
-@Preview(widthDp = 390, heightDp = 794)
-@Composable
-fun ProfilePreview() {
-    ProfilePage()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ProPreview() {
+//    ProfilePage()
+//}

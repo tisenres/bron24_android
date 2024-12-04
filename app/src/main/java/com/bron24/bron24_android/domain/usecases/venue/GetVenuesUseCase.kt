@@ -17,7 +17,7 @@ class GetVenuesUseCase @Inject constructor(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase
 ) {
-    suspend fun execute(
+    fun execute(
         sort: String? = null,
         availableTime: String? = null,
         minPrice: Int? = null,

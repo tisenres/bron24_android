@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.searchfilter
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -48,8 +49,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.venuelisting.VenueCard
 
@@ -59,6 +62,10 @@ fun SearchPage(viewModel: SearchViewModel, navController: NavController) {
     val venues by viewModel.venues.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val resultLiveData = savedStateHandle?.getLiveData<FilterOptions>("filterResult")
+
+    Log.d("AAA", "SearchPage: Search")
     val focusManager = LocalFocusManager.current
     var query by rememberSaveable { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -68,6 +75,7 @@ fun SearchPage(viewModel: SearchViewModel, navController: NavController) {
             viewModel.getVenuesByQuery(query)
         }
     }
+    resultLiveData?.observe(LocalLifecycleOwner.current){}
 
     DisposableEffect(Unit) {
         focusRequester.requestFocus()

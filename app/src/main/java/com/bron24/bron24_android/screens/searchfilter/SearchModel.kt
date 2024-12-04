@@ -9,9 +9,9 @@ class SearchModel @Inject constructor(
     private val getPersonalUserDataUseCase: GetPersonalUserDataUseCase,
     private val searchVenuesUseCase: SearchVenuesUseCase
 ) {
-    fun getPersonalUserData(): User {
-        return getPersonalUserDataUseCase.execute()
-    }
+//    fun getPersonalUserData(): User {
+//        return getPersonalUserDataUseCase.execute()
+//    }
 
     suspend fun getVenueByQuery(query: String) = searchVenuesUseCase.execute(query)
 }

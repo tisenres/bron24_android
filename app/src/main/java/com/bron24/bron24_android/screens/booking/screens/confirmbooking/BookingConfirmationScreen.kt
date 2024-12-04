@@ -72,8 +72,8 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.extension.PhoneNumberVisualTransformation
+import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.screens.profile.formatWithSpansPhoneNumber
 import kotlinx.coroutines.launch
 
 @Composable
@@ -349,7 +349,7 @@ fun BookingInfoCard(
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 BookingDetail("FULL NAME", booking.firstName + " " + booking.lastName)
                 Spacer(modifier = Modifier.height(15.dp))
-                BookingDetail("FIRST NUMBER", formatWithSpansPhoneNumber(booking.phoneNumber))
+                BookingDetail("FIRST NUMBER", booking.phoneNumber.formatWithSpansPhoneNumber())
                 Spacer(modifier = Modifier.height(15.dp))
                 SecondNumberField(
                     value = secondPhoneNumber,

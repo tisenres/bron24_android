@@ -125,7 +125,18 @@ dependencies {
 
     implementation(libs.konfetti.compose)
 
+    //datePicker
+    implementation(libs.datetimepicker)
 
+    //orbit
+    implementation("org.orbit-mvi:orbit-core:9.0.0")
+    implementation("org.orbit-mvi:orbit-viewmodel:9.0.0")
+    implementation("org.orbit-mvi:orbit-compose:9.0.0")
+
+    //status bar color
+    implementation(libs.accompanist.systemuicontroller)
+    //motion orbital
+    implementation("com.github.skydoves:orbital:0.4.0")
 
     debugImplementation(libs.pluto)
     releaseImplementation(libs.pluto.no.op)

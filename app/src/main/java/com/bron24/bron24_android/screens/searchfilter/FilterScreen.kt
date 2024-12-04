@@ -26,14 +26,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun FilterScreen(
-    onApplyFilter: (FilterOptions) -> Unit,
-    onDismiss: () -> Unit
+//    onApplyFilter: (FilterOptions) -> Unit,
+//    onDismiss: () -> Unit
 ) {
     var availableTime by remember { mutableStateOf("") }
     var minPrice by remember { mutableIntStateOf(0) }
@@ -136,16 +137,16 @@ fun FilterScreen(
         // Apply Button
         Button(
             onClick = {
-                onApplyFilter(
-                    FilterOptions(
-                        availableTime = availableTime,
-                        minPrice = minPrice,
-                        maxPrice = maxPrice,
-                        infrastructure = infrastructure,
-                        district = district
-                    )
-                )
-                onDismiss()
+//                onApplyFilter(
+//                    FilterOptions(
+//                        availableTime = availableTime,
+//                        minPrice = minPrice,
+//                        maxPrice = maxPrice,
+//                        infrastructure = infrastructure,
+//                        district = district
+//                    )
+//                )
+//                onDismiss()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -154,10 +155,16 @@ fun FilterScreen(
     }
 }
 
-data class FilterOptions(
-    val availableTime: String,
-    val minPrice: Int,
-    val maxPrice: Int,
-    val infrastructure: Boolean,
-    val district: String
-)
+@Preview(showBackground = true)
+@Composable
+private fun FilterScreenPreview(){
+//    FilterScreen(onApplyFilter = {}, onDismiss = {})
+}
+
+//data class FilterOptions(
+//    val availableTime: String,
+//    val minPrice: Int,
+//    val maxPrice: Int,
+//    val infrastructure: Boolean,
+//    val district: String
+//)

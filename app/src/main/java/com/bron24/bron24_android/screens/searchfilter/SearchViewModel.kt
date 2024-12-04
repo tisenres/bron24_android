@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.searchfilter
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.user.User
@@ -26,7 +27,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun getPersonalUserData() {
-        _personalUserData.value = searchModel.getPersonalUserData()
+       // _personalUserData.value = searchModel.getPersonalUserData()
         _firstName.value = _personalUserData.value?.firstName
     }
 
@@ -43,6 +44,7 @@ class SearchViewModel @Inject constructor(
                 searchModel.getVenueByQuery(
                     query = query,
                 ).collect { venues ->
+                    Log.d("AAA", "getVenuesByQuery: $venues")
                     _isLoading.value = false
                     _venues.value = venues
                 }

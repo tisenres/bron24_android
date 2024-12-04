@@ -1,31 +1,36 @@
 package com.bron24.bron24_android.screens.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.domain.usecases.user.GetPersonalUserDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val model: ProfileModel
-): ViewModel() {
+    private val getPersonalUserDataUseCase: GetPersonalUserDataUseCase
+): ViewModel(),ProfilePageContract.ViewModel {
 
-    private val _profileState = MutableStateFlow<ProfileState>(ProfileState.Initial)
-    val profileState = _profileState.asStateFlow()
+    override fun onDispatchers(intent: ProfilePageContract.Intent) = intent {
+        //event
+    }
 
-    fun getPersonalUserData() {
-        viewModelScope.launch {
-            _profileState.value = ProfileState.Loading
-            try {
-                val user = model.getPersonalUserData()
-                _profileState.value = ProfileState.Success(user)
-            } catch (e: Exception) {
-                _profileState.value = ProfileState.Error(e.message ?: "An error occurred")
-            }
+    override fun initData(){
+        intent {
+            getPersonalUserDataUseCase.execute().onEach {
+                it.onSuccess {
+                    reduce { state.copy(isLoading = false, initial = false, user = it) }
+                }.onFailure {
+                    postSideEffect(sideEffect = ProfilePageContract.SideEffect(message = it.message.toString()))
+                }
+            }.launchIn(viewModelScope)
         }
     }
 
+    override val container =
+        container<ProfilePageContract.UISate, ProfilePageContract.SideEffect>(ProfilePageContract.UISate())
 }

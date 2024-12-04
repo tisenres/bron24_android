@@ -45,7 +45,6 @@ fun SearchView(
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
-
     val firstName by viewModel.firstName.collectAsState()
 
     Column(

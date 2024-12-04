@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.screens.venuelisting
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -33,7 +35,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
+import com.bron24.bron24_android.common.FilterOptions
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
+var filterCallback: (FilterOptions) -> Unit = {}
+
+
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VenueListingView(
@@ -42,23 +53,38 @@ fun VenueListingView(
     modifier: Modifier = Modifier,
     viewModel: VenueListingViewModel = hiltViewModel(),
 ) {
+    Log.d("AAA", "VenueListingView: open")
     val venues by viewModel.venues.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    var loading by remember {
+        mutableStateOf(true)
+    }
+    val scope = rememberCoroutineScope()
+    scope.launch {
+        viewModel.isLoading.collect{
+            loading = it
+        }
+    }
+
     val currentSortOption by viewModel.sortOption.collectAsState()
+
 
     var sortExpanded by remember { mutableStateOf(false) }
 
     val pullRefreshState = rememberPullToRefreshState()
 
+    filterCallback = {filterOptions->
+        Log.d("SSS", "VenueListingView: openCalll")
+        viewModel.updateFilterOptions(filterOptions = filterOptions)
+    }
     PullToRefreshBox(
         state = pullRefreshState,
         onRefresh = { viewModel.refreshVenues() },
-        isRefreshing = isLoading,
+        isRefreshing = loading,
         modifier = modifier,
         indicator = {
             PullToRefreshDefaults.Indicator(
                 state = pullRefreshState,
-                isRefreshing = isLoading,
+                isRefreshing = loading,
                 color = Color(0xFF32B768),
                 containerColor = Color.White,
                 modifier = Modifier.align(Alignment.TopCenter)
@@ -97,7 +123,7 @@ fun VenueListingView(
                 }
             }
 
-            if (isLoading) {
+            if (loading) {
                 // Display shimmer placeholders while loading
                 items(5) { // Arbitrary number of placeholders
                     VenueCard(venue = null, isLoading = true, navController = navController)
@@ -163,7 +189,7 @@ fun SortRow(onSortClick: () -> Unit) {
             .selectable(
                 selected = false,
                 onClick = {
-                // TODO
+                    // TODO
                 },
                 interactionSource = interactionSource,
                 indication = ripple()
