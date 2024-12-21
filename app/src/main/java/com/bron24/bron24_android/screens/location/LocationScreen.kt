@@ -41,12 +41,21 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTapGestures
+import cafe.adriel.voyager.core.screen.Screen
+
+class LocationRequestScreen:Screen{
+    @Composable
+    override fun Content() {
+
+    }
+
+}
 
 @Composable
-fun LocationRequestScreen(
+fun LocationRequestScreenContent(
     onAllowClick: () -> Unit,
     onDenyClick: () -> Unit,
-    viewModel: LocationViewModel = hiltViewModel(),
+    viewModel: LocationScreenVM = hiltViewModel(),
 ) {
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),

@@ -2,8 +2,7 @@ package com.bron24.bron24_android.di
 
 import com.bron24.bron24_android.domain.usecases.onboarding.OnboardingUseCase
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageVM
-import com.bron24.bron24_android.screens.location.LocationModel
-import com.bron24.bron24_android.screens.location.LocationViewModel
+import com.bron24.bron24_android.screens.location.LocationScreenVM
 import com.bron24.bron24_android.screens.main.MainViewModel
 import com.bron24.bron24_android.screens.map.VenueMapModel
 import com.bron24.bron24_android.screens.map.VenueMapViewModel
@@ -31,8 +30,8 @@ object ViewModelModule {
     @ActivityScoped
     fun provideLocationViewModel(
         locationModel: LocationModel
-    ): LocationViewModel {
-        return LocationViewModel(locationModel)
+    ): LocationScreenVM {
+        return LocationScreenVM(locationModel)
     }
 
     @Provides
