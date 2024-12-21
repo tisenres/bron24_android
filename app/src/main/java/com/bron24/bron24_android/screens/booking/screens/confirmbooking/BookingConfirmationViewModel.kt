@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

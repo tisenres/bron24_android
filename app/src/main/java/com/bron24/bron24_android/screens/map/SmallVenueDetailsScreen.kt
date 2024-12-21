@@ -44,8 +44,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.valentinilk.shimmer.shimmer

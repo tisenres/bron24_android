@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.screens.main
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -20,17 +21,25 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavHostController
+import androidx.navigation.Navigation
 import androidx.navigation.compose.rememberNavController
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.bron24.bron24_android.helper.util.LocaleManager
 import com.bron24.bron24_android.helper.util.NetworkConnection
 import com.bron24.bron24_android.helper.util.presentation.AuthEvent
 import com.bron24.bron24_android.helper.util.presentation.GlobalAuthEventBus
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ObserveToast
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.components.toast.ObserveToast
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.navigator.NavigationHandler
+import com.bron24.bron24_android.screens.language.LanguageContract
+import com.bron24.bron24_android.screens.language.LanguageSelectionScreen
 import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
 import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,11 +49,17 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var localeManager: LocaleManager
-    private lateinit var navController: NavHostController
-//    private lateinit var networkConnection: NetworkConnection
 
+    @Inject
+    lateinit var navigationHandler : NavigationHandler
+
+    private lateinit var navController: NavHostController
+////    private lateinit var networkConnection: NetworkConnection
+
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+       // MapKitFactory.initialize(this)
         MapKitFactory.initialize(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -57,16 +72,24 @@ class MainActivity : ComponentActivity() {
             navController.setViewModelStore(viewModelStoreOwner.viewModelStore)
 
 //            networkConnection = NetworkConnection(applicationContext)
-
-            CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
-                Bron24_androidTheme(darkTheme = false) {
-                    val mainViewModel: MainViewModel = hiltViewModel()
-                    OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
-                    ObserveToast()
-
-//                    NetworkErrorToastHandler(networkConnection)
+            Bron24_androidTheme {
+                Navigator(screen = LanguageSelectionScreen()){navigator->
+                    navigationHandler.screenState.onEach {
+                        it.invoke(navigator)
+                    }.launchIn(lifecycleScope)
+                    SlideTransition(navigator = navigator)
                 }
             }
+
+//            CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
+//                Bron24_androidTheme(darkTheme = false) {
+//                    val mainViewModel: MainViewModel = hiltViewModel()
+//                    OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
+//                    ObserveToast()
+//
+////                    NetworkErrorToastHandler(networkConnection)
+//                }
+//            }
 
 //            networkConnection.observe(this) { isConnected ->
 //                if (!isConnected) {
@@ -81,7 +104,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
-        localeManager.applySavedLocale(this)
+        localeManager.applySavedLocale()
     }
 
     override fun onStop() {

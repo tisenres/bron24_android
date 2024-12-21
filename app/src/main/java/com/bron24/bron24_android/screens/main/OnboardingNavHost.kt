@@ -69,19 +69,19 @@ fun OnboardingNavHost(
                 )
             }
         ) {
-            composable(Screen.LanguageSelection.route) {
-                LanguageSelectionScreen(
-                    viewModel = hiltViewModel(),
-                    onNavigateToHowItWorksRequest = {
-                        coroutineScope.launch {
-                            mainViewModel.setOnboardingCompleted(OnboardingScreen.LANGUAGE)
-                            navController.navigate(Screen.HowItWorksPager.route) {
-                                popUpTo(Screen.LanguageSelection.route) { inclusive = true }
-                            }
-                        }
-                    }
-                )
-            }
+//            composable(Screen.LanguageSelection.route) {
+//                LanguageSelectionScreen(
+//                    viewModel = hiltViewModel(),
+//                    onNavigateToHowItWorksRequest = {
+//                        coroutineScope.launch {
+//                            mainViewModel.setOnboardingCompleted(OnboardingScreen.LANGUAGE)
+//                            navController.navigate(Screen.HowItWorksPager.route) {
+//                                popUpTo(Screen.LanguageSelection.route) { inclusive = true }
+//                            }
+//                        }
+//                    }
+//                )
+//            }
             composable(Screen.HowItWorksPager.route) {
                 HowItWorksPager(
                     onNavigateToAuthScreens = {

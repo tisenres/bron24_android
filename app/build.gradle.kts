@@ -39,11 +39,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
     splits {
@@ -137,6 +137,18 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     //motion orbital
     implementation("com.github.skydoves:orbital:0.4.0")
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+
+    //voyager
+    implementation(libs.voyager.navigator)
+    implementation(libs.voyager.hilt)
+    implementation(libs.voyager.tabNavigator)
+    implementation(libs.voyager.screenModel)
+    implementation(libs.voyager.transitions)
+    implementation (libs.voyager.transitions.vlatestversion)
+    implementation(libs.voyager.bottomSheetNavigator)
+    //yandex
+    implementation(libs.maps.mobile.v431)
 
     debugImplementation(libs.pluto)
     releaseImplementation(libs.pluto.no.op)

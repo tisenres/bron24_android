@@ -30,7 +30,7 @@ class Bron24Application : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        MapKitFactory.setApiKey("3c062e82-1411-437c-9157-f7e96556b098")
+        MapKitFactory.setApiKey("905faf4b-e40f-4fc3-b1e5-a1043a3ab4ae")
         MapKitFactory.initialize(this)
         if (BuildConfig.DEBUG) {
             installTimber()

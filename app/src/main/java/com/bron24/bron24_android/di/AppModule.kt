@@ -28,11 +28,11 @@ object AppModule {
         return PermissionChecker(context)
     }
 
-    @Provides
-    @Singleton
-    fun provideLocaleManager(
-        getSelectedLanguageUseCase: GetSelectedLanguageUseCase
-    ): LocaleManager {
-        return LocaleManager(getSelectedLanguageUseCase)
-    }
+//    @Provides
+//    @Singleton
+//    fun provideLocaleManager(
+//        getSelectedLanguageUseCase: GetSelectedLanguageUseCase
+//    ): LocaleManager {
+//        return LocaleManager(getSelectedLanguageUseCase)
+//    }
 }

@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.Order
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable

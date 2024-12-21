@@ -22,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -30,19 +29,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
-import com.bron24.bron24_android.helper.util.presentation.components.BottomNavigationBar
+import com.bron24.bron24_android.components.BottomNavigationBar
 import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingConfirmationScreen
 import com.bron24.bron24_android.screens.booking.screens.finishbooking.BookingSuccessScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
-import com.bron24.bron24_android.screens.home.HomePage
-import com.bron24.bron24_android.screens.home.HomeViewModel
-import com.bron24.bron24_android.screens.map.YandexMapScreen
+import com.bron24.bron24_android.screens.menu_pages.home_page.HomePage
+import com.bron24.bron24_android.screens.menu_pages.map_page.YandexMapScreen
 import com.bron24.bron24_android.screens.orderdetails.OrderDetailsPage
-import com.bron24.bron24_android.screens.orders.OrdersPage
-import com.bron24.bron24_android.screens.profile.ProfilePage
-import com.bron24.bron24_android.screens.searchfilter.SearchPage
-import com.bron24.bron24_android.screens.searchfilter.filter_screen.FilterScreen
+import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPage
+import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePage
+import com.bron24.bron24_android.screens.search.search_screen.SearchPage
+import com.bron24.bron24_android.screens.search.filter_screen.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
 import com.bron24.bron24_android.screens.venuelisting.filterCallback
@@ -120,7 +118,7 @@ fun MainNavHost(
     ) {
         composable(Screen.HomePage.route) {
             onDestinationChanged(Screen.HomePage.route)
-            HomePage(navController)
+            HomePage()
         }
 
         composable(
@@ -161,7 +159,7 @@ fun MainNavHost(
 
         composable(Screen.OrdersPage.route) {
             onDestinationChanged(Screen.OrdersPage.route)
-            OrdersPage(navController = navController)
+            OrdersPage()
         }
 
         composable(Screen.ProfilePage.route) {

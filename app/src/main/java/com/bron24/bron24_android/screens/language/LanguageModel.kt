@@ -12,17 +12,17 @@ class LanguageModel @Inject constructor(
     private val setUserLanguageUseCase: SetUserLanguageUseCase,
     private val localeManager: LocaleManager
 ) {
-    fun getAvailableLanguagesUseCase(): List<Language> {
-        return getAvailableLanguagesUseCase.execute()
-    }
+//    fun getAvailableLanguagesUseCase(): List<Language> {
+//        return getAvailableLanguagesUseCase.execute()
+//    }
 
-    fun updateSelectedLanguageUseCase(context: Context, language: Language) {
-        setUserLanguageUseCase.execute(language)
-        localeManager.setLocale(context, language.languageCode)
-    }
-
-    fun selectLanguage(context: Context, language: Language) {
-        localeManager.setLocale(context, language.languageCode)
-    }
+//    fun updateSelectedLanguageUseCase(context: Context, language: Language) {
+//        setUserLanguageUseCase.invoke(language)
+//        localeManager.setLocale(language.languageCode)
+//    }
+//
+//    fun selectLanguage(language: Language) {
+//        localeManager.setLocale(language.languageCode)
+//    }
 }
 

@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.input.pointer.pointerInput

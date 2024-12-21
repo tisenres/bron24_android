@@ -1,9 +1,7 @@
 package com.bron24.bron24_android.di
 
 import com.bron24.bron24_android.domain.usecases.onboarding.OnboardingUseCase
-import com.bron24.bron24_android.screens.home.HomeViewModel
-import com.bron24.bron24_android.screens.language.LanguageModel
-import com.bron24.bron24_android.screens.language.LanguageViewModel
+import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageVM
 import com.bron24.bron24_android.screens.location.LocationModel
 import com.bron24.bron24_android.screens.location.LocationViewModel
 import com.bron24.bron24_android.screens.main.MainViewModel
@@ -21,13 +19,13 @@ import dagger.hilt.android.scopes.ActivityScoped
 @InstallIn(ActivityComponent::class)
 object ViewModelModule {
 
-    @Provides
-    @ActivityScoped
-    fun provideLanguageViewModel(
-        languageModel: LanguageModel
-    ): LanguageViewModel {
-        return LanguageViewModel(languageModel)
-    }
+//    @Provides
+//    @ActivityScoped
+//    fun provideLanguageViewModel(
+//        languageModel: LanguageModel
+//    ): LanguageViewModel {
+//        return LanguageViewModel(languageModel)
+//    }
 
     @Provides
     @ActivityScoped
@@ -40,8 +38,8 @@ object ViewModelModule {
     @Provides
     @ActivityScoped
     fun provideHomeViewModel(
-    ): HomeViewModel {
-        return HomeViewModel()
+    ): HomePageVM {
+        return HomePageVM()
     }
 
     @Provides

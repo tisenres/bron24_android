@@ -36,8 +36,8 @@ import androidx.navigation.NavHostController
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.domain.entity.order.OrderStatus
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.orderdetails.layout.OrderDetailContacts

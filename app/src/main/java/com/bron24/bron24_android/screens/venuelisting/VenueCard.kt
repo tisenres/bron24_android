@@ -40,19 +40,19 @@ import coil.request.ImageRequest
 import coil.size.Scale
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Venue
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.valentinilk.shimmer.shimmer
 
 @Composable
-fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavController) {
-    val navigateToDetails: (() -> Unit)? = remember(venue) {
-        venue?.venueId?.let { id ->
-            { navController.navigate(Screen.VenueDetails.route.replace("{venueId}", id.toString())) }
-        }
-    }
+fun VenueCard(venue: Venue? = null, isLoading: Boolean) {
+//    val navigateToDetails: (() -> Unit)? = remember(venue) {
+////        venue?.venueId?.let { id ->
+////            { navController.navigate(Screen.VenueDetails.route.replace("{venueId}", id.toString())) }
+////        }
+//    }
 
     val onFavoriteClick: () -> Unit = {}
 
@@ -68,15 +68,15 @@ fun VenueCard(venue: Venue? = null, isLoading: Boolean, navController: NavContro
             .clip(RoundedCornerShape(10.dp))
             .background(Color(0xFFF4FEF4).copy(alpha = 0.47f))
             .then(shimmerModifier)
-            .let {
-                if (!isLoading) {
-                    navigateToDetails?.let { action ->
-                        it.clickable(onClick = action)
-                    } ?: it
-                } else {
-                    it
-                }
-            }
+//            .let {
+//                if (!isLoading) {
+//                    navigateToDetails?.let { action ->
+//                        it.clickable(onClick = action)
+//                    } ?: it
+//                } else {
+//                    it
+//                }
+//            }
     ) {
         if (isLoading) {
             LoadingPlaceholder()

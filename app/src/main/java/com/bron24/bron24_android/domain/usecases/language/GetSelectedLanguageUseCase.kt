@@ -7,7 +7,5 @@ import javax.inject.Inject
 class GetSelectedLanguageUseCase @Inject constructor(
     private val languageRepository: LanguageRepository
 ) {
-    fun execute(): Language {
-        return languageRepository.getSelectedLanguage()
-    }
+    operator fun invoke(): Language =  languageRepository.getSelectedLanguage()
 }

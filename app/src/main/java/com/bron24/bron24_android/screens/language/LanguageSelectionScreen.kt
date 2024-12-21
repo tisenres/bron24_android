@@ -1,47 +1,52 @@
 package com.bron24.bron24_android.screens.language
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.user.Language
-import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import org.orbitmvi.orbit.compose.collectAsState
 
-@Composable
-fun LanguageSelectionScreen(
-    viewModel: LanguageViewModel = hiltViewModel(),
-    onNavigateToHowItWorksRequest: () -> Unit
-) {
-    val selectedLanguage by viewModel.selectedLanguage.collectAsState()
-    val availableLanguages by viewModel.availableLanguages.collectAsState()
-    val context = LocalContext.current
-    var triggerRecomposition by remember { mutableStateOf(false) }
+class LanguageSelectionScreen : Screen {
+    @Composable
+    override fun Content() {
+        val viewModel: LanguageContract.ViewModel = getViewModel<LanguageViewModel>()
+        remember { viewModel.initData() }
+        val state = viewModel.collectAsState()
 
-    LaunchedEffect(selectedLanguage) {
-        viewModel.selectLanguage(context, selectedLanguage)
-        triggerRecomposition = !triggerRecomposition
+        LanguageScreenContent(state = state, intent = viewModel::onDispatchers)
     }
+}
+@Composable
+fun LanguageScreenContent(
+    state: State<LanguageContract.UISate>,
+    intent: (LanguageContract.Intent) -> Unit
+) {
+    var selectedLanguage by remember {
+        mutableIntStateOf(0)
+    }
+    var triggerRecomposition by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -52,71 +57,71 @@ fun LanguageSelectionScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(horizontalAlignment = Alignment.Start) {
-            if (triggerRecomposition) {
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    modifier = Modifier
-                        .padding(start = 24.dp)
-                        .height(32.dp),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp,
-                        color = Color(0xFF32B768),
-                        lineHeight = 31.85.sp,
-                    ),
-                )
+            Text(
+                text = stringResource(id = R.string.app_name),
+                modifier = Modifier
+                    .padding(start = 24.dp)
+                    .height(32.dp),
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 26.sp,
+                    color = Color(0xFF32B768),
+                    lineHeight = 31.85.sp,
+                ),
+            )
 
-                Text(
-                    text = stringResource(id = R.string.select_language),
-                    modifier = Modifier
-                        .padding(top = 16.dp, start = 24.dp, bottom = 30.dp, end = 90.dp)
-                        .height(128.dp),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 48.sp,
-                        color = Color(0xFF060606),
-                        lineHeight = 64.sp
-                    ),
-                )
-            } else {
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    modifier = Modifier
-                        .padding(start = 24.dp)
-                        .height(32.dp),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 26.sp,
-                        color = Color(0xFF32B768),
-                        lineHeight = 31.85.sp,
-                    ),
-                )
+            Text(
+                text = stringResource(id = R.string.select_language),
+                modifier = Modifier
+                    .padding(top = 16.dp, start = 24.dp, bottom = 30.dp, end = 90.dp)
+                    .height(128.dp),
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 48.sp,
+                    color = Color(0xFF060606),
+                    lineHeight = 64.sp
+                ),
+            )
 
-                Text(
-                    text = stringResource(id = R.string.select_language),
-                    modifier = Modifier
-                        .padding(top = 16.dp, start = 24.dp, bottom = 30.dp, end = 90.dp)
-                        .height(128.dp),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 48.sp,
-                        color = Color(0xFF060606),
-                        lineHeight = 64.sp
-                    ),
-                )
-            }
-
+//        else {
+//                Text(
+//                    text = stringResource(id = R.string.app_name),
+//                    modifier = Modifier
+//                        .padding(start = 24.dp)
+//                        .height(32.dp),
+//                    style = TextStyle(
+//                        fontFamily = gilroyFontFamily,
+//                        fontWeight = FontWeight.ExtraBold,
+//                        fontSize = 26.sp,
+//                        color = Color(0xFF32B768),
+//                        lineHeight = 31.85.sp,
+//                    ),
+//                )
+//                Text(
+//                    text = stringResource(id = R.string.select_language),
+//                    modifier = Modifier
+//                        .padding(top = 16.dp, start = 24.dp, bottom = 30.dp, end = 90.dp)
+//                        .height(128.dp),
+//                    style = TextStyle(
+//                        fontFamily = gilroyFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 48.sp,
+//                        color = Color(0xFF060606),
+//                        lineHeight = 64.sp
+//                    ),
+//                )
+//            }
             LazyColumn {
-                items(availableLanguages) { language ->
+                items(state.value.availableLanguages.size) {
                     LanguageOption(
-                        language = language,
-                        isSelected = selectedLanguage == language,
-                        onClick = {
-                            viewModel.selectLanguage(context, language)
+                        language = state.value.availableLanguages[it],
+                        isSelected = state.value.langCode==state.value.availableLanguages[it].languageCode,
+                        onClick = {language->
+                            Log.d("BBB", "LanguageScreenContent: ${language.languageCode}")
+                            intent.invoke(LanguageContract.Intent.SelectedLanguage(language = language))
+                            triggerRecomposition = true
                         },
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -127,8 +132,8 @@ fun LanguageSelectionScreen(
         ConfirmButton(
             isEnabled = true,
             onClick = {
-                viewModel.confirmLanguageSelection(context)
-                onNavigateToHowItWorksRequest()
+//                viewModel.confirmLanguageSelection(context)
+//                onNavigateToHowItWorksRequest()
             },
         )
     }
@@ -138,7 +143,7 @@ fun LanguageSelectionScreen(
 fun LanguageOption(
     language: Language,
     isSelected: Boolean,
-    onClick: () -> Unit,
+    onClick: (Language) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val animatedColor by animateColorAsState(
@@ -158,7 +163,7 @@ fun LanguageOption(
                 detectTapGestures(
                     onPress = {
                         tryAwaitRelease()
-                        onClick()
+                        onClick(language)
                     }
                 )
             },
@@ -222,10 +227,9 @@ fun ConfirmButton(
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
 fun SimpleComposablePreview() {
-    Bron24_androidTheme {
-        LanguageSelectionScreen (hiltViewModel()) {}
-    }
+    LanguageScreenContent(state = mutableStateOf(LanguageContract.UISate("uz")), intent = {})
 }

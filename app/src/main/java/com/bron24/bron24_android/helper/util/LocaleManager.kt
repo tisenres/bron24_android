@@ -1,19 +1,27 @@
 package com.bron24.bron24_android.helper.util
 
+import android.app.LocaleManager
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
+import android.os.LocaleList
+import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.onEach
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class LocaleManager @Inject constructor(
+    @ApplicationContext val context: Context,
     private val getSelectedLanguageUseCase: GetSelectedLanguageUseCase
 ) {
-
-    fun setLocale(context: Context, languageCode: String) {
+    fun changeLanguage(languageCode: String) {
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
 
@@ -29,8 +37,19 @@ class LocaleManager @Inject constructor(
         }
     }
 
-    fun applySavedLocale(context: Context) {
-        val languageCode = getSelectedLanguageUseCase.execute().languageCode
-        setLocale(context, languageCode)
+    fun getLanguageCode(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.getSystemService(LocaleManager::class.java).applicationLocales[0]?.toLanguageTag()?.split("-")?.first() ?: "en"
+        } else {
+            //version < 13
+            AppCompatDelegate.getApplicationLocales()[0]?.toLanguageTag()?.split("-")?.first() ?: "en"
+        }
     }
+
+    fun applySavedLocale() {
+        val languageCode = getSelectedLanguageUseCase.invoke().languageCode
+        changeLanguage(languageCode)
+
+    }
+
 }

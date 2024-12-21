@@ -17,9 +17,13 @@ hilt = "2.52"
 hiltCompiler = "1.2.0"
 hiltNavigationCompose = "1.2.0"
 locationServices = "21.3.0"
+mapsMobile = "4.9.0-lite"
+mapsMobileVersion = "4.3.1"
 retrofit = "2.11.0"
 okhttpLoggingInterceptor = "5.0.0-alpha.14"
 room = "2.6.1"
+voyager = "1.1.0-beta02"
+voyagerTransitions = "<latest-version>"
 accompanistSystemuicontroller = "0.32.0"
 lifecycleViewModelCompose = "2.8.5"
 appcompat = "1.7.0"
@@ -65,6 +69,8 @@ hiltNavigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compo
 hiltAndroidTesting = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 konfetti-compose = { module = "nl.dionsegijn:konfetti-compose", version.ref = "konfettiCompose" }
 locationServices = { group = "com.google.android.gms", name = "play-services-location", version.ref = "locationServices" }
+maps-mobile-v431 = { module = "com.yandex.android:maps.mobile", version.ref = "mapsMobileVersion" }
+maps-mobile-v490lite = { module = "com.yandex.android:maps.mobile", version.ref = "mapsMobile" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofitMoshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofitMoshi" }
 okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLoggingInterceptor" }
@@ -79,6 +85,13 @@ play-services-maps = { group = "com.google.android.gms", name = "play-services-m
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
 yandex-maps = { group = "com.yandex.android", name = "maps.mobile", version.ref = "yandexMaps" }
 morfly-compose = { group = "io.morfly.compose", name = "advanced-bottomsheet-material3", version.ref = "morflyCompose" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-bottomSheetNavigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
+voyager-transitions-vlatestversion = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyagerTransitions" }
 
 pluto = { group = "com.plutolib", name = "pluto", version.ref = "pluto" }
 pluto-no-op = { group = "com.plutolib", name = "pluto-no-op", version.ref = "pluto" }
