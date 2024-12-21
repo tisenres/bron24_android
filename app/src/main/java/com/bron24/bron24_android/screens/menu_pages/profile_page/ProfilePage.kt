@@ -52,7 +52,8 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.orbitmvi.orbit.compose.collectAsState
 
-class ProfilePage : Tab {
+object ProfilePage : Tab {
+    private fun readResolve(): Any = ProfilePage
     override val options: TabOptions
         @Composable get() {
             val icon =
@@ -254,5 +255,5 @@ fun ProfilePageContent(
 @Preview(showBackground = true)
 @Composable
 private fun ProPreview() {
-    ProfilePage()
+    ProfilePage
 }

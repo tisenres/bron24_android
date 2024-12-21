@@ -26,13 +26,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import cafe.adriel.voyager.navigator.tab.Tab
+import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.OrderCard
 import com.bron24.bron24_android.components.items.OrdersTabRow
@@ -41,18 +46,38 @@ import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.Purple
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.bron24.bron24_android.screens.orderdetails.OrderDetailsPage
+
+
+object OrdersPage: Tab {
+    private fun readResolve(): Any = OrdersPage
+    override val options: TabOptions
+        @Composable
+        get(){
+            val icon = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.baseline_wallet_24))
+            return TabOptions(
+                index = 2u,
+                title = "Orders",
+                icon = icon
+            )
+        }
+
+    @Composable
+    override fun Content() {
+        OrdersPageContent()
+    }
+}
 
 
 @Preview(showBackground = true)
 @Composable
 private fun OrdersPagePreview(){
     val context = LocalContext.current
-    OrdersPage()
 }
 
 
 @Composable
-fun OrdersPage(viewModel: OrdersViewModel = hiltViewModel()) {
+fun OrdersPageContent(viewModel: OrdersViewModel = hiltViewModel()) {
 
     var selectedOption by rememberSaveable { mutableStateOf(OrdersType.UPCOMING) }
 
@@ -78,7 +103,9 @@ fun OrdersPage(viewModel: OrdersViewModel = hiltViewModel()) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(start = 24.dp, end = 24.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 24.dp, end = 24.dp),
     ) {
         Spacer(modifier = Modifier.height(30.dp))
         Text(

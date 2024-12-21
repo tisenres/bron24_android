@@ -323,7 +323,6 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
             stiffness = Spring.StiffnessLow
         ), label = ""
     )
-
     Box(
         modifier = Modifier
             .size(38.dp)

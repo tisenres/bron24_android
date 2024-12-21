@@ -24,7 +24,8 @@ import com.bron24.bron24_android.screens.venuelisting.VenueListingView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.orbitmvi.orbit.compose.collectAsState
 
-class HomePage : Tab {
+object HomePage : Tab {
+    private fun readResolve(): Any = HomePage
     override val options: TabOptions
         @Composable
         get() {

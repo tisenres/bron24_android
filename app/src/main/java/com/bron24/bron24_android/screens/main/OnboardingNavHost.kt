@@ -19,11 +19,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.domain.entity.enums.OnboardingScreen
 import com.bron24.bron24_android.screens.auth.AuthViewModel
-import com.bron24.bron24_android.screens.auth.OTPInputScreen
-import com.bron24.bron24_android.screens.auth.PhoneNumberInputScreen
-import com.bron24.bron24_android.screens.auth.UserDataInputScreen
+import com.bron24.bron24_android.screens.auth.sms_otp.OTPInputScreen
+import com.bron24.bron24_android.screens.auth.phone_number.PhoneNumberInputScreen
+import com.bron24.bron24_android.screens.auth.register.UserDataInputScreen
 import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
-import com.bron24.bron24_android.screens.language.LanguageSelectionScreen
 import com.bron24.bron24_android.screens.location.LocationRequestScreen
 import kotlinx.coroutines.launch
 

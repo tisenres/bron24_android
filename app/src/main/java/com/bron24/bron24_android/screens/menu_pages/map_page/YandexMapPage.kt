@@ -36,7 +36,8 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 
 
-class YandexMapPage : Tab {
+object YandexMapPage : Tab {
+    private fun readResolve(): Any = YandexMapPage
     override val options: TabOptions
         @Composable
         get() {
@@ -52,7 +53,7 @@ class YandexMapPage : Tab {
 
     @Composable
     override fun Content() {
-
+    
     }
 }
 

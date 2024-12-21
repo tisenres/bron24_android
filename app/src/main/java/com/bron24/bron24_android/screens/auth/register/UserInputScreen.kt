@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.auth
+package com.bron24.bron24_android.screens.auth.register
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -25,7 +25,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
@@ -35,6 +34,8 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTapGestures
+import com.bron24.bron24_android.screens.auth.AuthState
+import com.bron24.bron24_android.screens.auth.AuthViewModel
 
 @Composable
 fun UserDataInputScreen(

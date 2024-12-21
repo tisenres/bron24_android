@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.auth
+package com.bron24.bron24_android.screens.auth.sms_otp
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -58,6 +58,8 @@ import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.screens.auth.AuthState
+import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
 
