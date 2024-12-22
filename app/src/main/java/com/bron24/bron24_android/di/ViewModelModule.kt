@@ -26,13 +26,13 @@ object ViewModelModule {
 //        return LanguageViewModel(languageModel)
 //    }
 
-    @Provides
-    @ActivityScoped
-    fun provideLocationViewModel(
-        locationModel: LocationModel
-    ): LocationScreenVM {
-        return LocationScreenVM(locationModel)
-    }
+//    @Provides
+//    @ActivityScoped
+//    fun provideLocationViewModel(
+//        locationModel: LocationModel
+//    ): LocationScreenVM {
+//        return LocationScreenVM(locationModel)
+//    }
 
     @Provides
     @ActivityScoped

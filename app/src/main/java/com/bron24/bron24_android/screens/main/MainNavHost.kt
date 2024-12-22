@@ -116,10 +116,10 @@ fun MainNavHost(
             )
         }
     ) {
-        composable(Screen.HomePage.route) {
-            onDestinationChanged(Screen.HomePage.route)
-            HomePage()
-        }
+//        composable(Screen.HomePage.route) {
+//            onDestinationChanged(Screen.HomePage.route)
+//            HomePage()
+//        }
 
         composable(
             route = Screen.MapPage.route,
@@ -157,15 +157,15 @@ fun MainNavHost(
             )
         }
 
-        composable(Screen.OrdersPage.route) {
-            onDestinationChanged(Screen.OrdersPage.route)
-            OrdersPage()
-        }
-
-        composable(Screen.ProfilePage.route) {
-            onDestinationChanged(Screen.ProfilePage.route)
-            ProfilePage()
-        }
+//        composable(Screen.OrdersPage.route) {
+//            onDestinationChanged(Screen.OrdersPage.route)
+//            OrdersPage()
+//        }
+//
+//        composable(Screen.ProfilePage.route) {
+//            onDestinationChanged(Screen.ProfilePage.route)
+//            ProfilePage()
+//        }
 
         composable(
             route = Screen.VenueDetails.route,
@@ -281,26 +281,26 @@ fun MainNavHost(
                 }
             }
 
-            BookingSuccessScreen(
-                viewModel = hiltViewModel(),
-                orderId = orderId,
-                venueName = venueName,
-                date = date,
-                sector = sector,
-                timeSlots = timeSlots,
-                onMyOrdersClick = {
-                    navController.navigate(Screen.OrdersPage.route) {
-                        popUpTo(Screen.HomePage.route) { inclusive = false }
-                    }
-                },
-                onMainPageClick = {
-                    navController.navigate(Screen.HomePage.route) {
-                        popUpTo(Screen.HomePage.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                onMapClick = { },
-            )
+//            BookingSuccessScreen(
+//                viewModel = hiltViewModel(),
+//                orderId = orderId,
+//                venueName = venueName,
+//                date = date,
+//                sector = sector,
+//                timeSlots = timeSlots,
+//                onMyOrdersClick = {
+//                    navController.navigate(Screen.OrdersPage.route) {
+//                        popUpTo(Screen.HomePage.route) { inclusive = false }
+//                    }
+//                },
+//                onMainPageClick = {
+//                    navController.navigate(Screen.HomePage.route) {
+//                        popUpTo(Screen.HomePage.route) { inclusive = false }
+//                        launchSingleTop = true
+//                    }
+//                },
+//                onMapClick = { },
+//            )
         }
         composable(
             route = Screen.OrderDetails.route,

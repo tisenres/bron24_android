@@ -23,29 +23,29 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ModelModule {
 
-    @Provides
-    @Singleton
-    fun provideLanguageModel(
-        getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
-        setUserLanguageUseCase: SetUserLanguageUseCase,
-        localeManager: LocaleManager
-    ): LanguageModel {
-        return LanguageModel(
-            getAvailableLanguagesUseCase,
-            setUserLanguageUseCase,
-            localeManager
-        )
-    }
+//    @Provides
+//    @Singleton
+//    fun provideLanguageModel(
+//        getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
+//        setUserLanguageUseCase: SetUserLanguageUseCase,
+//        localeManager: LocaleManager
+//    ): LanguageModel {
+//        return LanguageModel(
+//            getAvailableLanguagesUseCase,
+//            setUserLanguageUseCase,
+//            localeManager
+//        )
+//    }
 
-    @Provides
-    @Singleton
-    fun provideLocationModel(
-        checkLocationPermissionUseCase: CheckLocationPermissionUseCase
-    ): LocationModel {
-        return LocationModel(
-            checkLocationPermissionUseCase
-        )
-    }
+//    @Provides
+//    @Singleton
+//    fun provideLocationModel(
+//        checkLocationPermissionUseCase: CheckLocationPermissionUseCase
+//    ): LocationModel {
+//        return LocationModel(
+//            checkLocationPermissionUseCase
+//        )
+//    }
 
 
     @Provides
