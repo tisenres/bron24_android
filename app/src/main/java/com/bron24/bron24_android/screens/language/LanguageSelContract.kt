@@ -4,7 +4,7 @@ import com.bron24.bron24_android.domain.entity.user.Language
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
-interface LanguageContract {
+interface LanguageSelContract {
     interface ViewModel:ContainerHost<UISate,SideEffect>{
         fun onDispatchers(intent: Intent): Job
         fun initData():Job
@@ -24,5 +24,6 @@ interface LanguageContract {
 
     sealed interface Intent{
         data class SelectedLanguage(val language:Language):Intent
+        data object ClickMoveTo:Intent
     }
 }

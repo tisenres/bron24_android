@@ -39,7 +39,6 @@ fun BottomNavigationBar(navController: NavController) {
         val items = listOf(
             Triple(R.drawable.ic_home, stringResource(id = R.string.home), Screen.HomePage.route),
             Triple(R.drawable.ic_map, stringResource(id = R.string.nearby), Screen.MapPage.route),
-            Triple(R.drawable.ic_wallet, stringResource(id = R.string.orders), Screen.OrdersPage.route),
             Triple(R.drawable.ic_person, stringResource(id = R.string.profile), Screen.ProfilePage.route)
         )
 

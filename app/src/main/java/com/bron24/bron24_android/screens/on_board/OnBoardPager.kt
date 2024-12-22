@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.howitworks
+package com.bron24.bron24_android.screens.on_board
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,6 +8,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,13 +19,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.bron24.bron24_android.screens.on_board.pages.HowItWorksScreen1
+import com.bron24.bron24_android.screens.on_board.pages.HowItWorksScreen2
+import com.bron24.bron24_android.screens.on_board.pages.HowItWorksScreen3
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.compose.collectAsState
+
+class OnBoardPager : Screen {
+    @Composable
+    override fun Content() {
+        val viewModel:OnBoardPagerContract.ViewModel = getViewModel<OnBoardPagerVM>()
+        val uiState = viewModel.collectAsState()
+        OnBoardPagerContent(state = uiState, intent = viewModel::onDispatchers)
+    }
+
+}
+
 
 @Composable
-fun HowItWorksPager(
-    onNavigateToAuthScreens: () -> Unit
+fun OnBoardPagerContent(
+    state:State<OnBoardPagerContract.UIState>,
+    intent:(OnBoardPagerContract.Intent)->Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
@@ -54,7 +73,7 @@ fun HowItWorksPager(
         ) {
             // Skip button
             TextButton(
-                onClick = { onNavigateToAuthScreens() },
+                onClick = { intent.invoke(OnBoardPagerContract.Intent.ClickMoveTo) },
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Text(
@@ -84,7 +103,7 @@ fun HowItWorksPager(
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
                     } else {
-                        onNavigateToAuthScreens()
+                        intent.invoke(OnBoardPagerContract.Intent.ClickMoveTo)
                     }
                 },
                 modifier = Modifier.align(Alignment.CenterEnd)

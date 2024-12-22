@@ -17,7 +17,6 @@ import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePage
 import com.bron24.bron24_android.screens.menu_pages.map_page.YandexMapPage
-import com.bron24.bron24_android.screens.main.Screen.OrdersPage
 import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPage
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePage
 

@@ -1,7 +1,5 @@
 package com.bron24.bron24_android.screens.language
 
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.user.Language
@@ -21,12 +19,13 @@ import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
-class LanguageViewModel @Inject constructor(
+class LanguageSelVM @Inject constructor(
     private val getAvailableLanguagesUseCase: GetAvailableLanguagesUseCase,
     private val setUserLanguageUseCase: SetUserLanguageUseCase,
     private val getSelectedLanguageUseCase: GetSelectedLanguageUseCase,
-    private val localeManager: LocaleManager
-) : ViewModel(), LanguageContract.ViewModel {
+    private val localeManager: LocaleManager,
+    private val direction: LanguageSelContract.Direction
+) : ViewModel(), LanguageSelContract.ViewModel {
     private var langCode = ""
     private val _selectedLanguage = MutableStateFlow(Language("uz", "O`zbek"))
     val selectedLanguage: StateFlow<Language> = _selectedLanguage
@@ -79,9 +78,9 @@ class LanguageViewModel @Inject constructor(
 //    }
 
 
-    override fun onDispatchers(intent: LanguageContract.Intent): Job = intent {
+    override fun onDispatchers(intent: LanguageSelContract.Intent): Job = intent {
         when (intent) {
-            is LanguageContract.Intent.SelectedLanguage -> {
+            is LanguageSelContract.Intent.SelectedLanguage -> {
                 viewModelScope.launch(Dispatchers.Main) {
                     if(langCode!=intent.language.languageCode){
                         localeManager.changeLanguage(intent.language.languageCode)
@@ -89,12 +88,15 @@ class LanguageViewModel @Inject constructor(
                     }
                 }
             }
+            LanguageSelContract.Intent.ClickMoveTo->{
+                direction.moveToNext()
+            }
         }
     }
 
     override val container =
-        container<LanguageContract.UISate, LanguageContract.SideEffect>(
-            LanguageContract.UISate(
+        container<LanguageSelContract.UISate, LanguageSelContract.SideEffect>(
+            LanguageSelContract.UISate(
                 langCode = localeManager.getLanguageCode()
             )
         )

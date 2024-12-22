@@ -31,7 +31,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 class LanguageSelectionScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel: LanguageContract.ViewModel = getViewModel<LanguageViewModel>()
+        val viewModel: LanguageSelContract.ViewModel = getViewModel<LanguageSelVM>()
         remember { viewModel.initData() }
         val state = viewModel.collectAsState()
 
@@ -40,8 +40,8 @@ class LanguageSelectionScreen : Screen {
 }
 @Composable
 fun LanguageScreenContent(
-    state: State<LanguageContract.UISate>,
-    intent: (LanguageContract.Intent) -> Unit
+    state: State<LanguageSelContract.UISate>,
+    intent: (LanguageSelContract.Intent) -> Unit
 ) {
     var selectedLanguage by remember {
         mutableIntStateOf(0)
@@ -120,7 +120,7 @@ fun LanguageScreenContent(
                         isSelected = state.value.langCode==state.value.availableLanguages[it].languageCode,
                         onClick = {language->
                             Log.d("BBB", "LanguageScreenContent: ${language.languageCode}")
-                            intent.invoke(LanguageContract.Intent.SelectedLanguage(language = language))
+                            intent.invoke(LanguageSelContract.Intent.SelectedLanguage(language = language))
                             triggerRecomposition = true
                         },
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -132,8 +132,7 @@ fun LanguageScreenContent(
         ConfirmButton(
             isEnabled = true,
             onClick = {
-//                viewModel.confirmLanguageSelection(context)
-//                onNavigateToHowItWorksRequest()
+                intent.invoke(LanguageSelContract.Intent.ClickMoveTo)
             },
         )
     }
@@ -231,5 +230,5 @@ fun ConfirmButton(
 @Preview
 @Composable
 fun SimpleComposablePreview() {
-    LanguageScreenContent(state = mutableStateOf(LanguageContract.UISate("uz")), intent = {})
+    LanguageScreenContent(state = mutableStateOf(LanguageSelContract.UISate("uz")), intent = {})
 }

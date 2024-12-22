@@ -22,7 +22,6 @@ import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.auth.sms_otp.OTPInputScreen
 import com.bron24.bron24_android.screens.auth.phone_number.PhoneNumberInputScreen
 import com.bron24.bron24_android.screens.auth.register.UserDataInputScreen
-import com.bron24.bron24_android.screens.howitworks.HowItWorksPager
 import com.bron24.bron24_android.screens.location.LocationRequestScreen
 import kotlinx.coroutines.launch
 
@@ -81,18 +80,18 @@ fun OnboardingNavHost(
 //                    }
 //                )
 //            }
-            composable(Screen.HowItWorksPager.route) {
-                HowItWorksPager(
-                    onNavigateToAuthScreens = {
-                        coroutineScope.launch {
-                            mainViewModel.setOnboardingCompleted(OnboardingScreen.HOWITWORKS)
-                            navController.navigate(Screen.PhoneNumberInput.route) {
-                                popUpTo(Screen.HowItWorksPager.route) { inclusive = true }
-                            }
-                        }
-                    }
-                )
-            }
+//            composable(Screen.HowItWorksPager.route) {
+//                HowItWorksPager(
+//                    onNavigateToAuthScreens = {
+//                        coroutineScope.launch {
+//                            mainViewModel.setOnboardingCompleted(OnboardingScreen.HOWITWORKS)
+//                            navController.navigate(Screen.PhoneNumberInput.route) {
+//                                popUpTo(Screen.HowItWorksPager.route) { inclusive = true }
+//                            }
+//                        }
+//                    }
+//                )
+//            }
             composable(Screen.PhoneNumberInput.route) {
                 PhoneNumberInputScreen(
                     authViewModel = authViewModel,
@@ -141,23 +140,23 @@ fun OnboardingNavHost(
                 // So let's set ondoarding status for auth when navigation to Location screen exactly
                 mainViewModel.setOnboardingCompleted(OnboardingScreen.AUTHENTICATION)
                 LocationRequestScreen(
-                    onAllowClick = {
-                        coroutineScope.launch {
-                            mainViewModel.setOnboardingCompleted(OnboardingScreen.LOCATION)
-                            navController.navigate(Screen.Main.route) {
-                                popUpTo(Screen.LocationPermission.route) { inclusive = true }
-                            }
-                        }
-                    },
-                    onDenyClick = {
-                        coroutineScope.launch {
-                            mainViewModel.setOnboardingCompleted(OnboardingScreen.LOCATION)
-                            navController.navigate(Screen.Main.route) {
-                                popUpTo(Screen.LocationPermission.route) { inclusive = true }
-                            }
-                        }
-                    },
-                    viewModel = hiltViewModel()
+//                    onAllowClick = {
+//                        coroutineScope.launch {
+//                            mainViewModel.setOnboardingCompleted(OnboardingScreen.LOCATION)
+//                            navController.navigate(Screen.Main.route) {
+//                                popUpTo(Screen.LocationPermission.route) { inclusive = true }
+//                            }
+//                        }
+//                    },
+//                    onDenyClick = {
+//                        coroutineScope.launch {
+//                            mainViewModel.setOnboardingCompleted(OnboardingScreen.LOCATION)
+//                            navController.navigate(Screen.Main.route) {
+//                                popUpTo(Screen.LocationPermission.route) { inclusive = true }
+//                            }
+//                        }
+//                    },
+//                    viewModel = hiltViewModel()
                 )
             }
             composable(Screen.Main.route) {
