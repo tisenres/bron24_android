@@ -1,0 +1,4 @@
+package com.bron24.bron24_android.screens.auth.sms_otp
+
+class OTPInputScreenDirection {
+}

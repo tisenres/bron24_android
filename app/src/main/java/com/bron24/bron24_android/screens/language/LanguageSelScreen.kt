@@ -84,35 +84,6 @@ fun LanguageScreenContent(
                     lineHeight = 64.sp
                 ),
             )
-
-//        else {
-//                Text(
-//                    text = stringResource(id = R.string.app_name),
-//                    modifier = Modifier
-//                        .padding(start = 24.dp)
-//                        .height(32.dp),
-//                    style = TextStyle(
-//                        fontFamily = gilroyFontFamily,
-//                        fontWeight = FontWeight.ExtraBold,
-//                        fontSize = 26.sp,
-//                        color = Color(0xFF32B768),
-//                        lineHeight = 31.85.sp,
-//                    ),
-//                )
-//                Text(
-//                    text = stringResource(id = R.string.select_language),
-//                    modifier = Modifier
-//                        .padding(top = 16.dp, start = 24.dp, bottom = 30.dp, end = 90.dp)
-//                        .height(128.dp),
-//                    style = TextStyle(
-//                        fontFamily = gilroyFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 48.sp,
-//                        color = Color(0xFF060606),
-//                        lineHeight = 64.sp
-//                    ),
-//                )
-//            }
             LazyColumn {
                 items(state.value.availableLanguages.size) {
                     LanguageOption(
