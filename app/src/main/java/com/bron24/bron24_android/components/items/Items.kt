@@ -1,5 +1,8 @@
 package com.bron24.bron24_android.components.items
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -24,13 +27,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.IconButton
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -48,7 +47,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.PathSegment
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -99,15 +97,9 @@ fun ItemsPreview() {
 
         }
         ItemLanguage(text = "Uzbek", selected = true) {}
-        ItemInputText(
-            modifier = Modifier.padding(top = 12.dp),
-            text = "sardor",
-            hint = "",
+        ItemInputText(modifier = Modifier.padding(top = 12.dp), text = "sardor", hint = "",
             //visualTransformation = null,
-            onValueChange = {},
-            isSelect = true,
-            listener = {}
-        )
+            onValueChange = {}, isSelect = true, listener = {})
     }
 }
 
@@ -117,8 +109,7 @@ fun ErrorNetWork(networkConnection: NetworkConnection) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Transparent),
-        contentAlignment = Alignment.Center
+            .background(color = Color.Transparent), contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
@@ -131,11 +122,7 @@ fun ErrorNetWork(networkConnection: NetworkConnection) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Internetni tekshiring!",
-                fontFamily = gilroyFontFamily,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.Red
+                text = "Internetni tekshiring!", fontFamily = gilroyFontFamily, fontSize = 20.sp, fontWeight = FontWeight.Medium, color = Color.Red
             )
         }
     }
@@ -162,8 +149,7 @@ fun ItemInputText(
     val select = remember {
         mutableStateOf(false)
     }
-    BasicTextField(
-        value = text,
+    BasicTextField(value = text,
         onValueChange = onValueChange,
         modifier = modifier
             .defaultMinSize(minHeight = minHeight ?: 54.dp)
@@ -174,14 +160,10 @@ fun ItemInputText(
                 listener.invoke(focusState.isFocused)
             }
             .border(
-                1.2.dp,
-                if (select.value && !error) Success else if (error) Color.Red else GrayLighter,
-                RoundedCornerShape(10.dp)
+                1.2.dp, if (select.value && !error) Success else if (error) Color.Red else GrayLighter, RoundedCornerShape(10.dp)
             ),
         textStyle = TextStyle(
-            fontSize = 16.sp,
-            fontFamily = gilroyFontFamily,
-            fontWeight = FontWeight.SemiBold
+            fontSize = 16.sp, fontFamily = gilroyFontFamily, fontWeight = FontWeight.SemiBold
         ),
         cursorBrush = SolidColor(Success),
         keyboardOptions = keyboardOptions,
@@ -194,8 +176,7 @@ fun ItemInputText(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .width(minHeight ?: 54.dp),
-                contentAlignment = Alignment.Center
+                    .width(minHeight ?: 54.dp), contentAlignment = Alignment.Center
             ) {
                 Row(
                     modifier = Modifier
@@ -222,18 +203,13 @@ fun ItemInputText(
                     endIcon?.invoke()
                 }
             }
-        }
-    )
+        })
 }
 
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun ItemSelectedData(
-    date: String,
-    hint: String,
-    modifier: Modifier,
-    leadingIcon: @Composable() (() -> Unit)? = null,
-    endIcon: @Composable (() -> Unit)? = null,
+    date: String, hint: String, modifier: Modifier, leadingIcon: @Composable() (() -> Unit)? = null, endIcon: @Composable (() -> Unit)? = null,
 
     listener: () -> Unit
 ) {
@@ -246,7 +222,8 @@ fun ItemSelectedData(
             interactionSource = MutableInteractionSource(), indication = null
         ) { listener.invoke() }
         .border(width = 1.dp, color = GrayLighter, shape = RoundedCornerShape(16))
-        .padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically
+        .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
 
     ) {
         Text(
@@ -265,36 +242,24 @@ fun ItemSelectedData(
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun ItemLanguage(
-    text: String,
-    selected: Boolean,
-    listener: () -> Unit
+    text: String, selected: Boolean, listener: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(54.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(
-                interactionSource = MutableInteractionSource(),
-                indication = null
-            ) { listener.invoke() }
-            .border(width = 1.2.dp, color = GrayLighter, shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .height(54.dp)
+        .clip(RoundedCornerShape(8.dp))
+        .clickable(
+            interactionSource = MutableInteractionSource(), indication = null
+        ) { listener.invoke() }
+        .border(width = 1.2.dp, color = GrayLighter, shape = RoundedCornerShape(8.dp))
+        .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically) {
         Text(
-            text = text,
-            fontFamily = gilroyFontFamily,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.weight(1f)
+            text = text, fontFamily = gilroyFontFamily, fontSize = 16.sp, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f)
         )
         if (selected) {
             Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "icon",
-                tint = Success,
-                modifier = Modifier.size(24.dp)
+                imageVector = Icons.Default.Check, contentDescription = "icon", tint = Success, modifier = Modifier.size(24.dp)
             )
         }
     }
@@ -308,7 +273,7 @@ fun CustomAppBar(
     startIcons: @Composable (() -> Unit)? = null,
     actions: @Composable (() -> Unit)? = null,
     listener: () -> Unit
-    ) {
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -344,22 +309,13 @@ fun ItemEditProfile(
             .height(30.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(color = Success, shape = RoundedCornerShape(8.dp))
-            .clickable { listener() },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+            .clickable { listener() }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = Icons.Default.Edit,
-            contentDescription = "icon",
-            tint = White,
-            modifier = Modifier.size(20.dp)
+            imageVector = Icons.Default.Edit, contentDescription = "icon", tint = White, modifier = Modifier.size(20.dp)
         )
         Text(
-            text = "Edit profile",
-            fontFamily = gilroyFontFamily,
-            fontSize = 14.sp,
-            color = White,
-            fontWeight = FontWeight.Medium
+            text = "Edit profile", fontFamily = gilroyFontFamily, fontSize = 14.sp, color = White, fontWeight = FontWeight.Medium
         )
     }
 }
@@ -416,9 +372,7 @@ fun ItemInfosData(
             interactionSource = MutableInteractionSource(), indication = null
         ) { listener.invoke() }
         .border(
-            width = 1.dp,
-            color = if (select) GreenLight else GrayLighter,
-            shape = RoundedCornerShape(16)
+            width = 1.dp, color = if (select) GreenLight else GrayLighter, shape = RoundedCornerShape(16)
         )
         .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.Center,
@@ -451,18 +405,14 @@ fun CheckBox(
                 modifier = Modifier
                     .size(24.dp)
                     .border(
-                        width = 1.2.dp,
-                        color = if (state) Success else GrayLighter,
-                        shape = RoundedCornerShape(8.dp)
+                        width = 1.2.dp, color = if (state) Success else GrayLighter, shape = RoundedCornerShape(8.dp)
                     )
                     .clip(RoundedCornerShape(8.dp))
                     .background(color = if (state) Success else White)
             ) {
                 if (state) {
                     Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "icons",
-                        tint = White
+                        imageVector = Icons.Default.Check, contentDescription = "icons", tint = White
                     )
                 }
             }
@@ -484,21 +434,14 @@ fun AppButton(
     text: String, modifier: Modifier, listener: () -> Unit
 ) {
     Button(
-        enabled = true,
-        onClick = {
+        enabled = true, onClick = {
             listener.invoke()
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Success,
-            contentColor = White,
-            disabledContainerColor = bgSuccess,
-            disabledContentColor = GrayLighter
-        ),
-        modifier = modifier
+        }, colors = ButtonDefaults.buttonColors(
+            containerColor = Success, contentColor = White, disabledContainerColor = bgSuccess, disabledContentColor = GrayLighter
+        ), modifier = modifier
             .padding(vertical = 24.dp)
             .fillMaxWidth()
-            .height(50.dp),
-        shape = RoundedCornerShape(12.dp)
+            .height(50.dp), shape = RoundedCornerShape(12.dp)
     ) {
         Text(
             text = text, fontFamily = gilroyFontFamily, fontSize = 16.sp, color = White
@@ -508,9 +451,7 @@ fun AppButton(
 
 @Composable
 fun SearchView(
-    modifier: Modifier = Modifier,
-    clickSearch:()->Unit,
-    clickFilter: () -> Unit
+    modifier: Modifier = Modifier, clickSearch: () -> Unit, clickFilter: () -> Unit
 ) {
 //    val firstName by viewModel.firstName.collectAsState()
 
@@ -519,13 +460,11 @@ fun SearchView(
             .fillMaxWidth()
             .height(150.dp)
             .background(
-                color = Color(0xFF32B768),
-                shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
+                color = Color(0xFF32B768), shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
             )
-            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        ProfileRow( "John")
+        ProfileRow("John")
         SearchRow(
             onSearchClick = clickSearch,
             onFilterClick = clickFilter,
@@ -536,26 +475,20 @@ fun SearchView(
 @Composable
 fun ProfileRow(firstName: String) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 painter = rememberAsyncImagePainter(model = R.drawable.ball_pic), // Optimized with Coil
-                contentDescription = "profile_image",
-                modifier = Modifier
+                contentDescription = "profile_image", modifier = Modifier
                     .size(50.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
+                    .clip(CircleShape), contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(15.dp))
             Column {
                 val helloText = stringResource(id = R.string.hello) + ", $firstName!"
                 androidx.compose.material3.Text(
-                    text = helloText,
-                    style = TextStyle(
+                    text = helloText, style = TextStyle(
                         fontFamily = interFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
@@ -571,8 +504,7 @@ fun ProfileRow(firstName: String) {
 
 @Composable
 fun SearchRow(
-    onSearchClick: () -> Unit,
-    onFilterClick: () -> Unit
+    onSearchClick: () -> Unit, onFilterClick: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -581,20 +513,15 @@ fun SearchRow(
             .fillMaxWidth()
             .padding(top = 10.dp, bottom = 10.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier
-                .weight(1f)
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(5.dp)
-                )
-                .height(40.dp)
-                .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
-                .clickable { onSearchClick.invoke() }
-                .padding(horizontal = 10.dp, vertical = 10.dp)
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start, modifier = Modifier
+            .weight(1f)
+            .background(
+                color = Color.White, shape = RoundedCornerShape(5.dp)
+            )
+            .height(40.dp)
+            .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
+            .clickable { onSearchClick.invoke() }
+            .padding(horizontal = 10.dp, vertical = 10.dp)) {
             Image(
                 painter = rememberAsyncImagePainter(model = R.drawable.ic_search_green),
                 contentDescription = "search_icon",
@@ -603,13 +530,8 @@ fun SearchRow(
             Spacer(modifier = Modifier.width(9.dp))
             val searchHint = stringResource(id = R.string.search_stadium)
             androidx.compose.material3.Text(
-                text = searchHint,
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    color = Color(0xFF9C9E9C),
-                    lineHeight = 16.sp
+                text = searchHint, style = TextStyle(
+                    fontFamily = gilroyFontFamily, fontWeight = FontWeight.Normal, fontSize = 14.sp, color = Color(0xFF9C9E9C), lineHeight = 16.sp
                 )
             )
         }
@@ -621,8 +543,7 @@ fun SearchRow(
                 .background(color = Color.White)
                 .clickable {
                     onFilterClick()
-                },
-            contentAlignment = Alignment.Center
+                }, contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_filter),
