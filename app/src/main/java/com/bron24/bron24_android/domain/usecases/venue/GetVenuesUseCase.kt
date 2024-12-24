@@ -6,8 +6,11 @@ import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.repository.VenueRepository
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 private const val TAG = "GetVenuesUseCase"
@@ -17,14 +20,14 @@ class GetVenuesUseCase @Inject constructor(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase
 ) {
-    fun execute(
+    operator fun invoke(
         sort: String? = null,
         availableTime: String? = null,
         minPrice: Int? = null,
         maxPrice: Int? = null,
         infrastructure: Boolean? = null,
         district: String? = null
-    ): Flow<List<Venue>> = flow {
+    ): Flow<Result<List<Venue>>> = flow {
         try {
             checkLocationPermissionUseCase.execute().collect { permissionState ->
                 when (permissionState) {
@@ -42,7 +45,7 @@ class GetVenuesUseCase @Inject constructor(
                                 infrastructure = infrastructure,
                                 district = district,
                             )
-                            emit(venues)
+                            emit(Result.success(venues))
                         }
                     }
                     LocationPermissionState.DENIED -> {
@@ -57,13 +60,13 @@ class GetVenuesUseCase @Inject constructor(
                             infrastructure = infrastructure,
                             district = district
                         )
-                        emit(venues)
+                        emit(Result.success(venues))
                     }
                 }
             }
         } catch (e: Exception) {
             // Log the error if needed
-            emit(emptyList())
+            emit(Result.success(emptyList()))
         }
-    }
+    }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)
 }

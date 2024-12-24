@@ -41,7 +41,7 @@ object HomePage : Tab {
 
     @Composable
     override fun Content() {
-        val viewModel:HomePageContract.ViewModel = getViewModel<HomePageVM>()
+        val viewModel: HomePageContract.ViewModel = getViewModel<HomePageVM>()
         val state = viewModel.collectAsState()
         HomePageContent(state = state, intent = viewModel::onDispatchers)
     }
@@ -50,7 +50,7 @@ object HomePage : Tab {
 @Composable
 fun HomePageContent(
     state: State<HomePageContract.UISate>,
-    intent:(HomePageContract.Intent)->Unit
+    intent: (HomePageContract.Intent) -> Unit
 ) {
     val listState = rememberLazyListState()
     Box(
@@ -73,8 +73,13 @@ fun HomePageContent(
                 }
             )
             VenueListingView(
-                listState = listState,
-            )
+                isLoading = state.value.isLoading,
+                venues = state.value.itemData,
+                refreshVenue = {  },
+                clickSort = {  })
+            {
+
+            }
         }
     }
     val systemUiController = rememberSystemUiController()

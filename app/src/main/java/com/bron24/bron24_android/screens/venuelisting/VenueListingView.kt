@@ -36,48 +36,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.bron24.bron24_android.common.FilterOptions
+import com.bron24.bron24_android.domain.entity.venue.Venue
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-var filterCallback: (FilterOptions) -> Unit = {}
+//var filterCallback: (FilterOptions) -> Unit = {}
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VenueListingView(
+    isLoading:Boolean,
+    venues: List<Venue>,
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier,
-    viewModel: VenueListingViewModel = hiltViewModel(),
+    refreshVenue: ()->Unit,
+    clickSort:()->Unit,
+    listenerItem:(Venue)->Unit,
 ) {
-    Log.d("AAA", "VenueListingView: open")
-    val venues by viewModel.venues.collectAsState()
     var loading by remember {
-        mutableStateOf(true)
+        mutableStateOf(isLoading)
     }
-    val scope = rememberCoroutineScope()
-    scope.launch {
-        viewModel.isLoading.collect{
-            loading = it
-        }
-    }
-
-    val currentSortOption by viewModel.sortOption.collectAsState()
-
 
     var sortExpanded by remember { mutableStateOf(false) }
 
     val pullRefreshState = rememberPullToRefreshState()
 
-    filterCallback = {filterOptions->
-        Log.d("SSS", "VenueListingView: openCalll")
-        viewModel.updateFilterOptions(filterOptions = filterOptions)
-    }
+//    filterCallback = {filterOptions->
+//        Log.d("SSS", "VenueListingView: openCalll")
+//        viewModel.updateFilterOptions(filterOptions = filterOptions)
+//    }
     PullToRefreshBox(
         state = pullRefreshState,
-        onRefresh = { viewModel.refreshVenues() },
+        onRefresh = { refreshVenue.invoke() },
         isRefreshing = loading,
         modifier = modifier,
         indicator = {
@@ -129,7 +123,7 @@ fun VenueListingView(
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             } else {
-                items(venues, key = { it.venueId }) { venue ->
+                items(venues) { venue ->
                     VenueCard(venue = venue, isLoading = false)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
@@ -148,14 +142,14 @@ fun VenueListingView(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    viewModel.updateSortOption(option)
+                                    clickSort.invoke()
                                     sortExpanded = false
                                 }
                                 .padding(vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
-                                selected = currentSortOption == option,
+                                selected = true,
                                 onClick = null
                             )
                             Spacer(modifier = Modifier.width(8.dp))
