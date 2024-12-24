@@ -23,6 +23,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -93,6 +95,7 @@ class ProfilePage : Tab {
 fun ProfilePageContent(
     state: State<ProfilePageContract.UISate>, intent: (ProfilePageContract.Intent) -> Unit
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val skipPartiallyExpanded by rememberSaveable { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
@@ -238,7 +241,7 @@ fun ProfilePageContent(
                 .clickable(
                     interactionSource = MutableInteractionSource(), indication = null
                 ) {
-
+                    showDialog = true
                 }
                 .border(width = 2.dp, color = Color.Red, shape = RoundedCornerShape(8.dp))
                 .padding(horizontal = 40.dp, vertical = 10.dp)
@@ -299,6 +302,25 @@ fun ProfilePageContent(
                 }
             }
         }
+    }
+    if (showDialog) {
+        AlertDialog(onDismissRequest = { showDialog = false }, title = {
+            Text(text = "Are you sure you want to logout?")
+        }, text = {
+            //Text
+        }, confirmButton = {
+            Button(onClick = {
+                showDialog = false
+            }) {
+                Text(text = "Log out")
+            }
+        }, dismissButton = {
+            Button(onClick = {
+                showDialog = false
+            }) {
+                Text(text = "Cansel")
+            }
+        })
     }
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(Color.White, darkIcons = true)
