@@ -31,3 +31,8 @@ val White = Color(0xFFFFFFFF)
 val Black17 = Color(0xff171717)
 val Black = Color(0xFF000000)
 val Black61 = Color(0xff616161)
+
+val FavoriteItemBackGround = Color(0x78F4FEF4)
+val FavoriteItemDivider = Color(0xFFE9EEEA)
+val FavoriteItemStadiumName = Color(0xFF3C2E56)
+val FavoriteItemAddress = Color(0xFF949494)
