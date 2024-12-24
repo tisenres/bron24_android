@@ -9,13 +9,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomePageVM @Inject constructor(
-    localStorage: LocalStorage
+    private val direction: HomePageContract.Direction,
+    private val localStorage: LocalStorage
 ) : ViewModel(),HomePageContract.ViewModel {
     init {
         localStorage.openMenu = true
     }
-    override fun onDispatchers(intent: HomePageContract.Intent): Job {
-        return Job()
+    override fun onDispatchers(intent: HomePageContract.Intent): Job = intent {
+        when(intent){
+            HomePageContract.Intent.ClickFilter -> direction.moveToFilter()
+            HomePageContract.Intent.ClickSearch -> direction.moveToSearch()
+        }
     }
 
     override fun initData(): Job {

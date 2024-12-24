@@ -28,7 +28,6 @@ class OTPInputScreenVM @Inject constructor(
             OTPInputContract.Intent.ClickBack -> {
                 direction.back()
             }
-
             is OTPInputContract.Intent.RequestOTP -> {
                 verifyOTPUseCase.invoke(
                     intent.phoneNumber.substring(1), intent.otpCode
@@ -44,7 +43,7 @@ class OTPInputScreenVM @Inject constructor(
                                 }
                             }.launchIn(viewModelScope)
                         } else {
-                            direction.moveToRegister()
+                            direction.moveToRegister(intent.phoneNumber.substring(1))
                         }
                     }.onFailure {
                         postSideEffect(it.message.toString())

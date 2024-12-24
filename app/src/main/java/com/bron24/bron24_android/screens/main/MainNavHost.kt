@@ -39,7 +39,6 @@ import com.bron24.bron24_android.screens.menu_pages.map_page.YandexMapScreen
 import com.bron24.bron24_android.screens.orderdetails.OrderDetailsPage
 import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPage
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePage
-import com.bron24.bron24_android.screens.search.search_screen.SearchPage
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
@@ -140,22 +139,22 @@ fun MainNavHost(
             )
         }
 
-        composable(Screen.Filter.route) {
-            onDestinationChanged(Screen.Filter.route)
-            FilterScreen(
-                onApplyFilter = { filterOptions ->
-                    // Handle the applied filter
-                    // You might want to pass this back to your ViewModel
-                    filterCallback(filterOptions)
-                    Log.d("SSS", "MainNavHost: filter call")
-//                    navController.previousBackStackEntry?.savedStateHandle?.set("filterResult", filterOptions)
-                    navController.popBackStack(Screen.VenueDetails.route,inclusive = true)
-                },
-                onDismiss = {
-                    navController.popBackStack()
-                }
-            )
-        }
+//        composable(Screen.Filter.route) {
+//            onDestinationChanged(Screen.Filter.route)
+//            FilterScreen(
+//                onApplyFilter = { filterOptions ->
+//                    // Handle the applied filter
+//                    // You might want to pass this back to your ViewModel
+//                    filterCallback(filterOptions)
+//                    Log.d("SSS", "MainNavHost: filter call")
+////                    navController.previousBackStackEntry?.savedStateHandle?.set("filterResult", filterOptions)
+//                    navController.popBackStack(Screen.VenueDetails.route,inclusive = true)
+//                },
+//                onDismiss = {
+//                    navController.popBackStack()
+//                }
+//            )
+//        }
 
 //        composable(Screen.OrdersPage.route) {
 //            onDestinationChanged(Screen.OrdersPage.route)
@@ -275,11 +274,11 @@ fun MainNavHost(
             val timeSlots = Gson().fromJson(timeSlotsJson, Array<TimeSlot>::class.java).toList()
 
             // Add BackHandler here
-            BackHandler {
-                navController.navigate(Screen.HomePage.route) {
-                    popUpTo(Screen.HomePage.route) { inclusive = false }
-                }
-            }
+//            BackHandler {
+//                navController.navigate(Screen.HomePage.route) {
+//                    popUpTo(Screen.HomePage.route) { inclusive = false }
+//                }
+//            }
 
 //            BookingSuccessScreen(
 //                viewModel = hiltViewModel(),
@@ -311,9 +310,9 @@ fun MainNavHost(
 
             OrderDetailsPage(orderId = orderId, navController = navController)
         }
-        composable(route = Screen.SearchPage.route) {
-            SearchPage(viewModel = hiltViewModel(), navController = navController)
-        }
+//        composable(route = Screen.SearchPage.route) {
+//            SearchPage(viewModel = hiltViewModel(), navController = navController)
+//        }
     }
 }
 

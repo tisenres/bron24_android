@@ -26,6 +26,5 @@ interface EditProfileContract {
         ) : Intent
         data object ClickDeleteAcc:Intent
         data object ClickEditPhone:Intent
-        data object ClickF
     }
 }

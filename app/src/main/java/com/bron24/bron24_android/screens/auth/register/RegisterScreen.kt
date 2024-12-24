@@ -28,28 +28,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.components.toast.ToastManager
-import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTapGestures
-import com.bron24.bron24_android.screens.auth.AuthState
-import com.bron24.bron24_android.screens.auth.AuthViewModel
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
+import org.orbitmvi.orbit.compose.collectAsState
+
+class RegisterScreen(val phoneNumber: String) : Screen {
+    @Composable
+    override fun Content() {
+        val viewModel: RegisterScreenContract.ViewModel = getViewModel<RegisterScreenVM>()
+        val uiState = viewModel.collectAsState()
+        RegisterScreenContent(phoneNumber, state = uiState, intent = viewModel::onDispatchers)
+    }
+}
 
 @Composable
-fun UserDataInputScreen(
-    authViewModel: AuthViewModel,
-    onSignUpVerified: () -> Unit,
+fun RegisterScreenContent(
+    phoneNumber: String,
+    state: State<RegisterScreenContract.UISate>,
+    intent: (RegisterScreenContract.Intent) -> Unit
 ) {
-
-    val authState by authViewModel.authState.collectAsState()
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-
 
     Column(
         modifier = Modifier
@@ -104,42 +109,17 @@ fun UserDataInputScreen(
         ConfirmButtonUser(
             isEnabled = firstName.isNotEmpty() && lastName.isNotEmpty(),
             onClick = {
-//                authViewModel.authenticateUser(
-//                    firstName = firstName,
-//                    lastName = lastName
-//                )
+                intent.invoke(
+                    RegisterScreenContract.Intent.ClickRegister(
+                        phoneNumber,
+                        firstName,
+                        lastName
+                    )
+                )
             },
-            authViewModel = authViewModel,
-            onSignUpVerified = onSignUpVerified
         )
     }
-
-    when (authState) {
-        is AuthState.Loading -> {
-            isLoading = true
-            // Show loading indicator
-        }
-
-        is AuthState.Authenticated -> {
-            isLoading = false
-            // Navigate to the next screen when authentication is successful
-            onSignUpVerified()
-        }
-
-        is AuthState.Error -> {
-            isLoading = false
-            ToastManager.showToast(
-                "Error: " + (authState as AuthState.Error).message,
-                ToastType.ERROR
-            )
-        }
-
-        else -> {
-            isLoading = false
-        }
-    }
-
-    if (isLoading) {
+    if (state.value.isLoading) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -247,13 +227,10 @@ fun UserDataField(
 fun ConfirmButtonUser(
     isEnabled: Boolean,
     onClick: () -> Unit,
-    authViewModel: AuthViewModel,
-    onSignUpVerified: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    val authState by authViewModel.authState.collectAsState()
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(if (isPressed) 0.95f else 1f, label = "")
@@ -286,25 +263,4 @@ fun ConfirmButtonUser(
         )
     }
 
-    LaunchedEffect(authState) {
-        when (authState) {
-            is AuthState.Authenticated -> {
-                onSignUpVerified()
-            }
-            is AuthState.Error -> {
-                // Handle error state if necessary
-            }
-            else -> {
-                // Handle other states if necessary
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun UserDataInputScreenPreview() {
-    UserDataInputScreen(authViewModel = hiltViewModel()) {
-
-    }
 }

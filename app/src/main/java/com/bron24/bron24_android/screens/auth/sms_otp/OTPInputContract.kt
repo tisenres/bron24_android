@@ -18,7 +18,7 @@ interface OTPInputContract {
 
     interface Direction{
         suspend fun moveToMenu()
-        suspend fun moveToRegister()
+        suspend fun moveToRegister(phoneNumber: String)
         suspend fun back()
     }
 
