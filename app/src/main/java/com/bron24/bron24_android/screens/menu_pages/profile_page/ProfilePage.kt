@@ -66,6 +66,7 @@ import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -92,9 +93,8 @@ class ProfilePage : Tab {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
-fun ProfilePageContent(
-    state: State<ProfilePageContract.UISate>, intent: (ProfilePageContract.Intent) -> Unit
-) {
+fun ProfilePageContent(state: State<ProfilePageContract.UISate>, intent: (ProfilePageContract.Intent) -> Unit) {
+    var isClickable by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val skipPartiallyExpanded by rememberSaveable { mutableStateOf(false) }
@@ -111,6 +111,10 @@ fun ProfilePageContent(
             }
         }
     }
+    LaunchedEffect(isClickable) {
+        delay(300)
+        isClickable = true
+    }
 //    viewModel.initData()
 //    val context = LocalContext.current
 //    var state = viewModel.collectAsState()
@@ -124,7 +128,10 @@ fun ProfilePageContent(
     ) {
         CustomAppBar(title = "Profile", actions = {
             ItemEditProfile {
-                intent(ProfilePageContract.Intent.OpenEdit)
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenEdit)
+                    isClickable = false
+                }
             }
         }) {}
 
@@ -197,14 +204,20 @@ fun ProfilePageContent(
                     painter = painterResource(id = R.drawable.ic_language), contentDescription = "icon", modifier = Modifier.size(20.dp)
                 )
             }) {
-                intent(ProfilePageContract.Intent.OpenChangeLanguage)
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenChangeLanguage)
+                    isClickable = false
+                }
             }
             ItemProfileTask(text = "Favorites", startIcons = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_favorite), contentDescription = "icon", modifier = Modifier.size(20.dp)
                 )
             }) {
-                intent(ProfilePageContract.Intent.OpenFavorites)
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenFavorites)
+                    isClickable = false
+                }
             }
             Text(
                 text = "Support",
@@ -226,14 +239,20 @@ fun ProfilePageContent(
                     painter = painterResource(id = R.drawable.ic_info), contentDescription = "icon", modifier = Modifier.size(22.dp)
                 )
             }) {
-                intent(ProfilePageContract.Intent.OpenAboutUs)
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenAboutUs)
+                    isClickable = false
+                }
             }
             ItemProfileTask(text = "Add Venue", startIcons = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_add), contentDescription = "icon", modifier = Modifier.size(20.dp)
                 )
             }) {
-                intent(ProfilePageContract.Intent.OpenAddVenue)
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenAddVenue)
+                    isClickable = false
+                }
             }
             Row(modifier = Modifier
                 .padding(vertical = 32.dp)

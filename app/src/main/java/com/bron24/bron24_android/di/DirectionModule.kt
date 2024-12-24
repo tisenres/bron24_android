@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.di
 
-import com.bron24.bron24_android.R
 import com.bron24.bron24_android.screens.auth.phone_number.PhoneNumberScreenContract
 import com.bron24.bron24_android.screens.auth.phone_number.PhoneNumberScreenDirection
 import com.bron24.bron24_android.screens.auth.register.RegisterScreenContract
@@ -22,7 +21,6 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -50,6 +48,5 @@ interface DirectionModule {
     fun bindsFilterDirection(impl: FilterScreenDirection): FilterScreenContract.Direction
 
     @[Binds ViewModelScoped]
-    fun bindsRegisterDirection(impl: RegisterScreenDirection):RegisterScreenContract.Direction
-
+    fun bindsRegisterDirection(impl: RegisterScreenDirection): RegisterScreenContract.Direction
 }
