@@ -95,10 +95,8 @@ object ProfilePage : Tab {
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun ProfilePageContent(
-    state: State<ProfilePageContract.UISate>,
-    intent: (ProfilePageContract.Intent) -> Unit
+    state: State<ProfilePageContract.UISate>, intent: (ProfilePageContract.Intent) -> Unit
 ) {
-fun ProfilePageContent(state: State<ProfilePageContract.UISate>, intent: (ProfilePageContract.Intent) -> Unit) {
     var isClickable by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
