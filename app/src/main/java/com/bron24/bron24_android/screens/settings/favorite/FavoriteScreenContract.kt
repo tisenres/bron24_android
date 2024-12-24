@@ -8,7 +8,9 @@ interface FavoriteScreenContract {
         fun onDispatcher(intent: Intent): Job
     }
 
-    data class UiState(val isLoading: Boolean = false)
+    data class UiState(
+        val isLoading: Boolean = false
+    )
 
     sealed interface SideEffect {
 

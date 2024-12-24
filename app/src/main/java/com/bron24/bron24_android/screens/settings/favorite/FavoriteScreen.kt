@@ -1,9 +1,18 @@
 package com.bron24.bron24_android.screens.settings.favorite
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.ui.res.painterResource
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.bron24.bron24_android.R
+import com.bron24.bron24_android.components.items.CustomAppBar
+import com.bron24.bron24_android.screens.main.theme.Black
+import com.bron24.bron24_android.screens.main.theme.White
 import org.orbitmvi.orbit.compose.collectAsState
 
 object FavoriteScreen : Screen {
@@ -19,5 +28,7 @@ object FavoriteScreen : Screen {
 
 @Composable
 private fun FavoriteScreenContent(state: State<FavoriteScreenContract.UiState>, intent: (FavoriteScreenContract.Intent) -> Unit) {
+    Column {
 
+    }
 }
