@@ -95,11 +95,15 @@ fun ProfilePageContent(
             .fillMaxSize()
             .background(color = White)
     ) {
-        CustomAppBar(title = "Profile", actions = {
+        CustomAppBar(title = "Profile",
+            actions = {
             ItemEditProfile {
                 //click
+                }
             }
-        })
+        ){
+
+        }
 
         Column(
             modifier = Modifier

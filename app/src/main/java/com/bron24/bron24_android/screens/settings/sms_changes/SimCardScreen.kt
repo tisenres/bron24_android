@@ -48,13 +48,11 @@ fun SimCardScreenContent() {
         CustomAppBar(
             title = "Phone Number",
             startIcons = {
-                IconButton(
-                    onClick = { }
-                ) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "icons")
-                }
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "icons")
             }
-        )
+        ){
+
+        }
         Image(
             painter = painterResource(id = R.drawable.sim_card),
             contentDescription = "img",

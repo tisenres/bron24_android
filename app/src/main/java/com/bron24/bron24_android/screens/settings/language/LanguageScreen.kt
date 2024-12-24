@@ -51,7 +51,7 @@ fun LanguageScreenContent() {
                 contentDescription = "icons",
                 tint = Black17
             )
-        })
+        }){}
         LazyColumn(
             contentPadding = PaddingValues(top = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
