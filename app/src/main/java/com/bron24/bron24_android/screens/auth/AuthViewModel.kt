@@ -14,26 +14,26 @@ class AuthViewModel @Inject constructor(
     private val model: AuthModel
 ) : ViewModel() {
 
-    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
-    val authState: StateFlow<AuthState> get() = _authState
-
-    private val _phoneNumber = MutableStateFlow("")
-    val phoneNumber: StateFlow<String> get() = _phoneNumber
-
-    private val _otp = MutableStateFlow(0)
-    val otp: StateFlow<Int> get() = _otp
-
-    private val _isPhoneNumberValid = MutableStateFlow(false)
-    val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
-
-    fun updateOTP(code: Int) {
-        _otp.value = code
-    }
-
-    fun updatePhoneNumber(phone: String) {
-        _phoneNumber.value = phone
-        _isPhoneNumberValid.value = phone.isValidUzbekPhoneNumber()
-    }
+//    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
+//    val authState: StateFlow<AuthState> get() = _authState
+//
+//    private val _phoneNumber = MutableStateFlow("")
+//    val phoneNumber: StateFlow<String> get() = _phoneNumber
+//
+//    private val _otp = MutableStateFlow(0)
+//    val otp: StateFlow<Int> get() = _otp
+//
+//    private val _isPhoneNumberValid = MutableStateFlow(false)
+//    val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
+//
+//    fun updateOTP(code: Int) {
+//        _otp.value = code
+//    }
+//
+//    fun updatePhoneNumber(phone: String) {
+//        _phoneNumber.value = phone
+//        _isPhoneNumberValid.value = phone.isValidUzbekPhoneNumber()
+//    }
 
 
 
@@ -81,9 +81,4 @@ class AuthViewModel @Inject constructor(
 //            }
 //        }
 //    }
-
-    fun clearState() {
-        _authState.value = AuthState.Idle
-        _otp.value = 0
-    }
 }

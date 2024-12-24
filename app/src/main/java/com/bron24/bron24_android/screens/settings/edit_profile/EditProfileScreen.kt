@@ -75,13 +75,11 @@ fun EditProfileScreenContent() {
         CustomAppBar(
             title = "Edit profile",
             startIcons = {
-                IconButton(
-                    onClick = { }
-                ) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "icons")
-                }
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "icons")
             }
-        )
+        ) {
+
+        }
         Box(
             modifier = Modifier
                 .fillMaxHeight(0.25f)
@@ -151,10 +149,10 @@ fun EditProfileScreenContent() {
             modifier = Modifier
                 .padding(top = 12.dp)
                 .padding(horizontal = 20.dp),
-            hint ="",
-            text ="Sardorbek",
-            listener ={},
-            onValueChange ={}
+            hint = "",
+            text = "Sardorbek",
+            listener = {},
+            onValueChange = {}
         )
         Text(
             text = "Last name",
@@ -170,11 +168,11 @@ fun EditProfileScreenContent() {
             modifier = Modifier
                 .padding(top = 12.dp)
                 .padding(horizontal = 20.dp),
-            hint ="",
-            text ="Abdurakhmonov",
+            hint = "",
+            text = "Abdurakhmonov",
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            listener ={},
-            onValueChange ={}
+            listener = {},
+            onValueChange = {}
         )
         Text(
             text = "Phone number",
@@ -190,11 +188,11 @@ fun EditProfileScreenContent() {
             modifier = Modifier
                 .padding(top = 12.dp)
                 .padding(horizontal = 20.dp),
-            hint ="",
-            text ="883410807",
+            hint = "",
+            text = "883410807",
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            listener ={},
-            onValueChange ={},
+            listener = {},
+            onValueChange = {},
             visualTransformation = MaskVisualTransformation("+998 ## ### ## ##")
         )
         Button(
@@ -218,7 +216,7 @@ fun EditProfileScreenContent() {
         }
         Spacer(modifier = Modifier.weight(1f))
         AppButton(text = "Save Changes", modifier = Modifier.padding(horizontal = 20.dp)) {
-            
+
         }
     }
 }

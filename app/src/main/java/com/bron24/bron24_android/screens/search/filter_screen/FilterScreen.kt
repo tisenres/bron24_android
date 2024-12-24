@@ -159,21 +159,12 @@ fun FilterScreenContent(
         CustomAppBar(
             title = "Filter",
             startIcons = {
-                IconButton(
-                    onClick = {
-                        intent.invoke(FilterScreenContract.Intent.ClickBack)
-                    },
-                    Modifier
-                        .size(28.dp)
-                        .clip(CircleShape),
-                ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "icons",
                         tint = Black17,
                         modifier = Modifier.size(24.dp)
                     )
-                }
             },
             actions = {
                 Text(
@@ -184,7 +175,7 @@ fun FilterScreenContent(
                     color = Success
                 )
             }
-        )
+        ){}
         if (openDialog) {
             DatePickerDialog(
                 colors = DatePickerDefaults.colors(containerColor = White),

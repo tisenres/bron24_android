@@ -307,7 +307,7 @@ fun CustomAppBar(
     backgroundColor: Color? = null,
     startIcons: @Composable (() -> Unit)? = null,
     actions: @Composable (() -> Unit)? = null,
-
+    listener: () -> Unit
     ) {
     Row(
         modifier = Modifier
@@ -317,7 +317,9 @@ fun CustomAppBar(
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        startIcons?.invoke()
+        IconButton(onClick = listener) {
+            startIcons?.invoke()
+        }
         Text(
             text = title,
             color = titleColor ?: Black,

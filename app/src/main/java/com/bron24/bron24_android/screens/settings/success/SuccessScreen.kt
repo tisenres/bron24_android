@@ -43,7 +43,8 @@ object SuccessScreen : Screen {
 
 @Composable
 private fun SuccessScreenContent(
-    state: State<SuccessScreenContract.UiState>, intent: (SuccessScreenContract.Intent) -> Unit
+    state: State<SuccessScreenContract.UiState>,
+    intent: (SuccessScreenContract.Intent) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painter = painterResource(R.drawable.success_booking), contentDescription = "")
