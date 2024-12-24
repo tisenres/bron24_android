@@ -60,7 +60,7 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 class EditProfileScreen : Screen {
     @Composable
     override fun Content() {
-
+        EditProfileScreenContent()
     }
 }
 

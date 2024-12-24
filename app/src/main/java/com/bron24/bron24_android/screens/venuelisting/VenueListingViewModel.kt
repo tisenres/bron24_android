@@ -45,35 +45,35 @@ class VenueListingViewModel @Inject constructor(
     }
 
     private fun getVenues() {
-        try {
-            _filterOptions.onEach {filter->
-                Log.d("SSS", "getVenues: $filter")
-                getVenuesUseCase.execute(
-                    sort = _sortOption.value?.name,
-                    availableTime = filter.availableTime,
-                    minPrice = filter.minPrice,
-                    maxPrice = filter.maxPrice,
-                    infrastructure = filter.infrastructure,
-                    district = filter.district
-                ).onStart {
-                    isLoading.emit(true)
-                }.onEach { venues ->
-                    Log.d(TAG, "Received ${venues.size} venues")
-                    Log.d("AAA", "Received ${venues} venues")
-                    isLoading.emit(false)
-                    _venues.value = venues
-                }.launchIn(viewModelScope)
-            }.launchIn(viewModelScope)
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Error fetching venues", e)
-            // You might want to handle the error here, e.g., show an error message to the user
-        } finally {
-            viewModelScope.launch {
-                Log.d(TAG, "Finished fetching venues")
-                isLoading.emit(false)
-            }
-        }
+//        try {
+//            _filterOptions.onEach {filter->
+//                Log.d("SSS", "getVenues: $filter")
+//                getVenuesUseCase.execute(
+//                    sort = _sortOption.value?.name,
+//                    availableTime = filter.availableTime,
+//                    minPrice = filter.minPrice,
+//                    maxPrice = filter.maxPrice,
+//                    infrastructure = filter.infrastructure,
+//                    district = filter.district
+//                ).onStart {
+//                    isLoading.emit(true)
+//                }.onEach { venues ->
+//                    Log.d(TAG, "Received ${venues.size} venues")
+//                    Log.d("AAA", "Received ${venues} venues")
+//                    isLoading.emit(false)
+//                    _venues.value = venues
+//                }.launchIn(viewModelScope)
+//            }.launchIn(viewModelScope)
+//
+//        } catch (e: Exception) {
+//            Log.e(TAG, "Error fetching venues", e)
+//            // You might want to handle the error here, e.g., show an error message to the user
+//        } finally {
+//            viewModelScope.launch {
+//                Log.d(TAG, "Finished fetching venues")
+//                isLoading.emit(false)
+//            }
+//        }
 
     }
 

@@ -279,21 +279,22 @@ fun CustomAppBar(
             .fillMaxWidth()
             .height(56.dp)
             .background(color = backgroundColor ?: White)
-            .padding(horizontal = 16.dp),
+            .padding(start = if(startIcons==null) 20.dp else 16.dp, end = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = listener) {
-            startIcons?.invoke()
+        if(startIcons!=null){
+            IconButton(onClick = listener) {
+                startIcons.invoke()
+            }
         }
         Text(
-            text = title,
+            text =title,
             color = titleColor ?: Black,
             fontFamily = gilroyFontFamily,
             fontSize = 20.sp,
             fontWeight = FontWeight.ExtraBold,
             modifier = Modifier
-                .padding(start = if (startIcons != null) 8.dp else 0.dp)
-                .weight(1f)
+                .weight(0.9f)
         )
         actions?.invoke()
     }
