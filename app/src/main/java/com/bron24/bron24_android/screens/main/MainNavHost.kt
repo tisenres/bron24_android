@@ -42,7 +42,6 @@ import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePage
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsViewModel
-import com.bron24.bron24_android.screens.venuelisting.filterCallback
 import com.google.gson.Gson
 
 @Composable

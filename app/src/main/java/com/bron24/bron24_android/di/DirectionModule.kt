@@ -10,6 +10,8 @@ import com.bron24.bron24_android.screens.language.LanguageSelContract
 import com.bron24.bron24_android.screens.language.LanguageSelDirection
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageDirection
+import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract
+import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageDirection
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerContract
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerDirection
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenContract
@@ -48,5 +50,9 @@ interface DirectionModule {
     fun bindsFilterDirection(impl: FilterScreenDirection): FilterScreenContract.Direction
 
     @[Binds ViewModelScoped]
-    fun bindsRegisterDirection(impl: RegisterScreenDirection): RegisterScreenContract.Direction
+    fun bindsRegisterDirection(impl: RegisterScreenDirection):RegisterScreenContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsProfilePageDirection(impl: ProfilePageDirection): ProfilePageContract.Direction
+
 }

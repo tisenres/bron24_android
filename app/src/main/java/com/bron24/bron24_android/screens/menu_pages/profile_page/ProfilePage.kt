@@ -70,7 +70,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 
-class ProfilePage : Tab {
+object ProfilePage : Tab {
+    private fun readResolve(): Any = ProfilePage
     override val options: TabOptions
         @Composable get() {
             val icon = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_person))
@@ -93,6 +94,10 @@ class ProfilePage : Tab {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
+fun ProfilePageContent(
+    state: State<ProfilePageContract.UISate>,
+    intent: (ProfilePageContract.Intent) -> Unit
+) {
 fun ProfilePageContent(state: State<ProfilePageContract.UISate>, intent: (ProfilePageContract.Intent) -> Unit) {
     var isClickable by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
@@ -255,7 +260,7 @@ fun ProfilePageContent(state: State<ProfilePageContract.UISate>, intent: (Profil
                 }
             }
             Row(modifier = Modifier
-                .padding(vertical = 32.dp)
+                .padding(vertical = 36.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .clickable(
                     interactionSource = MutableInteractionSource(), indication = null

@@ -21,7 +21,15 @@ class HomePageVM @Inject constructor(
 ) : ViewModel(),HomePageContract.ViewModel {
     init {
         localStorage.openMenu = true
-        intent {
+    }
+    override fun onDispatchers(intent: HomePageContract.Intent): Job = intent {
+        when(intent){
+            HomePageContract.Intent.ClickFilter -> direction.moveToFilter()
+            HomePageContract.Intent.ClickSearch -> direction.moveToSearch()
+        }
+    }
+
+    override fun initData(): Job =intent {
             getVenuesUseCase.invoke().onStart {
                 reduce { state.copy(isLoading = true) }
             }.onEach {
@@ -31,18 +39,6 @@ class HomePageVM @Inject constructor(
 
                 }
             }.launchIn(viewModelScope)
-        }
-
-    }
-    override fun onDispatchers(intent: HomePageContract.Intent): Job = intent {
-        when(intent){
-            HomePageContract.Intent.ClickFilter -> direction.moveToFilter()
-            HomePageContract.Intent.ClickSearch -> direction.moveToSearch()
-        }
-    }
-
-    override fun initData(): Job {
-        return Job()
     }
 
     private fun postSideEffect(message: String) {
