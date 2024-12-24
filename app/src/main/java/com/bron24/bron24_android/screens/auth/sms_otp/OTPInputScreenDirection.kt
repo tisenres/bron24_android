@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.auth.sms_otp
 
-import android.util.Log
 import com.bron24.bron24_android.navigator.AppNavigator
 import com.bron24.bron24_android.screens.auth.register.RegisterScreen
 import com.bron24.bron24_android.screens.menu_pages.screen_menu.MenuScreen
