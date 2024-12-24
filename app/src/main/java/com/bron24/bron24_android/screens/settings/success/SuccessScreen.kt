@@ -30,9 +30,7 @@ import com.bron24.bron24_android.screens.main.theme.Purple
 import com.bron24.bron24_android.screens.main.theme.White
 import org.orbitmvi.orbit.compose.collectAsState
 
-object SuccessScreen : Screen {
-    private fun readResolve(): Any = SuccessScreen
-
+class SuccessScreen : Screen {
     @Composable
     override fun Content() {
         val viewModel: SuccessScreenContract.ViewModel = getViewModel<SuccessScreenVM>()

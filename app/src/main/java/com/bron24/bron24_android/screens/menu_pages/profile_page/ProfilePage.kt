@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.screens.menu_pages.profile_page
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,6 +11,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,13 +21,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,8 +46,10 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -48,21 +60,19 @@ import com.bron24.bron24_android.components.items.CustomAppBar
 import com.bron24.bron24_android.components.items.ItemEditProfile
 import com.bron24.bron24_android.components.items.ItemProfileTask
 import com.bron24.bron24_android.screens.main.theme.Black
+import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 
-object ProfilePage : Tab {
-    private fun readResolve(): Any = ProfilePage
+class ProfilePage : Tab {
     override val options: TabOptions
         @Composable get() {
-            val icon =
-                rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_person))
+            val icon = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_person))
             return TabOptions(
-                index = 5u,
-                title = "Profile",
-                icon = icon
+                index = 5u, title = "Profile", icon = icon
             )
         }
 
@@ -72,18 +82,32 @@ object ProfilePage : Tab {
         remember {
             viewModel.initData()
         }
-        val state  = viewModel.collectAsState()
+        val state = viewModel.collectAsState()
         ProfilePageContent(state = state, intent = viewModel::onDispatchers)
     }
-
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun ProfilePageContent(
-    state: State<ProfilePageContract.UISate>,
-    intent:(ProfilePageContract.Intent)->Unit
+    state: State<ProfilePageContract.UISate>, intent: (ProfilePageContract.Intent) -> Unit
 ) {
+    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val skipPartiallyExpanded by rememberSaveable { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+    LaunchedEffect(openBottomSheet) {
+        if (openBottomSheet) {
+            coroutineScope.launch {
+                bottomSheetState.show()
+            }
+        } else {
+            coroutineScope.launch {
+                bottomSheetState.hide()
+            }
+        }
+    }
 //    viewModel.initData()
 //    val context = LocalContext.current
 //    var state = viewModel.collectAsState()
@@ -95,15 +119,11 @@ fun ProfilePageContent(
             .fillMaxSize()
             .background(color = White)
     ) {
-        CustomAppBar(title = "Profile",
-            actions = {
+        CustomAppBar(title = "Profile", actions = {
             ItemEditProfile {
-                //click
-                }
+                intent(ProfilePageContract.Intent.OpenEdit)
             }
-        ){
-
-        }
+        }) {}
 
         Column(
             modifier = Modifier
@@ -124,8 +144,7 @@ fun ProfilePageContent(
                 Column(
                     modifier = Modifier
                         .padding(bottom = 32.dp)
-                        .align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Box(
                         modifier = Modifier
@@ -134,9 +153,7 @@ fun ProfilePageContent(
                             .clip(shape = CircleShape)
                             .border(
                                 brush = Brush.linearGradient(
-                                    start = Offset(0f, 0f),
-                                    colors = listOf(White, Color(0xff2D6544)),
-                                    end = Offset(0f, Float.POSITIVE_INFINITY)
+                                    start = Offset(0f, 0f), colors = listOf(White, Color(0xff2D6544)), end = Offset(0f, Float.POSITIVE_INFINITY)
                                 ), shape = CircleShape, width = 5.dp
                             )
                     ) {
@@ -147,19 +164,13 @@ fun ProfilePageContent(
                                 .size(110.dp)
                                 .align(Alignment.Center),
                             contentScale = ContentScale.Crop
-
                         )
                     }
                     Text(
-                        text = "",
-                        modifier = Modifier.padding(bottom = 60.dp),
-                        color = Black,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold
+                        text = "", modifier = Modifier.padding(bottom = 60.dp), color = Black, fontSize = 20.sp, fontWeight = FontWeight.SemiBold
                     )
                 }
             }
-
             Text(
                 text = "Profile",
                 fontSize = 20.sp,
@@ -168,36 +179,30 @@ fun ProfilePageContent(
                 modifier = Modifier.padding(horizontal = 20.dp)
 
             )
-            ItemProfileTask(text = "",
-                startIcons = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_profile),
-                        contentDescription = "icon",
-                        modifier = Modifier.size(20.dp)
-                    )
-                }) {}
-            ItemProfileTask(text = "",
-                startIcons = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_phone),
-                        contentDescription = "icon",
-                        modifier = Modifier.size(20.dp)
-                    )
-                }) {}
+            ItemProfileTask(text = "", startIcons = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_profile), contentDescription = "icon", modifier = Modifier.size(20.dp)
+                )
+            }) {}
+            ItemProfileTask(text = "", startIcons = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_phone), contentDescription = "icon", modifier = Modifier.size(20.dp)
+                )
+            }) {}
             ItemProfileTask(text = "Change Language", startIcons = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_language),
-                    contentDescription = "icon",
-                    modifier = Modifier.size(20.dp)
+                    painter = painterResource(id = R.drawable.ic_language), contentDescription = "icon", modifier = Modifier.size(20.dp)
                 )
-            }) {}
+            }) {
+                intent(ProfilePageContract.Intent.OpenChangeLanguage)
+            }
             ItemProfileTask(text = "Favorites", startIcons = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_favorite),
-                    contentDescription = "icon",
-                    modifier = Modifier.size(20.dp)
+                    painter = painterResource(id = R.drawable.ic_favorite), contentDescription = "icon", modifier = Modifier.size(20.dp)
                 )
-            }) {}
+            }) {
+                intent(ProfilePageContract.Intent.OpenFavorites)
+            }
             Text(
                 text = "Support",
                 fontSize = 20.sp,
@@ -210,40 +215,37 @@ fun ProfilePageContent(
 
             ItemProfileTask(text = "Help", startIcons = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_help),
-                    contentDescription = "icon",
-                    modifier = Modifier.size(20.dp)
+                    painter = painterResource(id = R.drawable.ic_help), contentDescription = "icon", modifier = Modifier.size(20.dp)
                 )
             }) {}
             ItemProfileTask(text = "About Us", startIcons = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_info),
-                    contentDescription = "icon",
-                    modifier = Modifier.size(22.dp)
+                    painter = painterResource(id = R.drawable.ic_info), contentDescription = "icon", modifier = Modifier.size(22.dp)
                 )
-            }) {}
+            }) {
+                intent(ProfilePageContract.Intent.OpenAboutUs)
+            }
             ItemProfileTask(text = "Add Venue", startIcons = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_add),
-                    contentDescription = "icon",
-                    modifier = Modifier.size(20.dp)
+                    painter = painterResource(id = R.drawable.ic_add), contentDescription = "icon", modifier = Modifier.size(20.dp)
                 )
-            }) {}
+            }) {
+                intent(ProfilePageContract.Intent.OpenAddVenue)
+            }
             Row(modifier = Modifier
                 .padding(vertical = 32.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .clickable(
                     interactionSource = MutableInteractionSource(), indication = null
-                ) { }
+                ) {
+
+                }
                 .border(width = 2.dp, color = Color.Red, shape = RoundedCornerShape(8.dp))
                 .padding(horizontal = 40.dp, vertical = 10.dp)
 
-                .align(Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically) {
+                .align(Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_logout),
-                    contentDescription = "icon",
-                    tint = Color.Red
+                    painter = painterResource(id = R.drawable.ic_logout), contentDescription = "icon", tint = Color.Red
                 )
                 Text(
                     text = "Logout",
@@ -253,6 +255,48 @@ fun ProfilePageContent(
                     color = Color.Red,
                     modifier = Modifier.padding(start = 8.dp)
                 )
+            }
+        }
+    }
+    if (openBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet = false },
+            sheetState = bottomSheetState,
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row {
+                    Text(
+                        text = "Contact Us",
+                        textAlign = TextAlign.Center,
+                        color = Black,
+                        fontFamily = FontFamily(Font(R.font.gilroy_bold)),
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .border(width = 1.dp, color = GrayLighter, shape = RoundedCornerShape(10.dp))
+                        .padding(4.dp)
+                ) {
+                    Icon(painter = painterResource(R.drawable.icon_telegram), contentDescription = "", modifier = Modifier.padding(2.dp))
+                    Text(text = "Telegram", color = Black, fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)))
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(painter = painterResource(R.drawable.arrow_up_right), contentDescription = "", modifier = Modifier.padding(2.dp))
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .border(width = 1.dp, color = GrayLighter, shape = RoundedCornerShape(10.dp))
+                        .padding(4.dp)
+                ) {
+                    Icon(painter = painterResource(R.drawable.ic_phone), contentDescription = "", modifier = Modifier.padding(2.dp))
+                    Text(text = "Contact Number", color = Black, fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)))
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(painter = painterResource(R.drawable.arrow_up_right), contentDescription = "", modifier = Modifier.padding(2.dp))
+                }
             }
         }
     }

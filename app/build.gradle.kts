@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.ksp)
-    id ("kotlin-parcelize")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -34,8 +34,7 @@ android {
             isMinifyEnabled = false
 //            isShrinkResources = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -138,7 +137,7 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     //motion orbital
     implementation("com.github.skydoves:orbital:0.4.0")
-    implementation ("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     //Chuck
     debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
@@ -151,7 +150,7 @@ dependencies {
     implementation(libs.voyager.tabNavigator)
     implementation(libs.voyager.screenModel)
     implementation(libs.voyager.transitions)
-    implementation (libs.voyager.transitions.vlatestversion)
+    implementation(libs.voyager.transitions.vlatestversion)
     implementation(libs.voyager.bottomSheetNavigator)
     //yandex
     implementation(libs.maps.mobile.v431)
@@ -172,6 +171,8 @@ dependencies {
     releaseImplementation(libs.pluto.layout.inspector.no.op)
 
     implementation(libs.timber)
+
+    implementation(libs.androidx.material)
 }
 
 kapt {

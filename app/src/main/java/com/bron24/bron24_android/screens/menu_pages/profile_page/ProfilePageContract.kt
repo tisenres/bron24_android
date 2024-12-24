@@ -5,20 +5,32 @@ import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface ProfilePageContract {
-    interface ViewModel:ContainerHost<UISate, SideEffect>{
-        fun onDispatchers(intent: Intent):Job
-        fun initData():Job
+    interface ViewModel : ContainerHost<UISate, SideEffect> {
+        fun onDispatchers(intent: Intent): Job
+        fun initData(): Job
     }
 
     data class UISate(
-        val isLoading:Boolean = true,
-        val initial:Boolean = false,
-        val user:User?=null
+        val isLoading: Boolean = true,
+        val initial: Boolean = false,
+        val user: User? = null
     )
 
-    class SideEffect(val message:String)
+    class SideEffect(val message: String)
 
-    sealed interface Intent{
+    interface Direction {
+        suspend fun openEdit()
+        suspend fun openChangeLanguage()
+        suspend fun openFavorites()
+        suspend fun openAboutUs()
+        suspend fun openAddVenue()
+    }
 
+    interface Intent {
+        data object OpenEdit : Intent
+        data object OpenChangeLanguage : Intent
+        data object OpenFavorites : Intent
+        data object OpenAboutUs : Intent
+        data object OpenAddVenue : Intent
     }
 }
