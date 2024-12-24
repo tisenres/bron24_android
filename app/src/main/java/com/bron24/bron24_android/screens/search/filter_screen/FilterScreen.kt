@@ -1,9 +1,5 @@
 package com.bron24.bron24_android.screens.search.filter_screen
 
-import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,25 +24,21 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.IconButton
-import androidx.compose.material.ModalBottomSheetValue
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,9 +53,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.helper.util.formatDate
@@ -77,7 +68,6 @@ import com.bron24.bron24_android.components.items.ItemInfosData
 import com.bron24.bron24_android.components.items.ItemProfileTask
 import com.bron24.bron24_android.components.items.ItemSelectedData
 import com.bron24.bron24_android.components.items.RangeSlider
-import com.bron24.bron24_android.helper.util.stringToInt
 import com.bron24.bron24_android.screens.main.theme.BgColorF3
 import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.Black17
@@ -85,18 +75,27 @@ import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.Success
 import com.bron24.bron24_android.screens.main.theme.White
-import com.bron24.bron24_android.screens.main.theme.bgSuccess
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.screens.venuelisting.filterCallback
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.compose.collectAsState
 import java.util.Locale
+
+
+class FilterScreen : Screen {
+    @Composable
+    override fun Content() {
+        val viewModel: FilterScreenContract.ViewModel = getViewModel<FilterScreenVM>()
+        val uiState = viewModel.collectAsState()
+        FilterScreenContent(state = uiState, intent = viewModel::onDispatchers)
+    }
+
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterScreen(
-    onApplyFilter: (FilterOptions) -> Unit,
-    onDismiss: () -> Unit
+fun FilterScreenContent(
+    state: State<FilterScreenContract.UIState>,
+    intent: (FilterScreenContract.Intent) -> Unit
 ) {
     var selParking by remember { mutableStateOf(false) }
     var selRoom by remember { mutableStateOf(false) }
@@ -162,7 +161,7 @@ fun FilterScreen(
             startIcons = {
                 IconButton(
                     onClick = {
-                        onDismiss.invoke()
+                        intent.invoke(FilterScreenContract.Intent.ClickBack)
                     },
                     Modifier
                         .size(28.dp)
@@ -384,7 +383,12 @@ fun FilterScreen(
                             contentPadding = PaddingValues(bottom = 12.dp)
                         ) {
                             items(count = list.size) {
-                                ItemProfileTask(text = list[it], borderColor = if(it==selectLocation) Success else GrayLighter, index = it, paddingHor = 0.dp){
+                                ItemProfileTask(
+                                    text = list[it],
+                                    borderColor = if (it == selectLocation) Success else GrayLighter,
+                                    index = it,
+                                    paddingHor = 0.dp
+                                ) {
                                     selectLocation = it
                                     location = list[it]
                                 }
@@ -563,16 +567,17 @@ fun FilterScreen(
                 }
             }
             AppButton(text = "See Results", modifier = Modifier) {
-                onApplyFilter(
-                    FilterOptions(
-                        selectedDate,
-                        0,
-                        100000,
-                        selRoom or selIndoor or selShower or selParking or selOutdoor,
-                        ""
+                intent.invoke(
+                    FilterScreenContract.Intent.ClickFilterBtn(
+                        FilterOptions(
+                            selectedDate,
+                            0,
+                            100000,
+                            selRoom or selIndoor or selShower or selParking or selOutdoor,
+                            ""
+                        )
                     )
                 )
-                onDismiss.invoke()
             }
         }
     }
@@ -581,6 +586,5 @@ fun FilterScreen(
 @Preview(showBackground = true)
 @Composable
 private fun FilterScreenPreview() {
-    FilterScreen({}, {})
 }
 

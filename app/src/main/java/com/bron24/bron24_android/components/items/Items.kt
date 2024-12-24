@@ -507,6 +507,8 @@ fun AppButton(
 @Composable
 fun SearchView(
     modifier: Modifier = Modifier,
+    clickSearch:()->Unit,
+    clickFilter: () -> Unit
 ) {
 //    val firstName by viewModel.firstName.collectAsState()
 
@@ -523,12 +525,8 @@ fun SearchView(
     ) {
         ProfileRow( "John")
         SearchRow(
-            onSearchClick = {
-
-            },
-            onFilterClick = {
-
-            },
+            onSearchClick = clickSearch,
+            onFilterClick = clickFilter,
         )
     }
 }

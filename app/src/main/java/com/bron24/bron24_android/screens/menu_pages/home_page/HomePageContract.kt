@@ -21,6 +21,12 @@ interface HomePageContract {
     class SideEffect(val message:String)
 
     sealed interface Intent{
+        data object ClickSearch:Intent
+        data object ClickFilter:Intent
+    }
 
+    interface Direction{
+        suspend fun moveToSearch()
+        suspend fun moveToFilter()
     }
 }

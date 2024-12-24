@@ -30,6 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,34 +52,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.venuelisting.VenueCard
+class SearchScreen:Screen{
+    @Composable
+    override fun Content() {
+        val viewModel:SearchScreenContract.ViewModel = getViewModel<SearchScreenVM>()
+    }
 
+}
 
 @Composable
-fun SearchPage(
-    viewModel: SearchScreenVM,
-    navController: NavController
+fun SearchScreenContent(
+    state:State<SearchScreenContract.UIState>,
+    intent:(SearchScreenContract.Intent)->Unit
 ) {
-    val venues by viewModel.venues.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-
-    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-    val resultLiveData = savedStateHandle?.getLiveData<FilterOptions>("filterResult")
-
-    Log.d("AAA", "SearchPage: Search")
     val focusManager = LocalFocusManager.current
-    var query by rememberSaveable { mutableStateOf("") }
+    var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(query) {
-        if (query.length >= 2) {
-            viewModel.getVenuesByQuery(query)
-        }
-    }
-    resultLiveData?.observe(LocalLifecycleOwner.current){}
 
     DisposableEffect(Unit) {
         focusRequester.requestFocus()
@@ -94,9 +89,12 @@ fun SearchPage(
             focusRequester = focusRequester,
             onQueryChanged = { query = it },
             onSearch = {
-                viewModel.getVenuesByQuery(query)
+
             },
-            onCancelClick = { navController.popBackStack() })
+            onCancelClick = {
+
+            }
+        )
         Text(
             text = "Search Result",
             modifier = Modifier.padding(start = 16.dp),
@@ -110,13 +108,13 @@ fun SearchPage(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            if (isLoading) {
+            if (state.value.isLoading) {
                 items(5) { // Arbitrary number of placeholders
                     VenueCard(venue = null, isLoading = true,)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             } else {
-                items(venues, key = { it.venueId }) { venue ->
+                items(state.value.searchResult) { venue ->
                     VenueCard(
                         venue = venue,
                         isLoading = false,

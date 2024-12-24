@@ -65,8 +65,13 @@ fun HomePageContent(
         ) {
             SearchView(
                 modifier = Modifier.fillMaxWidth(),
+                clickSearch = {
+                    intent.invoke(HomePageContract.Intent.ClickSearch)
+                },
+                clickFilter = {
+                    intent.invoke(HomePageContract.Intent.ClickFilter)
+                }
             )
-
             VenueListingView(
                 listState = listState,
             )
@@ -75,3 +80,5 @@ fun HomePageContent(
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(Success)
 }
+
+
