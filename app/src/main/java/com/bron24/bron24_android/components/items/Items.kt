@@ -329,14 +329,14 @@ fun ItemProfileTask(
     paddingHor: Dp? = null,
     startIcons: @Composable (() -> Unit)? = null,
     endIcon: @Composable (() -> Unit)? = null,
-    listener: (Int) -> Unit
+    listener: () -> Unit
 ) {
     Row(modifier = Modifier
         .padding(horizontal = paddingHor ?: 20.dp)
         .padding(top = 16.dp)
         .fillMaxWidth()
         .clip(RoundedCornerShape(8.dp))
-        .clickable { listener.invoke(index) }
+        .clickable { listener() }
         .border(
             color = borderColor ?: GrayLighter, width = 1.dp, shape = RoundedCornerShape(8.dp)
         )

@@ -34,6 +34,7 @@ converter-gson = "2.11.0"
 runtimeLivedata = "1.7.1"
 playServicesMaps = "19.0.0"
 mapsCompose = "6.1.1"
+material = "1.7.3"
 yandexMaps = "4.6.1-lite"
 morflyCompose = "0.1.0"
 com-google-devtools-ksp = "2.0.20-1.0.24"
@@ -41,6 +42,7 @@ pluto = "2.2.2"
 timber = "5.0.1"
 
 [libraries]
+androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPager" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

@@ -13,8 +13,7 @@ import com.bron24.bron24_android.components.items.CustomAppBar
 import com.bron24.bron24_android.components.items.FavoriteItem
 import org.orbitmvi.orbit.compose.collectAsState
 
-object FavoriteScreen : Screen {
-    private fun readResolve(): Any = FavoriteScreen
+class FavoriteScreen : Screen {
 
     @Composable
     override fun Content() {
