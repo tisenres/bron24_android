@@ -20,7 +20,6 @@ import androidx.navigation.navArgument
 import com.bron24.bron24_android.domain.entity.enums.OnboardingScreen
 import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.auth.sms_otp.OTPInputScreen
-import com.bron24.bron24_android.screens.auth.phone_number.PhoneNumberInputScreen
 import com.bron24.bron24_android.screens.auth.register.UserDataInputScreen
 import com.bron24.bron24_android.screens.location.LocationRequestScreen
 import kotlinx.coroutines.launch
@@ -92,41 +91,41 @@ fun OnboardingNavHost(
 //                    }
 //                )
 //            }
-            composable(Screen.PhoneNumberInput.route) {
-                PhoneNumberInputScreen(
-                    authViewModel = authViewModel,
-                    onNavigateToOTPScreen = { phoneNumber ->
-                        navController.navigate("${Screen.OTPInput.route}/$phoneNumber")
-                    }
-                )
-            }
-            composable(
-                route = "${Screen.OTPInput.route}/{phoneNumber}",
-                arguments = listOf(
-                    navArgument("phoneNumber") { type = NavType.StringType }
-                )
-            ) { navBackStackEntry ->
-                val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
-                Log.d("OnboardingNavHost", "phoneNumber: $phoneNumber")
-                OTPInputScreen(
-                    authViewModel = authViewModel,
-                    onUserLogIn = {
-                        navController.navigate(Screen.LocationPermission.route) {
-                            popUpTo(Screen.OTPInput.route) { inclusive = true }
-                        }
-                    },
-                    onUserSignUp = {
-                        navController.navigate(Screen.UserDataInput.route) {
-                            popUpTo(Screen.OTPInput.route) { inclusive = true }
-                        }
-                    },
-                    onBackClick = {
-                        authViewModel.clearState()
-                        navController.popBackStack()
-                    },
-                    phoneNumber = phoneNumber
-                )
-            }
+//            composable(Screen.PhoneNumberInput.route) {
+//                PhoneNumberInputScreen(
+//                    authViewModel = authViewModel,
+//                    onNavigateToOTPScreen = { phoneNumber ->
+//                        navController.navigate("${Screen.OTPInput.route}/$phoneNumber")
+//                    }
+//                )
+//            }
+//            composable(
+//                route = "${Screen.OTPInput.route}/{phoneNumber}",
+//                arguments = listOf(
+//                    navArgument("phoneNumber") { type = NavType.StringType }
+//                )
+//            ) { navBackStackEntry ->
+//                val phoneNumber = navBackStackEntry.arguments?.getString("phoneNumber") ?: ""
+//                Log.d("OnboardingNavHost", "phoneNumber: $phoneNumber")
+//                OTPInputScreen(
+//                    authViewModel = authViewModel,
+//                    onUserLogIn = {
+//                        navController.navigate(Screen.LocationPermission.route) {
+//                            popUpTo(Screen.OTPInput.route) { inclusive = true }
+//                        }
+//                    },
+//                    onUserSignUp = {
+//                        navController.navigate(Screen.UserDataInput.route) {
+//                            popUpTo(Screen.OTPInput.route) { inclusive = true }
+//                        }
+//                    },
+//                    onBackClick = {
+//                        authViewModel.clearState()
+//                        navController.popBackStack()
+//                    },
+//                    phoneNumber = phoneNumber
+//                )
+//            }
             composable(Screen.UserDataInput.route) { navBackStackEntry ->
                 UserDataInputScreen(
                     authViewModel = authViewModel,

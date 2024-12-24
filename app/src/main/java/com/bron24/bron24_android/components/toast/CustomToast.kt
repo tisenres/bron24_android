@@ -51,7 +51,6 @@ fun CustomToast(
         }
         isVisible = false
         onDismiss()
-
     }
 
     AnimatedVisibility(

@@ -139,6 +139,11 @@ dependencies {
     implementation("com.github.skydoves:orbital:0.4.0")
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
+    //Chuck
+    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:3.5.2")
+
+
     //voyager
     implementation(libs.voyager.navigator)
     implementation(libs.voyager.hilt)

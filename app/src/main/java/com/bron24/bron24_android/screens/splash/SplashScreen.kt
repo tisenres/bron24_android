@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.components
+package com.bron24.bron24_android.screens.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,9 +11,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bron24.bron24_android.R
 import androidx.compose.ui.graphics.Color
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
+
+class SplashScreen: Screen {
+    @Composable
+    override fun Content() {
+        val viewModel:SplashScreenContract.ViewModel = getViewModel<SplashScreenVM>()
+        SplashScreenContent()
+    }
+
+}
 
 @Composable
-fun SplashScreen() {
+fun SplashScreenContent() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -27,7 +38,6 @@ fun SplashScreen() {
                 .padding(47.dp)
         )
     }
-
 }
 
 @Preview

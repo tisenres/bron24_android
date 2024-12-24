@@ -2,7 +2,7 @@ package com.bron24.bron24_android.di
 
 import android.content.Context
 import com.bron24.bron24_android.data.local.preference.AppPreference
-import com.bron24.bron24_android.data.network.apiservices.AuthApiService
+import com.bron24.bron24_android.data.network.apiservices.AuthApi
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.apiservices.OrdersApi
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
@@ -143,10 +143,10 @@ object UseCasesModule {
     @Provides
     @Singleton
     fun provideAuthRepository(
-        authApiService: AuthApiService,
+        authApi: AuthApi,
         tokenRepository: TokenRepository
     ): AuthRepository {
-        return AuthRepositoryImpl(authApiService, tokenRepository)
+        return AuthRepositoryImpl(authApi, tokenRepository)
     }
 
     @Provides

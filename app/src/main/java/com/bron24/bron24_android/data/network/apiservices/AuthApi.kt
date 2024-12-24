@@ -7,10 +7,11 @@ import com.bron24.bron24_android.data.network.dto.auth.LoginUserDto
 import com.bron24.bron24_android.data.network.dto.auth.OTPRequestDto
 import com.bron24.bron24_android.data.network.dto.auth.RefreshTokenDto
 import com.bron24.bron24_android.data.network.dto.auth.SignupUserDto
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface AuthApiService {
+interface AuthApi {
     @POST("api/v1/auth/request_otp/")
     suspend fun requestOTP(@Body otpRequest: OTPRequestDto): PhoneNumberResponseDto
 
@@ -24,5 +25,5 @@ interface AuthApiService {
     suspend fun signupUser(@Body user: SignupUserDto): AuthResponseDto
 
     @POST("api/v1/auth/token/refresh/")
-    suspend fun refreshAccessToken(@Body refreshToken: RefreshTokenDto): AuthResponseDto
+    suspend fun updateToken(@Body refreshToken: RefreshTokenDto): Response<AuthResponseDto>
 }

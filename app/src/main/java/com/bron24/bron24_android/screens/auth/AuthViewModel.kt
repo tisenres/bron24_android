@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.helper.extension.isValidUzbekPhoneNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,58 +32,55 @@ class AuthViewModel @Inject constructor(
 
     fun updatePhoneNumber(phone: String) {
         _phoneNumber.value = phone
-        _isPhoneNumberValid.value = isValidUzbekPhoneNumber(phone)
+        _isPhoneNumberValid.value = phone.isValidUzbekPhoneNumber()
     }
 
-    private fun isValidUzbekPhoneNumber(phone: String): Boolean {
-        val regex = "^\\+998[0-9]{9}$".toRegex()
-        return regex.matches(phone)
-    }
 
-    fun requestOTP() {
-        viewModelScope.launch {
-            _authState.value = AuthState.Loading
-            try {
-                val response = model.requestOTP(
-                    _phoneNumber.value.replace("+", "")
-                )
-                _authState.value = AuthState.OTPRequested(response.result)
-            } catch (e: Exception) {
-                _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
-            }
-        }
-    }
 
-    fun verifyOTP() {
-        viewModelScope.launch {
-            _authState.value = AuthState.Loading
-            try {
-                val response = model.verifyOTP(
-                    _phoneNumber.value.replace("+", ""),
-                    _otp.value
-                )
-                _authState.value = AuthState.OTPVerified(response.result, response.userExists)
-            } catch (e: Exception) {
-                _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
-            }
-        }
-    }
+//    fun requestOTP() {
+//        viewModelScope.launch {
+//            _authState.value = AuthState.Loading
+//            try {
+//                val response = model.requestOTP(
+//                    _phoneNumber.value.replace("+", "")
+//                )
+//                _authState.value = AuthState.OTPRequested(response.result)
+//            } catch (e: Exception) {
+//                _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
+//            }
+//        }
+//    }
 
-    fun authenticateUser(firstName: String, lastName: String) {
-        viewModelScope.launch {
-            _authState.value = AuthState.Loading
-            try {
-                val response = model.authUser(
-                    _phoneNumber.value.replace("+", ""),
-                    firstName,
-                    lastName
-                )
-                _authState.value = AuthState.Authenticated(response)
-            } catch (e: Exception) {
-                _authState.value = AuthState.Error(e.message ?: "Authentication failed")
-            }
-        }
-    }
+//    fun verifyOTP() {
+//        viewModelScope.launch {
+//            _authState.value = AuthState.Loading
+//            try {
+//                val response = model.verifyOTP(
+//                    _phoneNumber.value.replace("+", ""),
+//                    _otp.value
+//                )
+//                _authState.value = AuthState.OTPVerified(response.result, response.userExists)
+//            } catch (e: Exception) {
+//                _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
+//            }
+//        }
+//    }
+
+//    fun authenticateUser(firstName: String, lastName: String) {
+//        viewModelScope.launch {
+//            _authState.value = AuthState.Loading
+//            try {
+//                val response = model.authUser(
+//                    _phoneNumber.value.replace("+", ""),
+//                    firstName,
+//                    lastName
+//                )
+//                _authState.value = AuthState.Authenticated(response)
+//            } catch (e: Exception) {
+//                _authState.value = AuthState.Error(e.message ?: "Authentication failed")
+//            }
+//        }
+//    }
 
     fun clearState() {
         _authState.value = AuthState.Idle

@@ -34,12 +34,12 @@ object ViewModelModule {
 //        return LocationScreenVM(locationModel)
 //    }
 
-    @Provides
-    @ActivityScoped
-    fun provideHomeViewModel(
-    ): HomePageVM {
-        return HomePageVM()
-    }
+//    @Provides
+//    @ActivityScoped
+//    fun provideHomeViewModel(
+//    ): HomePageVM {
+//        return HomePageVM()
+//    }
 
     @Provides
     @ActivityScoped

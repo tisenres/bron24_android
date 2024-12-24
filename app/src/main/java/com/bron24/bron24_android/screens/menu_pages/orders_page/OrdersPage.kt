@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
@@ -47,6 +49,7 @@ import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.Purple
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.orderdetails.OrderDetailsPage
+import org.orbitmvi.orbit.compose.collectAsState
 
 
 object OrdersPage: Tab {
@@ -64,20 +67,18 @@ object OrdersPage: Tab {
 
     @Composable
     override fun Content() {
-        OrdersPageContent()
+        val viewModel:OrdersPageContract.ViewModel = getViewModel<OrdersViewModel>()
+        val uiState = viewModel.collectAsState()
+        //OrdersPageContent(uiState,viewModel::onDispatchers)
     }
 }
 
 
-@Preview(showBackground = true)
 @Composable
-private fun OrdersPagePreview(){
-    val context = LocalContext.current
-}
-
-
-@Composable
-fun OrdersPageContent(viewModel: OrdersViewModel = hiltViewModel()) {
+fun OrdersPageContent(
+    state:State<OrdersPageContract.UIState>,
+    intent:(OrdersPageContract.Intent)->Unit
+) {
 
     var selectedOption by rememberSaveable { mutableStateOf(OrdersType.UPCOMING) }
 

@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.language
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.entity.user.Language
 import com.bron24.bron24_android.domain.usecases.language.GetAvailableLanguagesUseCase
 import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
@@ -24,7 +25,8 @@ class LanguageSelVM @Inject constructor(
     private val setUserLanguageUseCase: SetUserLanguageUseCase,
     private val getSelectedLanguageUseCase: GetSelectedLanguageUseCase,
     private val localeManager: LocaleManager,
-    private val direction: LanguageSelContract.Direction
+    private val direction: LanguageSelContract.Direction,
+    private val localStorage: LocalStorage
 ) : ViewModel(), LanguageSelContract.ViewModel {
     private var langCode = ""
     private val _selectedLanguage = MutableStateFlow(Language("uz", "O`zbek"))
@@ -89,6 +91,7 @@ class LanguageSelVM @Inject constructor(
                 }
             }
             LanguageSelContract.Intent.ClickMoveTo->{
+                localStorage.openLanguageSel = true
                 direction.moveToNext()
             }
         }

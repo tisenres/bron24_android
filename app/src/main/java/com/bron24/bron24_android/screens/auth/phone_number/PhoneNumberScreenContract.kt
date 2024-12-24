@@ -1,29 +1,25 @@
 package com.bron24.bron24_android.screens.auth.phone_number
 
-import com.bron24.bron24_android.domain.entity.user.Language
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface PhoneNumberScreenContract {
     interface ViewModel: ContainerHost<UISate, SideEffect> {
         fun onDispatchers(intent: Intent): Job
-        fun initData(): Job
     }
 
     data class UISate(
-        val langCode:String,
-        val availableLanguages : List<Language> = emptyList(),
-        val reComposition:Boolean= false
+        val isValidPhoneNumber:Boolean = false,
     )
 
-    class SideEffect(val message:String)
+    data class SideEffect(val message:String)
 
     interface Direction{
-        suspend fun moveToNext()
+        suspend fun moveToNext(phoneNumber: String)
     }
 
     sealed interface Intent{
-        data class SelectedLanguage(val language: Language):Intent
-        data object ClickMoveTo:Intent
+        data class ClickNextBtn(val phoneNumber:String):Intent
+        data class UpdatePhone(val phoneNumber: String):Intent
     }
 }

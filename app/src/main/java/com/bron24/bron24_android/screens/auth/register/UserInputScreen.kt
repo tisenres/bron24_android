@@ -104,10 +104,10 @@ fun UserDataInputScreen(
         ConfirmButtonUser(
             isEnabled = firstName.isNotEmpty() && lastName.isNotEmpty(),
             onClick = {
-                authViewModel.authenticateUser(
-                    firstName = firstName,
-                    lastName = lastName
-                )
+//                authViewModel.authenticateUser(
+//                    firstName = firstName,
+//                    lastName = lastName
+//                )
             },
             authViewModel = authViewModel,
             onSignUpVerified = onSignUpVerified

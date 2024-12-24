@@ -15,34 +15,31 @@ class AuthModel @Inject constructor(
 
     private var userExists: Boolean = false
 
-    suspend fun requestOTP(phoneNumber: String): PhoneNumberResponse {
-        return requestOTPUseCase.execute(phoneNumber)
-    }
 
-    suspend fun verifyOTP(phoneNumber: String, otp: Int): OTPCodeResponse {
-        val response = verifyOTPUseCase.execute(phoneNumber, otp)
-        userExists = response.userExists
-        if (userExists) {
-            authenticateUserUseCase.execute(
-                User(
-                    firstName = "",
-                    lastName = "",
-                    phoneNumber = phoneNumber,
-                ),
-                userExists
-            )
-        }
-        return response
-    }
+//    suspend fun verifyOTP(phoneNumber: String, otp: Int): OTPCodeResponse {
+//        val response = verifyOTPUseCase.execute(phoneNumber, otp)
+//        userExists = response.userExists
+//        if (userExists) {
+//            authenticateUserUseCase.execute(
+//                User(
+//                    firstName = "",
+//                    lastName = "",
+//                    phoneNumber = phoneNumber,
+//                ),
+//                userExists
+//            )
+//        }
+//        return response
+//    }
 
-    suspend fun authUser(phoneNumber: String, firstName: String, lastName: String): AuthResponse {
-        return authenticateUserUseCase.execute(
-            User(
-                firstName = firstName,
-                lastName = lastName,
-                phoneNumber = phoneNumber,
-            ),
-            userExists
-        )
-    }
+//    suspend fun authUser(phoneNumber: String, firstName: String, lastName: String): AuthResponse {
+//        return authenticateUserUseCase.(
+//            User(
+//                firstName = firstName,
+//                lastName = lastName,
+//                phoneNumber = phoneNumber,
+//            ),
+//            userExists
+//        )
+//    }
 }

@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.auth.phone_number
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +60,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.components.items.ItemInputText
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.helper.extension.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.components.toast.ToastManager
@@ -66,72 +71,89 @@ import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.auth.AuthState
 import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
-
-
-@Composable
-fun PhoneNumberInputScreen(
-    authViewModel: AuthViewModel,
-    onNavigateToOTPScreen: (String) -> Unit
-) {
-    val authState by authViewModel.authState.collectAsState()
-    val phoneNumber by authViewModel.phoneNumber.collectAsState()
-    val isPhoneNumberValid by authViewModel.isPhoneNumberValid.collectAsState()
-    val focusRequester = remember { FocusRequester() }
-    var isLoading by remember { mutableStateOf(false) }
-
-    LaunchedEffect(authState) {
-        when (authState) {
-            is AuthState.Loading -> {
-                isLoading = true
-            }
-
-            is AuthState.OTPRequested -> {
-                isLoading = false
-                val status = (authState as AuthState.OTPRequested).status
-                when (status) {
-                    PhoneNumberResponseStatusCode.SUCCESS -> {
-                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
-                    }
-
-                    PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
-                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
-                    }
-
-                    PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER -> {
-                        ToastManager.showToast(
-                            "Incorrect phone number. Please try again.",
-                            ToastType.ERROR
-                        )
-                    }
-
-                    else -> {
-                        // TODO: remove when fix otpreq 404 bug
-                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
-
-                        ToastManager.showToast(
-                            "Failed to request OTP. Please try again later.",
-                            ToastType.ERROR
-                        )
-                    }
-                }
-            }
-
-            is AuthState.Error -> {
-                isLoading = false
-                ToastManager.showToast(
-                    "Error: " + (authState as AuthState.Error).message,
+class PhoneNumberScreen:Screen{
+    @Composable
+    override fun Content() {
+        val viewModel:PhoneNumberScreenContract.ViewModel = getViewModel<PhoneNumberScreenVM>()
+        val uiState = viewModel.collectAsState()
+        viewModel.collectSideEffect {
+            Log.d("AAA", "Content: ishladi side effect")
+            ToastManager.showToast(
+                    "Error: " + it.message,
                     ToastType.ERROR
                 )
-
-            }
-
-            else -> {
-                isLoading = false
-                // Handle other states if necessary
-            }
         }
+        PhoneNumberScreenContent(state = uiState, intent = viewModel::onDispatchers)
     }
+}
+
+@Composable
+fun PhoneNumberScreenContent(
+    state: State<PhoneNumberScreenContract.UISate>,
+    intent:(PhoneNumberScreenContract.Intent)->Unit
+) {
+
+    val focusRequester = remember { FocusRequester() }
+    var isLoading by remember { mutableStateOf(false) }
+    var phoneNumber by remember {
+        mutableStateOf("")
+    }
+
+//    LaunchedEffect(authState) {
+//        when (authState) {
+//            is AuthState.Loading -> {
+//                isLoading = true
+//            }
+//
+//            is AuthState.OTPRequested -> {
+//                isLoading = false
+//                val status = (authState as AuthState.OTPRequested).status
+//                when (status) {
+//                    PhoneNumberResponseStatusCode.SUCCESS -> {
+//                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
+//                    }
+//
+//                    PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
+//                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
+//                    }
+//
+//                    PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER -> {
+//                        ToastManager.showToast(
+//                            "Incorrect phone number. Please try again.",
+//                            ToastType.ERROR
+//                        )
+//                    }
+//
+//                    else -> {
+//                        // TODO: remove when fix otpreq 404 bug
+//                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
+//
+//                        ToastManager.showToast(
+//                            "Failed to request OTP. Please try again later.",
+//                            ToastType.ERROR
+//                        )
+//                    }
+//                }
+//            }
+//
+//            is AuthState.Error -> {
+//                isLoading = false
+//                ToastManager.showToast(
+//                    "Error: " + (authState as AuthState.Error).message,
+//                    ToastType.ERROR
+//                )
+//
+//            }
+//
+//            else -> {
+//                isLoading = false
+//                // Handle other states if necessary
+//            }
+//        }
+//    }
 
     Box(
         modifier = Modifier
@@ -150,17 +172,17 @@ fun PhoneNumberInputScreen(
             CustomPhoneNumberField(
                 value = phoneNumber,
                 onValueChange = { newValue ->
-                    if (newValue.startsWith("+998")) {
-                        authViewModel.updatePhoneNumber(newValue)
-                    }
+                    phoneNumber = newValue
+                    intent.invoke(PhoneNumberScreenContract.Intent.UpdatePhone(phoneNumber))
                 },
                 focusRequester = focusRequester,
-                authViewModel = authViewModel
             )
             Spacer(modifier = Modifier.weight(1f))
             BottomSection(
-                authViewModel,
-                isPhoneNumberValid,
+                clickNextBtn = {
+                    intent.invoke(PhoneNumberScreenContract.Intent.ClickNextBtn(phoneNumber))
+                },
+                state.value.isValidPhoneNumber
             )
         }
 
@@ -194,7 +216,7 @@ fun CustomPhoneNumberField(
     value: String,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
-    authViewModel: AuthViewModel
+    //authViewModel: AuthViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = value.removePrefix("+998"))) }
@@ -276,7 +298,7 @@ fun CustomPhoneNumberField(
                                     selection = TextRange(digitsOnly.length)
                                 )
                                 onValueChange(fullNumber)
-                                authViewModel.updatePhoneNumber(fullNumber)
+                                //authViewModel.updatePhoneNumber(fullNumber)
                             }
                         },
                         keyboardOptions = KeyboardOptions(
@@ -309,7 +331,7 @@ fun CustomPhoneNumberField(
 
 @Composable
 fun BottomSection(
-    authViewModel: AuthViewModel,
+    clickNextBtn: ()->Unit,
     isPhoneNumberValid: Boolean,
 ) {
     Column(
@@ -321,9 +343,7 @@ fun BottomSection(
         TermsAndConditionsText()
         ConfirmButton(
             isEnabled = isPhoneNumberValid,
-            onClick = {
-                authViewModel.requestOTP()
-            },
+            onClick = clickNextBtn,
         )
     }
 }

@@ -6,21 +6,31 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import com.bron24.bron24_android.components.items.ErrorNetWork
+import com.bron24.bron24_android.components.toast.ObserveToast
 import com.bron24.bron24_android.helper.util.LocaleManager
 import com.bron24.bron24_android.helper.util.NetworkConnection
 import com.bron24.bron24_android.helper.util.presentation.AuthEvent
@@ -28,8 +38,8 @@ import com.bron24.bron24_android.helper.util.presentation.GlobalAuthEventBus
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.navigator.NavigationHandler
-import com.bron24.bron24_android.screens.language.LanguageSelectionScreen
 import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
+import com.bron24.bron24_android.screens.splash.SplashScreen
 import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -45,7 +55,7 @@ class MainActivity : ComponentActivity() {
     lateinit var localeManager: LocaleManager
 
     @Inject
-    lateinit var navigationHandler : NavigationHandler
+    lateinit var navigationHandler: NavigationHandler
 
     private lateinit var navController: NavHostController
 ////    private lateinit var networkConnection: NetworkConnection
@@ -53,7 +63,6 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       // MapKitFactory.initialize(this)
         MapKitFactory.initialize(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -65,21 +74,34 @@ class MainActivity : ComponentActivity() {
 
             navController.setViewModelStore(viewModelStoreOwner.viewModelStore)
 
-//            networkConnection = NetworkConnection(applicationContext)
+            val networkConnection = NetworkConnection(applicationContext)
             Bron24_androidTheme {
-                Navigator(screen = LanguageSelectionScreen()){navigator->
+                Navigator(screen = SplashScreen()) { navigator ->
                     navigationHandler.screenState.onEach {
                         it.invoke(navigator)
                     }.launchIn(lifecycleScope)
                     SlideTransition(navigator = navigator)
+                    networkConnection.observe(this) { isConnected ->
+
+                    }
+
+                    ObserveToast()
+                    NetworkErrorToastHandler(networkConnection)
+
                 }
+                networkConnection.observe(this) { isConnected ->
+                    if (!isConnected) {
+                        Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
             }
 
 //            CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
 //                Bron24_androidTheme(darkTheme = false) {
 //                    val mainViewModel: MainViewModel = hiltViewModel()
 //                    OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
-//                    ObserveToast()
+//
 //
 ////                    NetworkErrorToastHandler(networkConnection)
 //                }

@@ -12,3 +12,7 @@ fun String.formatWithSpansPhoneNumber(): String {
         this
     }
 }
+fun String.isValidUzbekPhoneNumber(): Boolean {
+    val regex = "^\\+998[0-9]{9}$".toRegex()
+    return regex.matches(this)
+}

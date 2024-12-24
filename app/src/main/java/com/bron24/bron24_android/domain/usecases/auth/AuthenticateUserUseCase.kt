@@ -6,6 +6,11 @@ import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.PreferencesRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class AuthenticateUserUseCase @Inject constructor(
@@ -14,8 +19,7 @@ class AuthenticateUserUseCase @Inject constructor(
     private val preferencesRepository: PreferencesRepository
 ) {
 
-    suspend fun execute(user: User, userExists: Boolean): AuthResponse {
-
+    operator fun invoke(user: User, userExists: Boolean): Flow<Result<Unit>> = flow {
         val response = if (userExists) {
             authRepository.loginUser(user)
         } else {
@@ -30,6 +34,6 @@ class AuthenticateUserUseCase @Inject constructor(
                 preferencesRepository.saveUserData(user.phoneNumber, user.firstName, user.lastName)
             }
         }
-        return response
-    }
+        emit(Result.success(Unit))
+    }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)
 }

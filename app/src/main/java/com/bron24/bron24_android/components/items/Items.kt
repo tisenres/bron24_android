@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -63,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.helper.util.NetworkConnection
 import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.GrayLighter
@@ -109,19 +111,49 @@ fun ItemsPreview() {
     }
 }
 
+@Composable
+fun ErrorNetWork(networkConnection: NetworkConnection) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.Transparent),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .fillMaxHeight(0.3f)
+                .clip(RoundedCornerShape(12.dp))
+                .background(color = White, shape = RoundedCornerShape(12.dp))
+                .border(width = 1.5.dp, color = Color.Red, shape = RoundedCornerShape(12.dp)),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Internetni tekshiring!",
+                fontFamily = gilroyFontFamily,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Red
+            )
+        }
+    }
+}
+
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun ItemInputText(
     modifier: Modifier,
     hint: String,
     text: String,
-    error:Boolean = false,
+    error: Boolean = false,
     minHeight: Dp? = null,
     isSelect: Boolean = false,
     listener: (Boolean) -> Unit,
     value: ((String) -> Unit)? = null,
     onValueChange: (String) -> Unit,
-   //
+    //
     visualTransformation: VisualTransformation = VisualTransformation.None,
     leadingIcon: @Composable() (() -> Unit)? = null,
     endIcon: @Composable() (() -> Unit)? = null,
@@ -134,15 +166,16 @@ fun ItemInputText(
         value = text,
         onValueChange = onValueChange,
         modifier = modifier
-            .defaultMinSize(minHeight = minHeight?:54.dp)
+            .defaultMinSize(minHeight = minHeight ?: 54.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(color = White, shape = RoundedCornerShape(10.dp))
             .onFocusChanged { focusState ->
                 select.value = focusState.isFocused
                 listener.invoke(focusState.isFocused)
-            }.border(
+            }
+            .border(
                 1.2.dp,
-                if (select.value&&!error) Success else if(error) Color.Red else GrayLighter,
+                if (select.value && !error) Success else if (error) Color.Red else GrayLighter,
                 RoundedCornerShape(10.dp)
             ),
         textStyle = TextStyle(
@@ -161,7 +194,7 @@ fun ItemInputText(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .width(minHeight?:54.dp),
+                    .width(minHeight ?: 54.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Row(
@@ -488,7 +521,7 @@ fun SearchView(
             .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-//        ProfileRow(firstName ?: "John")
+        ProfileRow( "John")
         SearchRow(
             onSearchClick = {
 

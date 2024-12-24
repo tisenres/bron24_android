@@ -11,13 +11,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 
 
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
-) : ViewModel() {
+) : ViewModel(),OrdersPageContract.ViewModel {
+    override fun onDispatchers(intent: OrdersPageContract.Intent) {
+
+    }
 
 //    private val _orders = MutableStateFlow<UiState<List<Order>>>(UiState.Loading)
 //    val orders: StateFlow<UiState<List<Order>>> = _orders
@@ -34,7 +39,7 @@ class OrdersViewModel @Inject constructor(
 //        fetchOrders()
 //    }
 
-//    private fun fetchOrders() {
+    //    private fun fetchOrders() {
 //        viewModelScope.launch {
 //            try {
 //                ordersModel.getOrders().collect { ordersList ->
@@ -46,6 +51,7 @@ class OrdersViewModel @Inject constructor(
 //            }
 //        }
 //    }
+    override val container = container<OrdersPageContract.UIState, OrdersPageContract.SideEffect>(OrdersPageContract.UIState())
 }
 
 //class OrdersModel @Inject constructor(

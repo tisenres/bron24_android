@@ -24,6 +24,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,6 +69,9 @@ object ProfilePage : Tab {
     @Composable
     override fun Content() {
         val viewModel: ProfilePageContract.ViewModel = getViewModel<ProfilePageVM>()
+        remember {
+            viewModel.initData()
+        }
         val state  = viewModel.collectAsState()
         ProfilePageContent(state = state, intent = viewModel::onDispatchers)
     }
@@ -250,10 +254,4 @@ fun ProfilePageContent(
     }
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(Color.White, darkIcons = true)
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ProPreview() {
-    ProfilePage
 }

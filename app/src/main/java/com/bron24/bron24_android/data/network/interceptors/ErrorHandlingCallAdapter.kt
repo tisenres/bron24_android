@@ -71,7 +71,7 @@ class ErrorHandlingCallAdapterFactory(
                     when (response.code()) {
                         in 200..299 -> callback.onResponse(call, response)
                         401 -> CoroutineScope(Dispatchers.IO).launch {
-                            handleUnauthorized(call, callback)
+                           // handleUnauthorized(call, callback)
                         }
 
                         in 400..499 -> handleClientError(call, response, callback)
@@ -133,7 +133,7 @@ class ErrorHandlingCallAdapterFactory(
                 val response = delegate.execute()
                 when (response.code()) {
                     in 200..299 -> response
-                    401 -> handleUnauthorizedSync() ?: response
+                    //401 -> handleUnauthorizedSync() ?: response
                     in 400..499 -> handleClientErrorSync(response)
                     in 500..599 -> handleServerErrorSync(response)
                     else -> handleUnknownErrorSync(response)
@@ -150,41 +150,41 @@ class ErrorHandlingCallAdapterFactory(
             }
         }
 
-        private suspend fun handleUnauthorized(call: Call<R>, callback: Callback<R>) {
-            val refreshToken = tokenRepository.getRefreshToken()
-            if (refreshToken != null) {
-                val refreshed = runBlocking {
-                    try {
-                        authRepository.get().refreshAndSaveTokens(refreshToken)
-                    } catch (e: Exception) {
-                        errorHandler.handleError(
-                            AppError.UnknownError(
-                                e.message ?: "Token refresh failed"
-                            )
-                        )
-                        false
-                    }
-                }
-                if (refreshed) {
-                    val newCall = clone()
-                    newCall.enqueue(callback)
-                } else {
-                    authRepository.get().handleRefreshFailure()
-                    errorHandler.handleError(AppError.HttpError(401, "Unauthorized"))
-                    callback.onResponse(
-                        call,
-                        Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
-                    )
-                }
-            } else {
-                authRepository.get().handleRefreshFailure()
-                errorHandler.handleError(AppError.HttpError(401, "Unauthorized"))
-                callback.onResponse(
-                    call,
-                    Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
-                )
-            }
-        }
+//        private suspend fun handleUnauthorized(call: Call<R>, callback: Callback<R>) {
+//            val refreshToken = tokenRepository.getRefreshToken()
+//            if (refreshToken != null) {
+//                val refreshed = runBlocking {
+//                    try {
+//                        authRepository.get.(refreshToken)
+//                    } catch (e: Exception) {
+//                        errorHandler.handleError(
+//                            AppError.UnknownError(
+//                                e.message ?: "Token refresh failed"
+//                            )
+//                        )
+//                        false
+//                    }
+//                }
+//                if (refreshed) {
+//                    val newCall = clone()
+//                    newCall.enqueue(callback)
+//                } else {
+//                    authRepository.get().handleRefreshFailure()
+//                    errorHandler.handleError(AppError.HttpError(401, "Unauthorized"))
+//                    callback.onResponse(
+//                        call,
+//                        Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
+//                    )
+//                }
+//            } else {
+//                authRepository.get().handleRefreshFailure()
+//                errorHandler.handleError(AppError.HttpError(401, "Unauthorized"))
+//                callback.onResponse(
+//                    call,
+//                    Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
+//                )
+//            }
+//        }
 
         private fun handleClientError(call: Call<R>, response: Response<R>, callback: Callback<R>) {
             CoroutineScope(Dispatchers.IO).launch {
@@ -247,41 +247,41 @@ class ErrorHandlingCallAdapterFactory(
 //            callback.onFailure(call, t)
 //        }
 
-        private fun handleUnauthorizedSync(): Response<R>? {
-            val refreshToken = tokenRepository.getRefreshToken()
-            return if (refreshToken != null) {
-                val refreshed = runBlocking {
-                    try {
-                        authRepository.get().refreshAndSaveTokens(refreshToken)
-                    } catch (e: Exception) {
-                        errorHandler.handleError(
-                            AppError.UnknownError(
-                                e.message ?: "Token refresh failed"
-                            )
-                        )
-                        false
-                    }
-                }
-                if (refreshed) {
-                    clone().execute()
-                } else {
-                    authRepository.get().handleRefreshFailure()
-                    runBlocking {
-                        errorHandler.handleError(
-                            AppError.HttpError(
-                                401,
-                                "Unauthorized"
-                            )
-                        )
-                    }
-                    Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
-                }
-            } else {
-                authRepository.get().handleRefreshFailure()
-                runBlocking { errorHandler.handleError(AppError.HttpError(401, "Unauthorized")) }
-                Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
-            }
-        }
+//        private fun handleUnauthorizedSync(): Response<R>? {
+//            val refreshToken = tokenRepository.getRefreshToken()
+//            return if (refreshToken != null) {
+//                val refreshed = runBlocking {
+//                    try {
+//                        //authRepository.get().refreshAndSaveTokens(refreshToken)
+//                    } catch (e: Exception) {
+//                        errorHandler.handleError(
+//                            AppError.UnknownError(
+//                                e.message ?: "Token refresh failed"
+//                            )
+//                        )
+//                        false
+//                    }
+//                }
+//                if (refreshed) {
+//                    clone().execute()
+//                } else {
+//                    authRepository.get().handleRefreshFailure()
+//                    runBlocking {
+//                        errorHandler.handleError(
+//                            AppError.HttpError(
+//                                401,
+//                                "Unauthorized"
+//                            )
+//                        )
+//                    }
+//                    Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
+//                }
+//            } else {
+//                authRepository.get().handleRefreshFailure()
+//                runBlocking { errorHandler.handleError(AppError.HttpError(401, "Unauthorized")) }
+//                Response.error(401, okhttp3.ResponseBody.create(null, "Unauthorized"))
+//            }
+//        }
 
         private fun handleClientErrorSync(response: Response<R>): Response<R> {
             runBlocking {

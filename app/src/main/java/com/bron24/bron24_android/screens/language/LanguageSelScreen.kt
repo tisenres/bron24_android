@@ -28,7 +28,7 @@ import com.bron24.bron24_android.domain.entity.user.Language
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import org.orbitmvi.orbit.compose.collectAsState
 
-class LanguageSelectionScreen : Screen {
+class LanguageSelScreen : Screen {
     @Composable
     override fun Content() {
         val viewModel: LanguageSelContract.ViewModel = getViewModel<LanguageSelVM>()

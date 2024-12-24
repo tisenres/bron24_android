@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.auth.sms_otp
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,7 +29,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,31 +54,35 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
-import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
-import com.bron24.bron24_android.components.toast.ToastManager
-import com.bron24.bron24_android.components.toast.ToastType
-import com.bron24.bron24_android.screens.auth.AuthState
-import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.delay
+import org.orbitmvi.orbit.compose.collectAsState
 
+class OTPInputScreen(val phoneNumber:String):Screen{
+    @Composable
+    override fun Content() {
+        val viewModel:OTPInputContract.ViewModel = getViewModel<OTPInputScreenVM>()
+        val uiState = viewModel.collectAsState()
+        OTPInputScreenContent(phoneNumber = phoneNumber, state = uiState,viewModel::onDispatchers)
+    }
+}
+
+@SuppressLint("DefaultLocale")
 @Composable
-fun OTPInputScreen(
-    authViewModel: AuthViewModel,
+fun OTPInputScreenContent(
     phoneNumber: String,
-    onUserLogIn: () -> Unit,
-    onUserSignUp: () -> Unit,
-    onBackClick: () -> Unit
+    state: State<OTPInputContract.UISate>,
+    intent:(OTPInputContract.Intent)->Unit
 ) {
     var otp by remember { mutableStateOf("") }
-    val authState by authViewModel.authState.collectAsState()
-    var resendCounter by remember { mutableIntStateOf(90) }
+    var resendCounter by remember { mutableIntStateOf(state.value.refreshTime) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    var isVerifying by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(state.value.isLoading) }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -120,7 +125,7 @@ fun OTPInputScreen(
                     .height(64.dp),
             ) {
                 EnhancedBackButton(
-                    onClick = onBackClick,
+                    onClick = {intent.invoke(OTPInputContract.Intent.RequestOTP(phoneNumber,otp.toInt()))},
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
 
@@ -143,7 +148,7 @@ fun OTPInputScreen(
             Text(
                 text = stringResource(id = R.string.enter_otp_code) +
                         "\n" +
-                        phoneNumber.formatWithSpansPhoneNumber(),
+                        phoneNumber,
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -164,15 +169,6 @@ fun OTPInputScreen(
                     if (newOtp.length <= 4) {
                         otp = newOtp
                         val otpValue = newOtp.toIntOrNull()
-                        if (otpValue != null) {
-                            authViewModel.updateOTP(otpValue)
-                            if (newOtp.length == 4) {
-                                isVerifying = true
-                                authViewModel.verifyOTP()
-                            }
-                        } else {
-                            authViewModel.updateOTP(0)
-                        }
                     }
                 },
                 focusRequester = focusRequester,
@@ -180,6 +176,9 @@ fun OTPInputScreen(
                     .fillMaxWidth()
                     .focusRequester(focusRequester)
             )
+            if(otp.length==4){
+                intent.invoke(OTPInputContract.Intent.RequestOTP(phoneNumber,otp.toInt()))
+            }
 
             Spacer(modifier = Modifier.height(36.dp)) // Push the resend section to the bottom
 
@@ -219,12 +218,11 @@ fun OTPInputScreen(
                 } else {
                     UnderlinedResendButton(
                         onClick = {
-                            authViewModel.requestOTP()
-                            resendCounter = 90
+                           intent.invoke(OTPInputContract.Intent.ClickRestart(phoneNumber))
                         },
                     )
 
-                    if (isVerifying) {
+                    if (isLoading) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -237,46 +235,46 @@ fun OTPInputScreen(
                 }
             }
 
-            LaunchedEffect(authState) {
-                when (authState) {
-                    is AuthState.Loading -> {
-                        isVerifying = true
-                    }
-                    is AuthState.OTPVerified -> {
-                        isVerifying = false
-                        if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
-                            // Clear focus and hide keyboard
-                            focusManager.clearFocus()
-                            keyboardController?.hide()
-
-                            ToastManager.showToast("OTP verified successfully", ToastType.SUCCESS)
-                            if ((authState as AuthState.OTPVerified).userExists) {
-                                onUserLogIn()
-                            } else {
-                                onUserSignUp()
-                            }
-                        } else {
-                            ToastManager.showToast(
-                                "Incorrect OTP. Please try again.",
-                                ToastType.ERROR
-                            )
-                            otp = ""
-                            focusRequester.requestFocus()
-                            keyboardController?.show()
-                        }
-                    }
-                    is AuthState.Error -> {
-                        isVerifying = false
-                        ToastManager.showToast(
-                            "Error: " + (authState as AuthState.Error).message,
-                            ToastType.ERROR
-                        )
-                    }
-                    else -> {
-                        isVerifying = false
-                    }
-                }
-            }
+//            LaunchedEffect(authState) {
+//                when (authState) {
+//                    is AuthState.Loading -> {
+//                        isVerifying = true
+//                    }
+//                    is AuthState.OTPVerified -> {
+//                        isVerifying = false
+//                        if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
+//                            // Clear focus and hide keyboard
+//                            focusManager.clearFocus()
+//                            keyboardController?.hide()
+//
+//                            ToastManager.showToast("OTP verified successfully", ToastType.SUCCESS)
+//                            if ((authState as AuthState.OTPVerified).userExists) {
+//                                onUserLogIn()
+//                            } else {
+//                                onUserSignUp()
+//                            }
+//                        } else {
+//                            ToastManager.showToast(
+//                                "Incorrect OTP. Please try again.",
+//                                ToastType.ERROR
+//                            )
+//                            otp = ""
+//                            focusRequester.requestFocus()
+//                            keyboardController?.show()
+//                        }
+//                    }
+//                    is AuthState.Error -> {
+//                        isVerifying = false
+//                        ToastManager.showToast(
+//                            "Error: " + (authState as AuthState.Error).message,
+//                            ToastType.ERROR
+//                        )
+//                    }
+//                    else -> {
+//                        isVerifying = false
+//                    }
+//                }
+//            }
         }
     }
 }

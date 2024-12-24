@@ -1,7 +1,7 @@
 package com.bron24.bron24_android.data.repository
 
 import android.util.Log
-import com.bron24.bron24_android.data.network.apiservices.AuthApiService
+import com.bron24.bron24_android.data.network.apiservices.AuthApi
 import com.bron24.bron24_android.data.network.dto.auth.RefreshTokenDto
 import com.bron24.bron24_android.data.network.mappers.toDomainEntity
 import com.bron24.bron24_android.data.network.mappers.toLoginNetworkModel
@@ -23,14 +23,14 @@ import java.io.IOException
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val authApiService: AuthApiService,
+    private val authApi: AuthApi,
     private val tokenRepository: TokenRepository
 ) : AuthRepository {
 
     override suspend fun requestOTP(otpRequest: OTPRequest): PhoneNumberResponse {
         return try {
             val networkRequest = otpRequest.toNetworkModel()
-            val networkResponse = authApiService.requestOTP(networkRequest)
+            val networkResponse = authApi.requestOTP(networkRequest)
             networkResponse.toDomainEntity()
         } catch (e: HttpException) {
             handleHttpExceptionPhone(e)
@@ -43,7 +43,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun verifyOTP(otpRequest: OTPRequest): OTPCodeResponse {
         return try {
             val networkRequest = otpRequest.toNetworkModel()
-            val networkResponse = authApiService.verifyOTP(networkRequest)
+            val networkResponse = authApi.verifyOTP(networkRequest)
             networkResponse.toDomainEntity()
         } catch (e: HttpException) {
             handleHttpExceptionOTP(e)
@@ -56,7 +56,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signUpUser(user: User): AuthResponse {
         return try {
             val networkRequest = user.toSignupNetworkModel()
-            val networkResponse = authApiService.signupUser(networkRequest)
+            val networkResponse = authApi.signupUser(networkRequest)
             networkResponse.toDomainEntity()
         } catch (e: HttpException) {
             handleHttpExceptionAuth(e)
@@ -66,7 +66,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun loginUser(user: User): AuthResponse {
         return try {
             val networkRequest = user.toLoginNetworkModel()
-            val networkResponse = authApiService.loginUser(networkRequest)
+            val networkResponse = authApi.loginUser(networkRequest)
             networkResponse.toDomainEntity()
         } catch (e: HttpException) {
             handleHttpExceptionAuth(e)
@@ -94,23 +94,24 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
-        return try {
-            val refreshTokenDto = RefreshTokenDto(refreshToken)
-            val tokens = authApiService.refreshAccessToken(refreshTokenDto).toDomainEntity()
-
-            if (tokens.accessToken.isNotEmpty() && tokens.refreshToken.isNotEmpty()) {
-                tokenRepository.saveTokens(tokens.accessToken, tokens.refreshToken)
-                true
-            } else {
-                Log.e("AuthRepository", "Received empty tokens from server")
-                false
-            }
-        } catch (e: Exception) {
-            Log.e("AuthRepository", "Error during token refresh", e)
-            false
-        }
-    }
+//    override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
+////        return try {
+////            val refreshTokenDto = RefreshTokenDto(refreshToken)
+////            val tokens = authApi.updateToken(refreshTokenDto)
+////
+////
+////            if (tokens.accessToken.isNotEmpty() && tokens.refreshToken.isNotEmpty()) {
+////                tokenRepository.saveTokens(tokens.accessToken, tokens.refreshToken)
+////                true
+////            } else {
+////                Log.e("AuthRepository", "Received empty tokens from server")
+////                false
+////            }
+////        } catch (e: Exception) {
+////            Log.e("AuthRepository", "Error during token refresh", e)
+////            false
+////        }
+//    }
 
     override fun handleRefreshFailure() {
         Log.e("AuthRepository", "handleRefreshFailure")
