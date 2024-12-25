@@ -15,7 +15,8 @@ interface HomePageContract {
         val isLoading:Boolean = true,
         val initial:Boolean = false,
         val user: User?=null,
-        val itemData:List<Venue> = emptyList()
+        val itemData:List<Venue> = emptyList(),
+        val selectedSort:String = ""
     )
 
     class SideEffect(val message:String)
@@ -23,6 +24,7 @@ interface HomePageContract {
     sealed interface Intent{
         data object ClickSearch:Intent
         data object ClickFilter:Intent
+        data class SelectedSort(val name:String):Intent
     }
 
     interface Direction{

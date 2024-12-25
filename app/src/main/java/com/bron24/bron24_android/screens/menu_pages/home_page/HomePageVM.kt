@@ -26,13 +26,14 @@ class HomePageVM @Inject constructor(
         when(intent){
             HomePageContract.Intent.ClickFilter -> direction.moveToFilter()
             HomePageContract.Intent.ClickSearch -> direction.moveToSearch()
+            is HomePageContract.Intent.SelectedSort -> {reduce { state.copy(selectedSort = intent.name) }}
         }
     }
 
     override fun initData(): Job =intent {
             getVenuesUseCase.invoke().onEach {
                 it.onSuccess {
-                    state.copy(isLoading = false, itemData = it)
+                    reduce { state.copy(isLoading = false, itemData = it)}
                 }.onFailure {
 
                 }

@@ -36,7 +36,6 @@ fun FavoriteItem() {
             .padding(top = 20.dp)
             .fillMaxWidth()
             .background(color = FavoriteItemBackGround)
-            .padding(horizontal = 16.dp)
     ) {
         Box(
             modifier = Modifier

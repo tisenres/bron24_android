@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.venuelisting
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -36,7 +37,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.bron24.bron24_android.common.FilterOptions
+import com.bron24.bron24_android.components.items.FavoriteItem
 import com.bron24.bron24_android.domain.entity.venue.Venue
+import com.bron24.bron24_android.screens.main.theme.GrayLighter
+import com.bron24.bron24_android.screens.main.theme.White
+import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -49,12 +54,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VenueListingView(
-    isLoading:Boolean,
-    venues: List<Venue>,
+    state: State<HomePageContract.UISate>,
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier,
     refreshVenue: ()->Unit,
-    clickSort:()->Unit,
+    clickSort:(String)->Unit,
     listenerItem:(Venue)->Unit,
 ) {
     var sortExpanded by remember { mutableStateOf(false) }
@@ -68,12 +72,12 @@ fun VenueListingView(
     PullToRefreshBox(
         state = pullRefreshState,
         onRefresh = { refreshVenue.invoke() },
-        isRefreshing = isLoading,
+        isRefreshing = state.value.isLoading,
         modifier = modifier,
         indicator = {
             PullToRefreshDefaults.Indicator(
                 state = pullRefreshState,
-                isRefreshing = isLoading,
+                isRefreshing = state.value.isLoading,
                 color = Color(0xFF32B768),
                 containerColor = Color.White,
                 modifier = Modifier.align(Alignment.TopCenter)
@@ -113,16 +117,15 @@ fun VenueListingView(
                     )
                 }
             }
-
-            if (isLoading) {
+            if (state.value.isLoading) {
                 // Display shimmer placeholders while loading
                 items(5) { // Arbitrary number of placeholders
                     VenueCard(venue = null, isLoading = true,)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             } else {
-                items(venues) { venue ->
-
+                items(state.value.itemData.size) { venue ->
+                    FavoriteItem()
                 }
             }
         }
@@ -134,19 +137,19 @@ fun VenueListingView(
             title = { Text("Sort by") },
             text = {
                 Column {
-                    SortOption.values().forEach { option ->
+                    SortOption.entries.forEach { option ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    clickSort.invoke()
+                                    clickSort.invoke(option.name)
                                     sortExpanded = false
                                 }
                                 .padding(vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             RadioButton(
-                                selected = true,
+                                selected = option.name==state.value.selectedSort,
                                 onClick = null
                             )
                             Spacer(modifier = Modifier.width(8.dp))
@@ -155,7 +158,7 @@ fun VenueListingView(
                                     SortOption.MIN_TO_MAX -> "Price: Low to High"
                                     SortOption.MAX_TO_MIN -> "Price: High to Low"
                                     SortOption.CLOSEST -> "Closest"
-                                }
+                                },
                             )
                         }
                     }
@@ -179,7 +182,7 @@ fun SortRow(
     Row(
         modifier = Modifier
             .selectable(
-                selected = false,
+                selected = true,
                 onClick = onSortClick,
                 interactionSource = interactionSource,
                 indication = ripple()
