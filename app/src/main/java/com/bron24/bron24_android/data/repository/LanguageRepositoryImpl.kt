@@ -10,28 +10,22 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class LanguageRepositoryImpl @Inject constructor(
-    private val appPreference: AppPreference
-) : LanguageRepository {
+class LanguageRepositoryImpl @Inject constructor(private val appPreference: AppPreference) : LanguageRepository {
+  private val availableLanguages = listOf(
+    Language("uz", "O`zbek"), Language("ru", "Russian"), Language("en", "English")
+  )
 
-    private val availableLanguages = listOf(
-        Language("uz", "O`zbek"),
-        Language("ru", "Russian"),
-        Language("en", "English")
-    )
+  override fun getAvailableLanguages(): Flow<Result<List<Language>>> = flow {
+    emit(Result.success(availableLanguages))
+  }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)
 
-    override fun getAvailableLanguages(): Flow<Result<List<Language>>> = flow {
-        emit(Result.success(availableLanguages))
-    }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)
+  override fun getSelectedLanguage(): Language {
+    val languageCode = appPreference.getSelectedLanguage() ?: Language("uz", "O`zbek'").languageCode
+    return availableLanguages.first { it.languageCode == languageCode }
+  }
 
-    override fun getSelectedLanguage(): Language {
-        val languageCode = appPreference.getSelectedLanguage() ?: Language("uz", "O`zbek'").languageCode
-        return availableLanguages.first { it.languageCode == languageCode }
-
-    }
-
-    override fun setSelectedLanguage(language: Language): Flow<Result<Unit>> = flow{
-        appPreference.setSelectedLanguage(language.languageCode)
-        emit(Result.success(Unit))
-    }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)
+  override fun setSelectedLanguage(language: Language): Flow<Result<Unit>> = flow {
+    appPreference.setSelectedLanguage(language.languageCode)
+    emit(Result.success(Unit))
+  }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)
 }
