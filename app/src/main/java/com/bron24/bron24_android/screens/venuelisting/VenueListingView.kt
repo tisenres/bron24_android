@@ -35,17 +35,9 @@ import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavController
-import com.bron24.bron24_android.common.FilterOptions
-import com.bron24.bron24_android.components.items.FavoriteItem
+import com.bron24.bron24_android.components.items.VenueItem
 import com.bron24.bron24_android.domain.entity.venue.Venue
-import com.bron24.bron24_android.screens.main.theme.GrayLighter
-import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 //var filterCallback: (FilterOptions) -> Unit = {}
 
@@ -71,10 +63,12 @@ fun VenueListingView(
 //    }
     PullToRefreshBox(
         state = pullRefreshState,
-        onRefresh = { refreshVenue.invoke() },
+        onRefresh = {
+            refreshVenue.invoke() },
         isRefreshing = state.value.isLoading,
         modifier = modifier,
         indicator = {
+            Log.d("AAA", "VenueListingView: ${state.value.isLoading}")
             PullToRefreshDefaults.Indicator(
                 state = pullRefreshState,
                 isRefreshing = state.value.isLoading,
@@ -124,8 +118,8 @@ fun VenueListingView(
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             } else {
-                items(state.value.itemData.size) { venue ->
-                    FavoriteItem()
+                items(state.value.itemData) { venue ->
+                    VenueItem(venue = venue)
                 }
             }
         }

@@ -78,7 +78,7 @@ fun HomePageContent(
             )
             VenueListingView(
                 state = state,
-                refreshVenue = {  },
+                refreshVenue = { intent.invoke(HomePageContract.Intent.Refresh) },
                 clickSort = { intent.invoke(HomePageContract.Intent.SelectedSort(it)) })
             {
 

@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.data.local.preference.LocalStorage
@@ -27,6 +28,18 @@ class HomePageVM @Inject constructor(
             HomePageContract.Intent.ClickFilter -> direction.moveToFilter()
             HomePageContract.Intent.ClickSearch -> direction.moveToSearch()
             is HomePageContract.Intent.SelectedSort -> {reduce { state.copy(selectedSort = intent.name) }}
+            HomePageContract.Intent.Refresh -> {
+                Log.d("AAA", "onDispatchers: ${state.selectedSort}")
+                getVenuesUseCase.invoke().onStart {
+                    reduce { state.copy(isLoading = true) }
+                }.onEach {
+                    it.onSuccess {
+                        reduce { state.copy(isLoading = false, itemData = it) }
+                    }.onFailure {
+                        postSideEffect(it.message.toString())
+                    }
+                }.launchIn(viewModelScope)
+            }
         }
     }
 
