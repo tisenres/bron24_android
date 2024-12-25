@@ -32,7 +32,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 class OnBoardPager : Screen {
     @Composable
     override fun Content() {
-        val viewModel:OnBoardPagerContract.ViewModel = getViewModel<OnBoardPagerVM>()
+        val viewModel: OnBoardPagerContract.ViewModel = getViewModel<OnBoardPagerVM>()
         val uiState = viewModel.collectAsState()
         OnBoardPagerContent(state = uiState, intent = viewModel::onDispatchers)
     }
@@ -42,8 +42,8 @@ class OnBoardPager : Screen {
 
 @Composable
 fun OnBoardPagerContent(
-    state:State<OnBoardPagerContract.UIState>,
-    intent:(OnBoardPagerContract.Intent)->Unit
+    state: State<OnBoardPagerContract.UIState>,
+    intent: (OnBoardPagerContract.Intent) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
@@ -109,7 +109,9 @@ fun OnBoardPagerContent(
                 modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 Text(
-                    text = if (pagerState.currentPage == 2) stringResource(id = R.string.get_started) else stringResource(id = R.string.next),
+                    text = if (pagerState.currentPage == 2) stringResource(id = R.string.get_started) else stringResource(
+                        id = R.string.next
+                    ),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
@@ -132,7 +134,8 @@ fun PagerIndicator(pagerState: PagerState, modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         repeat(pagerState.pageCount) { iteration ->
-            val color = if (pagerState.currentPage == iteration) Color(0xFF32B768) else Color(0xFFD9D9D9)
+            val color =
+                if (pagerState.currentPage == iteration) Color(0xFF32B768) else Color(0xFFD9D9D9)
             Box(
                 modifier = Modifier
                     .padding(5.dp)

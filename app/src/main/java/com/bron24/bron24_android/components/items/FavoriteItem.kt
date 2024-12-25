@@ -12,12 +12,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.IconButton
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -35,12 +42,20 @@ import com.bron24.bron24_android.screens.main.theme.FavoriteItemDivider
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemStadiumName
 import com.bron24.bron24_android.screens.main.theme.Green
 import com.bron24.bron24_android.screens.main.theme.Success
+import com.bron24.bron24_android.screens.main.theme.White
+import com.bron24.bron24_android.screens.main.theme.bgSuccess
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
 fun VenueItem(
-    venue: Venue
+    venue: Venue,
 ) {
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+    var isSelected by remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = Modifier
             .padding(top = 20.dp)
@@ -54,18 +69,29 @@ fun VenueItem(
                 .height(160.dp)
         ) {
             Image(
-                painter = rememberAsyncImagePainter(model = ),
+                painter = rememberAsyncImagePainter(model = venue.previewImage?:"", onLoading = {
+                    isLoading = true
+                }, onSuccess = {
+                    isLoading = false
+                }),
                 contentDescription = "",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-            Image(
-                painter = painterResource(R.drawable.baseline_favorite_24_red),
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(10.dp)
-                    .align(alignment = Alignment.TopEnd)
-            )
+            if(isLoading){
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(30.dp),
+                        color = Success,
+                        trackColor = bgSuccess,
+                        strokeWidth = 4.dp
+                    )
+                }
+            }
+            IconButton(onClick = { isSelected = !isSelected }, modifier = Modifier.align(Alignment.TopEnd)) {
+                Icon(painter = painterResource(R.drawable.baseline_favorite_24_red),
+                    contentDescription = "", tint = if(isSelected) Red else White)
+            }
         }
         Row(
             modifier = Modifier
@@ -92,8 +118,7 @@ fun VenueItem(
         ) {
             Text(
                 text = "Mustaqillik maydoni, Toshkent, Uzbekistan",
-                color = FavoriteItemAddress,
-                fontFamily = gilroyFontFamily,
+                color = FavoriteItemAddress, fontFamily = gilroyFontFamily,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -106,9 +131,12 @@ fun VenueItem(
                 .height(1.dp)
                 .background(color = FavoriteItemDivider)
         )
-        Row(modifier = Modifier.padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Icon(painter = painterResource(R.drawable.ic_dollar),
+        Row(
+            modifier = Modifier.padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_dollar),
                 contentDescription = "",
                 modifier = Modifier.size(20.dp),
                 tint = Success
@@ -119,8 +147,10 @@ fun VenueItem(
                 color = FavoriteItemStadiumName
             )
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = "Available: ", color = FavoriteItemStadiumName,
-                fontFamily = FontFamily(Font(R.font.gilroy_bold)))
+            Text(
+                text = "Available: ", color = FavoriteItemStadiumName,
+                fontFamily = FontFamily(Font(R.font.gilroy_bold))
+            )
             Text(text = "14 slots", color = Green, fontFamily = FontFamily(Font(R.font.gilroy_bold)))
         }
     }
