@@ -15,7 +15,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.CustomAppBar
-import com.bron24.bron24_android.components.items.FavoriteItem
+import com.bron24.bron24_android.components.items.VenueItem
 import com.bron24.bron24_android.screens.main.theme.White
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -30,7 +30,9 @@ class FavoriteScreen : Screen {
 }
 
 @Composable
-private fun FavoriteScreenContent(state: State<FavoriteScreenContract.UiState>, intent: (FavoriteScreenContract.Intent) -> Unit) {
+private fun FavoriteScreenContent(
+    state: State<FavoriteScreenContract.UiState>,
+    intent: (FavoriteScreenContract.Intent) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +45,7 @@ private fun FavoriteScreenContent(state: State<FavoriteScreenContract.UiState>, 
         })
         LazyColumn(contentPadding = PaddingValues(bottom = 16.dp)) {
             items(10) {
-                FavoriteItem()
+
             }
         }
     }
