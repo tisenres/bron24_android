@@ -4,8 +4,6 @@ import com.bron24.bron24_android.domain.entity.user.Language
 import com.bron24.bron24_android.domain.repository.LanguageRepository
 import javax.inject.Inject
 
-class GetSelectedLanguageUseCase @Inject constructor(
-    private val languageRepository: LanguageRepository
-) {
-    operator fun invoke(): Language =  languageRepository.getSelectedLanguage()
+class GetSelectedLanguageUseCase @Inject constructor(private val languageRepository: LanguageRepository) {
+  operator fun invoke(): Language = languageRepository.getSelectedLanguage()
 }
