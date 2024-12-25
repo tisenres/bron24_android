@@ -30,7 +30,7 @@ object NetworkModule {
     @Singleton
     fun providesOkHttpClient(
         chuckerInterceptor: ChuckerInterceptor
-    ):OkHttpClient = OkHttpClient.Builder()
+    ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(chuckerInterceptor)
         .build()
 
@@ -41,24 +41,16 @@ object NetworkModule {
         tokenRepository: TokenRepository,
         chuckerInterceptor: ChuckerInterceptor,
         authAuthenticator: AuthAuthenticator
-    ): OkHttpClient {
-        return OkHttpClient.Builder()
-            .addInterceptor(chuckerInterceptor)
-            .authenticator(authAuthenticator)
-            .authenticator(authAuthenticator)
-            .addNetworkInterceptor { chain ->
-                try {
-                    val token = tokenRepository.getRefreshToken()
-                    val newRequest = chain.request().newBuilder()
-                    newRequest.header("Authorization", "Bearer $token")
-                    chain.proceed(newRequest.build())
-                } catch (e: IOException) {
-                    // Handle network errors
-                    throw NoConnectivityException()
-                }
-            }
-            .build()
-    }
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(chuckerInterceptor)
+        .authenticator(authAuthenticator)
+        .addNetworkInterceptor { chain ->
+            val token = tokenRepository.getAccessToken() ?: ""
+            val newRequest = chain.request().newBuilder()
+            newRequest.header("Authorization", "Bearer $token")
+            chain.proceed(newRequest.build())
+        }
+        .build()
 
     @[Provides Singleton]
     fun provideBaseRetrofit(okHttpClient: OkHttpClient): Retrofit {
@@ -82,18 +74,4 @@ object NetworkModule {
             .build()
     }
 
-//    @Provides
-//    @Singleton
-//    @Named("ErrorHandlingRetrofit")
-//    fun provideErrorHandlingRetrofit(
-//        okHttpClient: OkHttpClient,
-//    ): Retrofit {
-//        return Retrofit.Builder()
-////            .baseUrl("http://109.123.241.109:46343/") // Real OTP
-//            .baseUrl("http://45.91.201.94:8000/") // Test OTP via webhook
-////            .baseUrl("https://ebd8-82-215-105-180.ngrok-free.app/")
-//            .client(okHttpClient)
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build()
-//    }
 }

@@ -17,3 +17,8 @@ object GlobalAuthEventBus {
 sealed class AuthEvent {
     object TokenRefreshFailed : AuthEvent()
 }
+
+var listener:(()->Unit)?=null
+fun logOut(block:()->Unit){
+    listener = block
+}

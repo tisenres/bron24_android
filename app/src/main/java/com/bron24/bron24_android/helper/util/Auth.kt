@@ -1,10 +1,16 @@
 package com.bron24.bron24_android.helper.util
 
+import android.util.Log
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.data.network.apiservices.AuthApi
+import com.bron24.bron24_android.data.network.dto.auth.AuthDataDto
+import com.bron24.bron24_android.data.network.dto.auth.AuthResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.RefreshTokenDto
+import com.bron24.bron24_android.data.network.dto.auth.UserDto
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
+import com.bron24.bron24_android.helper.util.presentation.listener
+import com.bron24.bron24_android.helper.util.presentation.logOut
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -23,24 +29,34 @@ class AuthAuthenticator @Inject constructor(
     }
 
     override fun authenticate(route: Route?, response: Response): Request? {
+        Log.d("AAA", "authenticate: Ishladi")
         val currentToken = runBlocking { tokenRepository.getAccessToken() }
         synchronized(this) {
             val updatedToken = runBlocking { tokenRepository.getAccessToken() }
             val token = if (currentToken != updatedToken) updatedToken else {
-                val newSessionResponse = runBlocking { authApi.updateToken(RefreshTokenDto(tokenRepository.getRefreshToken()?:"")) }
-                if (newSessionResponse.isSuccessful && newSessionResponse.body() != null) {
-                    newSessionResponse.body()!!
-                    newSessionResponse.body()?.let { body ->
-                        runBlocking {
-                            tokenRepository.saveTokens( accessToken = body.data?.accessToken?:"", refreshToken = body.data?.refreshToken?:"")
-                        }
-                        body.data?.accessToken
+                Log.d("AAA", "authenticate: runn")
+                Log.d("AAA", "authenticate: ${tokenRepository.getRefreshToken()}")
+                val newSessionResponse = runBlocking {
+                    try {
+                        authApi.updateToken(RefreshTokenDto(tokenRepository.getRefreshToken()?:""))
+                    }catch (e:Exception){
+                        AuthResponseDto(false,"", data = AuthDataDto(tokenRepository.getRefreshToken()?:"","",null),)
                     }
-                } else null
+                }
+                if(newSessionResponse.success){
+                    newSessionResponse.data?.let {
+                        runBlocking {
+                            Log.d("AAA", "authenticate: ${it.accessToken}")
+                            tokenRepository.saveTokens( accessToken =it.accessToken?:"", refreshToken = it.refreshToken?:"")
+                        }
+                        it.accessToken
+                    }
+                }else null
+
             }
             if (token == null) {
                 runBlocking {
-                    //appRepository.logOut()
+                    listener?.invoke()
                 }
             }
             return if (token != null) response.request.newBuilder()

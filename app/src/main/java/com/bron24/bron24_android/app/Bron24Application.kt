@@ -38,6 +38,10 @@ class Bron24Application : Application() {
 //        Timber.plant(Timber.DebugTree())
         Timber.plant(PlutoTimberTree())
     }
+    private var listener:(()->Unit)?=null
+    fun logOut(block:()->Unit){
+        listener = block
+    }
 
     private fun installPluto() {
         Pluto.Installer(this)

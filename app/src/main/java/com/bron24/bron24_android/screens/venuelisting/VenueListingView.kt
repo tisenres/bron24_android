@@ -57,10 +57,6 @@ fun VenueListingView(
     clickSort:()->Unit,
     listenerItem:(Venue)->Unit,
 ) {
-    var loading by remember {
-        mutableStateOf(isLoading)
-    }
-
     var sortExpanded by remember { mutableStateOf(false) }
 
     val pullRefreshState = rememberPullToRefreshState()
@@ -72,12 +68,12 @@ fun VenueListingView(
     PullToRefreshBox(
         state = pullRefreshState,
         onRefresh = { refreshVenue.invoke() },
-        isRefreshing = loading,
+        isRefreshing = isLoading,
         modifier = modifier,
         indicator = {
             PullToRefreshDefaults.Indicator(
                 state = pullRefreshState,
-                isRefreshing = loading,
+                isRefreshing = isLoading,
                 color = Color(0xFF32B768),
                 containerColor = Color.White,
                 modifier = Modifier.align(Alignment.TopCenter)
@@ -112,11 +108,13 @@ fun VenueListingView(
                         ),
                         modifier = Modifier.weight(1f)
                     )
-                    SortRow(onSortClick = { sortExpanded = true })
+                    SortRow(
+                        onSortClick = { sortExpanded = true }
+                    )
                 }
             }
 
-            if (loading) {
+            if (isLoading) {
                 // Display shimmer placeholders while loading
                 items(5) { // Arbitrary number of placeholders
                     VenueCard(venue = null, isLoading = true,)
@@ -124,8 +122,7 @@ fun VenueListingView(
                 }
             } else {
                 items(venues) { venue ->
-                    VenueCard(venue = venue, isLoading = false)
-                    Spacer(modifier = Modifier.height(20.dp))
+
                 }
             }
         }
@@ -174,16 +171,16 @@ fun VenueListingView(
 }
 
 @Composable
-fun SortRow(onSortClick: () -> Unit) {
+fun SortRow(
+    onSortClick: () -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
 
     Row(
         modifier = Modifier
             .selectable(
                 selected = false,
-                onClick = {
-                    // TODO
-                },
+                onClick = onSortClick,
                 interactionSource = interactionSource,
                 indication = ripple()
             ),

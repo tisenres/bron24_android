@@ -30,9 +30,7 @@ class HomePageVM @Inject constructor(
     }
 
     override fun initData(): Job =intent {
-            getVenuesUseCase.invoke().onStart {
-                reduce { state.copy(isLoading = true) }
-            }.onEach {
+            getVenuesUseCase.invoke().onEach {
                 it.onSuccess {
                     state.copy(isLoading = false, itemData = it)
                 }.onFailure {

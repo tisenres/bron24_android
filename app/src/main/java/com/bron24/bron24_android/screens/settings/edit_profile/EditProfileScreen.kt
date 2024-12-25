@@ -197,11 +197,11 @@ fun EditProfileScreenContent() {
         )
         Button(
             onClick = {},
-
+            shape = RoundedCornerShape(8.dp),
             modifier = Modifier
                 .padding(vertical = 32.dp)
-                .clip(RoundedCornerShape(8.dp))
                 .border(width = 2.dp, color = Color.Red, shape = RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(8.dp))
                 .align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
         ) {

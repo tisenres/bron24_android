@@ -11,6 +11,6 @@ interface AuthRepository {
     suspend fun verifyOTP(otpRequest: OTPRequest): OTPCodeResponse
     suspend fun signUpUser(user: User): AuthResponse
     suspend fun loginUser(user: User): AuthResponse
-//    suspend fun refreshAndSaveTokens(refreshToken: String): Boolean
+    //suspend fun refreshAndSaveTokens(refreshToken: String): Boolean
     fun handleRefreshFailure()
 }

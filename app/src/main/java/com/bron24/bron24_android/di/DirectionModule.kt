@@ -16,6 +16,8 @@ import com.bron24.bron24_android.screens.on_board.OnBoardPagerContract
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerDirection
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenContract
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenDirection
+import com.bron24.bron24_android.screens.settings.language.LanguageContract
+import com.bron24.bron24_android.screens.settings.language.LanguageDirection
 import com.bron24.bron24_android.screens.splash.SplashScreenContract
 import com.bron24.bron24_android.screens.splash.SplashScreenDirection
 import dagger.Binds
@@ -29,7 +31,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 interface DirectionModule {
 
     @[Binds ViewModelScoped]
-    fun bindsLanguageDirection(impl: LanguageSelDirection): LanguageSelContract.Direction
+    fun bindsLanguageSelDirection(impl: LanguageSelDirection): LanguageSelContract.Direction
 
     @[Binds ViewModelScoped]
     fun bindsOnBoardDirection(impl: OnBoardPagerDirection): OnBoardPagerContract.Direction
@@ -50,9 +52,12 @@ interface DirectionModule {
     fun bindsFilterDirection(impl: FilterScreenDirection): FilterScreenContract.Direction
 
     @[Binds ViewModelScoped]
-    fun bindsRegisterDirection(impl: RegisterScreenDirection):RegisterScreenContract.Direction
+    fun bindsRegisterDirection(impl: RegisterScreenDirection): RegisterScreenContract.Direction
 
     @[Binds ViewModelScoped]
     fun bindsProfilePageDirection(impl: ProfilePageDirection): ProfilePageContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsLanguageDirection(impl: LanguageDirection): LanguageContract.Direction
 
 }

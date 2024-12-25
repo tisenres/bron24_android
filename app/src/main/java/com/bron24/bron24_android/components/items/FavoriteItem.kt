@@ -63,13 +63,13 @@ fun FavoriteItem() {
                 .padding(4.dp)
                 .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
-            androidx.compose.material3.Text(
+            Text(
                 text = "Bunyodkor stadioni", color = FavoriteItemStadiumName, fontFamily = FontFamily(Font(R.font.gilroy_extra_bold))
             )
             Spacer(modifier = Modifier.weight(1f))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                androidx.compose.material3.Icon(painter = painterResource(R.drawable.ic_star), contentDescription = "")
-                androidx.compose.material3.Text(text = "4.0", fontFamily = FontFamily(Font(R.font.gilroy_regular)))
+                Icon(painter = painterResource(R.drawable.ic_star), contentDescription = "")
+                Text(text = "4.0", fontFamily = FontFamily(Font(R.font.gilroy_regular)))
             }
         }
         Row(
@@ -77,11 +77,11 @@ fun FavoriteItem() {
                 .padding(4.dp)
                 .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
-            androidx.compose.material3.Text(
+            Text(
                 text = "Mustaqillik maydoni, Toshkent, Uzbekistan", color = FavoriteItemAddress, fontFamily = FontFamily(Font(R.font.gilroy_regular))
             )
             Spacer(modifier = Modifier.weight(1f))
-            androidx.compose.material3.Text(text = "3 km", color = FavoriteItemAddress, fontFamily = FontFamily(Font(R.font.gilroy_regular)))
+            Text(text = "3 km", color = FavoriteItemAddress, fontFamily = FontFamily(Font(R.font.gilroy_regular)))
         }
         Box(
             modifier = Modifier
@@ -91,11 +91,11 @@ fun FavoriteItem() {
         )
         Row(modifier = Modifier.padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(painter = painterResource(R.drawable.ic_dollar), contentDescription = "")
-            androidx.compose.material3.Text(
+            Text(
                 text = "Price 100 sum/hour", fontFamily = FontFamily(Font(R.font.gilroy_bold)), color = FavoriteItemStadiumName
             )
             Spacer(modifier = Modifier.weight(1f))
-            androidx.compose.material3.Text(text = "Available: ", color = FavoriteItemStadiumName, fontFamily = FontFamily(Font(R.font.gilroy_bold)))
+            Text(text = "Available: ", color = FavoriteItemStadiumName, fontFamily = FontFamily(Font(R.font.gilroy_bold)))
             Text(text = "14 slots", color = Green, fontFamily = FontFamily(Font(R.font.gilroy_bold)))
         }
     }

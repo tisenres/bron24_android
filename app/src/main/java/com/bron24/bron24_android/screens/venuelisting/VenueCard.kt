@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -47,7 +48,10 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.valentinilk.shimmer.shimmer
 
 @Composable
-fun VenueCard(venue: Venue? = null, isLoading: Boolean) {
+fun VenueCard(
+    venue: Venue? = null,
+    isLoading: Boolean
+) {
 //    val navigateToDetails: (() -> Unit)? = remember(venue) {
 ////        venue?.venueId?.let { id ->
 ////            { navController.navigate(Screen.VenueDetails.route.replace("{venueId}", id.toString())) }
@@ -385,38 +389,33 @@ fun VenueFooter(venue: Venue) {
 @Composable
 @Preview(showBackground = true)
 fun PreviewVenueCard() {
-//    val venue = Venue(
-//        venueId = 5,
-//        venueName = "Test name LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG",
-//        pricePerHour = "800000",
-//        address = Address(
-//            id = 6,
-//            addressName = "Bunyodkor  LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONG LONkochasi",
-//            district = "Chilonzor",
-//            closestMetroStation = "Novza",
-//        ),
-//        imageUrl = null,
-//        distance = 0.0
-//    )
-    Row(
-        verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.spacedBy(2.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_dollar),
-            contentDescription = "Price Icon",
-            modifier = Modifier.size(14.dp).align(Alignment.CenterVertically)
-        )
-        Text(
-            text = "234545" + stringResource(id = R.string.som_per_hour),
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight(800),
-                fontSize = 14.sp,
-                color = Color(0xFF3C2E56),
-                lineHeight = 16.sp,
-            ),
-            modifier = Modifier.align(Alignment.Bottom)
-        )
+    Column(modifier = Modifier.fillMaxSize()) {
+        LazyColumn {
+            items(10){
+                VenueCard(isLoading = false, venue = null)
+            }
+        }
     }
+//    Row(
+//
+//        verticalAlignment = Alignment.Bottom,
+//        horizontalArrangement = Arrangement.spacedBy(2.dp)
+//    ) {
+//        Image(
+//            painter = painterResource(id = R.drawable.ic_dollar),
+//            contentDescription = "Price Icon",
+//            modifier = Modifier.size(14.dp).align(Alignment.CenterVertically)
+//        )
+//        Text(
+//            text = "234545" + stringResource(id = R.string.som_per_hour),
+//            style = TextStyle(
+//                fontFamily = gilroyFontFamily,
+//                fontWeight = FontWeight(800),
+//                fontSize = 14.sp,
+//                color = Color(0xFF3C2E56),
+//                lineHeight = 16.sp,
+//            ),
+//            modifier = Modifier.align(Alignment.Bottom)
+//        )
+//    }
 }

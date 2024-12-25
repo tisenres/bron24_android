@@ -25,5 +25,5 @@ interface AuthApi {
     suspend fun signupUser(@Body user: SignupUserDto): AuthResponseDto
 
     @POST("api/v1/auth/token/refresh/")
-    suspend fun updateToken(@Body refreshToken: RefreshTokenDto): Response<AuthResponseDto>
+    suspend fun updateToken(@Body refreshToken: RefreshTokenDto): AuthResponseDto
 }
