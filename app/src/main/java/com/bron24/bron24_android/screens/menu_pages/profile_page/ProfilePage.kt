@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -65,6 +64,8 @@ import com.bron24.bron24_android.components.items.CustomAppBar
 import com.bron24.bron24_android.components.items.ItemEditProfile
 import com.bron24.bron24_android.components.items.ItemProfileTask
 import com.bron24.bron24_android.screens.main.theme.Black
+import com.bron24.bron24_android.screens.main.theme.Error
+import com.bron24.bron24_android.screens.main.theme.FavoriteItemDivider
 import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -129,8 +130,8 @@ fun ProfilePageContent(
 //    }
   Column(
     modifier = Modifier
-        .fillMaxSize()
-        .background(color = White)
+      .fillMaxSize()
+      .background(color = White)
   ) {
     CustomAppBar(title = "Profile", actions = {
       ItemEditProfile {
@@ -143,13 +144,13 @@ fun ProfilePageContent(
 
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .verticalScroll(rememberScrollState())
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())
     ) {
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(280.dp)
+          .fillMaxWidth()
+          .height(280.dp)
       ) {
         Image(
           painter = painterResource(id = R.drawable.avatar),
@@ -159,28 +160,29 @@ fun ProfilePageContent(
         )
         Column(
           modifier = Modifier
-              .padding(bottom = 32.dp)
-              .align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally
+            .padding(bottom = 32.dp)
+            .align(Alignment.Center),
+          horizontalAlignment = Alignment.CenterHorizontally
         ) {
           Box(
             modifier = Modifier
-                .padding(12.dp)
-                .size(110.dp)
-                .clip(shape = CircleShape)
-                .border(
-                    brush = Brush.linearGradient(
-                        start = Offset(0f, 0f),
-                        colors = listOf(White, Color(0xff2D6544)),
-                        end = Offset(0f, Float.POSITIVE_INFINITY)
-                    ), shape = CircleShape, width = 5.dp
-                )
+              .padding(12.dp)
+              .size(110.dp)
+              .clip(shape = CircleShape)
+              .border(
+                brush = Brush.linearGradient(
+                  start = Offset(0f, 0f),
+                  colors = listOf(White, Color(0xff2D6544)),
+                  end = Offset(0f, Float.POSITIVE_INFINITY)
+                ), shape = CircleShape, width = 5.dp
+              )
           ) {
             Image(
               painter = painterResource(id = R.drawable.ball_pic),
               contentDescription = "img",
               modifier = Modifier
-                  .size(110.dp)
-                  .align(Alignment.Center),
+                .size(110.dp)
+                .align(Alignment.Center),
               contentScale = ContentScale.Crop
             )
           }
@@ -245,8 +247,8 @@ fun ProfilePageContent(
         fontWeight = FontWeight.Bold,
         fontFamily = gilroyFontFamily,
         modifier = Modifier
-            .padding(horizontal = 20.dp)
-            .padding(top = 16.dp)
+          .padding(horizontal = 20.dp)
+          .padding(top = 16.dp)
       )
 
       ItemProfileTask(text = "Help", startIcons = {
@@ -283,16 +285,17 @@ fun ProfilePageContent(
         }
       }
       Row(modifier = Modifier
-          .padding(vertical = 36.dp)
-          .clip(RoundedCornerShape(8.dp))
-          .clickable(
-              interactionSource = MutableInteractionSource(), indication = null
-          ) {
-              showDialog = true
-          }
-          .border(width = 2.dp, color = Color.Red, shape = RoundedCornerShape(8.dp))
-          .padding(horizontal = 40.dp, vertical = 10.dp)
-          .align(Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
+        .padding(vertical = 36.dp)
+        .clip(RoundedCornerShape(8.dp))
+        .clickable(
+          interactionSource = MutableInteractionSource(), indication = null
+        ) {
+          showDialog = true
+        }
+        .border(width = 2.dp, color = Color.Red, shape = RoundedCornerShape(8.dp))
+        .padding(horizontal = 40.dp, vertical = 10.dp)
+        .align(Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically) {
         Icon(
           painter = painterResource(id = R.drawable.ic_logout), contentDescription = "icon", tint = Color.Red
         )
@@ -326,21 +329,18 @@ fun ProfilePageContent(
         }
         Row(verticalAlignment = Alignment.CenterVertically,
           modifier = Modifier
-              .padding(horizontal = 16.dp, vertical = 10.dp)
-              .clip(shape = RoundedCornerShape(10.dp))
-              .clickable {}
-              .border(width = 1.dp, color = GrayLighter, shape = RoundedCornerShape(10.dp))
-              .padding(10.dp)) {
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .clip(shape = RoundedCornerShape(10.dp))
+            .clickable {}
+            .border(width = 1.dp, color = GrayLighter, shape = RoundedCornerShape(10.dp))
+            .padding(10.dp)) {
           Icon(
             painter = painterResource(R.drawable.icon_telegram),
             contentDescription = "",
             modifier = Modifier.padding(2.dp)
           )
           Text(
-            text = "Telegram",
-            color = Black,
-            fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-            fontSize = 14.sp
+            text = "Telegram", color = Black, fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)), fontSize = 14.sp
           )
           Spacer(modifier = Modifier.weight(1f))
           Icon(
@@ -351,15 +351,13 @@ fun ProfilePageContent(
         }
         Row(verticalAlignment = Alignment.CenterVertically,
           modifier = Modifier
-              .padding(horizontal = 16.dp, vertical = 10.dp)
-              .clip(shape = RoundedCornerShape(10.dp))
-              .clickable {}
-              .border(width = 1.dp, color = GrayLighter, shape = RoundedCornerShape(10.dp))
-              .padding(10.dp)) {
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .clip(shape = RoundedCornerShape(10.dp))
+            .clickable {}
+            .border(width = 1.dp, color = GrayLighter, shape = RoundedCornerShape(10.dp))
+            .padding(10.dp)) {
           Icon(
-            painter = painterResource(R.drawable.ic_phone),
-            contentDescription = "",
-            modifier = Modifier.padding(2.dp)
+            painter = painterResource(R.drawable.ic_phone), contentDescription = "", modifier = Modifier.padding(2.dp)
           )
           Text(
             text = "Contact Number",
@@ -389,36 +387,55 @@ fun CustomDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
   Dialog(onDismissRequest = onDismiss) {
     Box(
       modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .padding(16.dp)
-          .background(Color.White, shape = RoundedCornerShape(10.dp))
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(16.dp)
+        .background(Color.White, shape = RoundedCornerShape(10.dp))
     ) {
       Column(
         modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+          .padding(16.dp)
+          .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
       ) {
         Text(
           text = "Are you sure you want to\nlogout?",
           textAlign = TextAlign.Center,
-          fontFamily = FontFamily(Font(R.font.gilroy_semi_bold))
+          fontSize = 16.sp,
+          color = Black,
+          fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+          modifier = Modifier.padding(vertical = 10.dp)
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-          text = "Это пример кастомного диалога в Compose.", textAlign = TextAlign.Center
+        Box(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .height(1.dp)
+            .background(color = FavoriteItemDivider)
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(
-          horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()
-        ) {
-          TextButton(onClick = onDismiss) {
-            Text(text = "Отмена")
-          }
-          Spacer(modifier = Modifier.width(8.dp))
-          TextButton(onClick = onConfirm) {
-            Text(text = "OK")
-          }
+        TextButton(onClick = onDismiss) {
+          Text(
+            text = "Log out",
+            color = Error,
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+            modifier = Modifier.padding(10.dp)
+          )
+        }
+        Box(
+          modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .height(1.dp)
+            .background(color = FavoriteItemDivider)
+        )
+        TextButton(onClick = onDismiss) {
+          Text(
+            text = "Cansel",
+            color = Black,
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+            modifier = Modifier.padding(10.dp)
+          )
         }
       }
     }
