@@ -5,6 +5,7 @@ import com.bron24.bron24_android.data.network.dto.venue.VenueCoordinatesDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDetailsResponseDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueResponseDto
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -18,7 +19,8 @@ interface VenueApiService {
         @Query("min_price") minPrice: Int? = null,
         @Query("max_price") maxPrice: Int? = null,
         @Query("infrastructure") infrastructure: Boolean? = null,
-        @Query("district") district: String? = null
+        @Query("district") district: String? = null,
+        @Header("Accept-Language") lanCode:String?=null
     ): VenueResponseDto?
 
     @GET("api/v1/venues/coordinates/")

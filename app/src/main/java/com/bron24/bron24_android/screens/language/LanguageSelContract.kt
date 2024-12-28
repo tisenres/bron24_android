@@ -11,8 +11,8 @@ interface LanguageSelContract {
     }
 
     data class UISate(
-        val langCode:String,
-        val availableLanguages : List<Language> = emptyList(),
+        val selectedLanguage:Language = Language("uz","O`zbek") ,
+        val languages : List<Language> = emptyList(),
         val reComposition:Boolean= false
     )
 

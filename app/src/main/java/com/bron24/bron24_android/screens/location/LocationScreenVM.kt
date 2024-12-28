@@ -2,41 +2,49 @@ package com.bron24.bron24_android.screens.location
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
 class LocationScreenVM @Inject constructor(
-): ViewModel() {
+    private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
+    private val direction: LocationScreenContract.Direction
+): ViewModel(),LocationScreenContract.ViewModel {
 
-    private val _locationPermissionState = MutableStateFlow(LocationPermissionState.DENIED)
-
-    fun checkLocationPermission() {
-        viewModelScope.launch {
-//            model.checkLocationPermission().collect { permissionState ->
-//                _locationPermissionState.value = permissionState
-//            }
+    override fun onDispatchers(intent: LocationScreenContract.Intent) = intent {
+        when(intent){
+            LocationScreenContract.Intent.ClickAllow -> {
+                direction.moveToNext()
+            }
+            LocationScreenContract.Intent.ClickDeny -> {
+                direction.moveToNext()
+            }
         }
     }
 
-    fun setLocationPermissionGranted(granted: Boolean) {
-        _locationPermissionState.value = if (granted) {
-            LocationPermissionState.GRANTED
-        } else {
-            LocationPermissionState.DENIED
-        }
+    override fun checkLocation() = intent {
+        checkLocationPermissionUseCase.invoke().onEach {
+            when(it){
+                LocationPermissionState.GRANTED -> {
+                    direction.moveToNext()
+                }
+                LocationPermissionState.DENIED -> {
+                    direction.moveToNext()
+//                    postSideEffect()
+                }
+            }
+        }.launchIn(viewModelScope)
     }
+
+    override val container = container<LocationScreenContract.UIState, LocationScreenContract.SideEffect>(LocationScreenContract.UIState())
 }
-
-//class LocationModel @Inject constructor(
-//    private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
-//) {
-//    fun checkLocationPermission(): Flow<LocationPermissionState> {
-//        return checkLocationPermissionUseCase.execute()
-//    }
-//}

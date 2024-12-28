@@ -19,7 +19,7 @@ class RegisterScreenVM @Inject constructor(
     private val authenticateUC: AuthenticateUserUseCase,
     private val direction: RegisterScreenContract.Direction
 ) : ViewModel(), RegisterScreenContract.ViewModel {
-    override fun onDispatchers(intent: RegisterScreenContract.Intent): Job = intent {
+    override fun onDispatchers(intent: RegisterScreenContract.Intent) = intent {
         when (intent) {
             RegisterScreenContract.Intent.Back -> direction.back()
             is RegisterScreenContract.Intent.ClickRegister -> {

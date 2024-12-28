@@ -28,10 +28,9 @@ class VenueRepositoryImpl @Inject constructor(
         district: String?
     ): List<Venue> = withContext(Dispatchers.IO) {
         try {
-            Timber.tag(TAG).d("Start fetching venues")
             apiService.getVenues(
                 latitude, longitude, sort, availableTime,
-                minPrice, maxPrice, infrastructure, district
+                minPrice, maxPrice, infrastructure, district,lanCode = "en"
             )?.data?.map { it.toDomainModel() } ?: emptyList()
         } catch (e: Exception) {
             emptyList()

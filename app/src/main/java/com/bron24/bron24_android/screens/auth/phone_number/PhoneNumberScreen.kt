@@ -68,8 +68,6 @@ import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseSta
 import com.bron24.bron24_android.helper.extension.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
-import com.bron24.bron24_android.screens.auth.AuthState
-import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect

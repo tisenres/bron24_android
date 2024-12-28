@@ -41,8 +41,6 @@ class LocationRepositoryImpl @Inject constructor(
             .addOnFailureListener { e ->
                 close(e)
             }
-        awaitClose {
-            // No-op, as lastLocation is a one-time request and not a continuous update.
-        }
+        awaitClose()
     }
 }

@@ -5,8 +5,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class LocalStorage @Inject constructor(@ApplicationContext context: Context) : SharedPreferencesHelper(context) {
-    var isFirstRun: Boolean by booleans(true)
-    var isSignIn: Boolean by booleans(false)
 
     var openMenu :Boolean by booleans(false)
     var openOnBoard:Boolean by booleans(false)
@@ -17,6 +15,10 @@ class LocalStorage @Inject constructor(@ApplicationContext context: Context) : S
     var token: String by strings("")
     var refreshToken: String by strings("")
     var accessToken: String by strings("")
+
+    var firstName:String by strings("")
+    var lastName:String by strings("")
+    var phoneNumber by strings("")
 
     var inst: Int by ints()
     var parentId: Int by ints()

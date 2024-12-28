@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.components.items
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -35,7 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.Venue
+import com.bron24.bron24_android.helper.util.calculateDistance
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemAddress
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemBackGround
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemDivider
@@ -45,6 +48,7 @@ import com.bron24.bron24_android.screens.main.theme.Success
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.bgSuccess
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import org.w3c.dom.Text
 
 @Composable
 fun VenueItem(
@@ -69,17 +73,18 @@ fun VenueItem(
                 .height(160.dp)
         ) {
             Image(
-                painter = rememberAsyncImagePainter(model = venue.previewImage?:"", onLoading = {
-                    isLoading = true
-                }, onSuccess = {
-                    isLoading = false
-                }),
+                painter = rememberAsyncImagePainter(model = venue.previewImage ?: "",
+                    onLoading = {
+                        isLoading = true
+                    }, onSuccess = {
+                        isLoading = false
+                    }),
                 contentDescription = "",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-            if(isLoading){
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            if (isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(30.dp),
                         color = Success,
@@ -88,9 +93,14 @@ fun VenueItem(
                     )
                 }
             }
-            IconButton(onClick = { isSelected = !isSelected }, modifier = Modifier.align(Alignment.TopEnd)) {
-                Icon(painter = painterResource(R.drawable.baseline_favorite_24_red),
-                    contentDescription = "", tint = if(isSelected) Red else White)
+            IconButton(
+                onClick = { isSelected = !isSelected },
+                modifier = Modifier.align(Alignment.TopEnd)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.baseline_favorite_24_red),
+                    contentDescription = "", tint = if (isSelected) Red else White
+                )
             }
         }
         Row(
@@ -99,7 +109,7 @@ fun VenueItem(
                 .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Bunyodkor stadioni",
+                text = venue.venueName,
                 color = FavoriteItemStadiumName,
                 fontFamily = gilroyFontFamily,
                 fontSize = 13.sp,
@@ -117,13 +127,18 @@ fun VenueItem(
                 .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Mustaqillik maydoni, Toshkent, Uzbekistan",
+                text = venue.address.addressName,
                 color = FavoriteItemAddress, fontFamily = gilroyFontFamily,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = "3 km", color = FavoriteItemAddress, fontFamily = FontFamily(Font(R.font.gilroy_regular)))
+            Log.d("AAA", "VenueItem:${venue.distance}")
+            Text(
+                text = String.format("%.1f km",venue.distance),
+                color = FavoriteItemAddress,
+                fontFamily = FontFamily(Font(R.font.gilroy_regular))
+            )
         }
         Box(
             modifier = Modifier
@@ -142,7 +157,7 @@ fun VenueItem(
                 tint = Success
             )
             Text(
-                text = "Price 100 sum/hour",
+                text = "Price ${venue.pricePerHour} sum/hour",
                 fontFamily = FontFamily(Font(R.font.gilroy_bold)),
                 color = FavoriteItemStadiumName
             )
@@ -151,7 +166,11 @@ fun VenueItem(
                 text = "Available: ", color = FavoriteItemStadiumName,
                 fontFamily = FontFamily(Font(R.font.gilroy_bold))
             )
-            Text(text = "14 slots", color = Green, fontFamily = FontFamily(Font(R.font.gilroy_bold)))
+            Text(
+                text = "14 slots",
+                color = Green,
+                fontFamily = FontFamily(Font(R.font.gilroy_bold))
+            )
         }
     }
 }

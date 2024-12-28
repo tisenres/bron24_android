@@ -63,6 +63,8 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.CustomAppBar
 import com.bron24.bron24_android.components.items.ItemEditProfile
 import com.bron24.bron24_android.components.items.ItemProfileTask
+import com.bron24.bron24_android.domain.entity.user.User
+import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.Error
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemDivider
@@ -75,369 +77,387 @@ import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 
 object ProfilePage : Tab {
-  private fun readResolve(): Any = ProfilePage
-  override val options: TabOptions
-    @Composable get() {
-      val icon = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_person))
-      return TabOptions(
-        index = 5u, title = "Profile", icon = icon
-      )
-    }
+    private fun readResolve(): Any = ProfilePage
+    override val options: TabOptions
+        @Composable get() {
+            val icon =
+                rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_person))
+            return TabOptions(
+                index = 5u, title = "Profile", icon = icon
+            )
+        }
 
-  @Composable
-  override fun Content() {
-    val viewModel: ProfilePageContract.ViewModel = getViewModel<ProfilePageVM>()
-    remember {
-      viewModel.initData()
+    @Composable
+    override fun Content() {
+        val viewModel: ProfilePageContract.ViewModel = getViewModel<ProfilePageVM>()
+        remember {
+            viewModel.initData()
+        }
+        val state = viewModel.collectAsState()
+        ProfilePageContent(state = state, intent = viewModel::onDispatchers)
     }
-    val state = viewModel.collectAsState()
-    ProfilePageContent(state = state, intent = viewModel::onDispatchers)
-  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun ProfilePageContent(
-  state: State<ProfilePageContract.UISate>, intent: (ProfilePageContract.Intent) -> Unit
+    state: State<ProfilePageContract.UISate>,
+    intent: (ProfilePageContract.Intent) -> Unit
 ) {
-  var isClickable by remember { mutableStateOf(true) }
-  var showDialog by remember { mutableStateOf(false) }
-  var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-  val skipPartiallyExpanded by rememberSaveable { mutableStateOf(false) }
-  val coroutineScope = rememberCoroutineScope()
-  val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
-  LaunchedEffect(openBottomSheet) {
-    if (openBottomSheet) {
-      coroutineScope.launch {
-        bottomSheetState.show()
-      }
-    } else {
-      coroutineScope.launch {
-        bottomSheetState.hide()
-      }
-    }
-  }
-  LaunchedEffect(isClickable) {
-    delay(300)
-    isClickable = true
-  }
-//    viewModel.initData()
-//    val context = LocalContext.current
-//    var state = viewModel.collectAsState()
-//    viewModel.collectSideEffect {
-//        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-//    }
-  Column(
-    modifier = Modifier
-      .fillMaxSize()
-      .background(color = White)
-  ) {
-    CustomAppBar(title = "Profile", actions = {
-      ItemEditProfile {
-        if (isClickable) {
-          intent(ProfilePageContract.Intent.OpenEdit)
-          isClickable = false
+    var isClickable by remember { mutableStateOf(true) }
+    var showDialog by remember { mutableStateOf(false) }
+    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val skipPartiallyExpanded by rememberSaveable { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val user:User= state.value.user?:User("","","")
+    val bottomSheetState =
+        rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+    LaunchedEffect(openBottomSheet) {
+        if (openBottomSheet) {
+            coroutineScope.launch {
+                bottomSheetState.show()
+            }
+        } else {
+            coroutineScope.launch {
+                bottomSheetState.hide()
+            }
         }
-      }
-    }) {}
-
+    }
+    LaunchedEffect(isClickable) {
+        delay(300)
+        isClickable = true
+    }
     Column(
-      modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())
-    ) {
-      Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .height(280.dp)
-      ) {
-        Image(
-          painter = painterResource(id = R.drawable.avatar),
-          contentDescription = "icon",
-          modifier = Modifier.align(Alignment.BottomStart),
-          contentScale = ContentScale.Crop,
-        )
+            .fillMaxSize()
+            .background(color = White)
+    ) {
+        CustomAppBar(title = "Profile", actions = {
+            ItemEditProfile {
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenEdit)
+                    isClickable = false
+                }
+            }
+        }) {}
+
         Column(
-          modifier = Modifier
-            .padding(bottom = 32.dp)
-            .align(Alignment.Center),
-          horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-          Box(
             modifier = Modifier
-              .padding(12.dp)
-              .size(110.dp)
-              .clip(shape = CircleShape)
-              .border(
-                brush = Brush.linearGradient(
-                  start = Offset(0f, 0f),
-                  colors = listOf(White, Color(0xff2D6544)),
-                  end = Offset(0f, Float.POSITIVE_INFINITY)
-                ), shape = CircleShape, width = 5.dp
-              )
-          ) {
-            Image(
-              painter = painterResource(id = R.drawable.ball_pic),
-              contentDescription = "img",
-              modifier = Modifier
-                .size(110.dp)
-                .align(Alignment.Center),
-              contentScale = ContentScale.Crop
-            )
-          }
-          Text(
-            text = "",
-            modifier = Modifier.padding(bottom = 60.dp),
-            color = Black,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
-          )
-        }
-      }
-      Text(
-        text = "Profile",
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        fontFamily = gilroyFontFamily,
-        modifier = Modifier.padding(horizontal = 20.dp)
-
-      )
-      ItemProfileTask(text = "", startIcons = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_profile),
-          contentDescription = "icon",
-          modifier = Modifier.size(20.dp)
-        )
-      }) {}
-      ItemProfileTask(text = "", startIcons = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_phone),
-          contentDescription = "icon",
-          modifier = Modifier.size(20.dp)
-        )
-      }) {}
-      ItemProfileTask(text = "Change Language", startIcons = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_language),
-          contentDescription = "icon",
-          modifier = Modifier.size(20.dp)
-        )
-      }) {
-        if (isClickable) {
-          intent(ProfilePageContract.Intent.OpenChangeLanguage)
-          isClickable = false
-        }
-      }
-      ItemProfileTask(text = "Favorites", startIcons = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_favorite),
-          contentDescription = "icon",
-          modifier = Modifier.size(20.dp)
-        )
-      }) {
-        if (isClickable) {
-          intent(ProfilePageContract.Intent.OpenFavorites)
-          isClickable = false
-        }
-      }
-      Text(
-        text = "Support",
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        fontFamily = gilroyFontFamily,
-        modifier = Modifier
-          .padding(horizontal = 20.dp)
-          .padding(top = 16.dp)
-      )
-
-      ItemProfileTask(text = "Help", startIcons = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_help),
-          contentDescription = "icon",
-          modifier = Modifier.size(20.dp)
-        )
-      }) {
-        openBottomSheet = true
-      }
-      ItemProfileTask(text = "About Us", startIcons = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_info),
-          contentDescription = "icon",
-          modifier = Modifier.size(22.dp)
-        )
-      }) {
-        if (isClickable) {
-          intent(ProfilePageContract.Intent.OpenAboutUs)
-          isClickable = false
-        }
-      }
-      ItemProfileTask(text = "Add Venue", startIcons = {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_add),
-          contentDescription = "icon",
-          modifier = Modifier.size(20.dp)
-        )
-      }) {
-        if (isClickable) {
-          intent(ProfilePageContract.Intent.OpenAddVenue)
-          isClickable = false
-        }
-      }
-      Row(modifier = Modifier
-        .padding(vertical = 36.dp)
-        .clip(RoundedCornerShape(8.dp))
-        .clickable(
-          interactionSource = MutableInteractionSource(), indication = null
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
-          showDialog = true
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(280.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.avatar),
+                    contentDescription = "icon",
+                    modifier = Modifier.align(Alignment.BottomStart),
+                    contentScale = ContentScale.Crop,
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                        .align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(12.dp)
+                            .size(110.dp)
+                            .clip(shape = CircleShape)
+                            .border(
+                                brush = Brush.linearGradient(
+                                    start = Offset(0f, 0f),
+                                    colors = listOf(White, Color(0xff2D6544)),
+                                    end = Offset(0f, Float.POSITIVE_INFINITY)
+                                ), shape = CircleShape, width = 5.dp
+                            )
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ball_pic),
+                            contentDescription = "img",
+                            modifier = Modifier
+                                .size(110.dp)
+                                .align(Alignment.Center),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                    Text(
+                        text = "${user.firstName} ${user.firstName}",
+                        modifier = Modifier.padding(bottom = 60.dp),
+                        color = Black,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+            Text(
+                text = "Profile",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = gilroyFontFamily,
+                modifier = Modifier.padding(horizontal = 20.dp)
+
+            )
+            ItemProfileTask(text = "${user.firstName} ${user.lastName}", startIcons = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_profile),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(20.dp)
+                )
+            }) {}
+            ItemProfileTask(text = user.phoneNumber, startIcons = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_phone),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(20.dp)
+                )
+            }) {}
+            ItemProfileTask(text = "Change Language", startIcons = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_language),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(20.dp)
+                )
+            }) {
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenChangeLanguage)
+                    isClickable = false
+                }
+            }
+            ItemProfileTask(text = "Favorites", startIcons = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_favorite),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(20.dp)
+                )
+            }) {
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenFavorites)
+                    isClickable = false
+                }
+            }
+            Text(
+                text = "Support",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = gilroyFontFamily,
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 16.dp)
+            )
+
+            ItemProfileTask(text = "Help", startIcons = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_help),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(20.dp)
+                )
+            }) {
+                openBottomSheet = true
+            }
+            ItemProfileTask(text = "About Us", startIcons = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_info),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(22.dp)
+                )
+            }) {
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenAboutUs)
+                    isClickable = false
+                }
+            }
+            ItemProfileTask(text = "Add Venue", startIcons = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_add),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(20.dp)
+                )
+            }) {
+                if (isClickable) {
+                    intent(ProfilePageContract.Intent.OpenAddVenue)
+                    isClickable = false
+                }
+            }
+            Row(modifier = Modifier
+                .padding(vertical = 36.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(
+                    interactionSource = MutableInteractionSource(), indication = null
+                ) {
+                    showDialog = true
+                }
+                .border(width = 2.dp, color = Color.Red, shape = RoundedCornerShape(8.dp))
+                .padding(horizontal = 40.dp, vertical = 10.dp)
+                .align(Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_logout),
+                    contentDescription = "icon",
+                    tint = Color.Red
+                )
+                Text(
+                    text = "Logout",
+                    fontSize = 14.sp,
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Red,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
         }
-        .border(width = 2.dp, color = Color.Red, shape = RoundedCornerShape(8.dp))
-        .padding(horizontal = 40.dp, vertical = 10.dp)
-        .align(Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-          painter = painterResource(id = R.drawable.ic_logout), contentDescription = "icon", tint = Color.Red
-        )
-        Text(
-          text = "Logout",
-          fontSize = 14.sp,
-          fontFamily = gilroyFontFamily,
-          fontWeight = FontWeight.Bold,
-          color = Color.Red,
-          modifier = Modifier.padding(start = 8.dp)
-        )
-      }
     }
-  }
-  if (openBottomSheet) {
-    ModalBottomSheet(
-      onDismissRequest = { openBottomSheet = false }, sheetState = bottomSheetState, containerColor = White
-    ) {
-      Column(
-        modifier = Modifier.fillMaxSize()
-      ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-          Text(
-            text = "Contact Us",
-            textAlign = TextAlign.Center,
-            color = Black,
-            fontSize = 16.sp,
-            fontFamily = FontFamily(Font(R.font.gilroy_bold)),
-            modifier = Modifier.padding(vertical = 4.dp),
-          )
+    if (openBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet = false },
+            sheetState = bottomSheetState,
+            containerColor = White
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Contact Us",
+                        textAlign = TextAlign.Center,
+                        color = Black,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.gilroy_bold)),
+                        modifier = Modifier.padding(vertical = 4.dp),
+                    )
+                }
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clickable {}
+                        .border(
+                            width = 1.dp,
+                            color = GrayLighter,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .padding(10.dp)) {
+                    Icon(
+                        painter = painterResource(R.drawable.icon_telegram),
+                        contentDescription = "",
+                        modifier = Modifier.padding(2.dp)
+                    )
+                    Text(
+                        text = "Telegram",
+                        color = Black,
+                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_up_right),
+                        contentDescription = "",
+                        modifier = Modifier.padding(2.dp)
+                    )
+                }
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .clickable {}
+                        .border(
+                            width = 1.dp,
+                            color = GrayLighter,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .padding(10.dp)) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_phone),
+                        contentDescription = "",
+                        modifier = Modifier.padding(2.dp)
+                    )
+                    Text(
+                        text = "Contact Number",
+                        color = Black,
+                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_up_right),
+                        contentDescription = "",
+                        modifier = Modifier.padding(2.dp)
+                    )
+                }
+            }
         }
-        Row(verticalAlignment = Alignment.CenterVertically,
-          modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-            .clip(shape = RoundedCornerShape(10.dp))
-            .clickable {}
-            .border(width = 1.dp, color = GrayLighter, shape = RoundedCornerShape(10.dp))
-            .padding(10.dp)) {
-          Icon(
-            painter = painterResource(R.drawable.icon_telegram),
-            contentDescription = "",
-            modifier = Modifier.padding(2.dp)
-          )
-          Text(
-            text = "Telegram", color = Black, fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)), fontSize = 14.sp
-          )
-          Spacer(modifier = Modifier.weight(1f))
-          Icon(
-            painter = painterResource(R.drawable.arrow_up_right),
-            contentDescription = "",
-            modifier = Modifier.padding(2.dp)
-          )
-        }
-        Row(verticalAlignment = Alignment.CenterVertically,
-          modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-            .clip(shape = RoundedCornerShape(10.dp))
-            .clickable {}
-            .border(width = 1.dp, color = GrayLighter, shape = RoundedCornerShape(10.dp))
-            .padding(10.dp)) {
-          Icon(
-            painter = painterResource(R.drawable.ic_phone), contentDescription = "", modifier = Modifier.padding(2.dp)
-          )
-          Text(
-            text = "Contact Number",
-            color = Black,
-            fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-            fontSize = 14.sp
-          )
-          Spacer(modifier = Modifier.weight(1f))
-          Icon(
-            painter = painterResource(R.drawable.arrow_up_right),
-            contentDescription = "",
-            modifier = Modifier.padding(2.dp)
-          )
-        }
-      }
     }
-  }
-  if (showDialog) {
-    CustomDialog(onDismiss = { showDialog = false }, onConfirm = { showDialog = false })
-  }
-  val systemUiController = rememberSystemUiController()
-  systemUiController.setStatusBarColor(Color.White, darkIcons = true)
+    if (showDialog) {
+        CustomDialog(onDismiss = { showDialog = false }, onConfirm = { showDialog = false })
+    }
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(Color.White, darkIcons = true)
 }
 
 @Composable
 fun CustomDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
-  Dialog(onDismissRequest = onDismiss) {
-    Box(
-      modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(16.dp)
-        .background(Color.White, shape = RoundedCornerShape(10.dp))
-    ) {
-      Column(
-        modifier = Modifier
-          .padding(16.dp)
-          .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        Text(
-          text = "Are you sure you want to\nlogout?",
-          textAlign = TextAlign.Center,
-          fontSize = 16.sp,
-          color = Black,
-          fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-          modifier = Modifier.padding(vertical = 10.dp)
-        )
+    Dialog(onDismissRequest = onDismiss) {
         Box(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-            .height(1.dp)
-            .background(color = FavoriteItemDivider)
-        )
-        TextButton(onClick = onDismiss) {
-          Text(
-            text = "Log out",
-            color = Error,
-            fontSize = 16.sp,
-            fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-            modifier = Modifier.padding(10.dp)
-          )
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp)
+                .background(Color.White, shape = RoundedCornerShape(10.dp))
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Are you sure you want to\nlogout?",
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    color = Black,
+                    fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .height(1.dp)
+                        .background(color = FavoriteItemDivider)
+                )
+                TextButton(onClick = onDismiss) {
+                    Text(
+                        text = "Log out",
+                        color = Error,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .height(1.dp)
+                        .background(color = FavoriteItemDivider)
+                )
+                TextButton(onClick = onDismiss) {
+                    Text(
+                        text = "Cansel",
+                        color = Black,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            }
         }
-        Box(
-          modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-            .height(1.dp)
-            .background(color = FavoriteItemDivider)
-        )
-        TextButton(onClick = onDismiss) {
-          Text(
-            text = "Cansel",
-            color = Black,
-            fontSize = 16.sp,
-            fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-            modifier = Modifier.padding(10.dp)
-          )
-        }
-      }
     }
-  }
 }

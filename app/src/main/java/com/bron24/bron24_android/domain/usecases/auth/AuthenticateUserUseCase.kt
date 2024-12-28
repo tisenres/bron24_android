@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.domain.usecases.auth
 
+import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.entity.auth.AuthResponse
 import com.bron24.bron24_android.domain.entity.enums.OnboardingScreen
 import com.bron24.bron24_android.domain.entity.user.User
@@ -16,7 +17,8 @@ import javax.inject.Inject
 class AuthenticateUserUseCase @Inject constructor(
     private val authRepository: AuthRepository,
     private val tokenRepository: TokenRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val localStorage: LocalStorage
 ) {
 
     operator fun invoke(user: User, userExists: Boolean): Flow<Result<Unit>> = flow {
@@ -29,9 +31,13 @@ class AuthenticateUserUseCase @Inject constructor(
             tokenRepository.saveTokens(response.accessToken, response.refreshToken)
             preferencesRepository.setOnboardingCompleted(OnboardingScreen.AUTHENTICATION, true)
             if (response.firstName.isNotBlank() && response.lastName.isNotBlank()) {
-                preferencesRepository.saveUserData(user.phoneNumber, response.firstName, response.lastName)
+                localStorage.firstName = response.firstName
+                localStorage.lastName = response.lastName
+                localStorage.phoneNumber = user.phoneNumber
             } else {
-                preferencesRepository.saveUserData(user.phoneNumber, user.firstName, user.lastName)
+                localStorage.firstName = user.firstName
+                localStorage.lastName = user.lastName
+                localStorage.phoneNumber = user.phoneNumber
             }
         }
         emit(Result.success(Unit))

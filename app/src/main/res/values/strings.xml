@@ -49,5 +49,7 @@
     <string name="filter">Filter</string>
     <string name="recommendations">Recommend</string>
     <string name="confirm">Confirm</string>
-    <string name="som">soʻm</string>
+    <string name="search_result">Search result</string>
+    <string name="som">som</string>
+    <string name="not_found">Not found!</string>
 </resources>

@@ -18,9 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.bron24.bron24_android.domain.entity.enums.OnboardingScreen
-import com.bron24.bron24_android.screens.auth.AuthViewModel
 import com.bron24.bron24_android.screens.auth.sms_otp.OTPInputScreen
-import com.bron24.bron24_android.screens.location.LocationRequestScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -30,7 +28,6 @@ fun OnboardingNavHost(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val onboardingScreens by mainViewModel.onboardingScreensToShow.collectAsState()
-    val authViewModel: AuthViewModel = hiltViewModel()
 
     Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(

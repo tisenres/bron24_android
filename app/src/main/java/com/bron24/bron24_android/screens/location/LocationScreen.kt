@@ -41,30 +41,33 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.runtime.State
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
+import org.orbitmvi.orbit.compose.collectAsState
 
-class LocationRequestScreen:Screen{
+class LocationScreen : Screen {
     @Composable
     override fun Content() {
-
+        val viewModel: LocationScreenContract.ViewModel = getViewModel<LocationScreenVM>()
+        val uiState = viewModel.collectAsState()
+        LocationRequestScreenContent(state= uiState,intent = viewModel::onDispatchers)
     }
 
 }
 
 @Composable
 fun LocationRequestScreenContent(
-    onAllowClick: () -> Unit,
-    onDenyClick: () -> Unit,
-    viewModel: LocationScreenVM = hiltViewModel(),
+    state:State<LocationScreenContract.UIState>,
+    intent: (LocationScreenContract.Intent) -> Unit
 ) {
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
-            viewModel.setLocationPermissionGranted(isGranted)
             if (isGranted) {
-                onAllowClick()
+                intent(LocationScreenContract.Intent.ClickAllow)
             } else {
-                onDenyClick()
+                intent(LocationScreenContract.Intent.ClickDeny)
             }
         }
     )
@@ -77,9 +80,9 @@ fun LocationRequestScreenContent(
         focusManager.clearFocus()
     }
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.checkLocationPermission()
-    }
+//    LaunchedEffect(key1 = Unit) {
+//        viewModel.checkLocationPermission()
+//    }
 
     Column(
         modifier = Modifier
@@ -142,6 +145,7 @@ fun LocationRequestScreenContent(
             LocationButton(
                 text = stringResource(id = R.string.allow_button),
                 onClick = {
+                    intent.invoke(LocationScreenContract.Intent.ClickDeny)
                     locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 },
                 modifier = Modifier
@@ -150,8 +154,7 @@ fun LocationRequestScreenContent(
             )
 
             EnhancedOutlinedButton(
-                onClick = { viewModel.setLocationPermissionGranted(false) },
-                onDenyClick = onDenyClick
+                onClick = { intent.invoke(LocationScreenContract.Intent.ClickDeny) },
             )
         }
     }
@@ -160,7 +163,6 @@ fun LocationRequestScreenContent(
 @Composable
 fun EnhancedOutlinedButton(
     onClick: () -> Unit,
-    onDenyClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -170,7 +172,6 @@ fun EnhancedOutlinedButton(
     OutlinedButton(
         onClick = {
             onClick()
-            onDenyClick()
         },
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = Color(0xFF26A045)

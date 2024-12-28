@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,6 +27,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.user.Language
+import com.bron24.bron24_android.helper.util.setLanguage
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -32,21 +35,23 @@ class LanguageSelScreen : Screen {
     @Composable
     override fun Content() {
         val viewModel: LanguageSelContract.ViewModel = getViewModel<LanguageSelVM>()
-        remember { viewModel.initData() }
         val state = viewModel.collectAsState()
-
+        remember {
+            viewModel.initData()
+        }
         LanguageScreenContent(state = state, intent = viewModel::onDispatchers)
     }
 }
+@SuppressLint("RememberReturnType")
 @Composable
 fun LanguageScreenContent(
     state: State<LanguageSelContract.UISate>,
     intent: (LanguageSelContract.Intent) -> Unit
 ) {
-    var selectedLanguage by remember {
-        mutableIntStateOf(0)
-    }
     var triggerRecomposition by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    setLanguage(state.value.selectedLanguage,context)
+
 
     Column(
         modifier = Modifier
@@ -85,12 +90,12 @@ fun LanguageScreenContent(
                 ),
             )
             LazyColumn {
-                items(state.value.availableLanguages.size) {
+                items(state.value.languages.size){index->
+                    val contextX = LocalContext.current
                     LanguageOption(
-                        language = state.value.availableLanguages[it],
-                        isSelected = state.value.langCode==state.value.availableLanguages[it].languageCode,
+                        language = state.value.languages[index],
+                        isSelected = state.value.selectedLanguage.languageCode == state.value.languages[index].languageCode,
                         onClick = {language->
-                            Log.d("BBB", "LanguageScreenContent: ${language.languageCode}")
                             intent.invoke(LanguageSelContract.Intent.SelectedLanguage(language = language))
                             triggerRecomposition = true
                         },
@@ -108,6 +113,11 @@ fun LanguageScreenContent(
         )
     }
 }
+@Composable
+@Preview(showBackground = true)
+fun ContentPreview(){
+}
+
 
 @Composable
 fun LanguageOption(
@@ -201,5 +211,5 @@ fun ConfirmButton(
 @Preview
 @Composable
 fun SimpleComposablePreview() {
-    LanguageScreenContent(state = mutableStateOf(LanguageSelContract.UISate("uz")), intent = {})
+    LanguageScreenContent(state = mutableStateOf(LanguageSelContract.UISate()), intent = {})
 }

@@ -8,6 +8,8 @@ import com.bron24.bron24_android.screens.auth.sms_otp.OTPInputContract
 import com.bron24.bron24_android.screens.auth.sms_otp.OTPInputScreenDirection
 import com.bron24.bron24_android.screens.language.LanguageSelContract
 import com.bron24.bron24_android.screens.language.LanguageSelDirection
+import com.bron24.bron24_android.screens.location.LocationScreenContract
+import com.bron24.bron24_android.screens.location.LocationScreenDirection
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageDirection
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract
@@ -16,6 +18,8 @@ import com.bron24.bron24_android.screens.on_board.OnBoardPagerContract
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerDirection
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenContract
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenDirection
+import com.bron24.bron24_android.screens.search.search_screen.SearchScreenContract
+import com.bron24.bron24_android.screens.search.search_screen.SearchScreenDirection
 import com.bron24.bron24_android.screens.settings.language.LanguageContract
 import com.bron24.bron24_android.screens.settings.language.LanguageDirection
 import com.bron24.bron24_android.screens.splash.SplashScreenContract
@@ -59,5 +63,11 @@ interface DirectionModule {
 
     @[Binds ViewModelScoped]
     fun bindsLanguageDirection(impl: LanguageDirection): LanguageContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsLocationDirection(impl: LocationScreenDirection): LocationScreenContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsSearchDirection(impl: SearchScreenDirection): SearchScreenContract.Direction
 
 }

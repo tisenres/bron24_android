@@ -29,7 +29,7 @@ class GetVenuesUseCase @Inject constructor(
         district: String? = null
     ): Flow<Result<List<Venue>>> = flow {
         try {
-            checkLocationPermissionUseCase.execute().collect { permissionState ->
+            checkLocationPermissionUseCase.invoke().collect { permissionState ->
                 when (permissionState) {
                     LocationPermissionState.GRANTED -> {
                         Log.d(TAG, "Start fetching venues with permission")

@@ -3,6 +3,7 @@ package com.bron24.bron24_android.screens.auth.sms_otp
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.usecases.auth.AuthenticateUserUseCase
@@ -21,7 +22,8 @@ class OTPInputScreenVM @Inject constructor(
     private val requestOTPUseCase: RequestOTPUseCase,
     private val direction: OTPInputContract.Direction,
     private val verifyOTPUseCase: VerifyOTPUseCase,
-    private val authenticateUserUseCase: AuthenticateUserUseCase
+    private val authenticateUserUseCase: AuthenticateUserUseCase,
+    private val localStorage: LocalStorage
 ) : ViewModel(), OTPInputContract.ViewModel {
     override fun onDispatchers(intent: OTPInputContract.Intent): Job = intent {
         when (intent) {
@@ -37,7 +39,14 @@ class OTPInputScreenVM @Inject constructor(
                     reduce { state.copy(isLoading = false) }
                     it.onSuccess {
                         if (it.userExists) {
-                            authenticateUserUseCase.invoke(User("","",intent.phoneNumber.substring(1)),true).onEach {
+                            authenticateUserUseCase.invoke(
+                                User(
+                                    localStorage.firstName,
+                                    localStorage.lastName,
+                                    intent.phoneNumber.substring(1)
+                                ),
+                                userExists = true
+                            ).onEach {
                                 it.onSuccess {
                                     direction.moveToMenu()
                                 }

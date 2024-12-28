@@ -69,23 +69,6 @@ class AppPreference(context: Context) {
             .apply()
     }
 
-    fun getUserPhoneNumber(): String {
-        preferences.getString("phone_number", "")?.let {
-            return it
-        } ?: run {
-            return ""
-        }
-    }
-
-    fun getPersonalUserData(): User {
-        Timber.tag("UserRepositoryImpl")
-            .d("first_name: %s", preferences.getString("first_name", ""))
-        return User(
-            preferences.getString("first_name", "") ?: "",
-            preferences.getString("last_name", "") ?: "",
-            preferences.getString("phone_number", "") ?: ""
-        )
-    }
 
     fun saveBooking(booking: Booking) {
         val bookingJson = gson.toJson(booking)

@@ -1,9 +1,11 @@
 package com.bron24.bron24_android.screens.search.search_screen
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -56,20 +59,26 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.FilterOptions
+import com.bron24.bron24_android.screens.main.theme.GrayLight
+import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.venuelisting.VenueCard
-class SearchScreen:Screen{
+import org.orbitmvi.orbit.compose.collectAsState
+
+class SearchScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel:SearchScreenContract.ViewModel = getViewModel<SearchScreenVM>()
+        val viewModel: SearchScreenContract.ViewModel = getViewModel<SearchScreenVM>()
+        val uiState = viewModel.collectAsState()
+        SearchScreenContent(state = uiState, viewModel::onDispatchers)
     }
 
 }
 
 @Composable
 fun SearchScreenContent(
-    state:State<SearchScreenContract.UIState>,
-    intent:(SearchScreenContract.Intent)->Unit
+    state: State<SearchScreenContract.UIState>,
+    intent: (SearchScreenContract.Intent) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
     var query by remember { mutableStateOf("") }
@@ -82,47 +91,71 @@ fun SearchScreenContent(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().background(color = White)) {
         SearchBarSection(
             query = query,
             focusManager = focusManager,
             focusRequester = focusRequester,
             onQueryChanged = { query = it },
             onSearch = {
-
+                intent.invoke(SearchScreenContract.Intent.Search(query))
             },
             onCancelClick = {
-
+                Log.d("AAA", "SearchScreenContent: back")
             }
         )
         Text(
-            text = "Search Result",
+            text = "Search result",
             modifier = Modifier.padding(start = 16.dp),
             fontSize = 20.sp,
             fontFamily = gilroyFontFamily,
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            if (state.value.isLoading) {
-                items(5) { // Arbitrary number of placeholders
-                    VenueCard(venue = null, isLoading = true,)
-                    Spacer(modifier = Modifier.height(20.dp))
+        if (!state.value.isLoading && state.value.searchResult.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.not_found),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(100.dp)
+                )
+                Text(
+                    text = "Not found!",
+                    fontSize = 14.sp,
+                    fontFamily = gilroyFontFamily,
+                    color = GrayLight,
+                    modifier = Modifier.padding(top = 20.dp)
+                )
+            }
+        }else{
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                if (state.value.isLoading) {
+                    items(5) { // Arbitrary number of placeholders
+                        VenueCard(venue = null, isLoading = true)
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+                } else {
+                    items(state.value.searchResult) { venue ->
+                        VenueCard(
+                            venue = venue,
+                            isLoading = false,
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
                 }
-            } else {
-                items(state.value.searchResult) { venue ->
-                    VenueCard(
-                        venue = venue,
-                        isLoading = false,
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+
             }
         }
+
     }
 }
 

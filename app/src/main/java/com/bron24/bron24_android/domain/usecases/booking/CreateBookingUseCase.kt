@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.domain.usecases.booking
 
+import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.domain.repository.BookingRepository
@@ -8,14 +9,14 @@ import javax.inject.Inject
 
 class CreateBookingUseCase @Inject constructor(
     private val bookingRepository: BookingRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val localStorage: LocalStorage
 ) {
     suspend fun execute(venueId: Int, date: String, sector: String, timeSlots: List<TimeSlot>): Booking {
-        val phoneNumber = preferencesRepository.getUserPhoneNumber()
 
         val booking = Booking(
             orderId = 0,
-            phoneNumber = phoneNumber,
+            phoneNumber = localStorage.phoneNumber,
             venueId = venueId,
             bookingDate = date,
             sector = sector,

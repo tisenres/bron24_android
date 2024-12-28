@@ -2,6 +2,7 @@ package com.bron24.bron24_android.di
 
 import android.content.Context
 import com.bron24.bron24_android.data.local.preference.AppPreference
+import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.data.network.apiservices.AuthApi
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.apiservices.OrdersApi
@@ -12,7 +13,6 @@ import com.bron24.bron24_android.data.repository.LanguageRepositoryImpl
 import com.bron24.bron24_android.data.repository.LocationRepositoryImpl
 import com.bron24.bron24_android.data.repository.OrdersRepositoryImpl
 import com.bron24.bron24_android.data.repository.TokenRepositoryImpl
-import com.bron24.bron24_android.data.repository.UserRepositoryImpl
 import com.bron24.bron24_android.data.repository.VenueRepositoryImpl
 import com.bron24.bron24_android.domain.usecases.auth.*
 import com.bron24.bron24_android.domain.usecases.language.*
@@ -108,9 +108,10 @@ object UseCasesModule {
     @Provides
     fun provideCreateBookingUseCase(
         bookingRepository: BookingRepository,
-        preferencesRepository: PreferencesRepository
+        preferencesRepository: PreferencesRepository,
+        localStorage: LocalStorage
     ): CreateBookingUseCase {
-        return CreateBookingUseCase(bookingRepository, preferencesRepository)
+        return CreateBookingUseCase(bookingRepository, preferencesRepository,localStorage)
     }
 
     @Provides
@@ -149,13 +150,6 @@ object UseCasesModule {
         return AuthRepositoryImpl(authApi, tokenRepository)
     }
 
-    @Provides
-    @Singleton
-    fun provideUserRepository(
-        appPreference: AppPreference
-    ): UserRepository {
-        return UserRepositoryImpl(appPreference)
-    }
 
     @Provides
     @Singleton

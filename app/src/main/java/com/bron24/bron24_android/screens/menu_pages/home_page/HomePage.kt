@@ -56,7 +56,6 @@ fun HomePageContent(
     state: State<HomePageContract.UISate>,
     intent: (HomePageContract.Intent) -> Unit
 ) {
-    val listState = rememberLazyListState()
     Box(
         modifier = Modifier
             .fillMaxSize()

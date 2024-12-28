@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
+import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import kotlinx.coroutines.Job
@@ -16,7 +17,8 @@ interface HomePageContract {
         val initial:Boolean = false,
         val user: User?=null,
         val itemData:List<Venue> = emptyList(),
-        val selectedSort:String? = null
+        val selectedSort:String? = null,
+        val userLocation:Location = Location(33.33,33.33)
     )
 
     class SideEffect(val message:String)

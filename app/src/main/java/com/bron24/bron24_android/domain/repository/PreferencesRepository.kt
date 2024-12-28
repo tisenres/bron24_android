@@ -7,7 +7,6 @@ interface PreferencesRepository {
     fun isOnboardingCompleted(screen: OnboardingScreen): Boolean
     fun setOnboardingCompleted(screen: OnboardingScreen, completed: Boolean)
     fun saveUserData(phoneNumber: String, firstName: String, lastName: String)
-    fun getUserPhoneNumber(): String
     fun saveBooking(booking: Booking)
     fun getBooking(): Booking?
 }

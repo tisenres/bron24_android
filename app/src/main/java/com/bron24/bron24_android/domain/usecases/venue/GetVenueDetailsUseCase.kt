@@ -19,7 +19,7 @@ class GetVenueDetailsUseCase @Inject constructor(
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun execute(venueId: Int): Flow<VenueDetails> = flow {
-        checkLocationPermissionUseCase.execute()
+        checkLocationPermissionUseCase.invoke()
             .flatMapLatest { permissionState ->
                 when (permissionState) {
                     LocationPermissionState.GRANTED -> getCurrentLocationUseCase.execute()

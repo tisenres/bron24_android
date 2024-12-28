@@ -9,8 +9,8 @@ interface SearchScreenContract {
         fun onDispatchers(intent: Intent):Job
     }
 
-    class UIState(
-        val isLoading:Boolean = true,
+    data class UIState(
+        val isLoading:Boolean = false,
         val history:List<String> = emptyList(),
         val searchResult: List<Venue> = emptyList(),
     )
@@ -19,6 +19,7 @@ interface SearchScreenContract {
 
     sealed interface Intent{
         data object Back:Intent
+        data class Search(val query:String):Intent
     }
 
     interface Direction{

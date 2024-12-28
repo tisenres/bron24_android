@@ -9,7 +9,6 @@ import com.bron24.bron24_android.domain.usecases.language.*
 import com.bron24.bron24_android.domain.usecases.location.*
 import com.bron24.bron24_android.domain.usecases.venue.*
 import com.bron24.bron24_android.helper.util.LocaleManager
-import com.bron24.bron24_android.screens.auth.AuthModel
 import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingConfirmationModel
 import com.bron24.bron24_android.screens.map.VenueMapModel
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsModel
@@ -74,19 +73,6 @@ object ModelModule {
         )
     }
 
-    @Provides
-    @Singleton
-    fun provideAuthModel(
-        requestOTPUseCase: RequestOTPUseCase,
-        verifyOTPUseCase: VerifyOTPUseCase,
-        authenticateUserUseCase: AuthenticateUserUseCase
-    ): AuthModel {
-        return AuthModel(
-            requestOTPUseCase,
-            verifyOTPUseCase,
-            authenticateUserUseCase
-        )
-    }
 
     @Provides
     @Singleton
