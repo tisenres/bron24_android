@@ -25,7 +25,7 @@ class SearchScreenVM @Inject constructor(
                 searchVenuesUseCase.invoke(intent.query).onStart {
                      reduce { state.copy(isLoading = true) }
                 }.onEach {
-                    reduce { state.copy(searchResult = it) }
+                    reduce { state.copy(searchResult = it, isLoading = false) }
                 }.onCompletion {
                     reduce { state.copy(isLoading = false) }
                 }.launchIn(viewModelScope)

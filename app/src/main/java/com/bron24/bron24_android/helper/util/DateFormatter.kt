@@ -8,10 +8,10 @@ fun formatTime(sliderValue: Float): String {
     return String.format("%02d:%02d", hours, minutes)
 }
 
-fun formatMoney(sliderValue: Float): String {
+fun formatMoney(sliderValue: Float): Int {
     val realValue = (sliderValue * 1_000_000).toInt()
-    val adjustedValue = (realValue / 10_000) * 10_000
-    return String.format("%,d", adjustedValue)
+    val adjustedValue = (realValue / 50_000) * 50_000
+    return adjustedValue
 }
 
 fun formatDate(millis: Long): String {

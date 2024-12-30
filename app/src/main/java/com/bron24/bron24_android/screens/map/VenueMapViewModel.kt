@@ -57,8 +57,8 @@ class VenueMapViewModel @Inject constructor(
 
     private fun fetchVenuesForMap() {
         viewModelScope.launch {
-            val venuesList = model.getVenuesCoordinates()
-            _venues.value = venuesList
+//            val venuesList = model.getVenuesCoordinates()
+//            _venues.value = venuesList
         }
     }
 

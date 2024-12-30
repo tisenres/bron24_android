@@ -52,27 +52,25 @@ import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun SmallVenueDetailsScreen(
-    viewModel: VenueMapViewModel,
     onClose: () -> Unit
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
 
-    val venueDetails by viewModel.venueDetails.collectAsState()
-    val isLoading by remember { derivedStateOf { venueDetails == null } }
+    val isLoading by remember { derivedStateOf {  } }
 
-    if (isLoading) {
+    if (false) {
         LoadingScreen()
     } else {
         SmallDetailsContent(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-            venueDetails = venueDetails,
+//            venueDetails = venueDetails,
             onFavoriteClick = { isFavorite = !isFavorite },
             onCopyAddressClick = {
-                copyAddressToClipboard(
-                    context,
-                    venueDetails?.address?.addressName
-                )
+//                copyAddressToClipboard(
+//                    context,
+//                    venueDetails?.address?.addressName
+//                )
             },
         )
     }
@@ -171,7 +169,7 @@ fun LoadingScreen() {
 @Composable
 fun SmallDetailsContent(
     modifier: Modifier,
-    venueDetails: VenueDetails?,
+    venueDetails: VenueDetails?=null,
     onFavoriteClick: () -> Unit,
     onCopyAddressClick: () -> Unit,
 ) {
@@ -641,5 +639,5 @@ fun shareVenueDetails(context: Context, details: VenueDetails?) {
 @Preview
 @Composable
 private fun VenueDetailsPreview() {
-    SmallVenueDetailsScreen(hiltViewModel(), {})
+    SmallVenueDetailsScreen(hiltViewModel())
 }

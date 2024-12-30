@@ -1,8 +1,10 @@
 package com.bron24.bron24_android.di
 
 import android.content.Context
+import android.util.Log
 import com.bron24.bron24_android.data.network.interceptors.NoConnectivityException
 import com.bron24.bron24_android.domain.repository.TokenRepository
+import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
 import com.bron24.bron24_android.helper.util.AuthAuthenticator
 import com.bron24.bron24_android.helper.util.Public
 import com.chuckerteam.chucker.api.ChuckerInterceptor
@@ -19,7 +21,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule {
+class NetworkModule {
 
     @[Provides Singleton]
     fun providesChuck(@ApplicationContext context: Context): ChuckerInterceptor =
@@ -40,14 +42,18 @@ object NetworkModule {
     fun provideOkHttpClient(
         tokenRepository: TokenRepository,
         chuckerInterceptor: ChuckerInterceptor,
-        authAuthenticator: AuthAuthenticator
+        authAuthenticator: AuthAuthenticator,
+        getSelectedLanguageUseCase: GetSelectedLanguageUseCase
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(chuckerInterceptor)
         .authenticator(authAuthenticator)
         .addNetworkInterceptor { chain ->
+            Log.d("AAA", "provideOkHttpClient: ${getSelectedLanguageUseCase.invoke().languageCode}")
             val token = tokenRepository.getAccessToken() ?: ""
+            val lanCode = getSelectedLanguageUseCase.invoke().languageCode?:""
             val newRequest = chain.request().newBuilder()
             newRequest.header("Authorization", "Bearer $token")
+            newRequest.header("Accept-Language",lanCode)
             chain.proceed(newRequest.build())
         }
         .build()

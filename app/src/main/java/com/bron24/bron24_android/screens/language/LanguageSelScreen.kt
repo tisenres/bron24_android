@@ -106,6 +106,7 @@ fun LanguageScreenContent(
         }
 
         ConfirmButton(
+            text = stringResource(id = R.string.next),
             isEnabled = true,
             onClick = {
                 intent.invoke(LanguageSelContract.Intent.ClickMoveTo)
@@ -173,6 +174,7 @@ fun LanguageOption(
 
 @Composable
 fun ConfirmButton(
+    text:String,
     isEnabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -197,7 +199,7 @@ fun ConfirmButton(
             .padding(start = 24.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.next),
+            text = text,
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontFamily = gilroyFontFamily,

@@ -53,7 +53,7 @@ fun YandexMapScreen(
     val venues by mapViewModel.venues.collectAsState()
     val currentLocation by mapViewModel.currentLocation.collectAsState()
     val selectedVenueId by mapViewModel.selectedVenueId.collectAsState()
-    var showVenueDetails by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(initialLatitude, initialLongitude, initialSelectedVenueId) {
         if (initialLatitude != null && initialLongitude != null) {
@@ -61,7 +61,7 @@ fun YandexMapScreen(
         }
         if (initialSelectedVenueId != -1) {
             mapViewModel.selectVenue(initialSelectedVenueId)
-            showVenueDetails = true
+            //showVenueDetails = true
         }
     }
 
@@ -72,61 +72,13 @@ fun YandexMapScreen(
             selectedVenueId = selectedVenueId,
             onMarkerClick = { clickedVenueId ->
                 mapViewModel.selectVenue(clickedVenueId)
-                showVenueDetails = true
+                //showVenueDetails = true
             },
             onCameraPositionChanged = {}
         )
 
         // Zoom and location controls
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        ) {
-            IconButton(onClick = { mapViewModel.zoomIn() }) {
-                Icon(Icons.Outlined.LocationOn, contentDescription = "Zoom In")
-            }
-            IconButton(onClick = { mapViewModel.zoomOut() }) {
-                Icon(Icons.Default.LocationOn, contentDescription = "Zoom Out")
-            }
-            IconButton(onClick = { mapViewModel.centerOnCurrentLocation() }) {
-                Icon(Icons.Default.LocationOn, contentDescription = "Current Location")
-            }
-        }
 
-        // Venue details
-        AnimatedVisibility(
-            visible = showVenueDetails,
-            enter = slideInVertically(initialOffsetY = { it }),
-            exit = slideOutVertically(targetOffsetY = { it }),
-            modifier = Modifier.align(Alignment.BottomCenter)
-        ) {
-            val dismissState = rememberSwipeToDismissBoxState(
-                confirmValueChange = { dismissValue ->
-                    if (dismissValue == SwipeToDismissBoxValue.StartToEnd || dismissValue == SwipeToDismissBoxValue.EndToStart) {
-                        showVenueDetails = false
-                        mapViewModel.clearSelectedVenue()
-                        true
-                    } else {
-                        false
-                    }
-                }
-            )
-
-            SwipeToDismissBox(
-                state = dismissState,
-                backgroundContent = { /* Optional background content */ },
-                content = {
-                    SmallVenueDetailsScreen(
-                        viewModel = mapViewModel,
-                        onClose = {
-                            showVenueDetails = false
-                            mapViewModel.clearSelectedVenue()
-                        }
-                    )
-                }
-            )
-        }
     }
 }
 

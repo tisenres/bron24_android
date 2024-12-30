@@ -17,25 +17,22 @@ import javax.inject.Singleton
 class ApiModule {
     @Provides
     @Singleton
-    fun provideVenueApiService(@Public retrofit: Retrofit): VenueApiService {
-        return retrofit.create(VenueApiService::class.java)
-    }
+    fun provideVenueApiService(@Public retrofit: Retrofit): VenueApiService =
+        retrofit.create(VenueApiService::class.java)
 
     @Provides
     @Singleton
-    fun provideAuthApiService(retrofit: Retrofit): AuthApi {
-        return retrofit.create(AuthApi::class.java)
-    }
+    fun provideAuthApiService(retrofit: Retrofit): AuthApi =
+        retrofit.create(AuthApi::class.java)
 
     @Provides
     @Singleton
-    fun provideBookingApiService(@Public retrofit: Retrofit): BookingApiService {
-        return retrofit.create(BookingApiService::class.java)
-    }
+    fun provideBookingApiService(@Public retrofit: Retrofit): BookingApiService =
+        retrofit.create(BookingApiService::class.java)
+
 
     @Provides
     @Singleton
-    fun provideOrdersApi(@Public retrofit: Retrofit): OrdersApi {
-        return retrofit.create(OrdersApi::class.java)
-    }
+    fun provideOrdersApi(@Public retrofit: Retrofit): OrdersApi =
+        retrofit.create(OrdersApi::class.java)
 }

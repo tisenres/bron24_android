@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.domain.usecases.venue
 
 import android.util.Log
+import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.repository.VenueRepository
@@ -22,43 +23,36 @@ class GetVenuesUseCase @Inject constructor(
 ) {
     operator fun invoke(
         sort: String? = null,
-        availableTime: String? = null,
-        minPrice: Int? = null,
-        maxPrice: Int? = null,
-        infrastructure: Boolean? = null,
-        district: String? = null
+        filterOptions: FilterOptions? = null
     ): Flow<Result<List<Venue>>> = flow {
         try {
             checkLocationPermissionUseCase.invoke().collect { permissionState ->
                 when (permissionState) {
                     LocationPermissionState.GRANTED -> {
-                        Log.d(TAG, "Start fetching venues with permission")
-
                         getCurrentLocationUseCase.execute().collect { location ->
                             val venues = repository.getVenues(
                                 latitude = location.latitude,
                                 longitude = location.longitude,
                                 sort = sort,
-                                availableTime = availableTime,
-                                minPrice = minPrice,
-                                maxPrice = maxPrice,
-                                infrastructure = infrastructure,
-                                district = district,
+                                availableTime = filterOptions?.availableTime,
+                                minPrice = filterOptions?.minPrice,
+                                maxPrice = filterOptions?.maxPrice,
+                                infrastructure = filterOptions?.infrastructure,
+                                district = filterOptions?.district,
                             )
                             emit(Result.success(venues))
                         }
                     }
                     LocationPermissionState.DENIED -> {
-                        Log.d(TAG, "Start fetching venues with NO permission")
                         val venues = repository.getVenues(
                             latitude = null,
                             longitude = null,
                             sort = sort,
-                            availableTime = availableTime,
-                            minPrice = minPrice,
-                            maxPrice = maxPrice,
-                            infrastructure = infrastructure,
-                            district = district
+                            availableTime = filterOptions?.availableTime,
+                            minPrice = filterOptions?.minPrice,
+                            maxPrice = filterOptions?.maxPrice,
+                            infrastructure = filterOptions?.infrastructure,
+                            district = filterOptions?.district
                         )
                         emit(Result.success(venues))
                     }

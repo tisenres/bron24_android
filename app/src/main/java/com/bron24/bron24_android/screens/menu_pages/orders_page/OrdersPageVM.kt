@@ -2,62 +2,51 @@ package com.bron24.bron24_android.screens.menu_pages.orders_page
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bron24.bron24_android.domain.entity.order.Order
-import com.bron24.bron24_android.domain.entity.order.OrderStatus
+import com.bron24.bron24_android.domain.usecases.orders.GetOrdersByStatusUseCase
+import com.bron24.bron24_android.domain.usecases.orders.GetOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import org.orbitmvi.orbit.Container
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 
-
 @HiltViewModel
-class OrdersViewModel @Inject constructor(
-) : ViewModel(),OrdersPageContract.ViewModel {
-    override fun onDispatchers(intent: OrdersPageContract.Intent) {
+class OrdersPageVM @Inject constructor(
+    private val getOrdersByStatusUseCase: GetOrdersByStatusUseCase
+) : ViewModel(), OrdersPageContract.ViewModel {
+    override fun onDispatchers(intent: OrdersPageContract.Intent): Job = intent {
+        when(intent){
+            OrdersPageContract.Intent.ClickHistory -> {
+                getOrdersByStatusUseCase.invoke("history")
+                    .onStart { reduce { state.copy(isLoading = true) } }
+                    .onEach { reduce { state.copy(itemData = it.data) } }
+                    .onCompletion { reduce { state.copy(isLoading = false) } }
+                    .launchIn(viewModelScope)
+            }
+            OrdersPageContract.Intent.ClickUpcoming -> {
+                getOrdersByStatusUseCase.invoke("INPROCESS")
+                    .onStart { reduce { state.copy(isLoading = true) } }
+                    .onEach { reduce { state.copy(itemData = it.data) } }
+                    .onCompletion { reduce { state.copy(isLoading = false) } }
+                    .launchIn(viewModelScope)
+            }
 
+            is OrdersPageContract.Intent.ClickItemOrder -> TODO()
+        }
     }
 
-//    private val _orders = MutableStateFlow<UiState<List<Order>>>(UiState.Loading)
-//    val orders: StateFlow<UiState<List<Order>>> = _orders
-//
-//    val upcomingOrders = orders.map { state ->
-//        (state as? UiState.Success)?.data?.filter { it.status == OrderStatus.IN_PROCESS }.orEmpty()
-//    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-//
-//    val historyOrders = orders.map { state ->
-//        (state as? UiState.Success)?.data?.filter { it.status == OrderStatus.CANCELLED }.orEmpty()
-//    }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
-//
-//    init {
-//        fetchOrders()
-//    }
+    override fun initData(): Job = intent {
+        getOrdersByStatusUseCase.invoke("INPROCESS")
+            .onStart { reduce { state.copy(isLoading = true) } }
+            .onEach { reduce { state.copy(itemData = it.data) } }
+            .onCompletion { reduce { state.copy(isLoading = false) } }
+            .launchIn(viewModelScope)
+    }
 
-    //    private fun fetchOrders() {
-//        viewModelScope.launch {
-//            try {
-//                ordersModel.getOrders().collect { ordersList ->
-//                    _orders.value =
-//                        if (ordersList.isEmpty()) UiState.Empty else UiState.Success(ordersList)
-//                }
-//            } catch (e: Exception) {
-//                _orders.value = UiState.Empty
-//            }
-//        }
-//    }
-    override val container = container<OrdersPageContract.UIState, OrdersPageContract.SideEffect>(OrdersPageContract.UIState())
+    override val container =
+        container<OrdersPageContract.UIState, OrdersPageContract.SideEffect>(OrdersPageContract.UIState())
 }
-
-//class OrdersModel @Inject constructor(
-////    private val getOrdersUseCase: GetOrdersUseCase
-////){
-////    suspend fun getOrders(): Flow<List<Order>> {
-////        return getOrdersUseCase.execute()
-////    }
-////}

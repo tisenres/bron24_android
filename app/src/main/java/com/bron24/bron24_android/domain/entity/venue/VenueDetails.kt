@@ -1,5 +1,9 @@
 package com.bron24.bron24_android.domain.entity.venue
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class VenueDetails(
     val venueId: Int,
     val address: Address,
@@ -24,4 +28,4 @@ data class VenueDetails(
     val longitude: Double,
     val distance: Double,
     val sectors: List<String>
-)
+):Parcelable

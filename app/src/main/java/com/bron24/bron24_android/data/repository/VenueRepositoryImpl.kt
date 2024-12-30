@@ -6,17 +6,16 @@ import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.repository.VenueRepository
+import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-private const val TAG = "VenueRepositoryImpl"
 
 class VenueRepositoryImpl @Inject constructor(
-    private val apiService: VenueApiService
+    private val apiService: VenueApiService,
 ) : VenueRepository {
-
     override suspend fun getVenues(
         latitude: Double?,
         longitude: Double?,
@@ -30,7 +29,7 @@ class VenueRepositoryImpl @Inject constructor(
         try {
             apiService.getVenues(
                 latitude, longitude, sort, availableTime,
-                minPrice, maxPrice, infrastructure, district,lanCode = "en"
+                minPrice, maxPrice, infrastructure, district
             )?.data?.map { it.toDomainModel() } ?: emptyList()
         } catch (e: Exception) {
             emptyList()

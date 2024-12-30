@@ -12,6 +12,8 @@ import com.bron24.bron24_android.screens.location.LocationScreenContract
 import com.bron24.bron24_android.screens.location.LocationScreenDirection
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageDirection
+import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPageContract
+import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPageDirection
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageDirection
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerContract
@@ -69,5 +71,8 @@ interface DirectionModule {
 
     @[Binds ViewModelScoped]
     fun bindsSearchDirection(impl: SearchScreenDirection): SearchScreenContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsOrderPageDirection(impl: OrdersPageDirection): OrdersPageContract.Direction
 
 }

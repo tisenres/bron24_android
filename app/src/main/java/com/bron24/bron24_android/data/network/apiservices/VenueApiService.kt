@@ -20,7 +20,6 @@ interface VenueApiService {
         @Query("max_price") maxPrice: Int? = null,
         @Query("infrastructure") infrastructure: Boolean? = null,
         @Query("district") district: String? = null,
-        @Header("Accept-Language") lanCode:String?=null
     ): VenueResponseDto?
 
     @GET("api/v1/venues/coordinates/")

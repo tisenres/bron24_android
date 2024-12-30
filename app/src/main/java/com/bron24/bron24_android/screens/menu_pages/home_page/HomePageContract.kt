@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
+import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.entity.venue.Venue
@@ -32,6 +33,6 @@ interface HomePageContract {
 
     interface Direction{
         suspend fun moveToSearch()
-        suspend fun moveToFilter()
+        suspend fun moveToFilter(block:(FilterOptions)->Unit)
     }
 }

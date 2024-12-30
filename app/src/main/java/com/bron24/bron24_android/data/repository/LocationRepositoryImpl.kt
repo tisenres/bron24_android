@@ -8,6 +8,7 @@ import com.bron24.bron24_android.domain.repository.LocationRepository
 import com.bron24.bron24_android.helper.util.PermissionChecker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class LocationRepositoryImpl @Inject constructor(
-    context: Context,
+    @ApplicationContext val context: Context,
     private val permissionChecker: PermissionChecker
 ) : LocationRepository {
 

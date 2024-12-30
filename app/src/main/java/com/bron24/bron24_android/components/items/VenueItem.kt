@@ -31,14 +31,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.GenericFontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.Venue
-import com.bron24.bron24_android.helper.util.calculateDistance
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemAddress
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemBackGround
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemDivider
@@ -73,7 +70,8 @@ fun VenueItem(
                 .height(160.dp)
         ) {
             Image(
-                painter = rememberAsyncImagePainter(model = venue.previewImage ?: "",
+                painter = rememberAsyncImagePainter(
+                    model = venue.previewImage ?: "",
                     onLoading = {
                         isLoading = true
                     }, onSuccess = {

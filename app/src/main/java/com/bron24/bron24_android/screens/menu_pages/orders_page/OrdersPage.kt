@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.screens.menu_pages.orders_page
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,11 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +46,7 @@ import com.bron24.bron24_android.components.items.OrdersType
 import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.Purple
+import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.orderdetails.OrderDetailsPage
 import org.orbitmvi.orbit.compose.collectAsState
@@ -67,9 +67,9 @@ object OrdersPage: Tab {
 
     @Composable
     override fun Content() {
-        val viewModel:OrdersPageContract.ViewModel = getViewModel<OrdersViewModel>()
+        val viewModel:OrdersPageContract.ViewModel = getViewModel<OrdersPageVM>()
         val uiState = viewModel.collectAsState()
-        //OrdersPageContent(uiState,viewModel::onDispatchers)
+        OrdersPageContent(uiState,viewModel::onDispatchers)
     }
 }
 
@@ -106,6 +106,7 @@ fun OrdersPageContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(color = White)
             .padding(start = 24.dp, end = 24.dp),
     ) {
         Spacer(modifier = Modifier.height(30.dp))
@@ -125,6 +126,9 @@ fun OrdersPageContent(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+        OrdersList(orders = emptyList(), state = rememberLazyListState()) {
+
+        }
 
 //        when (ordersState) {
 //            is UiState.Loading -> {

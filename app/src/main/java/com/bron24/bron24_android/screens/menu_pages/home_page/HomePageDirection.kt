@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
+import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.navigator.AppNavigator
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreen
 import com.bron24.bron24_android.screens.search.search_screen.SearchScreen
@@ -12,7 +13,7 @@ class HomePageDirection @Inject constructor(
         appNavigator.push(SearchScreen())
     }
 
-    override suspend fun moveToFilter() {
-        appNavigator.push(FilterScreen())
+    override suspend fun moveToFilter(block: (FilterOptions) -> Unit) {
+        appNavigator.push(FilterScreen(block))
     }
 }

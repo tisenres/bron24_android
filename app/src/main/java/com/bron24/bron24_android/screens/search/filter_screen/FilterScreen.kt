@@ -81,12 +81,12 @@ import org.orbitmvi.orbit.compose.collectAsState
 import java.util.Locale
 
 
-class FilterScreen : Screen {
+data class FilterScreen(val block: (FilterOptions) -> Unit) : Screen {
     @Composable
     override fun Content() {
         val viewModel: FilterScreenContract.ViewModel = getViewModel<FilterScreenVM>()
         val uiState = viewModel.collectAsState()
-        FilterScreenContent(state = uiState, intent = viewModel::onDispatchers)
+        FilterScreenContent(block = block, state = uiState, intent = viewModel::onDispatchers)
     }
 
 }
@@ -94,6 +94,7 @@ class FilterScreen : Screen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreenContent(
+    block: (FilterOptions) -> Unit,
     state: State<FilterScreenContract.UIState>,
     intent: (FilterScreenContract.Intent) -> Unit
 ) {
@@ -119,10 +120,10 @@ fun FilterScreenContent(
     }
 
     var minSumma by remember {
-        mutableStateOf("")
+        mutableIntStateOf(100000)
     }
     var maxSumma by remember {
-        mutableStateOf("")
+        mutableIntStateOf(1000000)
     }
 
     var openDialog by remember {
@@ -159,12 +160,12 @@ fun FilterScreenContent(
         CustomAppBar(
             title = "Filter",
             startIcons = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "icons",
-                        tint = Black17,
-                        modifier = Modifier.size(24.dp)
-                    )
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "icons",
+                    tint = Black17,
+                    modifier = Modifier.size(24.dp)
+                )
             },
             actions = {
                 Text(
@@ -175,7 +176,7 @@ fun FilterScreenContent(
                     color = Success
                 )
             }
-        ){}
+        ) {}
         if (openDialog) {
             DatePickerDialog(
                 colors = DatePickerDefaults.colors(containerColor = White),
@@ -233,10 +234,17 @@ fun FilterScreenContent(
                         titleContentColor = Success,
                         containerColor = White,
                         selectedDayContentColor = White,
+                        dayInSelectionRangeContentColor = White,
                         selectedDayContainerColor = Success,
                         dayInSelectionRangeContainerColor = Success,
                         todayDateBorderColor = Success,
-                        todayContentColor = Success
+                        todayContentColor = Success,
+                        dayContentColor = Black,
+                        weekdayContentColor = Black,
+                        yearContentColor = Black,
+                        selectedYearContainerColor = Success,
+                        headlineContentColor = Success,
+                        currentYearContentColor = Black,
                     ),
                 )
             }
@@ -413,7 +421,7 @@ fun FilterScreenContent(
                     .padding(horizontal = 24.dp)
             ) {
                 ItemSelectedData(
-                    date = minSumma,
+                    date = minSumma.toString(),
                     hint = "min",
                     modifier = Modifier.weight(0.2f),
                     endIcon = {
@@ -429,7 +437,7 @@ fun FilterScreenContent(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 ItemSelectedData(
-                    date = maxSumma,
+                    date = maxSumma.toString(),
                     hint = "max",
                     modifier = Modifier.weight(0.2f),
                     endIcon = {
@@ -558,15 +566,14 @@ fun FilterScreenContent(
                 }
             }
             AppButton(text = "See Results", modifier = Modifier) {
-                intent.invoke(
-                    FilterScreenContract.Intent.ClickFilterBtn(
-                        FilterOptions(
-                            selectedDate,
-                            0,
-                            100000,
-                            selRoom or selIndoor or selShower or selParking or selOutdoor,
-                            ""
-                        )
+                intent.invoke(FilterScreenContract.Intent.ClickBack)
+                block.invoke(
+                    FilterOptions(
+                        selectedDate,
+                        minSumma,
+                        maxSumma,
+                        selRoom or selIndoor or selShower or selParking or selOutdoor,
+                        district = location
                     )
                 )
             }

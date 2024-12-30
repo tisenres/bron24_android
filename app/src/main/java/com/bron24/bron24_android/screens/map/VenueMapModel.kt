@@ -27,9 +27,9 @@ class VenueMapModel @Inject constructor(
         return checkLocationPermissionUseCase.invoke()
     }
 
-    suspend fun getVenuesCoordinates(): List<VenueCoordinates> {
-        return getVenuesCoordinatesUseCase.execute()
-    }
+//    suspend fun getVenuesCoordinates(): List<VenueCoordinates> {
+//        return getVenuesCoordinatesUseCase.invoke()
+//    }
 
     fun getVenueDetails(venueId: Int): Flow<VenueDetails> {
         return getVenueDetailsUseCase.execute(venueId)

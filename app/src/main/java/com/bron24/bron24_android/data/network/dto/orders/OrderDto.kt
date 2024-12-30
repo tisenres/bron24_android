@@ -1,10 +1,12 @@
 package com.bron24.bron24_android.data.network.dto.orders
 
 
+import android.os.Parcelable
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
-
+@Parcelize
 @Keep
 data class OrderDto(
     @SerializedName("id")
@@ -43,8 +45,8 @@ data class OrderDto(
     val longitude: Double,
     @SerializedName("preview_image")
     val previewImage: String
-)
-
+):Parcelable
+@Parcelize
 @Keep
 data class TimeSlotDto(
     @SerializedName("id")
@@ -59,9 +61,9 @@ data class TimeSlotDto(
     val isAvailable: Boolean,
     @SerializedName("venue_id")
     val venueId: Int
-)
+):Parcelable
 
-
+@Parcelize
 @Keep
 data class AddressDto(
     @SerializedName("id")
@@ -72,4 +74,4 @@ data class AddressDto(
     val district: String,
     @SerializedName("closest_metro_station")
     val closestMetroStation: String
-)
+):Parcelable

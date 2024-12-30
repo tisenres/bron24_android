@@ -59,6 +59,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.FilterOptions
+import com.bron24.bron24_android.components.items.VenueItem
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -91,7 +92,9 @@ fun SearchScreenContent(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize().background(color = White)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(color = White)) {
         SearchBarSection(
             query = query,
             focusManager = focusManager,
@@ -101,7 +104,7 @@ fun SearchScreenContent(
                 intent.invoke(SearchScreenContract.Intent.Search(query))
             },
             onCancelClick = {
-                Log.d("AAA", "SearchScreenContent: back")
+                intent.invoke(SearchScreenContract.Intent.Back)
             }
         )
         Text(
@@ -145,11 +148,7 @@ fun SearchScreenContent(
                     }
                 } else {
                     items(state.value.searchResult) { venue ->
-                        VenueCard(
-                            venue = venue,
-                            isLoading = false,
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
+                       VenueItem(venue = venue)
                     }
                 }
 
