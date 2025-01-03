@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
+import com.bron24.bron24_android.screens.auth.register.RegisterScreenContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LocationScreenVM @Inject constructor(
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
-    private val direction: LocationScreenContract.Direction
+    private val direction: LocationScreenContract.Direction,
 ): ViewModel(),LocationScreenContract.ViewModel {
 
     override fun onDispatchers(intent: LocationScreenContract.Intent) = intent {
@@ -27,23 +28,14 @@ class LocationScreenVM @Inject constructor(
                 direction.moveToNext()
             }
             LocationScreenContract.Intent.ClickDeny -> {
-                direction.moveToNext()
+                postSideEffect("")
             }
         }
     }
-
-    override fun checkLocation() = intent {
-        checkLocationPermissionUseCase.invoke().onEach {
-            when(it){
-                LocationPermissionState.GRANTED -> {
-                    direction.moveToNext()
-                }
-                LocationPermissionState.DENIED -> {
-                    direction.moveToNext()
-//                    postSideEffect()
-                }
-            }
-        }.launchIn(viewModelScope)
+    private fun postSideEffect(message: String) {
+        intent {
+            postSideEffect(LocationScreenContract.SideEffect(message))
+        }
     }
 
     override val container = container<LocationScreenContract.UIState, LocationScreenContract.SideEffect>(LocationScreenContract.UIState())

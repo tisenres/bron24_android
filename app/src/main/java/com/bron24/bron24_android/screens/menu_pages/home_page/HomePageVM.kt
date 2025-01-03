@@ -31,7 +31,6 @@ class HomePageVM @Inject constructor(
     override fun onDispatchers(intent: HomePageContract.Intent): Job = intent {
         when (intent) {
             HomePageContract.Intent.ClickFilter -> direction.moveToFilter {
-                Log.d("AAA", "onDispatchers: $it")
                 filterOptions = it
             }
 
@@ -55,12 +54,13 @@ class HomePageVM @Inject constructor(
     }
 
     override fun initData(): Job = intent {
+        val name = localStorage.firstName
         getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
             it.onSuccess {
                 if(filterOptions!=null){
                     filterResult()
                 }
-                reduce { state.copy(isLoading = false, itemData = it) }
+                reduce { state.copy(isLoading = false, itemData = it, firstName = name) }
             }.onFailure {
                 postSideEffect(it.message.toString())
             }
@@ -71,7 +71,6 @@ class HomePageVM @Inject constructor(
     }
 
     private fun filterResult() = intent{
-        Log.d("AAA", "filterResult: filter")
         getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
             it.onSuccess {
                 reduce { state.copy(isLoading = false, itemData = it) }

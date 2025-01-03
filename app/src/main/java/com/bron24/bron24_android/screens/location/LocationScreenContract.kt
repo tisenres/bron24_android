@@ -8,7 +8,6 @@ import org.orbitmvi.orbit.ContainerHost
 interface LocationScreenContract {
     interface ViewModel: ContainerHost<UIState, SideEffect> {
         fun onDispatchers(intent:Intent):Job
-        fun checkLocation():Job
     }
 
     data class UIState(

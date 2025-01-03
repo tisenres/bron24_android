@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.venuedetails
+package com.bron24.bron24_android.screens.venuedetails.history
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -24,8 +24,8 @@ class VenueDetailsViewModel @Inject constructor(
             _venueDetailsState.value = VenueDetailsState.Loading
             model.getVenueDetails(venueId)
                 .catch { e ->
-                    Log.e("VenueDetailsViewModel", "Error fetching venue details", e)
-                    _venueDetailsState.value = VenueDetailsState.Error(e.message ?: "Unknown error occurred")
+                    _venueDetailsState.value =
+                        VenueDetailsState.Error(e.message ?: "Unknown error occurred")
                 }
                 .collect { details ->
                     _venueDetailsState.value = VenueDetailsState.Success(details)

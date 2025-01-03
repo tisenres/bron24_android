@@ -23,26 +23,28 @@ class OrdersPageVM @Inject constructor(
             OrdersPageContract.Intent.ClickHistory -> {
                 getOrdersByStatusUseCase.invoke("history")
                     .onStart { reduce { state.copy(isLoading = true) } }
-                    .onEach { reduce { state.copy(itemData = it.data) } }
+                    .onEach { reduce { state.copy(itemData = it) } }
                     .onCompletion { reduce { state.copy(isLoading = false) } }
                     .launchIn(viewModelScope)
             }
             OrdersPageContract.Intent.ClickUpcoming -> {
                 getOrdersByStatusUseCase.invoke("INPROCESS")
                     .onStart { reduce { state.copy(isLoading = true) } }
-                    .onEach { reduce { state.copy(itemData = it.data) } }
+                    .onEach { reduce { state.copy(itemData = it) } }
                     .onCompletion { reduce { state.copy(isLoading = false) } }
                     .launchIn(viewModelScope)
             }
 
-            is OrdersPageContract.Intent.ClickItemOrder -> TODO()
+            is OrdersPageContract.Intent.ClickItemOrder -> {
+
+            }
         }
     }
 
     override fun initData(): Job = intent {
         getOrdersByStatusUseCase.invoke("INPROCESS")
             .onStart { reduce { state.copy(isLoading = true) } }
-            .onEach { reduce { state.copy(itemData = it.data) } }
+            .onEach { reduce { state.copy(itemData = it) } }
             .onCompletion { reduce { state.copy(isLoading = false) } }
             .launchIn(viewModelScope)
     }

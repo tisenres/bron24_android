@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -52,12 +54,13 @@ import com.bron24.bron24_android.screens.orderdetails.OrderDetailsPage
 import org.orbitmvi.orbit.compose.collectAsState
 
 
-object OrdersPage: Tab {
+object OrdersPage : Tab {
     private fun readResolve(): Any = OrdersPage
     override val options: TabOptions
         @Composable
-        get(){
-            val icon = rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.baseline_wallet_24))
+        get() {
+            val icon =
+                rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.baseline_wallet_24))
             return TabOptions(
                 index = 2u,
                 title = "Orders",
@@ -67,17 +70,20 @@ object OrdersPage: Tab {
 
     @Composable
     override fun Content() {
-        val viewModel:OrdersPageContract.ViewModel = getViewModel<OrdersPageVM>()
+        val viewModel: OrdersPageContract.ViewModel = getViewModel<OrdersPageVM>()
+        remember {
+            viewModel.initData()
+        }
         val uiState = viewModel.collectAsState()
-        OrdersPageContent(uiState,viewModel::onDispatchers)
+        OrdersPageContent(uiState, viewModel::onDispatchers)
     }
 }
 
 
 @Composable
 fun OrdersPageContent(
-    state:State<OrdersPageContract.UIState>,
-    intent:(OrdersPageContract.Intent)->Unit
+    state: State<OrdersPageContract.UIState>,
+    intent: (OrdersPageContract.Intent) -> Unit
 ) {
 
     var selectedOption by rememberSaveable { mutableStateOf(OrdersType.UPCOMING) }
@@ -122,54 +128,56 @@ fun OrdersPageContent(
         // Tab Row for switching between order types
         OrdersTabRow(
             selectedOption = selectedOption,
-            onClick = { selectedOption = it }
+            onClick = {
+                when (it) {
+                    OrdersType.UPCOMING -> {
+                        intent.invoke(OrdersPageContract.Intent.ClickUpcoming)
+                    }
+
+                    OrdersType.HISTORY -> {
+                        intent.invoke(OrdersPageContract.Intent.ClickHistory)
+                    }
+                }
+                selectedOption = it
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         OrdersList(orders = emptyList(), state = rememberLazyListState()) {
 
         }
-
-//        when (ordersState) {
-//            is UiState.Loading -> {
-//                Box(modifier = Modifier.fillMaxSize()) {
-//                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-//                }
-//            }
-//
-//            is UiState.Empty -> {
-//                EmptyOrdersList(onButtonClick = {
-//                    // TODO: to start booking
-//                })
-//            }
-//
-//            is UiState.Success -> {
-//                if (selectedOrders.isEmpty()) {
-//                    EmptyOrdersList(onButtonClick = {
-//                        // TODO: to start booking
-//                    })
-//                } else {
-//                    OrdersList(
-//                        orders = selectedOrders,
-//                        state = selectedListState,
-//                        onClick = { order ->
-//                            navController.navigate(
-//                                Screen.OrderDetails.route
-//                                    .replace("{orderId}", order.id.toString())
-//                            )
-//                        }
-//                    )
-//                }
-//            }
-//        }
+        if (state.value.isLoading) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(40.dp)
+                )
+            }
+        }
+        if (state.value.itemData.isEmpty()) {
+            EmptyOrdersList(onButtonClick = {
+                }
+            )
+        }
+        OrdersList(
+            orders = state.value.itemData,
+            state = selectedListState,
+            onClick = { order ->
+                intent.invoke(OrdersPageContract.Intent.ClickItemOrder(order.id))
+            }
+        )
     }
 }
 
 @Composable
-fun OrdersList(orders: List<Order>, state: LazyListState, onClick: (order: Order) -> Unit) {
-    LazyColumn(state = state) {
+fun OrdersList(
+    orders: List<Order>,
+    state: LazyListState,
+    onClick: (order: Order) -> Unit
+) {
+    LazyColumn(state = state, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         items(orders) { order ->
-            Spacer(modifier = Modifier.height(20.dp))
             OrderCard(order = order, modifier = Modifier, onClick = { onClick(order) })
         }
     }
@@ -213,8 +221,14 @@ fun EmptyOrdersList(onButtonClick: () -> Unit = {}) {
                     .height(50.dp),
                 shape = RoundedCornerShape(10.dp),
                 onClick = onButtonClick
-            ) { Text("Start Booking", fontSize = 16.sp) }
+            ) {
+                Text(
+                    "Start Booking",
+                    fontSize = 16.sp,
+                    fontFamily = gilroyFontFamily,
+                    color = White
+                )
+            }
         }
     }
-
 }

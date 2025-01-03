@@ -43,7 +43,6 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
-import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.valentinilk.shimmer.shimmer
 

@@ -18,7 +18,7 @@ class GetVenueDetailsUseCase @Inject constructor(
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun execute(venueId: Int): Flow<VenueDetails> = flow {
+    operator fun invoke(venueId: Int): Flow<VenueDetails> = flow {
         checkLocationPermissionUseCase.invoke()
             .flatMapLatest { permissionState ->
                 when (permissionState) {

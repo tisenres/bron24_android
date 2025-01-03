@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.venuedetails
+package com.bron24.bron24_android.screens.venuedetails.history
 
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
@@ -9,6 +9,6 @@ class VenueDetailsModel @Inject constructor(
     private val getVenueDetailsUseCase: GetVenueDetailsUseCase
 ) {
     fun getVenueDetails(venueId: Int): Flow<VenueDetails> {
-        return getVenueDetailsUseCase.execute(venueId)
+        return getVenueDetailsUseCase.invoke(venueId)
     }
 }

@@ -11,6 +11,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +33,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.FadeTransition
+import cafe.adriel.voyager.transitions.ScaleTransition
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.bron24.bron24_android.components.items.ErrorNetWork
 import com.bron24.bron24_android.components.toast.ObserveToast
@@ -80,7 +87,7 @@ class MainActivity : ComponentActivity() {
                     navigationHandler.screenState.onEach {
                         it.invoke(navigator)
                     }.launchIn(lifecycleScope)
-                    SlideTransition(navigator = navigator)
+                    ScaleTransition(navigator = navigator)
                     networkConnection.observe(this) { isConnected ->
 
                     }
@@ -155,9 +162,9 @@ class MainActivity : ComponentActivity() {
     private fun handleTokenRefreshFailure() {
         Log.d("MainActivity", "Token refresh failed, navigating to login")
         runOnUiThread {
-            navController.navigate(Screen.PhoneNumberInput.route) {
-                popUpTo(navController.graph.startDestinationId) { inclusive = true }
-            }
+//            navController.navigate(Screen.PhoneNumberInput.route) {
+//                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+//            }
         }
     }
 

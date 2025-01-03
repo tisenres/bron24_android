@@ -65,7 +65,7 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -96,6 +96,7 @@ import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import cafe.adriel.voyager.core.screen.Screen
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
@@ -105,6 +106,7 @@ import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.bron24.bron24_android.screens.venuedetails.history.VenueDetailsState
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -113,42 +115,42 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
 
-@Composable
-fun VenueDetailsScreen(
-    viewModel: VenueDetailsViewModel,
-    venueId: Int,
-    onBackClick: () -> Unit,
-    onOrderClick: (List<String>, String) -> Unit,
-    onMapClick: (Double, Double) -> Unit
-) {
-    LaunchedEffect(key1 = venueId) {
-        viewModel.fetchVenueDetails(venueId)
+data class VenueDetailsScreen(val venueId: Int) :Screen{
+    @Composable
+    override fun Content() {
     }
 
-    val venueDetailsState by viewModel.venueDetailsState.collectAsState()
+}
+@Composable
+fun VenueDetailsScreenContent(
+    state:State<VenueDetailsContract.UIState>,
+    intent:(VenueDetailsContract.Intent)->Unit
+) {
+//    LaunchedEffect(key1 = venueId) {
+//        viewModel.fetchVenueDetails(venueId)
+//    }
 
-    when (val state = venueDetailsState) {
-        VenueDetailsState.Loading -> LoadingScreen()
-        is VenueDetailsState.Success -> VenueDetailsContent(
-            details = state.venueDetails,
-            onBackClick = onBackClick,
-            onFavoriteClick = { /* Implement favorite functionality */ },
-            onMapClick = onMapClick,
-            onOrderClick = {
-                onOrderClick(
-//                    state.venueDetails.venueId,
-                    state.venueDetails.sectors,
-                    state.venueDetails.pricePerHour
-                )
+    //val venueDetailsState by viewModel.venueDetailsState.collectAsState()
+    if(state.value.isLoading){
+        LoadingScreen()
+    }else{
+        VenueDetailsContent(
+            details = state.value.venue,
+            onBackClick = {
+
             },
+            onFavoriteClick = { /* Implement favorite functionality */ },
+            onMapClick = {lan,long->
+
+            },
+            onOrderClick = {
+//                onOrderClick(
+////                    state.venueDetails.venueId,
+//                    state.venueDetails.sectors,
+//                    state.venueDetails.pricePerHour
+//                )
+            }
         )
-
-        is VenueDetailsState.Error -> {
-            LoadingScreen()
-            ToastManager.showToast("Network error occurred", ToastType.ERROR)
-        }
-
-        VenueDetailsState.Initial -> LoadingScreen() // Do nothing or show initial state
     }
 }
 

@@ -9,6 +9,6 @@ class OnBoardPagerDirection @Inject constructor(
     private val appNavigator: AppNavigator
 ):OnBoardPagerContract.Direction {
     override suspend fun moveToNext() {
-        appNavigator.replace(LocationScreen())
+        appNavigator.replace(PhoneNumberScreen())
     }
 }

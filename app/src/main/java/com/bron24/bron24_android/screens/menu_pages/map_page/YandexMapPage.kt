@@ -2,7 +2,9 @@ package com.bron24.bron24_android.screens.menu_pages.map_page
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.PointF
+import android.graphics.drawable.Drawable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -41,12 +43,11 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
-import com.bron24.bron24_android.screens.map.SmallVenueDetailsScreen
-import com.google.android.play.integrity.internal.t
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.IconStyle
+import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.MapObject
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.MapObjectTapListener
@@ -149,8 +150,6 @@ fun YandexMapPageContent(
                     }
                     objects.remove(placemark)
                 }
-                placemarks = emptyList()
-
                     // Update user location
                     defaultLocation.let { location ->
                         val userPoint = Point(location.latitude, location.longitude)
@@ -266,6 +265,29 @@ fun YandexMapPageContent(
             )
         }
     }
+}
+fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f): Bitmap {
+    val width = (drawable.intrinsicWidth * scaleFactor).toInt()
+    val height = (drawable.intrinsicHeight * scaleFactor).toInt()
+    return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
+        val canvas = Canvas(this)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+    }
+}
+fun centerCameraOnMarker(map: Map, point: Point) {
+    val currentZoom = map.cameraPosition.zoom
+    val targetZoom = currentZoom.coerceAtLeast(15f) // Ensure minimum zoom level
+
+//     Calculate a point slightly above the marker
+    val offsetY = 0.002 // Adjust this value to change how much above the marker the camera centers
+    val newPoint = Point(point.latitude - offsetY, point.longitude)
+
+    map.move(
+        CameraPosition(newPoint, targetZoom, 0f, 0f),
+        Animation(Animation.Type.SMOOTH, 0.5f),
+        null
+    )
 }
 
 @Preview(showBackground = true)

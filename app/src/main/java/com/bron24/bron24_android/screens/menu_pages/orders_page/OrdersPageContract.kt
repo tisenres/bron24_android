@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.screens.menu_pages.orders_page
 
 import com.bron24.bron24_android.data.network.dto.orders.OrderDto
+import com.bron24.bron24_android.domain.entity.order.Order
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
@@ -12,7 +13,7 @@ interface OrdersPageContract {
 
     data class UIState(
         val isLoading:Boolean = true,
-        val itemData:List<OrderDto> = emptyList()
+        val itemData:List<Order> = emptyList()
     )
 
     data class SideEffect(
@@ -22,10 +23,10 @@ interface OrdersPageContract {
     sealed interface Intent{
         data object ClickHistory:Intent
         data object ClickUpcoming:Intent
-        data class ClickItemOrder(val order:OrderDto):Intent
+        data class ClickItemOrder(val orderId:Long):Intent
     }
 
     interface Direction{
-        suspend fun moveToInfo(order: OrderDto)
+        suspend fun moveToInfo(orderId: Long)
     }
 }

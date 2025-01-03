@@ -7,7 +7,7 @@ import javax.inject.Inject
 class OrdersPageDirection @Inject constructor(
     private val appNavigator: AppNavigator
 ):OrdersPageContract.Direction {
-    override suspend fun moveToInfo(order: OrderDto) {
+    override suspend fun moveToInfo(orderId: Long) {
 
     }
 }

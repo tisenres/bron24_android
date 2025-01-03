@@ -67,6 +67,7 @@ fun HomePageContent(
                 .fillMaxSize()
         ) {
             SearchView(
+                name = state.value.firstName,
                 modifier = Modifier.fillMaxWidth(),
                 clickSearch = {
                     intent.invoke(HomePageContract.Intent.ClickSearch)

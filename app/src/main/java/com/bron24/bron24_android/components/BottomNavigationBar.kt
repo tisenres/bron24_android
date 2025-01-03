@@ -20,7 +20,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.screens.main.Screen
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -36,20 +35,20 @@ fun BottomNavigationBar(navController: NavController) {
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val items = listOf(
-            Triple(R.drawable.ic_home, stringResource(id = R.string.home), Screen.HomePage.route),
-            Triple(R.drawable.ic_map, stringResource(id = R.string.nearby), Screen.MapPage.route),
-            Triple(R.drawable.ic_person, stringResource(id = R.string.profile), Screen.ProfilePage.route)
-        )
+//        val items = listOf(
+//            Triple(R.drawable.ic_home, stringResource(id = R.string.home), Screen.HomePage.route),
+//            Triple(R.drawable.ic_map, stringResource(id = R.string.nearby), Screen.MapPage.route),
+//            Triple(R.drawable.ic_person, stringResource(id = R.string.profile), Screen.ProfilePage.route)
+//        )
 
-        items.forEach { (iconRes, label, route) ->
-            CustomBottomBarItem(
-                iconRes = iconRes,
-                label = label,
-                isSelected = currentRoute == route,
-                onClick = { navController.navigate(route) }
-            )
-        }
+//        items.forEach { (iconRes, label, route) ->
+//            CustomBottomBarItem(
+//                iconRes = iconRes,
+//                label = label,
+//                isSelected = currentRoute == route,
+//                onClick = { navController.navigate(route) }
+//            )
+//        }
     }
 }
 

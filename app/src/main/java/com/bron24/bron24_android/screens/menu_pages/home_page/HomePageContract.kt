@@ -16,7 +16,7 @@ interface HomePageContract {
     data class UISate(
         val isLoading:Boolean = true,
         val initial:Boolean = false,
-        val user: User?=null,
+        val firstName:String = "John",
         val itemData:List<Venue> = emptyList(),
         val selectedSort:String? = null,
         val userLocation:Location = Location(33.33,33.33)

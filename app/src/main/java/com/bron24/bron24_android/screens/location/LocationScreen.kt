@@ -44,13 +44,19 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.State
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 class LocationScreen : Screen {
     @Composable
     override fun Content() {
         val viewModel: LocationScreenContract.ViewModel = getViewModel<LocationScreenVM>()
         val uiState = viewModel.collectAsState()
+        viewModel.collectSideEffect {
+            ToastManager.showToast(it.message,ToastType.INFO)
+        }
         LocationRequestScreenContent(state= uiState,intent = viewModel::onDispatchers)
     }
 
@@ -67,7 +73,7 @@ fun LocationRequestScreenContent(
             if (isGranted) {
                 intent(LocationScreenContract.Intent.ClickAllow)
             } else {
-                intent(LocationScreenContract.Intent.ClickDeny)
+                ToastManager.showToast("Dasturdan to'liq foydalanishni istasangiz joylashuv uchun ruxsat bering!",ToastType.INFO)
             }
         }
     )
@@ -79,10 +85,6 @@ fun LocationRequestScreenContent(
         keyboardController?.hide()
         focusManager.clearFocus()
     }
-
-//    LaunchedEffect(key1 = Unit) {
-//        viewModel.checkLocationPermission()
-//    }
 
     Column(
         modifier = Modifier
@@ -145,7 +147,6 @@ fun LocationRequestScreenContent(
             LocationButton(
                 text = stringResource(id = R.string.allow_button),
                 onClick = {
-                    intent.invoke(LocationScreenContract.Intent.ClickDeny)
                     locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 },
                 modifier = Modifier
@@ -154,7 +155,7 @@ fun LocationRequestScreenContent(
             )
 
             EnhancedOutlinedButton(
-                onClick = { intent.invoke(LocationScreenContract.Intent.ClickDeny) },
+                onClick = { ToastManager.showToast("Dasturdan to'liq foydalanishni istasangiz joylashuv uchun ruxsat bering!",ToastType.INFO) },
             )
         }
     }
