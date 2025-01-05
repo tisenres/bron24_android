@@ -132,7 +132,9 @@ fun VenueDetailsScreenContent(
     state:State<VenueDetailsContract.UIState>,
     intent:(VenueDetailsContract.Intent)->Unit
 ) {
-
+    var openOrder by remember {
+        mutableStateOf(false)
+    }
     if(state.value.isLoading){
         LoadingScreen()
     }else{
@@ -146,11 +148,10 @@ fun VenueDetailsScreenContent(
                 intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan,long)))
             },
             onOrderClick = {
-//                onOrderClick(
+                openOrder = true
 ////                    state.venueDetails.venueId,
 //                    state.venueDetails.sectors,
 //                    state.venueDetails.pricePerHour
-//                )
             }
         )
     }
