@@ -26,6 +26,8 @@ import com.bron24.bron24_android.screens.settings.language.LanguageContract
 import com.bron24.bron24_android.screens.settings.language.LanguageDirection
 import com.bron24.bron24_android.screens.splash.SplashScreenContract
 import com.bron24.bron24_android.screens.splash.SplashScreenDirection
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsDirection
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -74,5 +76,8 @@ interface DirectionModule {
 
     @[Binds ViewModelScoped]
     fun bindsOrderPageDirection(impl: OrdersPageDirection): OrdersPageContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsVenueDetailsDirection(impl: VenueDetailsDirection): VenueDetailsContract.Direction
 
 }

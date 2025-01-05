@@ -13,7 +13,7 @@ interface VenueDetailsContract {
         fun initData(venueId: Int): Job
     }
 
-    class UIState(
+    data class UIState(
         val isLoading: Boolean = false,
         val venue: VenueDetails? = null
     )
@@ -22,7 +22,7 @@ interface VenueDetailsContract {
 
     sealed interface Intent {
         data object ClickBack : Intent
-        data class ClickMap(val location: Location)
+        data class ClickMap(val location: Location):Intent
     }
 
     interface Direction {

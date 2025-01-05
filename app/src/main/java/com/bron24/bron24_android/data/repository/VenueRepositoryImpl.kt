@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.repository
 
+import android.util.Log
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.network.mappers.toDomainModel
 import com.bron24.bron24_android.domain.entity.venue.Venue
@@ -60,8 +61,10 @@ class VenueRepositoryImpl @Inject constructor(
         longitude: Double?
     ): VenueDetails? = withContext(Dispatchers.IO) {
         try {
+            Log.d("AAA", "getVenueDetailsById: try")
             apiService.getVenueDetails(venueId, latitude, longitude)?.data?.toDomainModel()
         } catch (e: Exception) {
+            Log.d("AAA", "getVenueDetailsById: ")
             null
         }
     }

@@ -46,10 +46,9 @@ fun CityDto.toDomainModel(): City {
 fun InfrastructureDto.toDomainModel(): Infrastructure {
     return Infrastructure(
         id = id,
-        lockerRoom = lockerRoom,
-        stands = stands,
-        shower = shower,
-        parking = parking
+        name = name,
+        description = description,
+        picture = picture
     )
 }
 
@@ -77,22 +76,20 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         venueId = venueId,
         address = address.toDomainModel(),
         city = city.toDomainModel(),
-        infrastructure = infrastructure.toDomainModel(),
+        infrastructure = infrastructure.map { it.toDomainModel() },
         venueOwner = venueOwner?.toDomainModel() ?: VenueOwner(0, "", 0, "", ""),
-        venueName = venueName,
         venueType = venueType,
         venueSurface = venueSurface,
         peopleCapacity = peopleCapacity,
         sportType = sportType,
         pricePerHour = pricePerHour.formatPrice(),
-        description = description,
         workingHoursFrom = workingHoursFrom,
         workingHoursTill = workingHoursTill,
         contact1 = contact1,
         contact2 = contact2,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        imageUrls = emptyList(),
+        imageUrl = previewImg,
         longitude = longitude.toDouble(),
         latitude = latitude.toDouble(),
         distance = distance,

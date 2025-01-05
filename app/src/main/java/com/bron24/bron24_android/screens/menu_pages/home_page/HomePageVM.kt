@@ -50,6 +50,10 @@ class HomePageVM @Inject constructor(
                     }
                 }.launchIn(viewModelScope)
             }
+
+            is HomePageContract.Intent.ClickItem -> {
+                direction.moveToDetails(intent.venueId)
+            }
         }
     }
 

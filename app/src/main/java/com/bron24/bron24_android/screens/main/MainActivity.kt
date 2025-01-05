@@ -87,11 +87,10 @@ class MainActivity : ComponentActivity() {
                     navigationHandler.screenState.onEach {
                         it.invoke(navigator)
                     }.launchIn(lifecycleScope)
-                    ScaleTransition(navigator = navigator)
+                    CurrentScreen()
                     networkConnection.observe(this) { isConnected ->
 
                     }
-
                     ObserveToast()
                     NetworkErrorToastHandler(networkConnection)
 

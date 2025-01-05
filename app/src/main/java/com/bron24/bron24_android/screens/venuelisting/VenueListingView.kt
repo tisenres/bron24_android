@@ -119,7 +119,7 @@ fun VenueListingView(
                 }
             } else {
                 items(state.value.itemData) { venue ->
-                    VenueItem(venue = venue)
+                    VenueItem(venue = venue, listener = listenerItem)
                 }
             }
         }

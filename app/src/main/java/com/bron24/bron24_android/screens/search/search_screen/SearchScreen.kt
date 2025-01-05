@@ -148,7 +148,7 @@ fun SearchScreenContent(
                     }
                 } else {
                     items(state.value.searchResult) { venue ->
-                       VenueItem(venue = venue)
+                       VenueItem(venue = venue){}
                     }
                 }
 

@@ -29,13 +29,10 @@ class AuthAuthenticator @Inject constructor(
     }
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        Log.d("AAA", "authenticate: Ishladi")
         val currentToken = runBlocking { tokenRepository.getAccessToken() }
         synchronized(this) {
             val updatedToken = runBlocking { tokenRepository.getAccessToken() }
             val token = if (currentToken != updatedToken) updatedToken else {
-                Log.d("AAA", "authenticate: runn")
-                Log.d("AAA", "authenticate: ${tokenRepository.getRefreshToken()}")
                 val newSessionResponse = runBlocking {
                     try {
                         authApi.updateToken(RefreshTokenDto(tokenRepository.getRefreshToken()?:""))
@@ -46,7 +43,6 @@ class AuthAuthenticator @Inject constructor(
                 if(newSessionResponse.success){
                     newSessionResponse.data?.let {
                         runBlocking {
-                            Log.d("AAA", "authenticate: ${it.accessToken}")
                             tokenRepository.saveTokens( accessToken =it.accessToken?:"", refreshToken = it.refreshToken?:"")
                         }
                         it.accessToken

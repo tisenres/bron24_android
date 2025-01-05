@@ -3,6 +3,7 @@ package com.bron24.bron24_android.components.items
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,7 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Cyan
 import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -50,6 +54,7 @@ import org.w3c.dom.Text
 @Composable
 fun VenueItem(
     venue: Venue,
+    listener:(Venue)->Unit
 ) {
     var isLoading by remember {
         mutableStateOf(false)
@@ -66,6 +71,7 @@ fun VenueItem(
         Box(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(10.dp))
+                .clickable { listener.invoke(venue) }
                 .fillMaxWidth()
                 .height(160.dp)
         ) {
@@ -110,12 +116,13 @@ fun VenueItem(
                 text = venue.venueName,
                 color = FavoriteItemStadiumName,
                 fontFamily = gilroyFontFamily,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                lineHeight = 21.sp
             )
             Spacer(modifier = Modifier.weight(1f))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(painter = painterResource(R.drawable.ic_star), contentDescription = "")
+                Icon(painter = painterResource(R.drawable.ic_star), contentDescription = "", tint = Yellow)
                 Text(text = "4.0", fontFamily = FontFamily(Font(R.font.gilroy_regular)))
             }
         }
@@ -126,16 +133,17 @@ fun VenueItem(
         ) {
             Text(
                 text = venue.address.addressName,
-                color = FavoriteItemAddress, fontFamily = gilroyFontFamily,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium
+                color = FavoriteItemAddress,
+                fontFamily = gilroyFontFamily,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                lineHeight = 21.sp
             )
             Spacer(modifier = Modifier.weight(1f))
-            Log.d("AAA", "VenueItem:${venue.distance}")
             Text(
                 text = String.format("%.1f km",venue.distance),
                 color = FavoriteItemAddress,
-                fontFamily = FontFamily(Font(R.font.gilroy_regular))
+                fontFamily = gilroyFontFamily,
             )
         }
         Box(

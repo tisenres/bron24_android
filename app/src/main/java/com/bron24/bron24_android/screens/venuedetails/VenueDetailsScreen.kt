@@ -88,7 +88,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -97,16 +96,16 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.venuedetails.history.VenueDetailsState
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -114,10 +113,17 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
+import org.orbitmvi.orbit.compose.collectAsState
 
 data class VenueDetailsScreen(val venueId: Int) :Screen{
     @Composable
     override fun Content() {
+        val viewModel:VenueDetailsContract.ViewModel = getViewModel<VenueDetailsVM>()
+        remember {
+            viewModel.initData(venueId)
+        }
+        val uiState = viewModel.collectAsState()
+        VenueDetailsScreenContent(state = uiState,viewModel::onDispatchers)
     }
 
 }
@@ -126,22 +132,18 @@ fun VenueDetailsScreenContent(
     state:State<VenueDetailsContract.UIState>,
     intent:(VenueDetailsContract.Intent)->Unit
 ) {
-//    LaunchedEffect(key1 = venueId) {
-//        viewModel.fetchVenueDetails(venueId)
-//    }
 
-    //val venueDetailsState by viewModel.venueDetailsState.collectAsState()
     if(state.value.isLoading){
         LoadingScreen()
     }else{
         VenueDetailsContent(
             details = state.value.venue,
             onBackClick = {
-
+                intent.invoke(VenueDetailsContract.Intent.ClickBack)
             },
             onFavoriteClick = { /* Implement favorite functionality */ },
             onMapClick = {lan,long->
-
+                intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan,long)))
             },
             onOrderClick = {
 //                onOrderClick(
@@ -200,7 +202,7 @@ fun VenueDetailsContent(
         ) {
             item(key = "imageSection") {
                 VenueImageSection(
-                    imageUrls = details?.imageUrls ?: emptyList(),
+                    imageUrl = details?.imageUrl ?: "",
                     onBackClick = onBackClick,
                     onShareClick = { shareVenueDetails(context, details) },
                     onFavoriteClick = onFavoriteClick
@@ -232,7 +234,7 @@ fun VenueDetailsContent(
 
         AnimatedToolbar(
             visible = toolbarVisible,
-            title = details?.venueName,
+            title ="135 Maktab",
             onBackClick = onBackClick,
             modifier = Modifier
                 .fillMaxWidth()
@@ -331,11 +333,11 @@ fun shareVenueDetails(context: Context, details: VenueDetails?) {
 
     val shareText = buildString {
         appendLine("Check out this venue:")
-        appendLine("Name: ${details.venueName}")
+        appendLine("Name: ")
         appendLine("Address: ${details.address.addressName}")
         appendLine("Price: ${details.pricePerHour} per hour")
         appendLine("Working hours: ${details.workingHoursFrom} - ${details.workingHoursTill}")
-        appendLine("Description: ${details.description}")
+        appendLine("Description: ")
     }
 
     val sendIntent: Intent = Intent().apply {
@@ -355,10 +357,10 @@ fun DescriptionSection(details: VenueDetails?) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        SectionTitle(text = "Additional info")
+        SectionTitle(text = stringResource(id = R.string.Additional_info))
         Spacer(modifier = Modifier.height(15.dp))
         Text(
-            text = details?.description ?: "",
+            text = "asdasdsa skdlsdn kdlfskdjln sksdlnncsdjl" ?: "",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -410,12 +412,12 @@ fun HeaderSection(
 
 @Composable
 fun VenueImageSection(
-    imageUrls: List<String>,
+    imageUrl:String,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
     onFavoriteClick: () -> Unit
 ) {
-    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
+    //val pagerState = rememberPagerState(pageCount = { imageUrls.size })
 
     Box(
         modifier = Modifier
@@ -423,15 +425,10 @@ fun VenueImageSection(
             .fillMaxWidth()
             .background(Color.Gray)
     ) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { page ->
-            VenueImage(imageUrl = imageUrls[page], page = page)
-        }
+        VenueImage(imageUrl = imageUrl)
         ImageOverlay(
-            currentPage = pagerState.currentPage,
-            totalPages = imageUrls.size,
+            currentPage = 1,
+            totalPages = 1,
             onBackClick = onBackClick,
             onShareClick = onShareClick,
             onFavoriteClick = onFavoriteClick
@@ -440,16 +437,10 @@ fun VenueImageSection(
 }
 
 @Composable
-fun VenueImage(imageUrl: String, page: Int) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(imageUrl)
-            .placeholder(R.drawable.placeholder)
-            .build()
-    )
+fun VenueImage(imageUrl: String) {
     Image(
-        painter = painter,
-        contentDescription = "Venue Image $page",
+        painter = rememberAsyncImagePainter(model = imageUrl),
+        contentDescription = "Venue Image",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
     )
@@ -606,7 +597,7 @@ fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = details?.venueName ?: "Unknown field",
+            text = "Unknown field",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -685,7 +676,7 @@ fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
                 )
         ) {
             Text(
-                text = "Copy",
+                text = stringResource(id = R.string.copy),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -704,7 +695,7 @@ fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
 fun AvailableSlots(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.baseline_event_available_24,
-        text = "12 available slots"
+        text = "12 ${stringResource(id = R.string.available)} slot"
     )
 }
 
@@ -788,7 +779,7 @@ fun RatingSection(details: VenueDetails?) {
             )
         ) {
             Text(
-                text = "See all reviews",
+                text = stringResource(id = R.string.see_all_reviews),
                 style = TextStyle(
                     fontFamily = interFontFamily,
                     fontWeight = FontWeight.SemiBold,
@@ -847,27 +838,28 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
                 onItemClick
             )
             InfrastructureItem(
-                "${venue.peopleCapacity} players",
+                "${venue.peopleCapacity} ${stringResource(id = R.string.players)}",
                 R.drawable.game_icons_soccer_kick,
                 onItemClick
             )
-            venue.infrastructure.let { infrastructure ->
-                if (infrastructure.lockerRoom) {
+            venue.infrastructure.forEach {
+
+            }.let { infrastructure ->
+//                if (infrastructure.lockerRoom) {
                     InfrastructureItem(
-                        "Locker Room",
+                        stringResource(id = R.string.changing_room),
                         R.drawable.mingcute_coathanger_fill,
                         onItemClick
                     )
-                }
-                if (infrastructure.stands.isNotBlank()) {
-                    InfrastructureItem("Stands", R.drawable.baseline_chair_24, onItemClick)
-                }
-                if (infrastructure.shower) {
-                    InfrastructureItem("Shower", R.drawable.baseline_shower_24, onItemClick)
-                }
-                if (infrastructure.parking) {
-                    InfrastructureItem("Parking", R.drawable.baseline_local_parking_24, onItemClick)
-                }
+//                }
+//                if (infrastructure.stands.isNotBlank()) {
+                //}
+                //if (infrastructure.shower) {
+                    InfrastructureItem(stringResource(id = R.string.shower), R.drawable.baseline_shower_24, onItemClick)
+//                }
+//                if (infrastructure.parking) {
+                    InfrastructureItem(stringResource(id = R.string.parking), R.drawable.baseline_local_parking_24, onItemClick)
+//                }
             }
             InfrastructureItem(
                 venue.venueSurface.capitalize(),
@@ -1042,7 +1034,7 @@ fun MapSection(details: VenueDetails?) {
             .clip(RoundedCornerShape(10.dp))
             .clickable {
                 details?.let { venue ->
-                    openMapWithOptions(context, venue.latitude, venue.longitude, venue.venueName)
+                    openMapWithOptions(context, venue.latitude, venue.longitude, "asdas")
                 }
             }
     ) {
@@ -1119,7 +1111,7 @@ fun MapSection(details: VenueDetails?) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Open in Maps",
+                    text = stringResource(id = R.string.Open_in_maps),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
@@ -1146,7 +1138,7 @@ fun MapSection(details: VenueDetails?) {
                             context,
                             venue.latitude,
                             venue.longitude,
-                            venue.venueName
+                            "dsds"
                         )
                     }
                 }
@@ -1221,7 +1213,7 @@ private fun MapDetails(details: VenueDetails?) {
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.mingcute_navigation_fill,
-            text = "8.9 km from you",
+            text = String.format("%.1f km ${stringResource(id = R.string.from_you )}",details?.distance?:0.0),
             tintColor = Color(0xFFD9D9D9),
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -1354,7 +1346,7 @@ fun PricingSection(
 //            contact2 = "+998 77 806 0288",
 //            createdAt = "2021-01-01",
 //            updatedAt = "2023-01-01",
-//            imageUrls = listOf(
+//            imageUrl = listOf(
 //                "https://www.google.com/imgres?q=football%20stadium&imgurl=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1502846052%2Fphoto%2Ftextured-soccer-game-field-with-neon-fog-center-midfield.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLPSo6ps1NfZ_xviL0tmhnnrcLjjFXAQhsYr3qAOfviY%3D&imgrefurl=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffootball-stadium&docid=LF8uWOsT77kHrM&tbnid=tb_4tkdFa4tgxM&vet=12ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA..i&w=612&h=344&hcb=2&ved=2ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA",
 //            ),
 //            latitude = 65.23232323,
@@ -1366,12 +1358,3 @@ fun PricingSection(
 //        {.0, 0.0}
 //    )
 //}
-
-@Preview(widthDp = 390, heightDp = 793, showBackground = true)
-@Composable
-private fun InfrastructureItemDetailsPreview() {
-    InfrastructureItemDetails(
-        text = "lalalasdasasasasdfdfsdsdsdwewewewesdsdsd",
-        iconRes = R.drawable.baseline_grass_24
-    )
-}
