@@ -19,12 +19,9 @@ class GetVenueDetailsUseCase @Inject constructor(
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(venueId: Int): Flow<VenueDetails> = flow {
-        Log.d("AAA", "invoke: KKK")
         getCurrentLocationUseCase.execute().collect{
-            Log.d("AAA", "invoke: AAAA")
            val data = venueRepository.getVenueDetailsById(venueId,it.latitude,it.longitude)
             if(data!=null){
-                Log.d("AAA", "invoke: $data")
                 emit(data)
             }
         }

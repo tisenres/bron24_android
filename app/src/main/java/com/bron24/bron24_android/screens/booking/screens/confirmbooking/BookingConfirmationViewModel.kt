@@ -16,52 +16,52 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
 
-@HiltViewModel
-class BookingConfirmationViewModel @Inject constructor(
-    private val model: BookingConfirmationModel
-) : ViewModel() {
-
-    private val _booking = MutableStateFlow<Booking?>(null)
-    val booking = _booking.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading get() = _isLoading
-
-    private val _secondPhoneNumber = MutableStateFlow("")
-    val secondPhoneNumber: StateFlow<String> get() = _secondPhoneNumber
-
-    private val _isBookingConfirmed = MutableStateFlow<Boolean?>(null)
-    val isBookingConfirmed: StateFlow<Boolean?> get() = _isBookingConfirmed
-
-    private val _isPhoneNumberValid = MutableStateFlow(false)
-    val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
-
-    // New StateFlows for promo code and total amount
-    private val _appliedPromoCode = MutableStateFlow<String?>(null)
-    val appliedPromoCode: StateFlow<String?> = _appliedPromoCode.asStateFlow()
-
-    private val _totalAmount = MutableStateFlow<String>("")
-    val totalAmount: StateFlow<String> = _totalAmount.asStateFlow()
-
-    suspend fun getBookingInfo(
-        venueId: Int,
-        date: String,
-        sector: String,
-        timeSlots: List<TimeSlot>
-    ) {
-        _isLoading.value = true
-        try {
-            val bookingDetails =
-                model.fetchBookingDetails(venueId, date, sector, timeSlots)
-            _booking.value = bookingDetails
-        } catch (e: Exception) {
-            // Handle error (e.g., show a message or log the error)
-        } finally {
-            _isLoading.value = false
-            Log.d("BookingConfirmationViewModel", booking.value.toString())
-        }
-    }
-
+//@HiltViewModel
+//class BookingConfirmationViewModel @Inject constructor(
+//    private val model: BookingConfirmationModel
+//) : ViewModel() {
+//
+//    private val _booking = MutableStateFlow<Booking?>(null)
+//    val booking = _booking.asStateFlow()
+//
+//    private val _isLoading = MutableStateFlow(false)
+//    val isLoading get() = _isLoading
+//
+//    private val _secondPhoneNumber = MutableStateFlow("")
+//    val secondPhoneNumber: StateFlow<String> get() = _secondPhoneNumber
+//
+//    private val _isBookingConfirmed = MutableStateFlow<Boolean?>(null)
+//    val isBookingConfirmed: StateFlow<Boolean?> get() = _isBookingConfirmed
+//
+//    private val _isPhoneNumberValid = MutableStateFlow(false)
+//    val isPhoneNumberValid: StateFlow<Boolean> = _isPhoneNumberValid
+//
+//    // New StateFlows for promo code and total amount
+//    private val _appliedPromoCode = MutableStateFlow<String?>(null)
+//    val appliedPromoCode: StateFlow<String?> = _appliedPromoCode.asStateFlow()
+//
+//    private val _totalAmount = MutableStateFlow<String>("")
+//    val totalAmount: StateFlow<String> = _totalAmount.asStateFlow()
+//
+//    suspend fun getBookingInfo(
+//        venueId: Int,
+//        date: String,
+//        sector: String,
+//        timeSlots: List<TimeSlot>
+//    ) {
+//        _isLoading.value = true
+//        try {
+//            val bookingDetails =
+//                model.fetchBookingDetails(venueId, date, sector, timeSlots)
+//            _booking.value = bookingDetails
+//        } catch (e: Exception) {
+//            // Handle error (e.g., show a message or log the error)
+//        } finally {
+//            _isLoading.value = false
+//            Log.d("BookingConfirmationViewModel", booking.value.toString())
+//        }
+//    }
+//
     fun formatDate(inputDate: String): String {
         // Define the input and output date formats
         val inputFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -71,28 +71,28 @@ class BookingConfirmationViewModel @Inject constructor(
         val parsedDate = inputFormatter.parse(inputDate)
         return outputFormatter.format(parsedDate)
     }
-
-    fun updatePhoneNumber(phone: String) {
-        _secondPhoneNumber.value = phone
-        _isPhoneNumberValid.value = isValidUzbekPhoneNumber(phone)
-    }
-
-    private fun isValidUzbekPhoneNumber(phone: String): Boolean {
-        val regex = "^\\+998[0-9]{9}$".toRegex()
-        return regex.matches(phone)
-    }
-
-    fun confirmBooking() {
-        viewModelScope.launch {
-            val orderId = model.confirmBooking()
-
-            if (orderId != null) {
-                ToastManager.showToast("Booking confirmed", ToastType.SUCCESS)
-                _isBookingConfirmed.value = true
-            } else {
-                ToastManager.showToast("Booking confirmation failed", ToastType.ERROR)
-                _isBookingConfirmed.value = false
-            }
-        }
-    }
-}
+//
+//    fun updatePhoneNumber(phone: String) {
+//        _secondPhoneNumber.value = phone
+//        _isPhoneNumberValid.value = isValidUzbekPhoneNumber(phone)
+//    }
+//
+//    private fun isValidUzbekPhoneNumber(phone: String): Boolean {
+//        val regex = "^\\+998[0-9]{9}$".toRegex()
+//        return regex.matches(phone)
+//    }
+//
+//    fun confirmBooking() {
+//        viewModelScope.launch {
+//            val orderId = model.confirmBooking()
+//
+//            if (orderId != null) {
+//                ToastManager.showToast("Booking confirmed", ToastType.SUCCESS)
+//                _isBookingConfirmed.value = true
+//            } else {
+//                ToastManager.showToast("Booking confirmation failed", ToastType.ERROR)
+//                _isBookingConfirmed.value = false
+//            }
+//        }
+//    }
+//}

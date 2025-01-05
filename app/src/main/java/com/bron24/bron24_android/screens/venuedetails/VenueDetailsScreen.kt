@@ -93,8 +93,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavHostController
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import coil.compose.rememberAsyncImagePainter
@@ -104,8 +106,11 @@ import com.bron24.bron24_android.helper.extension.DateTimeFormatter
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.user.Location
+import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
+import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.google.gson.Gson
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -123,12 +128,13 @@ data class VenueDetailsScreen(val venueId: Int) :Screen{
             viewModel.initData(venueId)
         }
         val uiState = viewModel.collectAsState()
-        VenueDetailsScreenContent(state = uiState,viewModel::onDispatchers)
+        VenueDetailsScreenContent(venueId,state = uiState,viewModel::onDispatchers)
     }
 
 }
 @Composable
 fun VenueDetailsScreenContent(
+    venueId: Int,
     state:State<VenueDetailsContract.UIState>,
     intent:(VenueDetailsContract.Intent)->Unit
 ) {
@@ -153,6 +159,41 @@ fun VenueDetailsScreenContent(
 //                    state.venueDetails.sectors,
 //                    state.venueDetails.pricePerHour
             }
+        )
+    }
+    if(openOrder){
+        BookingBottomSheet(
+            venueId = venueId,
+            sectors = state.value.venue?.sectors?: emptyList(),
+            pricePerHour = state.value.venue?.pricePerHour?:"",
+            onDismiss = { openOrder = false },
+        )
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BookingBottomSheet(
+    venueId: Int,
+    sectors: List<String>,
+    pricePerHour: String,
+    onDismiss: () -> Unit,
+) {
+    val viewModel: BookingViewModel = hiltViewModel()
+    val sheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = Color.White
+    ) {
+        BookingScreen(
+            venueId = venueId,
+            sectors = sectors,
+            pricePerHour = pricePerHour,
+            viewModel = viewModel,
+            onOrderClick = { venueId, date, sector, timeSlots ->
+
+            },
         )
     }
 }

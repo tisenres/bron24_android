@@ -45,6 +45,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,23 +69,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.extension.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.compose.collectAsState
+
+data class BookingConfirmationScreen(val bookingInfo:VenueOrderInfo):Screen{
+    @Composable
+    override fun Content() {
+        val viewModel:BookingConfirmationContract.ViewModel = getViewModel<BookingConfirmationVM>()
+        val uiState = viewModel.collectAsState()
+        remember {
+            viewModel.initData(bookingInfo)
+        }
+        BookingConfirmationContent(uiState = uiState,viewModel::onDispatchers)
+    }
+}
 
 @Composable
-fun BookingConfirmationScreen(
-    viewModel: BookingConfirmationViewModel,
-    venueId: Int,
-    date: String,
-    sector: String,
-    timeSlots: List<TimeSlot>,
-    onConfirmClick: (orderId: Int, venueName: String, date: String, sector: String, timeSlots: List<TimeSlot>) -> Unit,
-    onBackClick: () -> Unit
+fun BookingConfirmationContent(
+    uiState:State<BookingConfirmationContract.UIState>,
+    intent:(BookingConfirmationContract.Intent)->Unit
 ) {
     var showPaymentMethods by remember { mutableStateOf(false) }
     var showPromoCode by remember { mutableStateOf(false) }
@@ -93,31 +105,27 @@ fun BookingConfirmationScreen(
     var selectedPaymentMethod by remember { mutableStateOf("Cash") }
     var appliedPromoCode by remember { mutableStateOf<String?>(null) }
 
-    val booking by viewModel.booking.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val secondPhoneNumber by viewModel.secondPhoneNumber.collectAsState()
-    val isBookingConfirmed by viewModel.isBookingConfirmed.collectAsState()
+//    val booking by viewModel.booking.collectAsState()
+//    val isLoading by viewModel.isLoading.collectAsState()
+//    val secondPhoneNumber by viewModel.secondPhoneNumber.collectAsState()
+//    val isBookingConfirmed by viewModel.isBookingConfirmed.collectAsState()
 
     val scrollState = rememberLazyListState()
 
     // Since we want the toolbar to always be visible, we can set toolbarVisible to true
     val toolbarVisible = true
 
-    LaunchedEffect(venueId, date, sector, timeSlots) {
-        viewModel.getBookingInfo(venueId, date, sector, timeSlots)
-    }
-
-    LaunchedEffect(isBookingConfirmed) {
-        if (isBookingConfirmed == true && booking != null) {
-            onConfirmClick(
-                booking!!.orderId,
-                booking!!.venueName ?: "",
-                booking!!.bookingDate,
-                booking!!.sector,
-                booking!!.timeSlots
-            )
-        }
-    }
+//    LaunchedEffect(isBookingConfirmed) {
+//        if (isBookingConfirmed == true && booking != null) {
+//            onConfirmClick(
+//                booking!!.orderId,
+//                booking!!.venueName ?: "",
+//                booking!!.bookingDate,
+//                booking!!.sector,
+//                booking!!.timeSlots
+//            )
+//        }
+//    }
 
     Column(
         modifier = Modifier
@@ -128,14 +136,14 @@ fun BookingConfirmationScreen(
         AnimatedToolbar(
             visible = toolbarVisible,
             title = "Booking information",
-            onBackClick = onBackClick,
+            onBackClick = {intent.invoke(BookingConfirmationContract.Intent.Back)},
             modifier = Modifier
                 .fillMaxWidth()
 //                .height(50.dp)
                 .zIndex(1f)
         )
 
-        if (isLoading) {
+        if (uiState.value.isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -150,8 +158,10 @@ fun BookingConfirmationScreen(
                 state = scrollState
             ) {
                 item {
-                    booking?.let {
-                        BookingInfoCard(viewModel, it, secondPhoneNumber)
+                    uiState.value.booking?.let {
+                        BookingInfoCard( it, uiState.value.secondPhoneNumber){
+                            intent.invoke(BookingConfirmationContract.Intent.UpdatePhone(it))
+                        }
                         Spacer(modifier = Modifier.height(15.dp))
                         PaymentMethodButton(
                             selectedPaymentMethod = selectedPaymentMethod,
@@ -180,7 +190,7 @@ fun BookingConfirmationScreen(
             ConfirmButton(
                 isEnabled = true,
                 onClick = {
-                    viewModel.confirmBooking()
+                    intent.invoke(BookingConfirmationContract.Intent.Confirm)
                 },
                 title = stringResource(id = R.string.confirm),
                 modifier = Modifier
@@ -270,9 +280,9 @@ private fun AnimatedToolbar(
 
 @Composable
 fun BookingInfoCard(
-    viewModel: BookingConfirmationViewModel,
     booking: Booking,
-    secondPhoneNumber: String
+    secondPhoneNumber: String,
+    updatePhone: (String) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -290,7 +300,7 @@ fun BookingInfoCard(
                 color = Color.LightGray
             )
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                BookingDetail("DATE", viewModel.formatDate(booking.bookingDate))
+                BookingDetail("DATE", formatDate(booking.bookingDate))
                 Spacer(modifier = Modifier.height(15.dp))
 
                 BookingDetail("TOTAL HOURS", (booking.totalHours.toString() + " hours"))
@@ -355,10 +365,10 @@ fun BookingInfoCard(
                     value = secondPhoneNumber,
                     onValueChange = { newValue ->
                         if (newValue.startsWith("+998")) {
-                            viewModel.updatePhoneNumber(newValue)
+                            updatePhone(newValue)
                         }
                     },
-                    viewModel = viewModel
+                    updatePhone = updatePhone
                 )
             }
         }
@@ -369,7 +379,7 @@ fun BookingInfoCard(
 fun SecondNumberField(
     value: String,
     onValueChange: (String) -> Unit,
-    viewModel: BookingConfirmationViewModel
+    updatePhone:(String)->Unit
 ) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = value.removePrefix("+998"))) }
 
@@ -436,7 +446,7 @@ fun SecondNumberField(
                                 selection = TextRange(digitsOnly.length)
                             )
                             onValueChange(fullNumber)
-                            viewModel.updatePhoneNumber(fullNumber)
+                            updatePhone(fullNumber)
                         }
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -862,7 +872,7 @@ fun PromoCodeBottomSheet(
                     onValueChange = { promoCode = it.uppercase() },  // Automatically uppercase the input
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp,  Color(0xFFC0C0C0), RoundedCornerShape(10.dp))
+                        .border(1.dp, Color(0xFFC0C0C0), RoundedCornerShape(10.dp))
                         .padding(16.dp),
                     textStyle = TextStyle(
                         fontFamily = gilroyFontFamily,
