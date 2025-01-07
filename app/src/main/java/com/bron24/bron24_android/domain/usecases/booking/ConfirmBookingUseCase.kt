@@ -1,7 +1,11 @@
 package com.bron24.bron24_android.domain.usecases.booking
 
+import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.repository.BookingRepository
 import com.bron24.bron24_android.domain.repository.PreferencesRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class ConfirmBookingUseCase @Inject constructor(
@@ -9,12 +13,13 @@ class ConfirmBookingUseCase @Inject constructor(
     private val preferencesRepository: PreferencesRepository
 ) {
 
-    suspend fun execute(): Boolean {
+   operator fun invoke(): Flow<Result<Unit>> = flow {
         val booking = preferencesRepository.getBooking()
-        return if (booking != null) {
+        if (booking != null) {
             bookingRepository.confirmBooking(booking)
-        } else {
-            false
+            emit(Result.success(Unit))
+        }else{
+            emit(Result.failure(Exception("help")))
         }
-    }
+    }.catch { emit(Result.failure(it)) }
 }

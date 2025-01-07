@@ -9,6 +9,7 @@ data class Venue(
     val venueName: String,
     val pricePerHour: String,
     val address: Address,
+    val rate:Double,
     val distance: Double,
     val previewImage: String?
 ):Parcelable

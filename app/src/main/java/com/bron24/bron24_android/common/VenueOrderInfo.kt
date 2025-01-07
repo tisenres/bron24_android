@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class VenueOrderInfo(
     val venueId: Int,
+    val venueName:String,
     val date: String,
     val sector: String,
     val timeSlots: List<TimeSlot>,

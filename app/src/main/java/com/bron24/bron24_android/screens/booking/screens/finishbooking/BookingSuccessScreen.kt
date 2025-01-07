@@ -20,9 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,30 +37,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.screens.booking.screens.confirmbooking.ConfirmButton
 import com.bron24.bron24_android.screens.booking.states.BookingSuccessInfo
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-
-@Composable
-fun BookingSuccessScreen(
-    viewModel: BookingSuccessViewModel = hiltViewModel(),
-    orderId: String,
-    venueName: String,
-    date: String,
-    sector: String,
-    timeSlots: List<TimeSlot>,
-    onMyOrdersClick: () -> Unit,
-    onMainPageClick: () -> Unit,
-    onMapClick: () -> Unit,
-) {
-    val bookingInfo by viewModel.bookingInfo.collectAsState()
-
-    LaunchedEffect (Unit) {
-        viewModel.initBookingInfo(orderId, venueName, date, sector, timeSlots)
+class BookingSuccessScreen(private val info: VenueOrderInfo):Screen{
+    @Composable
+    override fun Content() {
+        val viewModel:BookingSuccessContract.ViewModel = getViewModel<BookingSuccessVM>()
+        BookingSuccessContent(
+            info = rememberUpdatedState(newValue = info),
+            intent = viewModel::onDispatchers
+        )
     }
 
+}
+
+@Composable
+fun BookingSuccessContent(
+    info: State<VenueOrderInfo>,
+    intent:(BookingSuccessContract.Intent)->Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -94,28 +98,34 @@ fun BookingSuccessScreen(
 
             Spacer(modifier = Modifier.height(27.dp))
 
-            BookingInfoCard(bookingInfo ?: BookingSuccessInfo("", "", "", emptyList(), ""), onMapClick)
+            BookingInfoCard(info.value){
+
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
             ConfirmButton(
                 isEnabled = true,
                 title = "My orders",
-                onClick = onMyOrdersClick
+                onClick = {
+                    intent.invoke(BookingSuccessContract.Intent.ClickOrder)
+                }
             )
             Spacer(modifier = Modifier.height(3.dp))
 
             MainPageButton(
                 isEnabled = true,
                 title = "Main page",
-                onClick = onMainPageClick
+                onClick = {
+                    intent.invoke(BookingSuccessContract.Intent.ClickMenu)
+                }
             )
         }
     }
 }
 
 @Composable
-fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
+fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,7 +155,7 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                    text = bookingInfo.orderId,
+                    text = info.venueId.toString(),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.ExtraBold,
@@ -156,7 +166,7 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 Text(
-                    text = bookingInfo.venueName,
+                    text = info.venueName,
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -167,7 +177,7 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                    text = bookingInfo.date,
+                    text = info.date,
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,

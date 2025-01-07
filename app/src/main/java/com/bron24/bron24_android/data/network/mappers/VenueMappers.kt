@@ -22,6 +22,7 @@ fun VenueDto.toDomainModel(): Venue {
         venueName = venueName,
         pricePerHour = pricePerHour.formatPrice(),
         address = address.toDomainModel(),
+        rate = rate,
         distance = distance,
         previewImage = previewImage
     )
@@ -79,6 +80,8 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         infrastructure = infrastructure.map { it.toDomainModel() },
         venueOwner = venueOwner?.toDomainModel() ?: VenueOwner(0, "", 0, "", ""),
         venueType = venueType,
+        venueName = venueName,
+        description = description,
         venueSurface = venueSurface,
         peopleCapacity = peopleCapacity,
         sportType = sportType,

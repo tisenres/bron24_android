@@ -48,16 +48,24 @@ import com.bron24.bron24_android.screens.menu_pages.map_page.YandexMapPage
 import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPage
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePage
 
-class MenuScreen:Screen {
+data class MenuScreen(val tab: String?=null):Screen {
+    val current = when(tab){
+        "M"->YandexMapPage
+        "O"->OrdersPage
+        "P"->ProfilePage
+        else ->null
+    }
     @Composable
     override fun Content() {
-        MenuScreenContent()
+        MenuScreenContent(current)
     }
 }
 
 @Composable
-fun MenuScreenContent(){
-    TabNavigator(tab = HomePage){
+fun MenuScreenContent(
+    tab: Tab? = null
+){
+    TabNavigator(tab = tab?:HomePage){
         Scaffold (
             content = {
                 Box(modifier = Modifier.padding(it)) {
@@ -109,7 +117,7 @@ fun RowScope.ItemBottomTab(
                         painter = tab.options.icon!!,
                         contentDescription = "",
                         tint = if (check) Success else GrayLighter,
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(28.dp),
                     )
                     Text(
                         text = tab.options.title,

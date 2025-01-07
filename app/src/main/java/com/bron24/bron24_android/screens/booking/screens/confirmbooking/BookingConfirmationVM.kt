@@ -1,41 +1,62 @@
 package com.bron24.bron24_android.screens.booking.screens.confirmbooking
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.common.VenueOrderInfo
-import com.bron24.bron24_android.domain.entity.booking.Booking
-import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.domain.usecases.booking.ConfirmBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
+@HiltViewModel
 class BookingConfirmationVM @Inject constructor(
     private val createBookingUseCase: CreateBookingUseCase,
     private val confirmBookingUseCase: ConfirmBookingUseCase,
-): ViewModel(),BookingConfirmationContract.ViewModel {
+    private val direction: BookingConfirmationContract.Direction
+) : ViewModel(), BookingConfirmationContract.ViewModel {
     override fun onDispatchers(intent: BookingConfirmationContract.Intent): Job = intent {
-        when(intent){
-            BookingConfirmationContract.Intent.Back -> {}
-            BookingConfirmationContract.Intent.Confirm -> {}
+        when (intent) {
+            BookingConfirmationContract.Intent.Back -> {
+                direction.back()
+            }
+
+            BookingConfirmationContract.Intent.Confirm -> {
+                confirmBookingUseCase.invoke().onEach {
+                    it.onSuccess {
+                        direction.moveToNext(
+                            state.venueOrderInfo ?: VenueOrderInfo(
+                                0, "", "", "",
+                                emptyList()
+                            )
+                        )
+                    }.onFailure {
+                        Log.d("AAA", "onDispatchers: ${it.message}")
+                    }
+                }.launchIn(viewModelScope)
+            }
+
             is BookingConfirmationContract.Intent.UpdatePhone -> {}
         }
     }
 
     override fun initData(venueOrderInfo: VenueOrderInfo): Job = intent {
         createBookingUseCase.invoke(venueOrderInfo).onStart {
-            reduce { state.copy(isLoading = true) }
+            reduce { state.copy(isLoading = true, venueOrderInfo = venueOrderInfo) }
         }.onEach {
             reduce { state.copy(isLoading = false, booking = it) }
         }.launchIn(viewModelScope)
     }
 
-    override val container = container<BookingConfirmationContract.UIState, BookingConfirmationContract.SideEffect>(BookingConfirmationContract.UIState())
+    override val container =
+        container<BookingConfirmationContract.UIState, BookingConfirmationContract.SideEffect>(
+            BookingConfirmationContract.UIState()
+        )
 
 }
 

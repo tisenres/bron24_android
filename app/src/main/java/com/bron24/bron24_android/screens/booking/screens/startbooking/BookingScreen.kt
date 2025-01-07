@@ -73,9 +73,10 @@ import java.util.Calendar
 fun BookingScreen(
     viewModel: BookingViewModel = hiltViewModel(),
     venueId: Int,
+    venueName:String,
     sectors: List<String>,
     pricePerHour: String,
-    onOrderClick: (Int, String, String, List<TimeSlot>) -> Unit
+    onOrderClick: (Int, String,String, String, List<TimeSlot>) -> Unit
 ) {
 
     val selectedDate by viewModel.selectedDate.collectAsState()
@@ -184,6 +185,7 @@ fun BookingScreen(
             onOrderClick = {
                 onOrderClick(
                     venueId,
+                    venueName,
                     millisToDate(selectedDate),
                     selectedSector?.name ?: "X",
                     selectedTimeSlots.toList()

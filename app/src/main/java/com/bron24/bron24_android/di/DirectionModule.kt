@@ -6,6 +6,10 @@ import com.bron24.bron24_android.screens.auth.register.RegisterScreenContract
 import com.bron24.bron24_android.screens.auth.register.RegisterScreenDirection
 import com.bron24.bron24_android.screens.auth.sms_otp.OTPInputContract
 import com.bron24.bron24_android.screens.auth.sms_otp.OTPInputScreenDirection
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingConfirmationContract
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingConfirmationDirection
+import com.bron24.bron24_android.screens.booking.screens.finishbooking.BookingSuccessContract
+import com.bron24.bron24_android.screens.booking.screens.finishbooking.BookingSuccessDirection
 import com.bron24.bron24_android.screens.language.LanguageSelContract
 import com.bron24.bron24_android.screens.language.LanguageSelDirection
 import com.bron24.bron24_android.screens.location.LocationScreenContract
@@ -79,5 +83,11 @@ interface DirectionModule {
 
     @[Binds ViewModelScoped]
     fun bindsVenueDetailsDirection(impl: VenueDetailsDirection): VenueDetailsContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsBookingConfirmDirection(impl: BookingConfirmationDirection): BookingConfirmationContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsBookingSuccessDirection(impl: BookingSuccessDirection): BookingSuccessContract.Direction
 
 }

@@ -15,12 +15,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VenueDetailsVM @Inject constructor(
-    private val getVenueDetailsUseCase: GetVenueDetailsUseCase
+    private val getVenueDetailsUseCase: GetVenueDetailsUseCase,
+    private val direction: VenueDetailsContract.Direction
 ): ViewModel(),VenueDetailsContract.ViewModel {
     override fun onDispatchers(intent: VenueDetailsContract.Intent): Job = intent {
         when(intent){
-            VenueDetailsContract.Intent.ClickBack -> {}
+            VenueDetailsContract.Intent.ClickBack -> {
+                direction.back()
+            }
             is VenueDetailsContract.Intent.ClickMap -> {}
+            is VenueDetailsContract.Intent.ClickOrder -> {
+                direction.moveToNext(intent.venueOrderInfo)
+            }
         }
     }
 

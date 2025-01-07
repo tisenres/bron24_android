@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.venuedetails
 
+import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.Venue
@@ -23,9 +24,11 @@ interface VenueDetailsContract {
     sealed interface Intent {
         data object ClickBack : Intent
         data class ClickMap(val location: Location):Intent
+        data class ClickOrder(val venueOrderInfo: VenueOrderInfo):Intent
     }
 
     interface Direction {
         suspend fun back()
+        suspend fun moveToNext(info: VenueOrderInfo)
     }
 }

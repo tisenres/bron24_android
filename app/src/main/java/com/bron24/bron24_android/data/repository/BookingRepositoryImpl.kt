@@ -9,6 +9,8 @@ import com.bron24.bron24_android.domain.entity.booking.AvailableTimesResponse
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.repository.BookingRepository
 import com.bron24.bron24_android.helper.extension.formatPrice
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookingRepositoryImpl @Inject constructor(
@@ -58,9 +60,8 @@ class BookingRepositoryImpl @Inject constructor(
         return currentBooking
     }
 
-    override suspend fun confirmBooking(booking: Booking): Boolean {
+    override suspend fun confirmBooking(booking: Booking): Boolean = withContext(Dispatchers.IO) {
         val response = bookingApiService.finishBooking(booking.toNetworkModel())
-
-       return response.success
+        response.success
     }
 }

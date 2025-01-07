@@ -101,6 +101,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter
 import com.bron24.bron24_android.components.toast.ToastManager
@@ -164,19 +165,24 @@ fun VenueDetailsScreenContent(
     if(openOrder){
         BookingBottomSheet(
             venueId = venueId,
+            venueName = state.value.venue?.venueName?:"",
             sectors = state.value.venue?.sectors?: emptyList(),
             pricePerHour = state.value.venue?.pricePerHour?:"",
             onDismiss = { openOrder = false },
-        )
+        ){
+            intent.invoke(VenueDetailsContract.Intent.ClickOrder(it))
+        }
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingBottomSheet(
     venueId: Int,
+    venueName: String,
     sectors: List<String>,
     pricePerHour: String,
     onDismiss: () -> Unit,
+    listener:(VenueOrderInfo)->Unit
 ) {
     val viewModel: BookingViewModel = hiltViewModel()
     val sheetState = rememberModalBottomSheetState()
@@ -188,11 +194,12 @@ fun BookingBottomSheet(
     ) {
         BookingScreen(
             venueId = venueId,
+            venueName = venueName,
             sectors = sectors,
             pricePerHour = pricePerHour,
             viewModel = viewModel,
-            onOrderClick = { venueId, date, sector, timeSlots ->
-
+            onOrderClick = { venueId,venueName,date, sector, timeSlots ->
+                listener.invoke(VenueOrderInfo(venueId=venueId,venueName = venueName,date=date, sector = sector, timeSlots = timeSlots))
             },
         )
     }
