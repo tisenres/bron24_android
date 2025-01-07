@@ -2,8 +2,11 @@ package com.bron24.bron24_android.domain.entity.venue
 
 data class Infrastructure(
     val id: Int,
-    val lockerRoom: Boolean,
-    val stands: String,
-    val shower: Boolean,
-    val parking: Boolean
+    val infrastructureName: String,
+    val infrastructureDescription: String,
+    val infrastructurePicture: String
+//    val lockerRoom: Boolean,
+//    val stands: String,
+//    val shower: Boolean,
+//    val parking: Boolean
 )

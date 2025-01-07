@@ -99,6 +99,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.venue.Infrastructure
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter
 import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
@@ -127,6 +128,10 @@ fun VenueDetailsScreen(
 
     val venueDetailsState by viewModel.venueDetailsState.collectAsState()
 
+//    LaunchedEffect(venueDetailsState) {
+//        Log.d("AAA", venueDetailsState.venueDetails)
+//    }
+//
     when (val state = venueDetailsState) {
         VenueDetailsState.Loading -> LoadingScreen()
         is VenueDetailsState.Success -> VenueDetailsContent(
@@ -145,6 +150,7 @@ fun VenueDetailsScreen(
 
         is VenueDetailsState.Error -> {
             LoadingScreen()
+            Log.d("AAA", state.message)
             ToastManager.showToast("Network error occurred", ToastType.ERROR)
         }
 
@@ -813,7 +819,7 @@ fun InfrastructureSection(details: VenueDetails?) {
     ) {
         SectionTitle(text = "Facilities")
         Spacer(modifier = Modifier.height(15.dp))
-        FacilitiesGrid(details) { text, icon ->
+        InfrastructureGrid(details?.infrastructure ?: emptyList()) { text, icon ->
             selectedItem = text to icon
             showBottomSheet = true
         }
@@ -832,57 +838,74 @@ fun InfrastructureSection(details: VenueDetails?) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
+fun InfrastructureGrid(
+    infrastructures: List<Infrastructure>,
+    onItemClick: (String, Int) -> Unit
+) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        details?.let { venue ->
+        infrastructures.forEach { infrastructure ->
             InfrastructureItem(
-                venue.venueType.capitalize(),
-                R.drawable.baseline_stadium_24,
-                onItemClick
-            )
-            InfrastructureItem(
-                "${venue.peopleCapacity} players",
-                R.drawable.game_icons_soccer_kick,
-                onItemClick
-            )
-            venue.infrastructure.let { infrastructure ->
-                if (infrastructure.lockerRoom) {
-                    InfrastructureItem(
-                        "Locker Room",
-                        R.drawable.mingcute_coathanger_fill,
-                        onItemClick
-                    )
-                }
-                if (infrastructure.stands.isNotBlank()) {
-                    InfrastructureItem("Stands", R.drawable.baseline_chair_24, onItemClick)
-                }
-                if (infrastructure.shower) {
-                    InfrastructureItem("Shower", R.drawable.baseline_shower_24, onItemClick)
-                }
-                if (infrastructure.parking) {
-                    InfrastructureItem("Parking", R.drawable.baseline_local_parking_24, onItemClick)
-                }
-            }
-            InfrastructureItem(
-                venue.venueSurface.capitalize(),
-                R.drawable.baseline_grass_24,
-                onItemClick
-            )
-            InfrastructureItem(
-                "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
-                R.drawable.baseline_access_time_filled_24,
-                onItemClick
+                text = infrastructure.infrastructureName,
+                iconUrl = infrastructure.infrastructurePicture,
+                onClick = onItemClick
             )
         }
     }
 }
 
+//        details?.let { venue ->
+//            InfrastructureItem(
+//                venue.venueType.capitalize(),
+//                R.drawable.baseline_stadium_24,
+//                onItemClick
+//            )
+//            InfrastructureItem(
+//                "${venue.peopleCapacity} players",
+//                R.drawable.game_icons_soccer_kick,
+//                onItemClick
+//            )
+//            venue.infrastructure.let { infrastructure ->
+//                if (infrastructure.lockerRoom) {
+//                    InfrastructureItem(
+//                        "Locker Room",
+//                        R.drawable.mingcute_coathanger_fill,
+//                        onItemClick
+//                    )
+//                }
+//                if (infrastructure.stands.isNotBlank()) {
+//                    InfrastructureItem("Stands", R.drawable.baseline_chair_24, onItemClick)
+//                }
+//                if (infrastructure.shower) {
+//                    InfrastructureItem("Shower", R.drawable.baseline_shower_24, onItemClick)
+//                }
+//                if (infrastructure.parking) {
+//                    InfrastructureItem("Parking", R.drawable.baseline_local_parking_24, onItemClick)
+//                }
+//            }
+//            InfrastructureItem(
+//                venue.venueSurface.capitalize(),
+//                R.drawable.baseline_grass_24,
+//                onItemClick
+//            )
+//            InfrastructureItem(
+//                "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
+//                R.drawable.baseline_access_time_filled_24,
+//                onItemClick
+//            )
+//        }
+//    }
+//}
+
 @Composable
-fun InfrastructureItem(text: String, iconRes: Int, onClick: (String, Int) -> Unit) {
+fun InfrastructureItem(
+    text: String,
+    iconUrl: String,
+    onClick: (String, Int) -> Unit
+) {
     var isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 1.1f else 1f,
@@ -910,13 +933,14 @@ fun InfrastructureItem(text: String, iconRes: Int, onClick: (String, Int) -> Uni
             .background(backgroundColor)
             .clickable {
                 isPressed = true
-                onClick(text, iconRes)
+                onClick(text, 0)
             }
             .padding(8.dp)
             .scale(scale)
     ) {
+        val painter = rememberAsyncImagePainter(iconUrl)
         Image(
-            painter = painterResource(id = iconRes),
+            painter = painter,
             contentDescription = text,
             contentScale = ContentScale.Inside,
             modifier = Modifier.size(24.dp)

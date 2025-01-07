@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.domain.usecases.venue
 
+import android.util.Log
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.repository.VenueRepository
@@ -42,6 +43,9 @@ class GetVenueDetailsUseCase @Inject constructor(
         val venue = venueRepository.getVenueDetailsById(venueId, latitude, longitude)
         val pictures = venueRepository.getVenuePictures(venueId)
         val venueWithPictures = venue?.copy(imageUrls = pictures)
+        Log.d("AAA", venue.toString())
+        Log.d("AAA", pictures.toString())
+        Log.d("AAA", venueWithPictures.toString())
         if (venueWithPictures != null) {
             emit(venueWithPictures)
         } else {

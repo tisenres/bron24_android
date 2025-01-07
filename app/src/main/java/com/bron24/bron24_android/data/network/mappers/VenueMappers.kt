@@ -46,10 +46,14 @@ fun CityDto.toDomainModel(): City {
 fun InfrastructureDto.toDomainModel(): Infrastructure {
     return Infrastructure(
         id = id,
-        lockerRoom = lockerRoom,
-        stands = stands,
-        shower = shower,
-        parking = parking
+        infrastructureName = infrastructureName,
+        infrastructureDescription = infrastructureDescription ?: "",
+        infrastructurePicture = infrastructurePicture ?: ""
+
+//        lockerRoom = lockerRoom,
+//        stands = stands,
+//        shower = shower,
+//        parking = parking
     )
 }
 
@@ -74,29 +78,29 @@ fun VenueOwnerDto.toDomainModel(): VenueOwner {
 
 fun VenueDetailsDto.toDomainModel(): VenueDetails {
     return VenueDetails(
-        venueId = venueId,
-        address = address.toDomainModel(),
-        city = city.toDomainModel(),
-        infrastructure = infrastructure.toDomainModel(),
+        venueId = venueId ?: 0,
+        address = address?.toDomainModel() ?: Address(0, "", "", ""),
+        city = city?.toDomainModel() ?: City(0, ""),
+        infrastructure = infrastructure?.map { it.toDomainModel() } ?: emptyList(),
         venueOwner = venueOwner?.toDomainModel() ?: VenueOwner(0, "", 0, "", ""),
-        venueName = venueName,
-        venueType = venueType,
-        venueSurface = venueSurface,
-        peopleCapacity = peopleCapacity,
-        sportType = sportType,
-        pricePerHour = pricePerHour.formatPrice(),
-        description = description,
-        workingHoursFrom = workingHoursFrom,
-        workingHoursTill = workingHoursTill,
-        contact1 = contact1,
-        contact2 = contact2,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
+        venueName = venueName ?: "",
+        venueType = venueType ?: "",
+        venueSurface = venueSurface ?: "",
+        peopleCapacity = peopleCapacity ?: 0,
+        sportType = sportType ?: "",
+        pricePerHour = pricePerHour?.formatPrice() ?: "0",
+        description = description ?: "",
+        workingHoursFrom = workingHoursFrom ?: "",
+        workingHoursTill = workingHoursTill ?: "",
+        contact1 = contact1 ?: "",
+        contact2 = contact2 ?: "",
+        createdAt = createdAt ?: "",
+        updatedAt = updatedAt ?: "",
         imageUrls = emptyList(),
-        longitude = longitude.toDouble(),
-        latitude = latitude.toDouble(),
-        distance = distance,
-        sectors = sectors
+        longitude = longitude?.toDoubleOrNull() ?: 0.0,
+        latitude = latitude?.toDoubleOrNull() ?: 0.0,
+        distance = distance ?: 0.0,
+        sectors = sectors ?: emptyList()
     )
 }
 
