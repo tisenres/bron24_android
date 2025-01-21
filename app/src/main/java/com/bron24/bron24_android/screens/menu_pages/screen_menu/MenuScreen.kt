@@ -96,22 +96,18 @@ fun RowScope.ItemBottomTab(
 ){
     val tabNavigator = LocalTabNavigator.current
     val check = tab==tabNavigator.current
-    val shape  = remember {
-        mutableStateOf(RoundedCornerShape(0.dp))
-    }
     if(tab!=null){
         Column(
             modifier = Modifier
-                .height(64.dp)
+                .height(72.dp)
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Button(onClick = {
-                tabNavigator.current = tab
-                             },
-                shape = shape.value,
-                modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(0.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)) {
+            Button(onClick = { tabNavigator.current = tab },
+                shape = CircleShape,
+                modifier = Modifier.size(72.dp),
+                contentPadding = PaddingValues(0.dp), colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         painter = tab.options.icon!!,
@@ -119,16 +115,18 @@ fun RowScope.ItemBottomTab(
                         tint = if (check) Success else GrayLighter,
                         modifier = Modifier.size(28.dp),
                     )
-                    Text(
-                        text = tab.options.title,
-                        fontSize = if(check) 13.sp else 12.sp,
-                        color =if (check) Success else GrayLighter,
-                        fontWeight = if (check) FontWeight.Medium else FontWeight.Normal,
-                        maxLines = 1
-                    )
+                    if (check){
+                        Text(
+                            text = tab.options.title,
+                            fontSize = 12.sp,
+                            color = Success,
+                            fontWeight = FontWeight.Normal,
+                            maxLines = 1
+                        )
+                    }
+
                 }
             }
-
         }
     }
 }

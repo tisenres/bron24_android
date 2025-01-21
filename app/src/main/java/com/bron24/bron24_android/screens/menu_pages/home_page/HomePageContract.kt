@@ -2,7 +2,6 @@ package com.bron24.bron24_android.screens.menu_pages.home_page
 
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.domain.entity.user.Location
-import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
@@ -16,7 +15,7 @@ interface HomePageContract {
     data class UISate(
         val isLoading:Boolean = true,
         val initial:Boolean = false,
-        val firstName:String = "John",
+        val firstName:String = "",
         val itemData:List<Venue> = emptyList(),
         val selectedSort:String? = null,
         val userLocation:Location = Location(33.33,33.33)
@@ -29,12 +28,12 @@ interface HomePageContract {
         data object ClickFilter:Intent
         data class SelectedSort(val name:String):Intent
         data object Refresh:Intent
-        data class ClickItem(val venueId:Int):Intent
+        data class ClickItem(val venueId:Int,val rate:Double):Intent
     }
 
     interface Direction{
         suspend fun moveToSearch()
         suspend fun moveToFilter(block:(FilterOptions)->Unit)
-        suspend fun moveToDetails(venueId: Int)
+        suspend fun moveToDetails(venueId: Int,rate: Double)
     }
 }

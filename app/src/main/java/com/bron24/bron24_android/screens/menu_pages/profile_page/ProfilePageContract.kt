@@ -24,6 +24,7 @@ interface ProfilePageContract {
         suspend fun openFavorites()
         suspend fun openAboutUs()
         suspend fun openAddVenue()
+        suspend fun moveToPhoneScreen()
     }
 
     interface Intent {
@@ -32,5 +33,6 @@ interface ProfilePageContract {
         data object OpenFavorites : Intent
         data object OpenAboutUs : Intent
         data object OpenAddVenue : Intent
+        data object ClickLogout:Intent
     }
 }

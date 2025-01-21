@@ -1,6 +1,8 @@
 package com.bron24.bron24_android.screens.menu_pages.profile_page
 
+import com.bron24.bron24_android.helper.util.presentation.listener
 import com.bron24.bron24_android.navigator.AppNavigator
+import com.bron24.bron24_android.screens.auth.phone_number.PhoneNumberScreen
 import com.bron24.bron24_android.screens.settings.edit_profile.EditProfileScreen
 import com.bron24.bron24_android.screens.settings.favorite.FavoriteScreen
 import com.bron24.bron24_android.screens.settings.language.LanguageScreen
@@ -25,5 +27,9 @@ class ProfilePageDirection @Inject constructor(private val appNavigator: AppNavi
 
     override suspend fun openAddVenue() {
 
+    }
+
+    override suspend fun moveToPhoneScreen() {
+        appNavigator.replaceAll(PhoneNumberScreen())
     }
 }

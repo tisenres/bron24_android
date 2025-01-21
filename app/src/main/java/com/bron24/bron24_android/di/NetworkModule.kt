@@ -60,7 +60,7 @@ class NetworkModule {
     @[Provides Singleton]
     fun provideBaseRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
 //            .baseUrl("http://109.123.241.109:46343/") // Real OTP
-            .baseUrl("http://13.60.51.148:8000/") // Test OTP via webhook
+            .baseUrl("http://13.60.36.176:8000/") // Test OTP via webhook
 //            .baseUrl("https://ebd8-82-215-105-180.ngrok-free.app/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
@@ -69,7 +69,7 @@ class NetworkModule {
     @[Provides Singleton Public]
     fun providePublicRetrofit(@Public okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
 //            .baseUrl("http://109.123.241.109:46343/") // Real OTP
-            .baseUrl("http://13.60.51.148:8000/") // Test OTP via webhook
+            .baseUrl("http://13.60.36.176:8000/") // Test OTP via webhook
 //            .baseUrl("https://ebd8-82-215-105-180.ngrok-free.app/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())

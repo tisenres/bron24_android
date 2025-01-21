@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.common.VenueOrderInfo
+import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.usecases.booking.ConfirmBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class BookingConfirmationVM @Inject constructor(
     private val createBookingUseCase: CreateBookingUseCase,
     private val confirmBookingUseCase: ConfirmBookingUseCase,
-    private val direction: BookingConfirmationContract.Direction
+    private val direction: BookingConfirmationContract.Direction,
+    private val localStorage: LocalStorage
 ) : ViewModel(), BookingConfirmationContract.ViewModel {
     override fun onDispatchers(intent: BookingConfirmationContract.Intent): Job = intent {
         when (intent) {
@@ -27,7 +29,12 @@ class BookingConfirmationVM @Inject constructor(
             }
 
             BookingConfirmationContract.Intent.Confirm -> {
-                confirmBookingUseCase.invoke().onEach {
+                confirmBookingUseCase.invoke(
+                    state.venueOrderInfo ?: VenueOrderInfo(
+                        0, "", "", "",
+                        emptyList()
+                    )
+                ).onEach {
                     it.onSuccess {
                         direction.moveToNext(
                             state.venueOrderInfo ?: VenueOrderInfo(

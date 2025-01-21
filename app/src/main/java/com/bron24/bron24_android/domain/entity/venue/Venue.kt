@@ -11,5 +11,6 @@ data class Venue(
     val address: Address,
     val rate:Double,
     val distance: Double,
+    val slots:Int,
     val previewImage: String?
 ):Parcelable

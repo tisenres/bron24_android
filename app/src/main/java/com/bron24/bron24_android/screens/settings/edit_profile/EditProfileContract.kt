@@ -2,15 +2,20 @@ package com.bron24.bron24_android.screens.settings.edit_profile
 
 import com.bron24.bron24_android.domain.entity.user.Language
 import com.bron24.bron24_android.domain.entity.user.User
+import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface EditProfileContract {
     interface ViewModel : ContainerHost<UIState, SideEffect> {
-        fun onDispatchers(intent: Intent)
+        fun onDispatchers(intent: Intent):Job
     }
 
     data class UIState(
-        val user: User = User("","","")
+        val isLoading:Boolean = false,
+        val phoneNumber:String,
+        val firstName: String,
+        val lastName:String,
+        val message: String = "",
     )
 
     data class SideEffect(
@@ -22,9 +27,13 @@ interface EditProfileContract {
         data class ClickSave(
             val firstName: String,
             val lastName: String,
-            val phone: String
         ) : Intent
         data object ClickDeleteAcc:Intent
         data object ClickEditPhone:Intent
+    }
+
+    interface Direction{
+        suspend fun back()
+        suspend fun moveToPhoneScreen()
     }
 }

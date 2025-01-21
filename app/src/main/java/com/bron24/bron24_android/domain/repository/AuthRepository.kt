@@ -4,6 +4,7 @@ import com.bron24.bron24_android.domain.entity.auth.AuthResponse
 import com.bron24.bron24_android.domain.entity.auth.OTPCodeResponse
 import com.bron24.bron24_android.domain.entity.auth.OTPRequest
 import com.bron24.bron24_android.domain.entity.auth.PhoneNumberResponse
+import com.bron24.bron24_android.domain.entity.user.UpdateProfile
 import com.bron24.bron24_android.domain.entity.user.User
 
 interface AuthRepository {

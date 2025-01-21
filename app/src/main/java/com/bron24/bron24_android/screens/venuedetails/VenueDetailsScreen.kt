@@ -102,6 +102,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
+import com.bron24.bron24_android.components.items.LoadingScreen
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.helper.extension.DateTimeFormatter
 import com.bron24.bron24_android.components.toast.ToastManager
@@ -121,7 +122,7 @@ import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
 
-data class VenueDetailsScreen(val venueId: Int) :Screen{
+data class VenueDetailsScreen(val venueId: Int,val rate: Double) :Screen{
     @Composable
     override fun Content() {
         val viewModel:VenueDetailsContract.ViewModel = getViewModel<VenueDetailsVM>()
@@ -129,13 +130,14 @@ data class VenueDetailsScreen(val venueId: Int) :Screen{
             viewModel.initData(venueId)
         }
         val uiState = viewModel.collectAsState()
-        VenueDetailsScreenContent(venueId,state = uiState,viewModel::onDispatchers)
+        VenueDetailsScreenContent(venueId,rate,state = uiState,viewModel::onDispatchers)
     }
 
 }
 @Composable
 fun VenueDetailsScreenContent(
     venueId: Int,
+    rate: Double,
     state:State<VenueDetailsContract.UIState>,
     intent:(VenueDetailsContract.Intent)->Unit
 ) {
@@ -154,6 +156,7 @@ fun VenueDetailsScreenContent(
             onMapClick = {lan,long->
                 intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan,long)))
             },
+            rate = rate,
             onOrderClick = {
                 openOrder = true
 ////                    state.venueDetails.venueId,
@@ -206,22 +209,11 @@ fun BookingBottomSheet(
 }
 
 
-@Composable
-fun LoadingScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        CircularProgressIndicator(
-            color = Color(0xFF32B768),
-            modifier = Modifier.align(Alignment.Center)
-        )
-    }
-}
+
 
 @Composable
 fun VenueDetailsContent(
+    rate: Double,
     details: VenueDetails?,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
@@ -259,6 +251,7 @@ fun VenueDetailsContent(
             }
             item(key = "headerSection") {
                 HeaderSection(
+                    rate = rate,
                     details = details,
                     onMapClick = onMapClick,
                     onCopyAddressClick = {
@@ -283,7 +276,7 @@ fun VenueDetailsContent(
 
         AnimatedToolbar(
             visible = toolbarVisible,
-            title ="135 Maktab",
+            title = details?.venueName?:"",
             onBackClick = onBackClick,
             modifier = Modifier
                 .fillMaxWidth()
@@ -442,6 +435,7 @@ fun SectionTitle(text: String) {
 
 @Composable
 fun HeaderSection(
+    rate: Double,
     details: VenueDetails?,
     onMapClick: (Double, Double) -> Unit,
     onCopyAddressClick: () -> Unit
@@ -455,7 +449,7 @@ fun HeaderSection(
         Spacer(modifier = Modifier.height(14.dp))
         AddressAndPhoneSection(details, onCopyAddressClick)
         Spacer(modifier = Modifier.height(14.dp))
-        RatingSection(details)
+        RatingSection(details,rate)
     }
 }
 
@@ -646,7 +640,7 @@ fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Unknown field",
+            text = details?.venueName?:"",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -784,9 +778,9 @@ fun InfoRow(icon: Int, text: String) {
 }
 
 @Composable
-fun RatingSection(details: VenueDetails?) {
+fun RatingSection(details: VenueDetails?,rate:Double) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        repeat(5) { index ->
+        repeat((rate).toInt()) { index ->
             Icon(
                 painter = painterResource(id = R.drawable.ic_star),
                 contentDescription = "Star",
@@ -797,7 +791,7 @@ fun RatingSection(details: VenueDetails?) {
         }
         Spacer(modifier = Modifier.width(7.dp))
         Text(
-            text = "4.8",
+            text = rate.toString(),
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
@@ -883,40 +877,44 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
         details?.let { venue ->
             InfrastructureItem(
                 venue.venueType.capitalize(),
+                null,
                 R.drawable.baseline_stadium_24,
                 onItemClick
             )
             InfrastructureItem(
                 "${venue.peopleCapacity} ${stringResource(id = R.string.players)}",
+                null,
                 R.drawable.game_icons_soccer_kick,
                 onItemClick
             )
             venue.infrastructure.forEach {
-
-            }.let { infrastructure ->
-//                if (infrastructure.lockerRoom) {
+                  if(it.id==3){
                     InfrastructureItem(
                         stringResource(id = R.string.changing_room),
+                        it.description,
                         R.drawable.mingcute_coathanger_fill,
                         onItemClick
                     )
+                  }
 //                }
 //                if (infrastructure.stands.isNotBlank()) {
                 //}
                 //if (infrastructure.shower) {
-                    InfrastructureItem(stringResource(id = R.string.shower), R.drawable.baseline_shower_24, onItemClick)
+                   // InfrastructureItem(stringResource(id = R.string.shower), R.drawable.baseline_shower_24, onItemClick)
 //                }
 //                if (infrastructure.parking) {
-                    InfrastructureItem(stringResource(id = R.string.parking), R.drawable.baseline_local_parking_24, onItemClick)
+                   // InfrastructureItem(stringResource(id = R.string.parking), R.drawable.baseline_local_parking_24, onItemClick)
 //                }
             }
             InfrastructureItem(
                 venue.venueSurface.capitalize(),
+                null,
                 R.drawable.baseline_grass_24,
                 onItemClick
             )
             InfrastructureItem(
                 "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
+                null,
                 R.drawable.baseline_access_time_filled_24,
                 onItemClick
             )
@@ -925,7 +923,7 @@ fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
 }
 
 @Composable
-fun InfrastructureItem(text: String, iconRes: Int, onClick: (String, Int) -> Unit) {
+fun InfrastructureItem(text: String,info:String? = null, iconRes: Int, onClick: (String, Int) -> Unit) {
     var isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 1.1f else 1f,
@@ -953,7 +951,7 @@ fun InfrastructureItem(text: String, iconRes: Int, onClick: (String, Int) -> Uni
             .background(backgroundColor)
             .clickable {
                 isPressed = true
-                onClick(text, iconRes)
+                onClick(info?:text, iconRes)
             }
             .padding(8.dp)
             .scale(scale)

@@ -14,6 +14,8 @@ interface BookingConfirmationContract {
     data class UIState(
         val isLoading:Boolean = true,
         val booking:Booking? = null,
+        val fullName:String = "",
+        val phoneNumber:String = "",
         val secondPhoneNumber: String = "",
         val isCheckPhoneNumber:Boolean = false,
         val venueOrderInfo: VenueOrderInfo?= null

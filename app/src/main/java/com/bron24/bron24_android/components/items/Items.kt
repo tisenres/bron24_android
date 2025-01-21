@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -37,7 +38,9 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,17 +56,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.helper.util.NetworkConnection
 import com.bron24.bron24_android.screens.main.theme.Black
+import com.bron24.bron24_android.screens.main.theme.Error
+import com.bron24.bron24_android.screens.main.theme.FavoriteItemDivider
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.GrayRegular
@@ -122,7 +131,11 @@ fun ErrorNetWork(networkConnection: NetworkConnection) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Internetni tekshiring!", fontFamily = gilroyFontFamily, fontSize = 20.sp, fontWeight = FontWeight.Medium, color = Color.Red
+                text = "Internetni tekshiring!",
+                fontFamily = gilroyFontFamily,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.Red
             )
         }
     }
@@ -160,7 +173,9 @@ fun ItemInputText(
                 listener.invoke(focusState.isFocused)
             }
             .border(
-                1.2.dp, if (select.value && !error) Success else if (error) Color.Red else GrayLighter, RoundedCornerShape(10.dp)
+                1.2.dp,
+                if (select.value && !error) Success else if (error) Color.Red else GrayLighter,
+                RoundedCornerShape(10.dp)
             ),
         textStyle = TextStyle(
             fontSize = 16.sp, fontFamily = gilroyFontFamily, fontWeight = FontWeight.SemiBold
@@ -209,7 +224,11 @@ fun ItemInputText(
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun ItemSelectedData(
-    date: String, hint: String, modifier: Modifier, leadingIcon: @Composable() (() -> Unit)? = null, endIcon: @Composable (() -> Unit)? = null,
+    date: String,
+    hint: String,
+    modifier: Modifier,
+    leadingIcon: @Composable() (() -> Unit)? = null,
+    endIcon: @Composable (() -> Unit)? = null,
 
     listener: () -> Unit
 ) {
@@ -255,11 +274,18 @@ fun ItemLanguage(
         .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically) {
         Text(
-            text = text, fontFamily = gilroyFontFamily, fontSize = 16.sp, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f)
+            text = text,
+            fontFamily = gilroyFontFamily,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f)
         )
         if (selected) {
             Icon(
-                imageVector = Icons.Default.Check, contentDescription = "icon", tint = Success, modifier = Modifier.size(24.dp)
+                imageVector = Icons.Default.Check,
+                contentDescription = "icon",
+                tint = Success,
+                modifier = Modifier.size(24.dp)
             )
         }
     }
@@ -279,16 +305,16 @@ fun CustomAppBar(
             .fillMaxWidth()
             .height(56.dp)
             .background(color = backgroundColor ?: White)
-            .padding(start = if(startIcons==null) 20.dp else 16.dp, end = 24.dp),
+            .padding(start = if (startIcons == null) 20.dp else 16.dp, end = 24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if(startIcons!=null){
+        if (startIcons != null) {
             IconButton(onClick = listener) {
                 startIcons.invoke()
             }
         }
         Text(
-            text =title,
+            text = title,
             color = titleColor ?: Black,
             fontFamily = gilroyFontFamily,
             fontSize = 20.sp,
@@ -310,13 +336,22 @@ fun ItemEditProfile(
             .height(30.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(color = Success, shape = RoundedCornerShape(8.dp))
-            .clickable { listener() }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center
+            .clickable { listener() },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = Icons.Default.Edit, contentDescription = "icon", tint = White, modifier = Modifier.size(20.dp)
+            imageVector = Icons.Default.Edit,
+            contentDescription = "icon",
+            tint = White,
+            modifier = Modifier.size(20.dp)
         )
         Text(
-            text = "Edit profile", fontFamily = gilroyFontFamily, fontSize = 14.sp, color = White, fontWeight = FontWeight.Medium
+            text = "Edit profile",
+            fontFamily = gilroyFontFamily,
+            fontSize = 14.sp,
+            color = White,
+            fontWeight = FontWeight.Medium
         )
     }
 }
@@ -373,7 +408,9 @@ fun ItemInfosData(
             interactionSource = MutableInteractionSource(), indication = null
         ) { listener.invoke() }
         .border(
-            width = 1.dp, color = if (select) GreenLight else GrayLighter, shape = RoundedCornerShape(16)
+            width = 1.dp,
+            color = if (select) GreenLight else GrayLighter,
+            shape = RoundedCornerShape(16)
         )
         .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.Center,
@@ -406,14 +443,18 @@ fun CheckBox(
                 modifier = Modifier
                     .size(24.dp)
                     .border(
-                        width = 1.2.dp, color = if (state) Success else GrayLighter, shape = RoundedCornerShape(8.dp)
+                        width = 1.2.dp,
+                        color = if (state) Success else GrayLighter,
+                        shape = RoundedCornerShape(8.dp)
                     )
                     .clip(RoundedCornerShape(8.dp))
                     .background(color = if (state) Success else White)
             ) {
                 if (state) {
                     Icon(
-                        imageVector = Icons.Default.Check, contentDescription = "icons", tint = White
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "icons",
+                        tint = White
                     )
                 }
             }
@@ -429,16 +470,94 @@ fun CheckBox(
         )
     }
 }
+@Composable
+fun CustomDialog(message:String,onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp)
+                .background(Color.White, shape = RoundedCornerShape(10.dp))
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Are you sure you want to\n$message?",
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    color = Black,
+                    fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .height(1.dp)
+                        .background(color = FavoriteItemDivider)
+                )
+                TextButton(onClick = onConfirm) {
+                    Text(
+                        text = message,
+                        color = Error,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .height(1.dp)
+                        .background(color = FavoriteItemDivider)
+                )
+                TextButton(onClick = onDismiss) {
+                    Text(
+                        text = "Cansel",
+                        color = Black,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        CircularProgressIndicator(
+            color = Color(0xFF32B768),
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
 
 @Composable
 fun AppButton(
-    text: String, modifier: Modifier, listener: () -> Unit
+    text: String,
+    enable:Boolean? = null,
+    modifier: Modifier, listener: () -> Unit
 ) {
     Button(
-        enabled = true, onClick = {
+        enabled = enable?:true, onClick = {
             listener.invoke()
         }, colors = ButtonDefaults.buttonColors(
-            containerColor = Success, contentColor = White, disabledContainerColor = bgSuccess, disabledContentColor = GrayLighter
+            containerColor = Success,
+            contentColor = White,
+            disabledContainerColor = bgSuccess,
+            disabledContentColor = GrayLighter
         ), modifier = modifier
             .padding(vertical = 24.dp)
             .fillMaxWidth()
@@ -452,7 +571,7 @@ fun AppButton(
 
 @Composable
 fun SearchView(
-    name:String,
+    name: String,
     modifier: Modifier = Modifier,
     clickSearch: () -> Unit,
     clickFilter: () -> Unit
@@ -464,9 +583,11 @@ fun SearchView(
             .fillMaxWidth()
             .height(150.dp)
             .background(
-                color = Color(0xFF32B768), shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
+                color = Color(0xFF32B768),
+                shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
             )
-            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         ProfileRow(name)
         SearchRow(
@@ -479,7 +600,9 @@ fun SearchView(
 @Composable
 fun ProfileRow(firstName: String) {
     Row(
-        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
@@ -517,15 +640,17 @@ fun SearchRow(
             .fillMaxWidth()
             .padding(top = 10.dp, bottom = 10.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start, modifier = Modifier
-            .weight(1f)
-            .background(
-                color = Color.White, shape = RoundedCornerShape(5.dp)
-            )
-            .height(40.dp)
-            .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
-            .clickable { onSearchClick.invoke() }
-            .padding(horizontal = 10.dp, vertical = 10.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+                .weight(1f)
+                .background(
+                    color = Color.White, shape = RoundedCornerShape(5.dp)
+                )
+                .height(40.dp)
+                .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
+                .clickable { onSearchClick.invoke() }
+                .padding(horizontal = 10.dp, vertical = 10.dp)) {
             Image(
                 painter = rememberAsyncImagePainter(model = R.drawable.ic_search_green),
                 contentDescription = "search_icon",
@@ -535,7 +660,11 @@ fun SearchRow(
             val searchHint = stringResource(id = R.string.search_stadium)
             androidx.compose.material3.Text(
                 text = searchHint, style = TextStyle(
-                    fontFamily = gilroyFontFamily, fontWeight = FontWeight.Normal, fontSize = 14.sp, color = Color(0xFF9C9E9C), lineHeight = 16.sp
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    color = Color(0xFF9C9E9C),
+                    lineHeight = 16.sp
                 )
             )
         }

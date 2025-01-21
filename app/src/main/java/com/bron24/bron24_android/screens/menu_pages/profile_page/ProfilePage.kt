@@ -61,6 +61,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.CustomAppBar
+import com.bron24.bron24_android.components.items.CustomDialog
 import com.bron24.bron24_android.components.items.ItemEditProfile
 import com.bron24.bron24_android.components.items.ItemProfileTask
 import com.bron24.bron24_android.domain.entity.user.User
@@ -110,7 +111,7 @@ fun ProfilePageContent(
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val skipPartiallyExpanded by rememberSaveable { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val user:User= state.value.user?:User("","","")
+    val user: User = state.value.user ?: User("", "", "")
     val bottomSheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     LaunchedEffect(openBottomSheet) {
@@ -140,7 +141,9 @@ fun ProfilePageContent(
                     isClickable = false
                 }
             }
-        }) {}
+        }) {
+            
+        }
 
         Column(
             modifier = Modifier
@@ -396,68 +399,11 @@ fun ProfilePageContent(
         }
     }
     if (showDialog) {
-        CustomDialog(onDismiss = { showDialog = false }, onConfirm = { showDialog = false })
+        CustomDialog(
+            message = "Logout",
+            onDismiss = { showDialog = false },
+            onConfirm = { intent.invoke(ProfilePageContract.Intent.ClickLogout) })
     }
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(Color.White, darkIcons = true)
-}
-
-@Composable
-fun CustomDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
-    Dialog(onDismissRequest = onDismiss) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(16.dp)
-                .background(Color.White, shape = RoundedCornerShape(10.dp))
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Are you sure you want to\nlogout?",
-                    textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
-                    color = Black,
-                    fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                        .height(1.dp)
-                        .background(color = FavoriteItemDivider)
-                )
-                TextButton(onClick = onDismiss) {
-                    Text(
-                        text = "Log out",
-                        color = Error,
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                        .height(1.dp)
-                        .background(color = FavoriteItemDivider)
-                )
-                TextButton(onClick = onDismiss) {
-                    Text(
-                        text = "Cansel",
-                        color = Black,
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-            }
-        }
-    }
 }

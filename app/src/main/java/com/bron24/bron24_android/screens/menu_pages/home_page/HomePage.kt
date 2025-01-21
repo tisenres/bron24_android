@@ -32,7 +32,7 @@ object HomePage : Tab {
         get() {
             val title = stringResource(id = R.string.home)
             val icon =
-                rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.baseline_home_24))
+                rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_home))
             return TabOptions(
                 index = 1u,
                 title = title,
@@ -81,7 +81,7 @@ fun HomePageContent(
                 refreshVenue = { intent.invoke(HomePageContract.Intent.Refresh) },
                 clickSort = { intent.invoke(HomePageContract.Intent.SelectedSort(it)) })
             {
-                intent.invoke(HomePageContract.Intent.ClickItem(it.venueId))
+                intent.invoke(HomePageContract.Intent.ClickItem(it.venueId,it.rate))
             }
         }
     }

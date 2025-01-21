@@ -3,6 +3,7 @@ package com.bron24.bron24_android.di
 import com.bron24.bron24_android.data.network.apiservices.AuthApi
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.apiservices.OrdersApi
+import com.bron24.bron24_android.data.network.apiservices.ProfileApi
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.helper.util.Public
 import dagger.Module
@@ -35,4 +36,9 @@ class ApiModule {
     @Singleton
     fun provideOrdersApi(@Public retrofit: Retrofit): OrdersApi =
         retrofit.create(OrdersApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideProfileApi(@Public retrofit: Retrofit): ProfileApi =
+        retrofit.create(ProfileApi::class.java)
 }

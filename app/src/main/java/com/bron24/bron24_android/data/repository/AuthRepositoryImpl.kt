@@ -13,11 +13,14 @@ import com.bron24.bron24_android.domain.entity.auth.OTPRequest
 import com.bron24.bron24_android.domain.entity.auth.PhoneNumberResponse
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
+import com.bron24.bron24_android.domain.entity.user.UpdateProfile
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import com.bron24.bron24_android.helper.util.presentation.AuthEvent
 import com.bron24.bron24_android.helper.util.presentation.GlobalAuthEventBus
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -72,6 +75,7 @@ class AuthRepositoryImpl @Inject constructor(
             handleHttpExceptionAuth(e)
         }
     }
+
 
     private fun handleHttpExceptionPhone(e: HttpException): PhoneNumberResponse {
         return when (e.code()) {

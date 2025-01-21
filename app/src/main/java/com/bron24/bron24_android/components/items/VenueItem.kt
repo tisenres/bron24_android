@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -54,7 +55,7 @@ import org.w3c.dom.Text
 @Composable
 fun VenueItem(
     venue: Venue,
-    listener:(Venue)->Unit
+    listener: (Venue) -> Unit
 ) {
     var isLoading by remember {
         mutableStateOf(false)
@@ -116,14 +117,19 @@ fun VenueItem(
                 text = venue.venueName,
                 color = FavoriteItemStadiumName,
                 fontFamily = gilroyFontFamily,
-                fontSize = 14.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 lineHeight = 21.sp
             )
             Spacer(modifier = Modifier.weight(1f))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(painter = painterResource(R.drawable.ic_star), contentDescription = "", tint = Yellow)
-                Text(text = "4.0", fontFamily = FontFamily(Font(R.font.gilroy_regular)))
+                Icon(
+                    painter = painterResource(R.drawable.ic_star),
+                    contentDescription = "",
+                    tint = Color(0xffffb800),
+                    modifier = Modifier.size(18.dp)
+                )
+                Text(text = venue.rate.toString(), fontFamily = FontFamily(Font(R.font.gilroy_regular)))
             }
         }
         Row(
@@ -141,7 +147,7 @@ fun VenueItem(
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = String.format("%.1f km",venue.distance),
+                text = String.format("%.1f ${stringResource(id = R.string.km)}", venue.distance),
                 color = FavoriteItemAddress,
                 fontFamily = gilroyFontFamily,
             )
@@ -162,18 +168,29 @@ fun VenueItem(
                 modifier = Modifier.size(20.dp),
                 tint = Success
             )
-            Text(
-                text = "Price ${venue.pricePerHour} sum/hour",
-                fontFamily = FontFamily(Font(R.font.gilroy_bold)),
-                color = FavoriteItemStadiumName
-            )
+            Row {
+                Text(
+                    text = "${stringResource(id = R.string.price)} ${venue.pricePerHour} ",
+                    fontFamily = gilroyFontFamily,
+                    fontSize = 16.sp,
+                    color = FavoriteItemStadiumName
+                )
+                Text(
+                    text = "sum/hr",
+                    fontFamily = gilroyFontFamily,
+                    color = FavoriteItemStadiumName,
+                    fontSize = 13.sp
+                )
+
+            }
+
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = "Available: ", color = FavoriteItemStadiumName,
+                text = " ${stringResource(id = R.string.available)}: ", color = FavoriteItemStadiumName,
                 fontFamily = FontFamily(Font(R.font.gilroy_bold))
             )
             Text(
-                text = "14 slots",
+                text = "${venue.slots} ${stringResource(id = R.string.slots)}",
                 color = Green,
                 fontFamily = FontFamily(Font(R.font.gilroy_bold))
             )

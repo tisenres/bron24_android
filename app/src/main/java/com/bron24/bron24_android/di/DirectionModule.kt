@@ -26,6 +26,8 @@ import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenContra
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenDirection
 import com.bron24.bron24_android.screens.search.search_screen.SearchScreenContract
 import com.bron24.bron24_android.screens.search.search_screen.SearchScreenDirection
+import com.bron24.bron24_android.screens.settings.edit_profile.EditProfileContract
+import com.bron24.bron24_android.screens.settings.edit_profile.EditProfileDirection
 import com.bron24.bron24_android.screens.settings.language.LanguageContract
 import com.bron24.bron24_android.screens.settings.language.LanguageDirection
 import com.bron24.bron24_android.screens.splash.SplashScreenContract
@@ -89,5 +91,8 @@ interface DirectionModule {
 
     @[Binds ViewModelScoped]
     fun bindsBookingSuccessDirection(impl: BookingSuccessDirection): BookingSuccessContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsEditProfileDirection(impl: EditProfileDirection): EditProfileContract.Direction
 
 }

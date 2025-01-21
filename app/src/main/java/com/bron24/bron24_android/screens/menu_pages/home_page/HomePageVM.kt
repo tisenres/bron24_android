@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.common.FilterOptions
@@ -10,7 +9,6 @@ import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import org.orbitmvi.orbit.viewmodel.container
@@ -52,19 +50,18 @@ class HomePageVM @Inject constructor(
             }
 
             is HomePageContract.Intent.ClickItem -> {
-                direction.moveToDetails(intent.venueId)
+                direction.moveToDetails(intent.venueId,intent.rate)
             }
         }
     }
 
-    override fun initData(): Job = intent {
-        val name = localStorage.firstName
+    override fun initData() = intent {
         getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
             it.onSuccess {
                 if(filterOptions!=null){
                     filterResult()
                 }
-                reduce { state.copy(isLoading = false, itemData = it, firstName = name) }
+                reduce { state.copy(isLoading = false, itemData = it) }
             }.onFailure {
                 postSideEffect(it.message.toString())
             }
@@ -94,5 +91,5 @@ class HomePageVM @Inject constructor(
     }
 
     override val container =
-        container<HomePageContract.UISate, HomePageContract.SideEffect>(HomePageContract.UISate())
+        container<HomePageContract.UISate, HomePageContract.SideEffect>(HomePageContract.UISate(firstName = localStorage.firstName))
 }

@@ -51,4 +51,9 @@ interface RepositoryModule {
         impl: VenueRepositoryImpl
     ): VenueRepository
 
+    @[Binds Singleton]
+    fun bindProfileRepository(
+        impl: ProfileRepositoryImpl
+    ): ProfileRepository
+
 }

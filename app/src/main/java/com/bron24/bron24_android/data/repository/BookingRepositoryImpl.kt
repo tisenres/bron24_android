@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.data.repository
 
+import com.bron24.bron24_android.common.VenueOrderInfo
+import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
 import com.bron24.bron24_android.data.network.dto.booking.AvailableTimesRequestDto
 import com.bron24.bron24_android.data.network.dto.booking.RequestBookingDto
@@ -14,7 +16,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookingRepositoryImpl @Inject constructor(
-    private val bookingApiService: BookingApiService
+    private val bookingApiService: BookingApiService,
+    private val localStorage: LocalStorage
 ) : BookingRepository {
 
     private lateinit var currentBooking: Booking
@@ -30,38 +33,41 @@ class BookingRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createBooking(
-        booking: Booking
+        info: VenueOrderInfo
     ): Booking {
 
-        val formattedTimeSlots: List<String> = booking.timeSlots.map { timeSlot ->
+        val formattedTimeSlots: List<String> = info.timeSlots.map { timeSlot ->
             "${timeSlot.startTime}-${timeSlot.endTime}"
         }
+        val booking = Booking(
+            orderId = 0,
+            phoneNumber = localStorage.phoneNumber,
+            firstName = "${localStorage.firstName} ${localStorage.lastName}",
+            venueId = info.venueId,
+            bookingDate = info.date,
+            sector = info.sector,
+            timeSlots = info.timeSlots,
+        )
 
         val bookingRequest = RequestBookingDto(
-            user = booking.phoneNumber,
-            venueId = booking.venueId,
-            bookingDate = booking.bookingDate,
-            sector = booking.sector,
+            venueId = info.venueId,
+            bookingDate = info.date,
+            sector = info.sector,
             timeSlot = formattedTimeSlots
         )
-        currentBooking = booking
         val response = bookingApiService.startBooking(bookingRequest)
 
-        currentBooking.apply {
-            firstName = response.data.user?.firstName
-            lastName = response.data.user?.lastName
-            venueName = response.data.venue?.venueName
-            venueAddress = response.data.venue?.venueAddress
-            totalHours = response.data.hours
-            cost = response.data.cost.toString().formatPrice()
-            orderIds = response.data.orderIds
-        }
-
-        return currentBooking
+        return booking.copy(
+            venueName = response.data.venue?.venueName,
+            venueAddress = response.data.venue?.venueAddress,
+            totalHours = response.data.hours,
+            cost = response.data.cost.toString().formatPrice(),
+            orderIds = response.data.orderIds?: emptyList(),
+        )
     }
 
-    override suspend fun confirmBooking(booking: Booking): Boolean = withContext(Dispatchers.IO) {
-        val response = bookingApiService.finishBooking(booking.toNetworkModel())
+    override suspend fun confirmBooking(info: VenueOrderInfo): Boolean = withContext(Dispatchers.IO) {
+        val response = bookingApiService.finishBooking(info.toNetworkModel())
         response.success
     }
 }

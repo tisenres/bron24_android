@@ -120,7 +120,7 @@ fun FilterScreenContent(
     }
 
     var minSumma by remember {
-        mutableIntStateOf(100000)
+        mutableIntStateOf(0)
     }
     var maxSumma by remember {
         mutableIntStateOf(1000000)

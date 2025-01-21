@@ -4,20 +4,28 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.entity.user.User
+import com.bron24.bron24_android.domain.usecases.update_profile.LogoutUseCase
 import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract.Intent.OpenAboutUs
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract.Intent.OpenAddVenue
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract.Intent.OpenChangeLanguage
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract.Intent.OpenEdit
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract.Intent.OpenFavorites
+import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract.Intent.ClickLogout
+import com.bron24.bron24_android.screens.settings.edit_profile.EditProfileContract
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfilePageVM @Inject constructor(
     private val direction: ProfilePageContract.Direction,
-    private val localStorage: LocalStorage
+    private val localStorage: LocalStorage,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel(), ProfilePageContract.ViewModel {
 
     override fun onDispatchers(intent: ProfilePageContract.Intent) = intent {
@@ -41,6 +49,21 @@ class ProfilePageVM @Inject constructor(
             OpenAddVenue -> {
                 direction.openAddVenue()
             }
+
+            ClickLogout -> {
+                logoutUseCase.invoke().onStart {
+                    reduce { state.copy(isLoading = true) }
+                }.onEach {
+                    it.onSuccess {
+                        postSideEffect(it)
+                        direction.moveToPhoneScreen()
+                    }.onFailure {
+                        postSideEffect(it.message ?: "Unknown error!")
+                    }
+                }.onCompletion {
+                    reduce { state.copy(isLoading = false) }
+                }.launchIn(viewModelScope)
+            }
         }
     }
 
@@ -54,6 +77,12 @@ class ProfilePageVM @Inject constructor(
                     localStorage.phoneNumber.formatPhoneNumber()
                 )
             )
+        }
+    }
+
+    private fun postSideEffect(message: String) {
+        intent {
+            postSideEffect(ProfilePageContract.SideEffect(message))
         }
     }
 

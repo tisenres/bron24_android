@@ -14,7 +14,7 @@
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <!-- This is for the ngrok domain -->
-        <domain includeSubdomains="true">13.60.51.148</domain>
+        <domain includeSubdomains="true">13.60.36.176</domain>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <!-- This is for the ngrok domain -->

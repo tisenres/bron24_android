@@ -23,6 +23,7 @@ fun VenueDto.toDomainModel(): Venue {
         pricePerHour = pricePerHour.formatPrice(),
         address = address.toDomainModel(),
         rate = rate,
+        slots = slots,
         distance = distance,
         previewImage = previewImage
     )

@@ -1,7 +1,9 @@
 package com.bron24.bron24_android.data.network.mappers
 
+import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.data.network.dto.booking.AvailableTimesResponseDto
 import com.bron24.bron24_android.data.network.dto.booking.RequestBookingDto
+import com.bron24.bron24_android.data.network.dto.booking.ResponseBookingDto
 import com.bron24.bron24_android.data.network.dto.booking.TimeStampDto
 import com.bron24.bron24_android.domain.entity.booking.AvailableTimesResponse
 import com.bron24.bron24_android.domain.entity.booking.Booking
@@ -23,11 +25,10 @@ fun AvailableTimesResponseDto.toDomain(): AvailableTimesResponse {
     )
 }
 
-fun Booking.toNetworkModel(): RequestBookingDto {
+fun VenueOrderInfo.toNetworkModel(): RequestBookingDto {
     return RequestBookingDto(
-        user = phoneNumber,
         venueId = venueId,
-        bookingDate = bookingDate,
+        bookingDate = date,
         sector = sector,
         timeSlot = timeSlots.map { "${it.startTime}-${it.endTime}" },
         status = BookingStatus.INPROCESS.name

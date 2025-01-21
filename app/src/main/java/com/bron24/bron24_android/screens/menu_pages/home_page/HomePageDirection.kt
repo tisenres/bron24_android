@@ -18,7 +18,7 @@ class HomePageDirection @Inject constructor(
         appNavigator.push(FilterScreen(block))
     }
 
-    override suspend fun moveToDetails(venueId: Int) {
-        appNavigator.push(VenueDetailsScreen(venueId))
+    override suspend fun moveToDetails(venueId: Int, rate: Double) {
+        appNavigator.push(VenueDetailsScreen(venueId,rate))
     }
 }

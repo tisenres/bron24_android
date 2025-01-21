@@ -292,7 +292,8 @@ fun BookingInfoCard(
     ) {
         Column(modifier = Modifier.padding(vertical = 15.dp)) {
             VenueInfo(
-                booking.venueName ?: "", booking.venueAddress ?: "",
+                booking.venueName ?: "",
+                booking.venueAddress ?: "",
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             HorizontalDivider(
