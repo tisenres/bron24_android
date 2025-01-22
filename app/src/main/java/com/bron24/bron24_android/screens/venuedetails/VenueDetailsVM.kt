@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.venuedetails
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.viewModelScope
@@ -33,7 +34,9 @@ class VenueDetailsVM @Inject constructor(
     override fun initData(venueId:Int): Job = intent {
         getVenueDetailsUseCase.invoke(venueId)
             .onStart { reduce { state.copy(isLoading = true) } }
-            .onEach { reduce { state.copy(isLoading = false, venue = it) }}
+            .onEach {
+                reduce { state.copy(isLoading = false, venue = it) }
+            }
             .launchIn(viewModelScope)
     }
 

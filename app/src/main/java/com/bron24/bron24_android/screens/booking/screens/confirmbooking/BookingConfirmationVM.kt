@@ -33,22 +33,24 @@ class BookingConfirmationVM @Inject constructor(
                     state.venueOrderInfo ?: VenueOrderInfo(
                         0, "", "", "",
                         emptyList()
-                    )
+                    ).copy(secondPhone = state.secondPhoneNumber)
                 ).onEach {
                     it.onSuccess {
                         direction.moveToNext(
                             state.venueOrderInfo ?: VenueOrderInfo(
                                 0, "", "", "",
-                                emptyList()
-                            )
+                                emptyList(),
+                            ).copy(secondPhone = state.secondPhoneNumber)
                         )
                     }.onFailure {
-                        Log.d("AAA", "onDispatchers: ${it.message}")
+
                     }
                 }.launchIn(viewModelScope)
             }
 
-            is BookingConfirmationContract.Intent.UpdatePhone -> {}
+            is BookingConfirmationContract.Intent.UpdatePhone -> {
+                reduce { state.copy(secondPhoneNumber = intent.phone) }
+            }
         }
     }
 

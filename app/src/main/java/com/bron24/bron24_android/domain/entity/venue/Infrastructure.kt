@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Infrastructure(
     val id: Int,
     val name: String,
+    val staticName:String,
     val description: String,
     val picture: Boolean,
 ):Parcelable

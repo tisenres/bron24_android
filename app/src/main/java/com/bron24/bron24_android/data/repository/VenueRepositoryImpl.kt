@@ -1,21 +1,26 @@
 package com.bron24.bron24_android.data.repository
 
 import android.util.Log
+import com.bron24.bron24_android.data.local.db.FavouriteDao
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.network.mappers.toDomainModel
+import com.bron24.bron24_android.domain.entity.favourite.Favourite
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.repository.VenueRepository
-import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 
 
 class VenueRepositoryImpl @Inject constructor(
     private val apiService: VenueApiService,
+    private val favouriteDao: FavouriteDao
 ) : VenueRepository {
     override suspend fun getVenues(
         latitude: Double?,
@@ -28,10 +33,12 @@ class VenueRepositoryImpl @Inject constructor(
         district: String?
     ): List<Venue> = withContext(Dispatchers.IO) {
         try {
-            apiService.getVenues(
+           apiService.getVenues(
                 latitude, longitude, sort, availableTime,
                 minPrice, maxPrice, infrastructure, district
-            )?.data?.map { it.toDomainModel() } ?: emptyList()
+            )?.data?.map {
+                it.toDomainModel()
+            } ?: emptyList()
         } catch (e: Exception) {
             emptyList()
         }
@@ -60,13 +67,14 @@ class VenueRepositoryImpl @Inject constructor(
         latitude: Double?,
         longitude: Double?
     ): VenueDetails? = withContext(Dispatchers.IO) {
-        try {
+//        try {
             Log.d("AAA", "getVenueDetailsById: try")
+            Log.d("AAA", "getVenueDetailsById: ${apiService.getVenueDetails(venueId,latitude,longitude)}")
             apiService.getVenueDetails(venueId, latitude, longitude)?.data?.toDomainModel()
-        } catch (e: Exception) {
-            Log.d("AAA", "getVenueDetailsById: ")
-            null
-        }
+//        } catch (e: Exception) {
+//            Log.d("AAA", "getVenueDetailsById: ")
+//            null
+//        }
     }
 
     override suspend fun searchVenues(
@@ -79,6 +87,33 @@ class VenueRepositoryImpl @Inject constructor(
                 ?.data?.map { it.toDomainModel() } ?: emptyList()
         } catch (e: Exception) {
             emptyList()
+        }
+    }
+
+    override fun getAllFavourite(): Flow<List<Favourite>> = flow {
+        try {
+            favouriteDao.getAll().collect{
+                emit(it)
+            }
+        }catch (e:Exception){
+            emit(emptyList())
+        }
+    }
+    override fun addFavourite(favourite: Favourite): Flow<Result<Unit>> = flow {
+        try {
+            favouriteDao.insert(favourite)
+            emit(Result.success(Unit))
+        }catch (e:Exception){
+            emit(Result.failure(e))
+        }
+
+    }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)
+
+    override fun deleteFavourite(id: Int): Flow<Result<Unit>> = flow {
+        try {
+            favouriteDao.delete(id)
+        }catch (e:Exception){
+            emit(Result.failure(e))
         }
     }
 

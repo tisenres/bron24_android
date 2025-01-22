@@ -61,7 +61,7 @@ fun VenueItem(
         mutableStateOf(false)
     }
     var isSelected by remember {
-        mutableStateOf(false)
+        mutableStateOf(venue.favourite)
     }
     Column(
         modifier = Modifier
@@ -99,7 +99,9 @@ fun VenueItem(
                 }
             }
             IconButton(
-                onClick = { isSelected = !isSelected },
+                onClick = {
+                    isSelected = !isSelected
+                          },
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
                 Icon(

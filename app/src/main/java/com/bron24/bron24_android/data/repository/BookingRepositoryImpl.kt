@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.repository
 
+import android.util.Log
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
@@ -56,7 +57,7 @@ class BookingRepositoryImpl @Inject constructor(
             timeSlot = formattedTimeSlots
         )
         val response = bookingApiService.startBooking(bookingRequest)
-
+        Log.d("AAA", "createBooking: $response")
         return booking.copy(
             venueName = response.data.venue?.venueName,
             venueAddress = response.data.venue?.venueAddress,

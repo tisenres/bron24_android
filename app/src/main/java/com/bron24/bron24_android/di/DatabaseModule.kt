@@ -2,6 +2,7 @@ package com.bron24.bron24_android.di
 
 import android.content.Context
 import androidx.room.Room
+import com.bron24.bron24_android.data.local.db.FavouriteDao
 import com.bron24.bron24_android.data.local.db.VenueDatabase
 import com.bron24.bron24_android.data.local.db.VenueDao
 import dagger.Module
@@ -30,4 +31,7 @@ class DatabaseModule {
     fun provideVenueDao(database: VenueDatabase): VenueDao {
         return database.venueDao()
     }
+    @Provides
+    @Singleton
+    fun provideFavouriteDao(database: VenueDatabase): FavouriteDao = database.favouriteDao()
 }

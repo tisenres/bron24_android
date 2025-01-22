@@ -124,7 +124,6 @@ fun RowScope.ItemBottomTab(
                             maxLines = 1
                         )
                     }
-
                 }
             }
         }

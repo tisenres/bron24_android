@@ -25,7 +25,8 @@ fun VenueDto.toDomainModel(): Venue {
         rate = rate,
         slots = slots,
         distance = distance,
-        previewImage = previewImage
+        previewImage = previewImage,
+        favourite = false
     )
 }
 
@@ -49,6 +50,7 @@ fun InfrastructureDto.toDomainModel(): Infrastructure {
     return Infrastructure(
         id = id,
         name = name,
+        staticName = staticName,
         description = description,
         picture = picture
     )

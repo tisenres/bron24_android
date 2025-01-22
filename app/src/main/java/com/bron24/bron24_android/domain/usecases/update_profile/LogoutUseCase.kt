@@ -11,7 +11,7 @@ class LogoutUseCase @Inject constructor(
 ) {
     operator fun invoke():Flow<Result<String>> = flow<Result<String>> {
         profileRepository.deleteProfile("soft").onSuccess {
-            emit(Result.success(it))
+            emit(Result.success("Log out success!"))
         }.onFailure {
             emit(Result.failure(it))
         }

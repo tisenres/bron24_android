@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
+import com.bron24.bron24_android.domain.usecases.venue.GetAllFavouriteUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
