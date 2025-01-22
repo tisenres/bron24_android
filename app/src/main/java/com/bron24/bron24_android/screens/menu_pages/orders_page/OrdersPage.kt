@@ -37,7 +37,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
@@ -50,7 +49,6 @@ import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.Purple
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.screens.orderdetails.OrderDetailsPage
 import org.orbitmvi.orbit.compose.collectAsState
 
 
@@ -60,7 +58,7 @@ object OrdersPage : Tab {
         @Composable
         get() {
             val icon =
-                rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.baseline_wallet_24))
+                rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_wallet))
             return TabOptions(
                 index = 2u,
                 title = "Orders",

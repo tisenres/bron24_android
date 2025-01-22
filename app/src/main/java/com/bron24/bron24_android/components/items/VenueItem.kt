@@ -1,9 +1,9 @@
 package com.bron24.bron24_android.components.items
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,187 +13,311 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.IconButton
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Cyan
-import androidx.compose.ui.graphics.Color.Companion.Red
-import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Venue
-import com.bron24.bron24_android.screens.main.theme.FavoriteItemAddress
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemBackGround
-import com.bron24.bron24_android.screens.main.theme.FavoriteItemDivider
-import com.bron24.bron24_android.screens.main.theme.FavoriteItemStadiumName
-import com.bron24.bron24_android.screens.main.theme.Green
-import com.bron24.bron24_android.screens.main.theme.Success
-import com.bron24.bron24_android.screens.main.theme.White
-import com.bron24.bron24_android.screens.main.theme.bgSuccess
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import org.w3c.dom.Text
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun VenueItem(
     venue: Venue,
-    listener: (Venue) -> Unit
+    listener: (Venue) -> Unit,
 ) {
-    var isLoading by remember {
+    val isLoading by remember {
         mutableStateOf(false)
     }
-    var isSelected by remember {
-        mutableStateOf(false)
-    }
+
     Column(
         modifier = Modifier
-            .padding(top = 20.dp)
             .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
             .background(color = FavoriteItemBackGround)
+            .clickable {
+                listener.invoke(venue)
+            }
+    ) {
+        if (isLoading) {
+            VenueLoadingPlaceholder()
+        } else {
+            VenueImageSection(venue)
+            VenueTitleRow(venue)
+            VenueDetailsRow(venue)
+            VenueFooter(venue)
+        }
+    }
+}
+
+@Composable
+fun VenueLoadingPlaceholder() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 20.dp)
+            .shimmer()
     ) {
         Box(
             modifier = Modifier
-                .clip(shape = RoundedCornerShape(10.dp))
-                .clickable { listener.invoke(venue) }
                 .fillMaxWidth()
-                .height(160.dp)
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter(
-                    model = venue.previewImage ?: "",
-                    onLoading = {
-                        isLoading = true
-                    }, onSuccess = {
-                        isLoading = false
-                    }),
-                contentDescription = "",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-            if (isLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(30.dp),
-                        color = Success,
-                        trackColor = bgSuccess,
-                        strokeWidth = 4.dp
-                    )
-                }
-            }
-            IconButton(
-                onClick = { isSelected = !isSelected },
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.baseline_favorite_24_red),
-                    contentDescription = "", tint = if (isSelected) Red else White
-                )
-            }
-        }
-        Row(
-            modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = venue.venueName,
-                color = FavoriteItemStadiumName,
-                fontFamily = gilroyFontFamily,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                lineHeight = 21.sp
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_star),
-                    contentDescription = "",
-                    tint = Color(0xffffb800),
-                    modifier = Modifier.size(18.dp)
-                )
-                Text(text = venue.rate.toString(), fontFamily = FontFamily(Font(R.font.gilroy_regular)))
-            }
-        }
-        Row(
-            modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = venue.address.addressName,
-                color = FavoriteItemAddress,
-                fontFamily = gilroyFontFamily,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                lineHeight = 21.sp
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = String.format("%.1f ${stringResource(id = R.string.km)}", venue.distance),
-                color = FavoriteItemAddress,
-                fontFamily = gilroyFontFamily,
-            )
-        }
+                .height(162.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.Gray.copy(alpha = 0.2f))
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(1.dp)
-                .background(color = FavoriteItemDivider)
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.Gray.copy(alpha = 0.2f))
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.Gray.copy(alpha = 0.2f))
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.Gray.copy(alpha = 0.2f))
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.Gray.copy(alpha = 0.2f))
+        )
+    }
+}
+
+
+@Composable
+fun VenueImageSection(venue: Venue) {
+    Box(
+        modifier = Modifier
+            .height(162.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(venue.previewImage ?: "")
+                .placeholder(R.drawable.placeholder)
+                .scale(Scale.FILL)
+                .crossfade(true)
+                .build(),
+            contentDescription = "Venue Image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+//        AnimatedFavoriteButton(
+//            onFavoriteClick,
+//            modifier = Modifier
+//                .align(Alignment.TopEnd)
+//                .padding(5.dp)
+//        )
+    }
+}
+
+@Composable
+fun VenueDetailsRow(venue: Venue) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 10.dp)
+    ) {
+        Text(
+            text = venue.address.addressName,
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = Color(0xFF949494),
+                lineHeight = 21.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = String.format("%.1f", venue.distance) + " " + stringResource(id = R.string.km),
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = Color(0xFF949494),
+                lineHeight = 21.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    }
+}
+
+@Composable
+fun VenueTitleRow(venue: Venue) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+    ) {
+        Text(
+            text = venue.venueName,
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight(800),
+                fontSize = 16.sp,
+                color = Color(0xFF3C2E56),
+                lineHeight = 19.6.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
         )
         Row(
-            modifier = Modifier.padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(3.dp),
+            modifier = Modifier.padding(start = 10.dp) // Adding padding to ensure spacing between title and rating
         ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_dollar),
-                contentDescription = "",
-                modifier = Modifier.size(20.dp),
-                tint = Success
+            Image(
+                painter = painterResource(id = R.drawable.ic_star),
+                contentDescription = "Rating Image",
+                modifier = Modifier
+                    .width(14.dp)
+                    .height(14.dp)
+                    .align(Alignment.CenterVertically)
             )
-            Row {
-                Text(
-                    text = "${stringResource(id = R.string.price)} ${venue.pricePerHour} ",
+            Text(
+                text = "4.5",
+                style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontSize = 16.sp,
-                    color = FavoriteItemStadiumName
-                )
-                Text(
-                    text = "sum/hr",
-                    fontFamily = gilroyFontFamily,
-                    color = FavoriteItemStadiumName,
-                    fontSize = 13.sp
-                )
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp,
+                    color = Color(0xFF3C2E56),
+                    lineHeight = 14.4.sp,
+                ),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+        }
+    }
+}
 
+@Composable
+fun VenueFooter(venue: Venue) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Spacer(
+            modifier = Modifier
+                .height(1.dp)
+                .fillMaxWidth()
+                .background(Color(0xFFEBECEE))
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, bottom = 15.dp, start = 10.dp, end = 10.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_dollar),
+                    contentDescription = "Price Icon",
+                    modifier = Modifier
+                        .size(14.dp)
+                        .align(Alignment.CenterVertically)
+                )
+                Text(
+                    text = venue.pricePerHour + " " + stringResource(id = R.string.som_per_hour),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight(800),
+                        fontSize = 14.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 16.sp,
+                    ),
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = " ${stringResource(id = R.string.available)}: ", color = FavoriteItemStadiumName,
-                fontFamily = FontFamily(Font(R.font.gilroy_bold))
-            )
-            Text(
-                text = "${venue.slots} ${stringResource(id = R.string.slots)}",
-                color = Green,
-                fontFamily = FontFamily(Font(R.font.gilroy_bold))
-            )
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                Text(
+                    text = stringResource(id = R.string.free_time) + ":",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight(800),
+                        fontSize = 14.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 16.sp,
+                    ),
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+                Text(
+                    text = "12 " + stringResource(id = R.string.slots),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight(800),
+                        fontSize = 14.sp,
+                        color = Color(0xFF26A045),
+                        lineHeight = 16.sp,
+                    ),
+                    modifier = Modifier.align(Alignment.Bottom),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

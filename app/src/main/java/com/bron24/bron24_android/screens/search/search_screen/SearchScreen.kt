@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.search.search_screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,13 +31,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,17 +49,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation.NavController
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.components.items.VenueItem
+import com.bron24.bron24_android.components.items.VenueLoadingPlaceholder
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.screens.venuelisting.VenueCard
 import org.orbitmvi.orbit.compose.collectAsState
 
 class SearchScreen : Screen {
@@ -142,8 +135,8 @@ fun SearchScreenContent(
                     .padding(16.dp)
             ) {
                 if (state.value.isLoading) {
-                    items(5) { // Arbitrary number of placeholders
-                        VenueCard(venue = null, isLoading = true)
+                    items(5) {
+                        VenueLoadingPlaceholder()
                         Spacer(modifier = Modifier.height(20.dp))
                     }
                 } else {
@@ -154,7 +147,6 @@ fun SearchScreenContent(
 
             }
         }
-
     }
 }
 
