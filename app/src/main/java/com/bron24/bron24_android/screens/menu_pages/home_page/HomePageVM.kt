@@ -1,0 +1,107 @@
+package com.bron24.bron24_android.screens.menu_pages.home_page
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.common.FilterOptions
+import com.bron24.bron24_android.data.local.preference.LocalStorage
+import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
+import com.bron24.bron24_android.domain.usecases.offers.GetSpecialOfferUseCase
+import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import org.orbitmvi.orbit.viewmodel.container
+import javax.inject.Inject
+
+@HiltViewModel
+class HomePageVM @Inject constructor(
+    private val direction: HomePageContract.Direction,
+    private val localStorage: LocalStorage,
+    private val getVenuesUseCase: GetVenuesUseCase,
+    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
+    private val getSpecialOfferUseCase: GetSpecialOfferUseCase
+) : ViewModel(), HomePageContract.ViewModel {
+    private var filterOptions: FilterOptions? = null
+
+    init {
+        localStorage.openMenu = true
+    }
+
+    override fun onDispatchers(intent: HomePageContract.Intent): Job = intent {
+        when (intent) {
+            HomePageContract.Intent.ClickFilter -> direction.moveToFilter {
+                filterOptions = it
+            }
+
+            HomePageContract.Intent.ClickSearch -> direction.moveToSearch()
+            is HomePageContract.Intent.SelectedSort -> {
+                reduce { state.copy(selectedSort = intent.name) }
+            }
+
+            HomePageContract.Intent.Refresh -> {
+                getVenuesUseCase.invoke().onStart {
+                    reduce { state.copy(isLoading = true) }
+                }.onEach {
+                    it.onSuccess {
+                        reduce { state.copy(isLoading = false, itemData = it) }
+                    }.onFailure {
+                        postSideEffect(it.message.toString())
+                    }
+                }.launchIn(viewModelScope)
+
+                getSpecialOfferUseCase.invoke().onEach {
+                    reduce { state.copy(offers = it) }
+                }.launchIn(viewModelScope)
+            }
+
+            is HomePageContract.Intent.ClickItem -> {
+                direction.moveToDetails(intent.venueId, intent.rate)
+            }
+        }
+    }
+
+    override fun initData() = intent {
+        getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
+            it.onSuccess {
+                if (filterOptions != null) {
+                    filterResult()
+                }
+                reduce { state.copy(isLoading = false, itemData = it) }
+            }.onFailure {
+                postSideEffect(it.message.toString())
+            }
+        }.launchIn(viewModelScope)
+
+        getCurrentLocationUseCase.execute().onEach {
+            reduce { state.copy(userLocation = it) }
+        }.launchIn(viewModelScope)
+
+        getSpecialOfferUseCase.invoke().onEach {
+            reduce { state.copy(offers = it) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun filterResult() = intent {
+        getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
+            it.onSuccess {
+                reduce { state.copy(isLoading = false, itemData = it) }
+            }.onFailure {
+                postSideEffect(it.message.toString())
+            }
+        }.launchIn(viewModelScope)
+        getCurrentLocationUseCase.execute().onEach {
+            reduce { state.copy(userLocation = it) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun postSideEffect(message: String) {
+        intent {
+            postSideEffect(HomePageContract.SideEffect(message))
+        }
+    }
+
+    override val container =
+        container<HomePageContract.UIState, HomePageContract.SideEffect>(HomePageContract.UIState(firstName = localStorage.firstName))
+}

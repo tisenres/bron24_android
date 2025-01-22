@@ -6,9 +6,11 @@ import com.bron24.bron24_android.data.network.dto.orders.ResponseOrdersDto
 import kotlinx.coroutines.flow.Flow
 
 interface OrdersRepository {
-    suspend fun getOrders(): Flow<ResponseOrdersDto>
+    fun getOrders(): Flow<ResponseOrdersDto>
 
-    suspend fun getOrderDetails(id: Long): Flow<ResponseOrderDetailsDto>
+    fun getOrderDetails(id: Int): Flow<ResponseOrderDetailsDto>
 
-    suspend fun cancelOrder(id: Long): Flow<ResponseCancelOrderDto>
+    fun cancelOrder(id: Int): Flow<ResponseCancelOrderDto>
+
+    fun getOrdersByStatus(status:String):Flow<ResponseOrdersDto>
 }

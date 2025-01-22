@@ -1,6 +1,6 @@
 package com.bron24.bron24_android.domain.usecases.venue
 
-import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
+import android.util.Log
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.repository.VenueRepository
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
@@ -18,34 +18,38 @@ class GetVenueDetailsUseCase @Inject constructor(
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun execute(venueId: Int): Flow<VenueDetails> = flow {
-        checkLocationPermissionUseCase.execute()
-            .flatMapLatest { permissionState ->
-                when (permissionState) {
-                    LocationPermissionState.GRANTED -> getCurrentLocationUseCase.execute()
-                        .flatMapLatest { location ->
-                            getVenueDetailsWithLocation(venueId, location.latitude, location.longitude)
-                        }
-                    LocationPermissionState.DENIED -> getVenueDetailsWithLocation(venueId, null, null)
-                }
+    operator fun invoke(venueId: Int): Flow<VenueDetails> = flow {
+        getCurrentLocationUseCase.execute().collect{
+           val data = venueRepository.getVenueDetailsById(venueId,it.latitude,it.longitude)
+            if(data!=null){
+                emit(data)
             }
-            .catch { e ->
-                // You can log the error here if needed
-                throw e
-            }
-            .collect { venueDetails ->
-                emit(venueDetails)
-            }
+        }
+//        checkLocationPermissionUseCase.invoke()
+//            .flatMapLatest { permissionState ->
+//                when (permissionState) {
+//                    LocationPermissionState.GRANTED -> getCurrentLocationUseCase.execute()
+//                        .flatMapLatest { location ->
+//                            getVenueDetailsWithLocation(venueId, location.latitude, location.longitude)
+//                        }
+//                    LocationPermissionState.DENIED -> getVenueDetailsWithLocation(venueId, null, null)
+//                }
+//            }
+//            .catch { e ->
+//                // You can log the error here if needed
+//                throw e
+//            }
+//            .collect { venueDetails ->
+//                emit(venueDetails)
+//            }
     }
 
-    private fun getVenueDetailsWithLocation(venueId: Int, latitude: Double?, longitude: Double?): Flow<VenueDetails> = flow {
-        val venue = venueRepository.getVenueDetailsById(venueId, latitude, longitude)
-        val pictures = venueRepository.getVenuePictures(venueId)
-        val venueWithPictures = venue?.copy(imageUrls = pictures)
-        if (venueWithPictures != null) {
-            emit(venueWithPictures)
-        } else {
-            throw NoSuchElementException("Venue not found")
-        }
-    }
+//    private fun getVenueDetailsWithLocation(venueId: Int, latitude: Double?, longitude: Double?): Flow<VenueDetails> = flow {
+//        val venue = venueRepository.getVenueDetailsById(venueId, latitude, longitude)
+//        val pictures = venueRepository.getVenuePictures(venueId)
+//        val venueWithPictures = venue?.copy(imageUrl = pictures)
+//        if (venueWithPictures != null) {
+//            emit(venueWithPictures)
+//        }
+//    }
 }

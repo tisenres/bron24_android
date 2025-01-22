@@ -62,9 +62,9 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.DateItem
 import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
-import com.bron24.bron24_android.helper.extension.priceToInt
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.helper.util.priceToInt
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import java.util.Calendar
@@ -73,9 +73,10 @@ import java.util.Calendar
 fun BookingScreen(
     viewModel: BookingViewModel = hiltViewModel(),
     venueId: Int,
+    venueName:String,
     sectors: List<String>,
     pricePerHour: String,
-    onOrderClick: (Int, String, String, List<TimeSlot>) -> Unit
+    onOrderClick: (Int, String,String, String, List<TimeSlot>) -> Unit
 ) {
 
     val selectedDate by viewModel.selectedDate.collectAsState()
@@ -184,6 +185,7 @@ fun BookingScreen(
             onOrderClick = {
                 onOrderClick(
                     venueId,
+                    venueName,
                     millisToDate(selectedDate),
                     selectedSector?.name ?: "X",
                     selectedTimeSlots.toList()

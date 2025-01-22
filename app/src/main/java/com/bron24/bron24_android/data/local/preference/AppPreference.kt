@@ -5,14 +5,16 @@ import android.content.SharedPreferences
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.entity.user.User
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 import timber.log.Timber
+import javax.inject.Inject
 
 private const val SELECTED_LANGUAGE = "selected_language"
 private const val TOKEN_KEY = "auth_token"
 private const val REFRESH_TOKEN_KEY = "refresh_token"
 
-class AppPreference(context: Context) {
+class AppPreference @Inject constructor(@ApplicationContext val context: Context) {
 
     private val preferences: SharedPreferences =
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -69,23 +71,6 @@ class AppPreference(context: Context) {
             .apply()
     }
 
-    fun getUserPhoneNumber(): String {
-        preferences.getString("phone_number", "")?.let {
-            return it
-        } ?: run {
-            return ""
-        }
-    }
-
-    fun getPersonalUserData(): User {
-        Timber.tag("UserRepositoryImpl")
-            .d("first_name: %s", preferences.getString("first_name", ""))
-        return User(
-            preferences.getString("first_name", "") ?: "",
-            preferences.getString("last_name", "") ?: "",
-            preferences.getString("phone_number", "") ?: ""
-        )
-    }
 
     fun saveBooking(booking: Booking) {
         val bookingJson = gson.toJson(booking)

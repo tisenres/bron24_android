@@ -19,7 +19,9 @@ data class VenueDto(
     @SerializedName("venue_id") val venueId: Int,
     @SerializedName("venue_name") val venueName: String,
     @SerializedName("address") val address: AddressDto,
+    @SerializedName("rate") val rate: Double,
     @SerializedName("price_per_hour") val pricePerHour: String,
+    @SerializedName("available_time_slots") val slots: Int,
     @SerializedName("distance") val distance: Double,
     @SerializedName("preview_image") val previewImage: String
 )

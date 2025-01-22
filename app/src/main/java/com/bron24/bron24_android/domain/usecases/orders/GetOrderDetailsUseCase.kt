@@ -12,14 +12,14 @@ class GetOrderDetailsUseCase @Inject constructor(
     private val ordersRepository: OrdersRepository,
     private val venueRepository: VenueRepository,
 ) {
-    suspend fun execute(orderId: Long): Flow<Order> {
+    suspend fun execute(orderId: Int): Flow<Order> {
         return ordersRepository.getOrderDetails(orderId).map { data ->
             val images = venueRepository.getVenuePictures(data.data.venueId)
-            data.data.toDomainModel().copy(images = images)
+            data.data.toDomainModel()
         }
     }
 
-    suspend fun cancelOrder(orderId: Long): Flow<Boolean> {
+    suspend fun cancelOrder(orderId: Int): Flow<Boolean> {
         return ordersRepository.cancelOrder(orderId).map {
             it.success
         }

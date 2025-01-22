@@ -23,9 +23,6 @@ class PreferencesRepositoryImpl @Inject constructor(
         appPreference.saveUserData(phoneNumber, firstName, lastName)
     }
 
-    override fun getUserPhoneNumber(): String {
-        return appPreference.getUserPhoneNumber()
-    }
 
     override fun saveBooking(booking: Booking) {
         appPreference.saveBooking(booking)

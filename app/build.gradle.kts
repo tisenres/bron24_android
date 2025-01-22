@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.ksp)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -33,17 +34,16 @@ android {
             isMinifyEnabled = false
 //            isShrinkResources = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
     splits {
@@ -125,7 +125,35 @@ dependencies {
 
     implementation(libs.konfetti.compose)
 
+    //datePicker
+    implementation(libs.datetimepicker)
 
+    //orbit
+    implementation("org.orbit-mvi:orbit-core:9.0.0")
+    implementation("org.orbit-mvi:orbit-viewmodel:9.0.0")
+    implementation("org.orbit-mvi:orbit-compose:9.0.0")
+
+    //status bar color
+    implementation(libs.accompanist.systemuicontroller)
+    //motion orbital
+    implementation("com.github.skydoves:orbital:0.4.0")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    //Chuck
+    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:3.5.2")
+
+
+    //voyager
+    implementation(libs.voyager.navigator)
+    implementation(libs.voyager.hilt)
+    implementation(libs.voyager.tabNavigator)
+    implementation(libs.voyager.screenModel)
+    implementation(libs.voyager.transitions)
+    implementation(libs.voyager.transitions.vlatestversion)
+    implementation(libs.voyager.bottomSheetNavigator)
+    //yandex
+    implementation(libs.maps.mobile.v431)
 
     debugImplementation(libs.pluto)
     releaseImplementation(libs.pluto.no.op)
@@ -143,6 +171,8 @@ dependencies {
     releaseImplementation(libs.pluto.layout.inspector.no.op)
 
     implementation(libs.timber)
+
+    implementation(libs.androidx.material)
 }
 
 kapt {

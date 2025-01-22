@@ -10,17 +10,50 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
-
-//    @Binds
-//    @Singleton
-//    abstract fun bindVenueRepository(
-//        venueRepositoryImpl: VenueRepositoryImpl
-//    ): VenueRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindPreferencesRepository(
+interface RepositoryModule {
+    @[Binds Singleton]
+    fun bindPreferencesRepository(
         preferencesRepositoryImpl: PreferencesRepositoryImpl
     ): PreferencesRepository
+
+    @[Binds Singleton]
+    fun bindAuthRepository(
+        impl: AuthRepositoryImpl
+    ): AuthRepository
+
+    @[Binds Singleton]
+    fun bindBookingRepository(
+        impl: BookingRepositoryImpl
+    ): BookingRepository
+
+    @[Binds Singleton]
+    fun bindLanguageRepository(
+        impl: LanguageRepositoryImpl
+    ): LanguageRepository
+
+    @[Binds Singleton]
+    fun bindLocationRepository(
+        impl: LocationRepositoryImpl
+    ): LocationRepository
+
+    @[Binds Singleton]
+    fun bindOrderRepository(
+        impl: OrdersRepositoryImpl
+    ): OrdersRepository
+
+    @[Binds Singleton]
+    fun bindTokenRepository(
+        impl: TokenRepositoryImpl
+    ): TokenRepository
+
+    @[Binds Singleton]
+    fun bindVenueRepository(
+        impl: VenueRepositoryImpl
+    ): VenueRepository
+
+    @[Binds Singleton]
+    fun bindProfileRepository(
+        impl: ProfileRepositoryImpl
+    ): ProfileRepository
+
 }

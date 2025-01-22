@@ -1,6 +1,7 @@
 [versions]
 accompanistPager = "0.36.0"
-agp = "8.6.1"
+agp = "8.5.0"
+datetimepicker = "1.0.3"
 konfettiCompose = "2.0.4"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
@@ -16,9 +17,14 @@ hilt = "2.52"
 hiltCompiler = "1.2.0"
 hiltNavigationCompose = "1.2.0"
 locationServices = "21.3.0"
+mapsMobile = "4.9.0-lite"
+mapsMobileVersion = "4.3.1"
 retrofit = "2.11.0"
 okhttpLoggingInterceptor = "5.0.0-alpha.14"
 room = "2.6.1"
+voyager = "1.1.0-beta02"
+voyagerTransitions = "<latest-version>"
+accompanistSystemuicontroller = "0.32.0"
 lifecycleViewModelCompose = "2.8.5"
 appcompat = "1.7.0"
 coilCompose = "2.7.0"
@@ -28,6 +34,7 @@ converter-gson = "2.11.0"
 runtimeLivedata = "1.7.1"
 playServicesMaps = "19.0.0"
 mapsCompose = "6.1.1"
+material = "1.7.3"
 yandexMaps = "4.6.1-lite"
 morflyCompose = "0.1.0"
 com-google-devtools-ksp = "2.0.20-1.0.24"
@@ -35,10 +42,12 @@ pluto = "2.2.2"
 timber = "5.0.1"
 
 [libraries]
+androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPager" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+datetimepicker = { module = "com.takisoft.datetimepicker:datetimepicker", version.ref = "datetimepicker" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -47,6 +56,7 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
@@ -61,6 +71,8 @@ hiltNavigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compo
 hiltAndroidTesting = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 konfetti-compose = { module = "nl.dionsegijn:konfetti-compose", version.ref = "konfettiCompose" }
 locationServices = { group = "com.google.android.gms", name = "play-services-location", version.ref = "locationServices" }
+maps-mobile-v431 = { module = "com.yandex.android:maps.mobile", version.ref = "mapsMobileVersion" }
+maps-mobile-v490lite = { module = "com.yandex.android:maps.mobile", version.ref = "mapsMobile" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofitMoshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofitMoshi" }
 okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLoggingInterceptor" }
@@ -75,6 +87,13 @@ play-services-maps = { group = "com.google.android.gms", name = "play-services-m
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
 yandex-maps = { group = "com.yandex.android", name = "maps.mobile", version.ref = "yandexMaps" }
 morfly-compose = { group = "io.morfly.compose", name = "advanced-bottomsheet-material3", version.ref = "morflyCompose" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-bottomSheetNavigator = { module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
+voyager-transitions-vlatestversion = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyagerTransitions" }
 
 pluto = { group = "com.plutolib", name = "pluto", version.ref = "pluto" }
 pluto-no-op = { group = "com.plutolib", name = "pluto-no-op", version.ref = "pluto" }

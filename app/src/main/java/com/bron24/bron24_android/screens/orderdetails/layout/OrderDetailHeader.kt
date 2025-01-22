@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.Order
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastManager
-import com.bron24.bron24_android.helper.util.presentation.components.toast.ToastType
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -63,14 +63,14 @@ fun OrderDetailHeader(order: Order, modifier: Modifier = Modifier) {
             color = Color(0xFF949494)
         )
         Spacer(modifier = Modifier.height(6.dp))
-        OrderPrice(price = order.cost)
+        OrderPrice(price = "")
         Spacer(modifier = Modifier.height(6.dp))
         OrderDateTime(
             date = order.bookingDate,
             time = " ${order.timeSlot.startTime} - ${order.timeSlot.endTime}"
         )
         Spacer(modifier = Modifier.height(6.dp))
-        OrderAddress(address = order.address.addressName)
+        //OrderAddress(address = order.address.addressName)
         Spacer(modifier = Modifier.height(6.dp))
     }
 }

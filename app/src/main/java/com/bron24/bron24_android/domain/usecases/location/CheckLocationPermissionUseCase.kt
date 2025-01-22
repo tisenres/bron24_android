@@ -8,7 +8,7 @@ import javax.inject.Inject
 class CheckLocationPermissionUseCase @Inject constructor(
     private val locationRepository: LocationRepository
 ) {
-    fun execute(): Flow<LocationPermissionState> {
+    operator fun invoke(): Flow<LocationPermissionState> {
         return locationRepository.checkLocationPermission()
     }
 }

@@ -14,9 +14,9 @@ class SearchVenuesUseCase @Inject constructor(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase
 ) {
-    suspend fun execute(query: String? = null): Flow<List<Venue>> = flow {
+    operator fun invoke(query: String? = null): Flow<List<Venue>> = flow {
         try {
-            checkLocationPermissionUseCase.execute().collect { permissionState ->
+            checkLocationPermissionUseCase.invoke().collect { permissionState ->
                 when (permissionState) {
                     LocationPermissionState.GRANTED -> {
                         getCurrentLocationUseCase.execute().collect { location ->
@@ -28,7 +28,6 @@ class SearchVenuesUseCase @Inject constructor(
                             emit(venues)
                         }
                     }
-
                     LocationPermissionState.DENIED -> {
                         val venues = repository.searchVenues(
                             query = query,

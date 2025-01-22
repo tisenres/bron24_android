@@ -3,12 +3,14 @@ package com.bron24.bron24_android.data.network.dto.booking
 import com.google.gson.annotations.SerializedName
 
 data class RequestBookingDto(
-    @SerializedName("user") val user: String,
+//    @SerializedName("user") val user: String,
     @SerializedName("venue_id") val venueId: Int,
     @SerializedName("booking_date") val bookingDate: String,
     @SerializedName("time_slot") val timeSlot: List<String>,
     @SerializedName("sector") val sector: String,
     @SerializedName("status") val status: String = "INPROCESS",
+    @SerializedName("phone_number_2") val phoneNumber: String = "",
+    @SerializedName("payment") val payment:String = "cash"
 )
 
 data class ResponseBookingDto(
@@ -21,8 +23,9 @@ data class BookingData(
     @SerializedName("user") val user: User?,
     @SerializedName("venue_id") val venue: Venue?,
     @SerializedName("time_slot") val timeSlots: List<TimeSlot>,
+    @SerializedName("date") val date:String,
     @SerializedName("cost") val cost: Int?,
-    @SerializedName("hours") val hours: Int?,
+    @SerializedName("hours") val hours: String,
     @SerializedName("sector") val sector: String?,
     @SerializedName("is_saved") val isSaved: Boolean?,
     @SerializedName("order_id") val orderIds: List<String>

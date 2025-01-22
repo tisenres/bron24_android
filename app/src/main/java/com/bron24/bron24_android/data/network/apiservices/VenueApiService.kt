@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.data.network.apiservices
 
 import com.bron24.bron24_android.data.network.dto.venue.PictureDto
+import com.bron24.bron24_android.data.network.dto.venue.SpecialOffersDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueCoordinatesDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDetailsResponseDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueResponseDto
@@ -18,7 +19,7 @@ interface VenueApiService {
         @Query("min_price") minPrice: Int? = null,
         @Query("max_price") maxPrice: Int? = null,
         @Query("infrastructure") infrastructure: Boolean? = null,
-        @Query("district") district: String? = null
+        @Query("district") district: String? = null,
     ): VenueResponseDto?
 
     @GET("api/v1/venues/coordinates/")
@@ -40,4 +41,7 @@ interface VenueApiService {
         @Query("lat") latitude: Double? = null,
         @Query("lon") longitude: Double? = null,
     ): VenueResponseDto?
+
+    @GET("api/v1/venues/special-offers")
+    suspend fun getSpecialOffers(): SpecialOffersDto?
 }

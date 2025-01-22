@@ -3,10 +3,12 @@ package com.bron24.bron24_android.data.network.mappers
 import com.bron24.bron24_android.data.network.dto.venue.AddressDto
 import com.bron24.bron24_android.data.network.dto.venue.CityDto
 import com.bron24.bron24_android.data.network.dto.venue.InfrastructureDto
+import com.bron24.bron24_android.data.network.dto.venue.SpecialOfferDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueCoordinatesDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDetailsDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueOwnerDto
+import com.bron24.bron24_android.domain.entity.offers.SpecialOffer
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.City
 import com.bron24.bron24_android.domain.entity.venue.Infrastructure
@@ -14,7 +16,7 @@ import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.entity.venue.VenueOwner
-import com.bron24.bron24_android.helper.extension.formatPrice
+import com.bron24.bron24_android.helper.util.formatPrice
 
 fun VenueDto.toDomainModel(): Venue {
     return Venue(
@@ -22,8 +24,11 @@ fun VenueDto.toDomainModel(): Venue {
         venueName = venueName,
         pricePerHour = pricePerHour.formatPrice(),
         address = address.toDomainModel(),
+        rate = rate,
+        slots = slots,
         distance = distance,
-        previewImage = previewImage
+        previewImage = previewImage,
+        favourite = false
     )
 }
 
@@ -46,10 +51,10 @@ fun CityDto.toDomainModel(): City {
 fun InfrastructureDto.toDomainModel(): Infrastructure {
     return Infrastructure(
         id = id,
-        lockerRoom = lockerRoom,
-        stands = stands,
-        shower = shower,
-        parking = parking
+        name = name,
+        staticName = staticName,
+        description = description,
+        picture = picture
     )
 }
 
@@ -77,22 +82,22 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         venueId = venueId,
         address = address.toDomainModel(),
         city = city.toDomainModel(),
-        infrastructure = infrastructure.toDomainModel(),
+        infrastructure = infrastructure.map { it.toDomainModel() },
         venueOwner = venueOwner?.toDomainModel() ?: VenueOwner(0, "", 0, "", ""),
-        venueName = venueName,
         venueType = venueType,
+        venueName = venueName,
+        description = description,
         venueSurface = venueSurface,
         peopleCapacity = peopleCapacity,
         sportType = sportType,
         pricePerHour = pricePerHour.formatPrice(),
-        description = description,
         workingHoursFrom = workingHoursFrom,
         workingHoursTill = workingHoursTill,
         contact1 = contact1,
         contact2 = contact2,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        imageUrls = emptyList(),
+        imageUrl = previewImg,
         longitude = longitude.toDouble(),
         latitude = latitude.toDouble(),
         distance = distance,
@@ -100,12 +105,11 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
     )
 }
 
-//fun formatPrice(price: String): String {
-//    return try {
-//        val floatPrice = price.toFloat()
-//        val intPrice = floatPrice.toInt()
-//        String.format("%,d", intPrice).replace(",", " ")
-//    } catch (e: NumberFormatException) {
-//        "0" // Return "0" if parsing fails
-//    }
-//}
+fun SpecialOfferDto.toDomainModel(): SpecialOffer {
+    return SpecialOffer(
+        id = id ?: 0,
+        image = image ?: "",
+        createdAt = createdAt ?: "",
+        validUntil = validUntil ?: ""
+    )
+}

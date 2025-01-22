@@ -1,121 +1,145 @@
 package com.bron24.bron24_android.screens.booking.screens.finishbooking
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.booking.TimeSlot
+import com.bron24.bron24_android.common.VenueOrderInfo
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingInfoCard
 import com.bron24.bron24_android.screens.booking.screens.confirmbooking.ConfirmButton
-import com.bron24.bron24_android.screens.booking.states.BookingSuccessInfo
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+class BookingSuccessScreen(private val info: VenueOrderInfo) : Screen {
+    @Composable
+    override fun Content() {
+        val viewModel: BookingSuccessContract.ViewModel = getViewModel<BookingSuccessVM>()
+        BookingSuccessContent(
+            info = rememberUpdatedState(newValue = info),
+            intent = viewModel::onDispatchers
+        )
+    }
+}
 
 @Composable
-fun BookingSuccessScreen(
-    viewModel: BookingSuccessViewModel = hiltViewModel(),
-    orderId: String,
-    venueName: String,
-    date: String,
-    sector: String,
-    timeSlots: List<TimeSlot>,
-    onMyOrdersClick: () -> Unit,
-    onMainPageClick: () -> Unit,
-    onMapClick: () -> Unit,
+fun BookingSuccessContent(
+    info: State<VenueOrderInfo>,
+    intent: (BookingSuccessContract.Intent) -> Unit
 ) {
-    val bookingInfo by viewModel.bookingInfo.collectAsState()
-
-    LaunchedEffect (Unit) {
-        viewModel.initBookingInfo(orderId, venueName, date, sector, timeSlots)
+    BackHandler {
+        intent.invoke(BookingSuccessContract.Intent.ClickMenu)
     }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Column(
+   LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 19.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.weight(1f))
+//            item { Spacer(modifier = Modifier.weight(1f)) }
 
-            Image(
-                painter = painterResource(id = R.drawable.success_booking),
-                contentDescription = "Booking Success",
-                modifier = Modifier
-                    .size(290.dp)
-            )
+            item {
+                Image(
+                    painter = painterResource(id = R.drawable.success_booking),
+                    contentDescription = "Booking Success",
+                    modifier = Modifier
+                        .padding( bottom = 60.dp)
+                        .size(200.dp)
 
-            Spacer(modifier = Modifier.height(45.dp))
+                )
+            }
 
-            Text(
-                text = "Success!",
-                color = Color(0xFF3C2E56),
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 30.sp,
+//            Spacer(modifier = Modifier.height(45.dp))
+
+            item {
+                Text(
+                    text = "Success!",
                     color = Color(0xFF3C2E56),
-                    lineHeight = 40.sp,
-                ),
-            )
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 30.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 40.sp,
+                    ),
+                    modifier = Modifier.padding(bottom = 40.dp)
+                )
+            }
 
-            Spacer(modifier = Modifier.height(27.dp))
+//            Spacer(modifier = Modifier.height(27.dp))
 
-            BookingInfoCard(bookingInfo ?: BookingSuccessInfo("", "", "", emptyList(), ""), onMapClick)
+            item {
+                BookingInfoCard(info.value) {
 
-            Spacer(modifier = Modifier.weight(1f))
+                }
+            }
 
-            ConfirmButton(
-                isEnabled = true,
-                title = "My orders",
-                onClick = onMyOrdersClick
-            )
-            Spacer(modifier = Modifier.height(3.dp))
 
-            MainPageButton(
-                isEnabled = true,
-                title = "Main page",
-                onClick = onMainPageClick
-            )
+//            Spacer(modifier = Modifier.weight(1f))
+
+            item {
+                ConfirmButton(
+                    isEnabled = true,
+                    title = "My orders",
+                    onClick = {
+                        intent.invoke(BookingSuccessContract.Intent.ClickOrder)
+                    }
+                )
+            }
+//            Spacer(modifier = Modifier.height(3.dp))
+
+            item {
+                MainPageButton(
+                    isEnabled = true,
+                    title = "Main page",
+                    onClick = {
+                        intent.invoke(BookingSuccessContract.Intent.ClickMenu)
+                    }
+                )
+            }
         }
-    }
+
 }
 
 @Composable
-fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
+fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -123,18 +147,20 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFA4ECC3))
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(260.dp)
                 .padding(20.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 56.dp)  // Add padding to prevent text overlap with the button
+                    .padding(end = 56.dp)
             ) {
                 Text(
-                    text = "Your order number",
+                    text = "Order details",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -142,10 +168,11 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
                         color = Color.Black,
                         lineHeight = 20.sp,
                     ),
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 20.dp)
                 )
+
                 Text(
-                    text = bookingInfo.orderId,
+                    text = info.venueName,
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.ExtraBold,
@@ -153,29 +180,48 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
                         color = Color.Black,
                         lineHeight = 20.sp,
                     ),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-                Text(
-                    text = bookingInfo.venueName,
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp,
-                        color = Color.Black,
-                        lineHeight = 20.sp,
-                    ),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                    text = bookingInfo.date,
+                    text = formatDate(info.date),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 16.sp,
                         color = Color.Black,
                         lineHeight = 20.sp,
                     ),
+                    modifier = Modifier.padding(bottom = 20.dp)
                 )
+
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    items(info.orderId.size) { index ->
+                        Text(
+                            text = "Order ID: " + info.orderId[index],
+                            style = TextStyle(
+                                fontFamily = gilroyFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp,
+                                color = Color.Black,
+                                lineHeight = 20.sp,
+                            ),
+                            modifier = Modifier.padding(bottom = 5.dp)
+                        )
+                        Text(
+                            text = "Time: " + info.resTimeSlot[index],
+                            style = TextStyle(
+                                fontFamily = gilroyFontFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 16.sp,
+                                color = Color.Black,
+                                lineHeight = 20.sp,
+                            ),
+                        )
+                    }
+                }
+
             }
             Box(
                 modifier = Modifier
@@ -198,6 +244,15 @@ fun BookingInfoCard(bookingInfo: BookingSuccessInfo, onMapClick: () -> Unit) {
             }
         }
     }
+}
+
+fun formatDate(inputDate: String): String {
+    val inputFormatter =
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) // assuming input format is "yyyy-MM-dd"
+    val date: Date = inputFormatter.parse(inputDate) ?: return ""  // parse the string into Date
+    val outputFormatter =
+        SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()) // desired output format
+    return outputFormatter.format(date)
 }
 
 @Composable
