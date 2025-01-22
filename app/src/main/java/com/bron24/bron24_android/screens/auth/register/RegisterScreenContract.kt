@@ -1,15 +1,14 @@
 package com.bron24.bron24_android.screens.auth.register
 
-import com.bron24.bron24_android.domain.entity.user.Language
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface RegisterScreenContract {
-    interface ViewModel: ContainerHost<UISate, SideEffect> {
+    interface ViewModel: ContainerHost<UIState, SideEffect> {
         fun onDispatchers(intent: Intent): Job
     }
 
-    data class UISate(
+    data class UIState(
         val isLoading:Boolean = false
     )
 

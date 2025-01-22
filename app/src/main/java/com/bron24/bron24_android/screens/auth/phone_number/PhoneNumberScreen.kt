@@ -87,7 +87,7 @@ class PhoneNumberScreen:Screen{
 
 @Composable
 fun PhoneNumberScreenContent(
-    state: State<PhoneNumberScreenContract.UISate>,
+    state: State<PhoneNumberScreenContract.UIState>,
     intent:(PhoneNumberScreenContract.Intent)->Unit
 ) {
 

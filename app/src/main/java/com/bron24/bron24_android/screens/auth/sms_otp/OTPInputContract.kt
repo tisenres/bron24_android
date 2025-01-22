@@ -4,11 +4,11 @@ import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface OTPInputContract {
-    interface ViewModel: ContainerHost<UISate, SideEffect> {
+    interface ViewModel: ContainerHost<UIState, SideEffect> {
         fun onDispatchers(intent: Intent): Job
     }
 
-    data class UISate(
+    data class UIState(
         val refreshTime:Int = 90,
         val otpCode: String = "",
         val isLoading:Boolean = false

@@ -16,7 +16,7 @@ interface OrdersApi {
     suspend fun getOrders(): ResponseOrdersDto
 
     @GET("/api/v1/orders/{id}")
-    suspend fun getOrderDetails(@Path("id") orderId: Long): ResponseOrderDetailsDto
+    suspend fun getOrderDetails(@Path("id") orderId: Int): ResponseOrderDetailsDto
 
     @GET("/api/v1/orders/")
     suspend fun getOrdersByStatus(@Query("status") status:String):ResponseOrdersDto

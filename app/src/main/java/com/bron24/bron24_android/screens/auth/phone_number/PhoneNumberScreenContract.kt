@@ -4,11 +4,11 @@ import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface PhoneNumberScreenContract {
-    interface ViewModel: ContainerHost<UISate, SideEffect> {
+    interface ViewModel: ContainerHost<UIState, SideEffect> {
         fun onDispatchers(intent: Intent): Job
     }
 
-    data class UISate(
+    data class UIState(
         val isValidPhoneNumber:Boolean = false,
     )
 

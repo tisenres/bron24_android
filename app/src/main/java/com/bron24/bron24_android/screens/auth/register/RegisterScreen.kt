@@ -46,7 +46,7 @@ data class RegisterScreen(val phoneNumber: String) : Screen {
 @Composable
 fun RegisterScreenContent(
     phoneNumber: String,
-    state: State<RegisterScreenContract.UISate>,
+    state: State<RegisterScreenContract.UIState>,
     intent: (RegisterScreenContract.Intent) -> Unit
 ) {
     var firstName by remember { mutableStateOf("") }

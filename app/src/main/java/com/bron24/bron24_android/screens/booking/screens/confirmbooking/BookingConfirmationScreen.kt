@@ -72,12 +72,15 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -88,6 +91,9 @@ data class BookingConfirmationScreen(val bookingInfo:VenueOrderInfo):Screen{
         val uiState = viewModel.collectAsState()
         remember {
             viewModel.initData(bookingInfo)
+        }
+        viewModel.collectSideEffect {
+            ToastManager.showToast(it.message,ToastType.INFO)
         }
         BookingConfirmationContent(uiState = uiState,viewModel::onDispatchers)
     }

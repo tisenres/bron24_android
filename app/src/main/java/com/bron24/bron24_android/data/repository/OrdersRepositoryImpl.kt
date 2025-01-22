@@ -21,12 +21,12 @@ class OrdersRepositoryImpl @Inject constructor(
         emit(response) // assuming the endpoint returns OrdersResponse
     }.flowOn(Dispatchers.IO)
 
-    override fun getOrderDetails(id: Long): Flow<ResponseOrderDetailsDto> = flow {
+    override fun getOrderDetails(id: Int): Flow<ResponseOrderDetailsDto> = flow {
         val response = api.getOrderDetails(id)
         emit(response)
     }.flowOn(Dispatchers.IO)
 
-    override fun cancelOrder(id: Long): Flow<ResponseCancelOrderDto> = flow {
+    override fun cancelOrder(id: Int): Flow<ResponseCancelOrderDto> = flow {
         val response = api.cancelOrder(RequestCancelOrderDto(id))
         emit(response)
     }.flowOn(Dispatchers.IO)

@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +40,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingInfoCard
 import com.bron24.bron24_android.screens.booking.screens.confirmbooking.ConfirmButton
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import java.text.SimpleDateFormat
@@ -58,12 +63,7 @@ fun BookingSuccessContent(
     info: State<VenueOrderInfo>,
     intent: (BookingSuccessContract.Intent) -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        LazyColumn(
+   LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 19.dp, vertical = 20.dp),
@@ -76,7 +76,9 @@ fun BookingSuccessContent(
                     painter = painterResource(id = R.drawable.success_booking),
                     contentDescription = "Booking Success",
                     modifier = Modifier
-                        .size(290.dp)
+                        .padding(top = 40.dp, bottom = 60.dp)
+                        .size(260.dp)
+
                 )
             }
 
@@ -104,6 +106,7 @@ fun BookingSuccessContent(
                 }
             }
 
+
 //            Spacer(modifier = Modifier.weight(1f))
 
             item {
@@ -127,7 +130,7 @@ fun BookingSuccessContent(
                 )
             }
         }
-    }
+
 }
 
 @Composable
@@ -142,6 +145,7 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(260.dp)
                 .padding(20.dp)
         ) {
             Column(
@@ -237,9 +241,11 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
 }
 
 fun formatDate(inputDate: String): String {
-    val inputFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) // assuming input format is "yyyy-MM-dd"
+    val inputFormatter =
+        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) // assuming input format is "yyyy-MM-dd"
     val date: Date = inputFormatter.parse(inputDate) ?: return ""  // parse the string into Date
-    val outputFormatter = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()) // desired output format
+    val outputFormatter =
+        SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()) // desired output format
     return outputFormatter.format(date)
 }
 

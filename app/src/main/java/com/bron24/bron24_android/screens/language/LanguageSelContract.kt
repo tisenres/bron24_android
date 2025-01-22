@@ -5,12 +5,12 @@ import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface LanguageSelContract {
-    interface ViewModel:ContainerHost<UISate,SideEffect>{
+    interface ViewModel:ContainerHost<UIState,SideEffect>{
         fun onDispatchers(intent: Intent): Job
         fun initData():Job
     }
 
-    data class UISate(
+    data class UIState(
         val selectedLanguage:Language = Language("uz","O`zbek") ,
         val languages : List<Language> = emptyList(),
         val reComposition:Boolean= false

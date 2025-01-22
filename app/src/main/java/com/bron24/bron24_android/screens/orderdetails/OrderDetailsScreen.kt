@@ -19,6 +19,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,9 +31,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
+import cafe.adriel.voyager.core.screen.Screen
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.domain.entity.order.OrderStatus
@@ -45,95 +45,101 @@ import com.bron24.bron24_android.screens.orderdetails.layout.OrderDetailMap
 import com.bron24.bron24_android.screens.orderdetails.layout.OrderDetailsImagePager
 import timber.log.Timber
 
+data class OrderDetailsScreen(val id:Int):Screen{
+    @Composable
+    override fun Content() {
+
+    }
+
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderDetailsPage(
-    orderId: Long,
-    viewModel: OrderDetailsViewModel = hiltViewModel(),
-    navController: NavHostController
+fun OrderDetailsContent(
+    uiState:State<OrderDetailsContact.UIState>
 ) {
 
-    var isFirstOpen by remember { mutableStateOf(true) }
-    val orderState by viewModel.orderState.collectAsStateWithLifecycle()
+//    var isFirstOpen by remember { mutableStateOf(true) }
+//    val orderState by viewModel.orderState.collectAsStateWithLifecycle()
+//
+//    LaunchedEffect(Unit) {
+//        Timber.tag("TAGTAG").d("LaunchedEffect")
+//        if (isFirstOpen) {
+//            viewModel.fetchOrder(orderId)
+//            isFirstOpen = false
+//        }
+//    }
+//    LaunchedEffect(orderState) {
+//        if (orderState is OrderDetailState.Success) {
+//            if ((orderState as OrderDetailState.Success).isCanceled) {
+//                navController.popBackStack()
+//            }
+//        }
+//    }
 
-    LaunchedEffect(Unit) {
-        Timber.tag("TAGTAG").d("LaunchedEffect")
-        if (isFirstOpen) {
-            viewModel.fetchOrder(orderId)
-            isFirstOpen = false
-        }
-    }
-    LaunchedEffect(orderState) {
-        if (orderState is OrderDetailState.Success) {
-            if ((orderState as OrderDetailState.Success).isCanceled) {
-                navController.popBackStack()
-            }
-        }
-    }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_arrow_back_24),
-                            contentDescription = "back"
-                        )
-                    }
-                },
-                actions = {
-                    val state = orderState
-                    if (state is OrderDetailState.Success && state.data.status != OrderStatus.CANCELLED.name) {
-                        TextButton(
-                            onClick = {
-                                viewModel.cancelOrder(orderId)
-                            },
-                            enabled = !state.isCancelling,
-                            colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFF24E1E))
-                        ) {
-                            if (state.isCancelling) {
-                                CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                            } else {
-                                Text("Cancel order")
-                            }
-                        }
-                    }
-                })
-        }
-    ) { paddingValues ->
-        when (orderState) {
-            OrderDetailState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-            }
-
-            is OrderDetailState.Success -> {
-                val order = (orderState as OrderDetailState.Success).data
-                OrderDetailsContent(
-                    order = order,
-                    modifier = Modifier.padding(paddingValues),
-                    navigateToVenueDetails = {
-//                        navController.navigate(
-//                            Screen.VenueDetails.route.replace("{venueId}", order.venueId.toString())
+//    Scaffold(
+//        topBar = {
+//            TopAppBar(
+//                title = { },
+//                navigationIcon = {
+//                    IconButton(onClick = { navController.popBackStack() }) {
+//                        Icon(
+//                            painter = painterResource(R.drawable.baseline_arrow_back_24),
+//                            contentDescription = "back"
 //                        )
-                    })
-            }
+//                    }
+//                },
+//                actions = {
+//                    val state = orderState
+//                    if (state is OrderDetailState.Success && state.data.status != OrderStatus.CANCELLED.name) {
+//                        TextButton(
+//                            onClick = {
+//                                viewModel.cancelOrder(orderId)
+//                            },
+//                            enabled = !state.isCancelling,
+//                            colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFF24E1E))
+//                        ) {
+//                            if (state.isCancelling) {
+//                                CircularProgressIndicator(modifier = Modifier.size(16.dp))
+//                            } else {
+//                                Text("Cancel order")
+//                            }
+//                        }
+//                    }
+//                })
+//        }
+//    ) { paddingValues ->
+//        when (orderState) {
+//            OrderDetailState.Loading -> {
+//                Box(
+//                    modifier = Modifier
+//                        .padding(paddingValues)
+//                        .fillMaxSize()
+//                ) {
+//                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+//                }
+//            }
+//
+//            is OrderDetailState.Success -> {
+//                val order = (orderState as OrderDetailState.Success).data
+//                OrderDetailsContent(
+//                    order = order,
+//                    modifier = Modifier.padding(paddingValues),
+//                    navigateToVenueDetails = {
+////                        navController.navigate(
+////                            Screen.VenueDetails.route.replace("{venueId}", order.venueId.toString())
+////                        )
+//                    })
+//            }
+//
+//            is OrderDetailState.Error -> {
+//                val errorMessage = (orderState as OrderDetailState.Error).message
+//                ToastManager.showToast(errorMessage, ToastType.ERROR)
+//
+//            }
+//        }
 
-            is OrderDetailState.Error -> {
-                val errorMessage = (orderState as OrderDetailState.Error).message
-                ToastManager.showToast(errorMessage, ToastType.ERROR)
-
-            }
-        }
-
-    }
+//    }
 }
 
 @Composable

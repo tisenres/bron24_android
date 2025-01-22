@@ -74,7 +74,7 @@ class OTPInputScreen(val phoneNumber:String):Screen{
 @Composable
 fun OTPInputScreenContent(
     phoneNumber: String,
-    state: State<OTPInputContract.UISate>,
+    state: State<OTPInputContract.UIState>,
     intent:(OTPInputContract.Intent)->Unit
 ) {
     var otp by remember { mutableStateOf("") }

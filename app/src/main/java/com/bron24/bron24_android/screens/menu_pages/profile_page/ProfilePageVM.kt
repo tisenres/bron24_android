@@ -12,7 +12,6 @@ import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageCont
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract.Intent.OpenEdit
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract.Intent.OpenFavorites
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract.Intent.ClickLogout
-import com.bron24.bron24_android.screens.settings.edit_profile.EditProfileContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
@@ -74,5 +73,5 @@ class ProfilePageVM @Inject constructor(
     }
 
     override val container =
-        container<ProfilePageContract.UISate, ProfilePageContract.SideEffect>(ProfilePageContract.UISate(isLoading = false, user = User(localStorage.firstName,localStorage.lastName,localStorage.phoneNumber.formatPhoneNumber())))
+        container<ProfilePageContract.UIState, ProfilePageContract.SideEffect>(ProfilePageContract.UIState(isLoading = false, user = User(localStorage.firstName,localStorage.lastName,localStorage.phoneNumber.formatPhoneNumber())))
 }

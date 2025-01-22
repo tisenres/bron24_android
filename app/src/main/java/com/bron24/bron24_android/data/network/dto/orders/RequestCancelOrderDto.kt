@@ -5,5 +5,5 @@ import com.google.gson.annotations.SerializedName
 
 @Keep
 data class RequestCancelOrderDto(
-    @SerializedName("booking_id") val id: Long,
+    @SerializedName("booking_id") val id: Int,
 )

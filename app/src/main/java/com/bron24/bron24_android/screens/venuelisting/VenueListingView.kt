@@ -48,7 +48,7 @@ import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VenueListingView(
-    state: State<HomePageContract.UISate>,
+    state: State<HomePageContract.UIState>,
     listState: LazyListState = rememberLazyListState(),
     modifier: Modifier = Modifier,
     refreshVenue: () -> Unit,

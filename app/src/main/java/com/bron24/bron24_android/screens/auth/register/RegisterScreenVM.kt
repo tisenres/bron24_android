@@ -1,13 +1,10 @@
 package com.bron24.bron24_android.screens.auth.register
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.usecases.auth.AuthenticateUserUseCase
-import com.bron24.bron24_android.screens.auth.phone_number.PhoneNumberScreenContract
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -48,7 +45,7 @@ class RegisterScreenVM @Inject constructor(
     }
 
     override val container =
-        container<RegisterScreenContract.UISate, RegisterScreenContract.SideEffect>(
-            RegisterScreenContract.UISate()
+        container<RegisterScreenContract.UIState, RegisterScreenContract.SideEffect>(
+            RegisterScreenContract.UIState()
         )
 }

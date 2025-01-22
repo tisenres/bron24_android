@@ -7,12 +7,12 @@ import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface HomePageContract {
-    interface ViewModel:ContainerHost<UISate, SideEffect>{
+    interface ViewModel:ContainerHost<UIState, SideEffect>{
         fun onDispatchers(intent: Intent): Job
         fun initData(): Job
     }
 
-    data class UISate(
+    data class UIState(
         val isLoading:Boolean = true,
         val initial:Boolean = false,
         val firstName:String = "",

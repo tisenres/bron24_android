@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.auth.sms_otp
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.data.local.preference.LocalStorage
@@ -100,5 +99,5 @@ class OTPInputScreenVM @Inject constructor(
     }
 
     override val container =
-        container<OTPInputContract.UISate, OTPInputContract.SideEffect>(OTPInputContract.UISate())
+        container<OTPInputContract.UIState, OTPInputContract.SideEffect>(OTPInputContract.UIState())
 }

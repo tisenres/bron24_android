@@ -77,7 +77,7 @@ class PhoneNumberScreenVM @Inject constructor(
     }
 
     override val container =
-        container<PhoneNumberScreenContract.UISate, PhoneNumberScreenContract.SideEffect>(
-            PhoneNumberScreenContract.UISate()
+        container<PhoneNumberScreenContract.UIState, PhoneNumberScreenContract.SideEffect>(
+            PhoneNumberScreenContract.UIState()
         )
 }

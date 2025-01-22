@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
@@ -53,7 +52,7 @@ object HomePage : Tab {
 
 @Composable
 fun HomePageContent(
-    state: State<HomePageContract.UISate>,
+    state: State<HomePageContract.UIState>,
     intent: (HomePageContract.Intent) -> Unit
 ) {
     Box(
