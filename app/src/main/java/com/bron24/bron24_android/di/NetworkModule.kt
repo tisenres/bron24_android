@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.bron24.bron24_android.BuildConfig
 import com.bron24.bron24_android.data.network.interceptors.HttpInterceptor
+import com.bron24.bron24_android.data.network.interceptors.NoConnectivityException
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
 import com.bron24.bron24_android.helper.util.AuthAuthenticator
@@ -18,6 +19,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 import javax.inject.Singleton
 
 @Module
@@ -31,23 +33,10 @@ class NetworkModule {
     @Provides
     @Singleton
     fun providesOkHttpClient(
-        chuckerInterceptor: ChuckerInterceptor,
-        httpInterceptor: HttpInterceptor,
-    ): OkHttpClient {
-
-        val logging = HttpLoggingInterceptor()
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-
-        return OkHttpClient.Builder()
-            .addInterceptor(chuckerInterceptor)
-            .addInterceptor(httpInterceptor)
-            .apply {
-                if (BuildConfig.DEBUG) {
-                    addInterceptor(logging)
-                }
-            }
-            .build()
-    }
+        chuckerInterceptor: ChuckerInterceptor
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(chuckerInterceptor)
+        .build()
 
     @Provides
     @Singleton

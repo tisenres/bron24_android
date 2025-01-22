@@ -9,6 +9,8 @@ data class RequestBookingDto(
     @SerializedName("time_slot") val timeSlot: List<String>,
     @SerializedName("sector") val sector: String,
     @SerializedName("status") val status: String = "INPROCESS",
+    @SerializedName("phone_number_2") val phoneNumber: String = "",
+    @SerializedName("payment") val payment:String = "cash"
 )
 
 data class ResponseBookingDto(
@@ -21,6 +23,7 @@ data class BookingData(
     @SerializedName("user") val user: User?,
     @SerializedName("venue_id") val venue: Venue?,
     @SerializedName("time_slot") val timeSlots: List<TimeSlot>,
+    @SerializedName("date") val date:String,
     @SerializedName("cost") val cost: Int?,
     @SerializedName("hours") val hours: String,
     @SerializedName("sector") val sector: String?,

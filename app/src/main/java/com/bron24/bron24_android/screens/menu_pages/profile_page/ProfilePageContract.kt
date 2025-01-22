@@ -7,13 +7,12 @@ import org.orbitmvi.orbit.ContainerHost
 interface ProfilePageContract {
     interface ViewModel : ContainerHost<UISate, SideEffect> {
         fun onDispatchers(intent: Intent): Job
-        fun initData(): Job
     }
 
     data class UISate(
         val isLoading: Boolean = true,
         val initial: Boolean = false,
-        val user: User? = null
+        val user: User
     )
 
     class SideEffect(val message: String)

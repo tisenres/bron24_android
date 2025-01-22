@@ -91,9 +91,6 @@ object ProfilePage : Tab {
     @Composable
     override fun Content() {
         val viewModel: ProfilePageContract.ViewModel = getViewModel<ProfilePageVM>()
-        remember {
-            viewModel.initData()
-        }
         val state = viewModel.collectAsState()
         ProfilePageContent(state = state, intent = viewModel::onDispatchers)
     }

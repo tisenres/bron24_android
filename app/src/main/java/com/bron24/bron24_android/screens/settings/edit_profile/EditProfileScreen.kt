@@ -269,8 +269,10 @@ fun EditProfileScreenContent(
         }
     }
     if(showDialog){
-        CustomDialog("Delete",onDismiss = { showDialog = false }){
-            showDialog = false
+        CustomDialog(
+            message = "Delete",
+            onDismiss = { showDialog = false })
+        {
             intent.invoke(EditProfileContract.Intent.ClickDeleteAcc)
         }
     }

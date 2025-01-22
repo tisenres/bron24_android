@@ -67,19 +67,6 @@ class ProfilePageVM @Inject constructor(
         }
     }
 
-    override fun initData() = intent {
-        reduce {
-            state.copy(
-                isLoading = false,
-                user = User(
-                    localStorage.firstName,
-                    localStorage.lastName,
-                    localStorage.phoneNumber.formatPhoneNumber()
-                )
-            )
-        }
-    }
-
     private fun postSideEffect(message: String) {
         intent {
             postSideEffect(ProfilePageContract.SideEffect(message))
@@ -87,5 +74,5 @@ class ProfilePageVM @Inject constructor(
     }
 
     override val container =
-        container<ProfilePageContract.UISate, ProfilePageContract.SideEffect>(ProfilePageContract.UISate())
+        container<ProfilePageContract.UISate, ProfilePageContract.SideEffect>(ProfilePageContract.UISate(isLoading = false, user = User(localStorage.firstName,localStorage.lastName,localStorage.phoneNumber.formatPhoneNumber())))
 }

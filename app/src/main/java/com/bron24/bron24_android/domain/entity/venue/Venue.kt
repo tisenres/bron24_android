@@ -12,5 +12,6 @@ data class Venue(
     val rate:Double,
     val distance: Double,
     val slots:Int,
-    val previewImage: String?
+    val previewImage: String?,
+    val favourite:Boolean
 ):Parcelable

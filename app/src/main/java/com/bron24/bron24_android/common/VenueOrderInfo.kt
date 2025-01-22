@@ -11,4 +11,5 @@ data class VenueOrderInfo(
     val date: String,
     val sector: String,
     val timeSlots: List<TimeSlot>,
+    val secondPhone:String = "",
 ):Parcelable

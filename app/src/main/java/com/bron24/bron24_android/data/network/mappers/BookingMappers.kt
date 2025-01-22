@@ -31,6 +31,7 @@ fun VenueOrderInfo.toNetworkModel(): RequestBookingDto {
         bookingDate = date,
         sector = sector,
         timeSlot = timeSlots.map { "${it.startTime}-${it.endTime}" },
-        status = BookingStatus.INPROCESS.name
+        status = BookingStatus.INPROCESS.name,
+        phoneNumber = secondPhone
     )
 }
