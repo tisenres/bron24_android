@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.booking.screens.finishbooking
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -63,6 +64,9 @@ fun BookingSuccessContent(
     info: State<VenueOrderInfo>,
     intent: (BookingSuccessContract.Intent) -> Unit
 ) {
+    BackHandler {
+        intent.invoke(BookingSuccessContract.Intent.ClickMenu)
+    }
    LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -76,8 +80,8 @@ fun BookingSuccessContent(
                     painter = painterResource(id = R.drawable.success_booking),
                     contentDescription = "Booking Success",
                     modifier = Modifier
-                        .padding(top = 40.dp, bottom = 60.dp)
-                        .size(260.dp)
+                        .padding( bottom = 60.dp)
+                        .size(200.dp)
 
                 )
             }
@@ -95,6 +99,7 @@ fun BookingSuccessContent(
                         color = Color(0xFF3C2E56),
                         lineHeight = 40.sp,
                     ),
+                    modifier = Modifier.padding(bottom = 40.dp)
                 )
             }
 
@@ -142,6 +147,7 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFA4ECC3))
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
