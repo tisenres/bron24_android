@@ -23,7 +23,7 @@ interface OrdersPageContract {
     sealed interface Intent{
         data object ClickHistory:Intent
         data object ClickUpcoming:Intent
-        data class ClickItemOrder(val orderId:Long):Intent
+        data class ClickItemOrder(val orderId:Int):Intent
     }
 
     interface Direction{

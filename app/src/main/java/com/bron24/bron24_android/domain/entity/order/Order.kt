@@ -1,27 +1,24 @@
 package com.bron24.bron24_android.domain.entity.order
 
 import androidx.annotation.Keep
+import com.bron24.bron24_android.data.network.dto.orders.TimeSlotDto
+import com.google.gson.annotations.SerializedName
 
 @Keep
 data class Order(
-    val id: Long,
-    val venueName: String,
-    val venueId: Int,
-    val timeSlot: TimeSlot,
+    val id: Int,
+    val timeSlot: TimeSlotDto,
     val bookingDate: String,
     val sector: String,
-    val status: OrderStatus,
-    val cost: String,
+    val status: String,
     val hours: String,
-    val bookingCreation: String,
-    val phoneNumber1: String,
-    val phoneNumber2: String?,
     val orderId: String,
-    val address: OrderAddress,
+    val payment: String,
+    val user: Int,
+    val venueId: Int,
     val previewImage: String,
-    var images: List<String>? = null,
-    val lat: Double,
-    val lon: Double
+    val statusName:String,
+    val venueName:String
 )
 
 @Keep

@@ -85,7 +85,7 @@ fun OrderDetailsPage(
                 },
                 actions = {
                     val state = orderState
-                    if (state is OrderDetailState.Success && state.data.status != OrderStatus.CANCELLED) {
+                    if (state is OrderDetailState.Success && state.data.status != OrderStatus.CANCELLED.name) {
                         TextButton(
                             onClick = {
                                 viewModel.cancelOrder(orderId)
@@ -146,7 +146,7 @@ private fun OrderDetailsContent(
         item {
             Spacer(modifier = Modifier.height(16.dp))
             OrderDetailsImagePager(
-                imageUrls = order.images ?: emptyList(),
+                imageUrls = order.previewImage?:"",
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
         }

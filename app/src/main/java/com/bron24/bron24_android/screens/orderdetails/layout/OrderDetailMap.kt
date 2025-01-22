@@ -94,7 +94,7 @@ fun OrderDetailMap(order: Order, modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(5.dp))
             .clickable {
-                openMapWithOptions(context, order.lat, order.lon, order.venueName)
+                //openMapWithOptions(context, order.lat, order.lon, order.venueName)
             }
             .background(Color(0xffFAFAFA))
     ) {
@@ -113,7 +113,7 @@ fun OrderDetailMap(order: Order, modifier: Modifier = Modifier) {
                         modifier = Modifier.fillMaxSize(),
                         update = { view ->
                             try {
-                                val venueLocation = Point(order.lat, order.lon)
+                                val venueLocation = Point(34.00,34.00)
                                 view.map.move(
                                     CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
                                     Animation(Animation.Type.SMOOTH, 0.3f),
@@ -194,8 +194,8 @@ fun OrderDetailMap(order: Order, modifier: Modifier = Modifier) {
                     order?.let { venue ->
                         openMapWithOptions(
                             context,
-                            venue.lat,
-                            venue.lon,
+                            34.00,
+                            34.00,
                             venue.venueName
                         )
                     }
@@ -249,7 +249,7 @@ private fun MapDetails(order: Order) {
             .padding(horizontal = 10.dp)
     ) {
         Text(
-            text = order.address.addressName + " " + order.sector,
+            text =  " " + order.sector,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -267,7 +267,7 @@ private fun MapDetails(order: Order) {
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.ic_metro,
-            text = order.address.closestMetroStation,
+            text = "",
             tintColor = Color(0xFFD43535),
         )
     }

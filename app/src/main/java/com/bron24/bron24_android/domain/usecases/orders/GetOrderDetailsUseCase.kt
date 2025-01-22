@@ -15,7 +15,7 @@ class GetOrderDetailsUseCase @Inject constructor(
     suspend fun execute(orderId: Long): Flow<Order> {
         return ordersRepository.getOrderDetails(orderId).map { data ->
             val images = venueRepository.getVenuePictures(data.data.venueId)
-            data.data.toDomainModel().copy(images = images)
+            data.data.toDomainModel()
         }
     }
 

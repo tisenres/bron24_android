@@ -41,32 +41,32 @@ fun OrderDetailContacts(order: Order, modifier: Modifier) {
                 modifier = Modifier.weight(1f)
             )
             Column {
-                if (order.phoneNumber1.isNotEmpty()) {
-                    Text(
-                        text = order.phoneNumber1.formatWithSpansPhoneNumber(),
-                        modifier = Modifier.clickable {
-                            openDialer(context, order.phoneNumber1.formatWithSpansPhoneNumber())
-                        },
-                        fontSize = 12.sp,
-                        color = Color(0xff32B768),
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        textDecoration = TextDecoration.Underline
-                    )
-                }
-                if (!order.phoneNumber2.isNullOrEmpty()) {
-                    Text(
-                        text = order.phoneNumber2.formatWithSpansPhoneNumber(),
-                        modifier = Modifier.clickable {
-                            openDialer(context, order.phoneNumber2.formatWithSpansPhoneNumber())
-                        },
-                        fontSize = 12.sp,
-                        color = Color(0xff32B768),
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        textDecoration = TextDecoration.Underline
-                    )
-                }
+//                if (order.phoneNumber1.isNotEmpty()) {
+//                    Text(
+//                        text = order.phoneNumber1.formatWithSpansPhoneNumber(),
+//                        modifier = Modifier.clickable {
+//                            openDialer(context, order.phoneNumber1.formatWithSpansPhoneNumber())
+//                        },
+//                        fontSize = 12.sp,
+//                        color = Color(0xff32B768),
+//                        fontFamily = gilroyFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        textDecoration = TextDecoration.Underline
+//                    )
+//                }
+//                if (!order.phoneNumber2.isNullOrEmpty()) {
+//                    Text(
+//                        text = order.phoneNumber2.formatWithSpansPhoneNumber(),
+//                        modifier = Modifier.clickable {
+//                            openDialer(context, order.phoneNumber2.formatWithSpansPhoneNumber())
+//                        },
+//                        fontSize = 12.sp,
+//                        color = Color(0xff32B768),
+//                        fontFamily = gilroyFontFamily,
+//                        fontWeight = FontWeight.Bold,
+//                        textDecoration = TextDecoration.Underline
+//                    )
+//                }
             }
         }
         Spacer(modifier = Modifier.height(12.dp))

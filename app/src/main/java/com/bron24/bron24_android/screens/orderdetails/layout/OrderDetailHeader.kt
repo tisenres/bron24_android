@@ -63,14 +63,14 @@ fun OrderDetailHeader(order: Order, modifier: Modifier = Modifier) {
             color = Color(0xFF949494)
         )
         Spacer(modifier = Modifier.height(6.dp))
-        OrderPrice(price = order.cost)
+        OrderPrice(price = "")
         Spacer(modifier = Modifier.height(6.dp))
         OrderDateTime(
             date = order.bookingDate,
             time = " ${order.timeSlot.startTime} - ${order.timeSlot.endTime}"
         )
         Spacer(modifier = Modifier.height(6.dp))
-        OrderAddress(address = order.address.addressName)
+        //OrderAddress(address = order.address.addressName)
         Spacer(modifier = Modifier.height(6.dp))
     }
 }

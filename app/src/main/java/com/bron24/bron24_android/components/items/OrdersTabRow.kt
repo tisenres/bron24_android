@@ -163,16 +163,16 @@ private fun OrderContent(order: Order) {
         Spacer(modifier = Modifier.height(2.dp))
         OrderId(id = order.id.toString())
         Spacer(modifier = Modifier.height(10.dp))
-        OrderPrice(price = order.cost)
+        OrderPrice(price = "1000")
         Spacer(modifier = Modifier.height(5.dp))
         OrderDateTime(
             date = order.bookingDate,
             time = " ${order.timeSlot.startTime} - ${order.timeSlot.endTime}"
         )
         Spacer(modifier = Modifier.height(5.dp))
-        OrderAddress(address = order.address.addressName)
+        //OrderAddress(address = order.address.addressName)
         Spacer(modifier = Modifier.height(7.dp))
-        OrderStatus(status = order.status)
+        //OrderStatus(status = order.status)
     }
 }
 
