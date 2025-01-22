@@ -67,8 +67,8 @@ class BookingRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun confirmBooking(info: VenueOrderInfo): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun confirmBooking(info: VenueOrderInfo): VenueOrderInfo = withContext(Dispatchers.IO) {
         val response = bookingApiService.finishBooking(info.toNetworkModel())
-        response.success
+        response.toDomain()
     }
 }

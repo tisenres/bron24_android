@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -45,6 +46,8 @@ import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.screens.booking.screens.confirmbooking.ConfirmButton
 import com.bron24.bron24_android.screens.booking.states.BookingSuccessInfo
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.yandex.mapkit.logo.VerticalAlignment
+
 class BookingSuccessScreen(private val info: VenueOrderInfo):Screen{
     @Composable
     override fun Content() {
@@ -154,17 +157,21 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
                     ),
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
-                Text(
-                    text = info.venueId.toString(),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 16.sp,
-                        color = Color.Black,
-                        lineHeight = 20.sp,
-                    ),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+                LazyColumn() {
+                    items(info.orderId.size){
+                        Text(
+                            text = info.orderId[it],
+                            style = TextStyle(
+                                fontFamily = gilroyFontFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 16.sp,
+                                color = Color.Black,
+                                lineHeight = 20.sp,
+                            ),
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+                }
                 Text(
                     text = info.venueName,
                     style = TextStyle(

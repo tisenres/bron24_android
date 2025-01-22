@@ -11,10 +11,10 @@ class ConfirmBookingUseCase @Inject constructor(
     private val bookingRepository: BookingRepository,
 ) {
 
-   operator fun invoke(info: VenueOrderInfo): Flow<Result<Unit>> = flow {
-       val check = bookingRepository.confirmBooking(info)
-       if (check){
-           emit(Result.success(Unit))
-       }else emit(Result.failure(Exception("error")))
+   operator fun invoke(info: VenueOrderInfo): Flow<Result<VenueOrderInfo>> = flow {
+       val info = bookingRepository.confirmBooking(info)
+       if (info.success){
+           emit(Result.success(info))
+       }else emit(Result.failure(Exception("error!")))
     }.catch { emit(Result.failure(it)) }
 }

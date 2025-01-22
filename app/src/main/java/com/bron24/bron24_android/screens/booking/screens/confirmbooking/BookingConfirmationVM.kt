@@ -7,6 +7,7 @@ import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.usecases.booking.ConfirmBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
+import com.bron24.bron24_android.helper.extension.isValidUzbekPhoneNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -30,18 +31,13 @@ class BookingConfirmationVM @Inject constructor(
 
             BookingConfirmationContract.Intent.Confirm -> {
                 confirmBookingUseCase.invoke(
-                    state.venueOrderInfo ?: VenueOrderInfo(
+                    state.venueOrderInfo?.copy(secondPhone = state.secondPhoneNumber) ?: VenueOrderInfo(
                         0, "", "", "",
                         emptyList()
                     ).copy(secondPhone = state.secondPhoneNumber)
                 ).onEach {
                     it.onSuccess {
-                        direction.moveToNext(
-                            state.venueOrderInfo ?: VenueOrderInfo(
-                                0, "", "", "",
-                                emptyList(),
-                            ).copy(secondPhone = state.secondPhoneNumber)
-                        )
+                        direction.moveToNext(it)
                     }.onFailure {
 
                     }
@@ -49,7 +45,9 @@ class BookingConfirmationVM @Inject constructor(
             }
 
             is BookingConfirmationContract.Intent.UpdatePhone -> {
-                reduce { state.copy(secondPhoneNumber = intent.phone) }
+                if(intent.phone.isValidUzbekPhoneNumber()){
+                    reduce { state.copy(secondPhoneNumber = intent.phone) }
+                }
             }
         }
     }
