@@ -1,11 +1,11 @@
 package com.bron24.bron24_android.data.network.apiservices
 
 import com.bron24.bron24_android.data.network.dto.venue.PictureDto
+import com.bron24.bron24_android.data.network.dto.venue.SpecialOffersDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueCoordinatesDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDetailsResponseDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueResponseDto
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -41,4 +41,7 @@ interface VenueApiService {
         @Query("lat") latitude: Double? = null,
         @Query("lon") longitude: Double? = null,
     ): VenueResponseDto?
+
+    @GET("api/v1/venues/special-offers")
+    suspend fun getSpecialOffers(): SpecialOffersDto?
 }

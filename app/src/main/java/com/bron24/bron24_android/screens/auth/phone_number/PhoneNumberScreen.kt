@@ -62,9 +62,9 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect

@@ -232,7 +232,7 @@ fun VenueTitleRow(venue: Venue) {
                     .align(Alignment.CenterVertically)
             )
             Text(
-                text = "4.5",
+                text = venue.rate.toString(),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -305,7 +305,7 @@ fun VenueFooter(venue: Venue) {
                     modifier = Modifier.align(Alignment.Bottom)
                 )
                 Text(
-                    text = "12 " + stringResource(id = R.string.slots),
+                    text = venue.slots.toString() + " " + stringResource(id = R.string.hours),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),

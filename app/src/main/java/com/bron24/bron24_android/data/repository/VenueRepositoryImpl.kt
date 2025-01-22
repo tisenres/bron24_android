@@ -5,6 +5,7 @@ import com.bron24.bron24_android.data.local.db.FavouriteDao
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.network.mappers.toDomainModel
 import com.bron24.bron24_android.domain.entity.favourite.Favourite
+import com.bron24.bron24_android.domain.entity.offers.SpecialOffer
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
@@ -33,7 +34,7 @@ class VenueRepositoryImpl @Inject constructor(
         district: String?
     ): List<Venue> = withContext(Dispatchers.IO) {
         try {
-           apiService.getVenues(
+            apiService.getVenues(
                 latitude, longitude, sort, availableTime,
                 minPrice, maxPrice, infrastructure, district
             )?.data?.map {
@@ -68,9 +69,9 @@ class VenueRepositoryImpl @Inject constructor(
         longitude: Double?
     ): VenueDetails? = withContext(Dispatchers.IO) {
 //        try {
-            Log.d("AAA", "getVenueDetailsById: try")
-            Log.d("AAA", "getVenueDetailsById: ${apiService.getVenueDetails(venueId,latitude,longitude)}")
-            apiService.getVenueDetails(venueId, latitude, longitude)?.data?.toDomainModel()
+        Log.d("AAA", "getVenueDetailsById: try")
+        Log.d("AAA", "getVenueDetailsById: ${apiService.getVenueDetails(venueId, latitude, longitude)}")
+        apiService.getVenueDetails(venueId, latitude, longitude)?.data?.toDomainModel()
 //        } catch (e: Exception) {
 //            Log.d("AAA", "getVenueDetailsById: ")
 //            null
@@ -92,18 +93,19 @@ class VenueRepositoryImpl @Inject constructor(
 
     override fun getAllFavourite(): Flow<List<Favourite>> = flow {
         try {
-            favouriteDao.getAll().collect{
+            favouriteDao.getAll().collect {
                 emit(it)
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             emit(emptyList())
         }
     }
+
     override fun addFavourite(favourite: Favourite): Flow<Result<Unit>> = flow {
         try {
             favouriteDao.insert(favourite)
             emit(Result.success(Unit))
-        }catch (e:Exception){
+        } catch (e: Exception) {
             emit(Result.failure(e))
         }
 
@@ -112,9 +114,12 @@ class VenueRepositoryImpl @Inject constructor(
     override fun deleteFavourite(id: Int): Flow<Result<Unit>> = flow {
         try {
             favouriteDao.delete(id)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             emit(Result.failure(e))
         }
     }
 
+    override fun getSpecialOffers(): Flow<List<SpecialOffer>> = flow<List<SpecialOffer>> {
+        emit(apiService.getSpecialOffers()?.data?.map { it.toDomainModel() } ?: emptyList())
+    }
 }

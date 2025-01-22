@@ -3,10 +3,12 @@ package com.bron24.bron24_android.data.network.mappers
 import com.bron24.bron24_android.data.network.dto.venue.AddressDto
 import com.bron24.bron24_android.data.network.dto.venue.CityDto
 import com.bron24.bron24_android.data.network.dto.venue.InfrastructureDto
+import com.bron24.bron24_android.data.network.dto.venue.SpecialOfferDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueCoordinatesDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDetailsDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueDto
 import com.bron24.bron24_android.data.network.dto.venue.VenueOwnerDto
+import com.bron24.bron24_android.domain.entity.offers.SpecialOffer
 import com.bron24.bron24_android.domain.entity.venue.Address
 import com.bron24.bron24_android.domain.entity.venue.City
 import com.bron24.bron24_android.domain.entity.venue.Infrastructure
@@ -103,12 +105,11 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
     )
 }
 
-//fun formatPrice(price: String): String {
-//    return try {
-//        val floatPrice = price.toFloat()
-//        val intPrice = floatPrice.toInt()
-//        String.format("%,d", intPrice).replace(",", " ")
-//    } catch (e: NumberFormatException) {
-//        "0" // Return "0" if parsing fails
-//    }
-//}
+fun SpecialOfferDto.toDomainModel(): SpecialOffer {
+    return SpecialOffer(
+        id = id ?: 0,
+        image = image ?: "",
+        createdAt = createdAt ?: "",
+        validUntil = validUntil ?: ""
+    )
+}

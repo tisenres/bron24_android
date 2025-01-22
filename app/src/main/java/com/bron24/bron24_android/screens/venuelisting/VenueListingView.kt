@@ -88,7 +88,7 @@ fun VenueListingView(
         ) {
             item(key = "ads") {
                 Spacer(modifier = Modifier.height(16.dp))
-                AdsSection()
+                AdsSection(imageUrls = state.value.offers.map { it.image })
             }
             item(key = "title") {
                 Row(

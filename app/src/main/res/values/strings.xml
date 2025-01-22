@@ -86,4 +86,5 @@
     <string name="delete_acc">Delete account</string>
     <string name="save_change">Save changes</string>
     <string name="order">Order</string>
+    <string name="hours">hours</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
+import com.bron24.bron24_android.domain.usecases.offers.GetSpecialOfferUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -19,9 +20,11 @@ class HomePageVM @Inject constructor(
     private val direction: HomePageContract.Direction,
     private val localStorage: LocalStorage,
     private val getVenuesUseCase: GetVenuesUseCase,
-    private val getCurrentLocationUseCase: GetCurrentLocationUseCase
+    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
+    private val getSpecialOfferUseCase: GetSpecialOfferUseCase
 ) : ViewModel(), HomePageContract.ViewModel {
-    private var filterOptions:FilterOptions?=null
+    private var filterOptions: FilterOptions? = null
+
     init {
         localStorage.openMenu = true
     }
@@ -47,10 +50,14 @@ class HomePageVM @Inject constructor(
                         postSideEffect(it.message.toString())
                     }
                 }.launchIn(viewModelScope)
+
+                getSpecialOfferUseCase.invoke().onEach {
+                    reduce { state.copy(offers = it) }
+                }.launchIn(viewModelScope)
             }
 
             is HomePageContract.Intent.ClickItem -> {
-                direction.moveToDetails(intent.venueId,intent.rate)
+                direction.moveToDetails(intent.venueId, intent.rate)
             }
         }
     }
@@ -58,7 +65,7 @@ class HomePageVM @Inject constructor(
     override fun initData() = intent {
         getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
             it.onSuccess {
-                if(filterOptions!=null){
+                if (filterOptions != null) {
                     filterResult()
                 }
                 reduce { state.copy(isLoading = false, itemData = it) }
@@ -66,12 +73,17 @@ class HomePageVM @Inject constructor(
                 postSideEffect(it.message.toString())
             }
         }.launchIn(viewModelScope)
+
         getCurrentLocationUseCase.execute().onEach {
             reduce { state.copy(userLocation = it) }
         }.launchIn(viewModelScope)
+
+        getSpecialOfferUseCase.invoke().onEach {
+            reduce { state.copy(offers = it) }
+        }.launchIn(viewModelScope)
     }
 
-    private fun filterResult() = intent{
+    private fun filterResult() = intent {
         getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
             it.onSuccess {
                 reduce { state.copy(isLoading = false, itemData = it) }

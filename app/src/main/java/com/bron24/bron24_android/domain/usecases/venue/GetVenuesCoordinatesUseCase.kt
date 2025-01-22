@@ -11,7 +11,7 @@ import javax.inject.Inject
 class GetVenuesCoordinatesUseCase @Inject constructor(
     private val repository: VenueRepository
 ) {
-    operator fun invoke(): Flow<List<VenueCoordinates>> = flow{
+    operator fun invoke(): Flow<List<VenueCoordinates>> = flow {
         emit(repository.getVenuesCoordinates())
     }
 }

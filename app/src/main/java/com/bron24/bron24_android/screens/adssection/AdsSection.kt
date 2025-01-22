@@ -1,46 +1,62 @@
 package com.bron24.bron24_android.screens.adssection
 
-import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.bron24.bron24_android.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun AdsSection(modifier: Modifier = Modifier) {
-    val images = remember {
-        listOf(
-            R.drawable.offer_image_1,
-            R.drawable.view_soccer_ball,
-            R.drawable.offer_image_1,
-            R.drawable.view_soccer_ball
-        )
-    }
-    val pagerState = rememberPagerState(pageCount = { images.size })
+fun AdsSection(
+    imageUrls: List<String>,
+    modifier: Modifier = Modifier
+) {
+//    val images = remember {
+//        listOf(
+//            R.drawable.offer_image_1,
+//            R.drawable.view_soccer_ball,
+//            R.drawable.offer_image_1,
+//            R.drawable.view_soccer_ball
+//        )
+//    }
+
+    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        while (true) {
+        while (imageUrls.isNotEmpty()) {
             delay(10000)
             coroutineScope.launch {
-                val nextPage = (pagerState.currentPage + 1) % images.size
+                val nextPage = (pagerState.currentPage + 1) % imageUrls.size
                 pagerState.animateScrollToPage(
                     page = nextPage,
-                    animationSpec = tween(durationMillis = 1000) // Slower animation (1 second)
+                    animationSpec = tween(durationMillis = 1000)
                 )
             }
         }
@@ -49,7 +65,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxWidth()) {
         Column {
             AdsImageSection(
-                images = images,
+                images = imageUrls,
                 pagerState = pagerState,
             )
         }
@@ -57,7 +73,7 @@ fun AdsSection(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AdsImageSection(images: List<Int>, pagerState: PagerState) {
+fun AdsImageSection(images: List<String>, pagerState: PagerState) {
     Column(
         modifier = Modifier
             .height(153.dp)
@@ -88,17 +104,29 @@ fun AdsImageSection(images: List<Int>, pagerState: PagerState) {
 }
 
 @Composable
-fun OfferImage(imageRes: Int) {
+fun OfferImage(imageRes: String) {
+//    AsyncImage(
+//        model = imageRes,
+//        contentDescription = "offer_image",
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .clip(RoundedCornerShape(10.dp))
+//            .clickable {
+//                Log.d("OfferImage", "Image clicked")
+//            },
+//        contentScale = androidx.compose.ui.layout.ContentScale.Crop
+//    )
+
     AsyncImage(
-        model = imageRes,
-        contentDescription = "offer_image",
-        modifier = Modifier
-            .fillMaxSize()
-            .clip(RoundedCornerShape(10.dp))
-            .clickable {
-                Log.d("OfferImage", "Image clicked")
-            },
-        contentScale = androidx.compose.ui.layout.ContentScale.Crop
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageRes)
+            .placeholder(R.drawable.placeholder)
+            .scale(Scale.FILL)
+            .crossfade(true)
+            .build(),
+        contentDescription = "Offer Image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize()
     )
 }
 
