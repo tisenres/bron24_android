@@ -99,11 +99,11 @@ import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.components.items.LoadingScreen
-import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.helper.extension.DateTimeFormatter
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.user.Location
+import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -257,8 +257,8 @@ fun VenueDetailsContent(
             item(key = "infrastructureSection") {
                 InfrastructureSection(
                     details = details?.copy(
-                        workingHoursFrom = DateTimeFormatter.formatISODateTimeToHourString(details.workingHoursFrom),
-                        workingHoursTill = DateTimeFormatter.formatISODateTimeToHourString(details.workingHoursTill)
+                        workingHoursFrom = formatISODateTimeToHourString(details.workingHoursFrom),
+                        workingHoursTill = formatISODateTimeToHourString(details.workingHoursTill)
                     )
                 )
             }

@@ -11,7 +11,7 @@ import com.bron24.bron24_android.data.network.mappers.toNetworkModel
 import com.bron24.bron24_android.domain.entity.booking.AvailableTimesResponse
 import com.bron24.bron24_android.domain.entity.booking.Booking
 import com.bron24.bron24_android.domain.repository.BookingRepository
-import com.bron24.bron24_android.helper.extension.formatPrice
+import com.bron24.bron24_android.helper.util.formatPrice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

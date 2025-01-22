@@ -1,16 +1,12 @@
 package com.bron24.bron24_android.helper.util
 
-import android.util.Log
-import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.data.network.apiservices.AuthApi
 import com.bron24.bron24_android.data.network.dto.auth.AuthDataDto
 import com.bron24.bron24_android.data.network.dto.auth.AuthResponseDto
 import com.bron24.bron24_android.data.network.dto.auth.RefreshTokenDto
-import com.bron24.bron24_android.data.network.dto.auth.UserDto
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import com.bron24.bron24_android.helper.util.presentation.listener
-import com.bron24.bron24_android.helper.util.presentation.logOut
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request

@@ -14,7 +14,7 @@ import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.entity.venue.VenueOwner
-import com.bron24.bron24_android.helper.extension.formatPrice
+import com.bron24.bron24_android.helper.util.formatPrice
 
 fun VenueDto.toDomainModel(): Venue {
     return Venue(

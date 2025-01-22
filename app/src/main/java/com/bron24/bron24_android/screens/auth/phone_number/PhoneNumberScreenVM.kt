@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.domain.usecases.auth.RequestOTPUseCase
-import com.bron24.bron24_android.helper.extension.isValidUzbekPhoneNumber
+import com.bron24.bron24_android.helper.util.isValidUzbekPhoneNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn

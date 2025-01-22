@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,9 +62,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.components.items.ItemInputText
-import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
-import com.bron24.bron24_android.helper.extension.PhoneNumberVisualTransformation
+import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily

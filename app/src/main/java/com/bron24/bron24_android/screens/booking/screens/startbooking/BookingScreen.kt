@@ -62,7 +62,7 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.booking.DateItem
 import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
-import com.bron24.bron24_android.helper.extension.priceToInt
+import com.bron24.bron24_android.helper.util.priceToInt
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.booking.states.BookingState

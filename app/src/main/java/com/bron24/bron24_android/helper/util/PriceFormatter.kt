@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.helper.extension
+package com.bron24.bron24_android.helper.util
 
 fun String.formatPrice(): String {
     return try {

@@ -1,13 +1,12 @@
 package com.bron24.bron24_android.screens.booking.screens.confirmbooking
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.usecases.booking.ConfirmBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
-import com.bron24.bron24_android.helper.extension.isValidUzbekPhoneNumber
+import com.bron24.bron24_android.helper.util.isValidUzbekPhoneNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn

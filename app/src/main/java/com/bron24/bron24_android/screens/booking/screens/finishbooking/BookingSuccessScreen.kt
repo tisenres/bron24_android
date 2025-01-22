@@ -20,11 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -37,16 +33,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
-import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.screens.booking.screens.confirmbooking.ConfirmButton
-import com.bron24.bron24_android.screens.booking.states.BookingSuccessInfo
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.yandex.mapkit.logo.VerticalAlignment
+
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class BookingSuccessScreen(private val info: VenueOrderInfo):Screen{
     @Composable
@@ -144,7 +141,7 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 56.dp)  // Add padding to prevent text overlap with the button
+                    .padding(end = 56.dp)
             ) {
                 Text(
                     text = "Your order number",
@@ -184,7 +181,7 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
-                    text = info.date,
+                    text = formatDate(info.date),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -215,6 +212,13 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
             }
         }
     }
+}
+
+fun formatDate(inputDate: String): String {
+    val inputFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) // assuming input format is "yyyy-MM-dd"
+    val date: Date = inputFormatter.parse(inputDate) ?: return ""  // parse the string into Date
+    val outputFormatter = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()) // desired output format
+    return outputFormatter.format(date)
 }
 
 @Composable

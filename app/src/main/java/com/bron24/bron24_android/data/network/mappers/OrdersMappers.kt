@@ -6,8 +6,8 @@ import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.domain.entity.order.OrderAddress
 import com.bron24.bron24_android.domain.entity.order.OrderStatus
 import com.bron24.bron24_android.domain.entity.order.TimeSlot
-import com.bron24.bron24_android.helper.extension.DateTimeFormatter
-import com.bron24.bron24_android.helper.extension.formatPrice
+import com.bron24.bron24_android.helper.util.formatPrice
+import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 
 fun OrderDto.toDomainModel(): Order = Order(
     id  =id,

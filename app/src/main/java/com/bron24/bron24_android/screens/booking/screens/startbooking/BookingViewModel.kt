@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.booking.DateItem
 import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
-import com.bron24.bron24_android.helper.extension.formatPrice
+import com.bron24.bron24_android.helper.util.formatPrice
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -87,9 +87,8 @@ class BookingViewModel @Inject constructor(
 
     fun getAvailableTimes(venueId: Int) {
         viewModelScope.launch {
-            _getAvailableTimesState.value = BookingState.Loading // Set state to Loading
+            _getAvailableTimesState.value = BookingState.Loading
             try {
-                // Use Calendar to convert timestamp to a date
                 val calendar = Calendar.getInstance().apply {
                     timeInMillis = selectedDate.value
                 }
@@ -103,10 +102,9 @@ class BookingViewModel @Inject constructor(
                     venueId = venueId,
                     date = formattedDate,
                     sector = selectedSector.value?.name
-                        ?: "X" // Default value or handle appropriately
+                        ?: "X"
                 )
 
-                // Update the state with the available time slots
                 _availableTimeSlots.value = times
                 _getAvailableTimesState.value = BookingState.Success // Update state to Success
             } catch (e: Exception) {
@@ -171,29 +169,22 @@ class BookingViewModel @Inject constructor(
     }
 
     fun showDatePicker() {
-        Log.d("BookingViewModel", "showDatePicker called")
         _showDatePicker.value = true
     }
 
     fun onDatePickerDismissed() {
-        Log.d("BookingViewModel", "onDatePickerDismissed called")
         _showDatePicker.value = false
     }
 
     private fun updateVisibleMonthYear(timestamp: Long) {
-        // Use SimpleDateFormat to format the date to "MMMM yyyy"
         val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
 
-        // Create a Calendar instance and set the time in milliseconds
         val calendar = Calendar.getInstance().apply {
             timeInMillis = timestamp
         }
 
-        // Format the calendar's time
         val formattedDate = formatter.format(calendar.time)
 
-        // Log and update the visible month and year
-        Log.d("BookingViewModel", "Updating visible month year to: $formattedDate")
         _visibleMonthYear.value = formattedDate
     }
 
@@ -204,16 +195,6 @@ class BookingViewModel @Inject constructor(
             Month.valueOf(monthName.uppercase()).ordinal + 1
         }
     }
-
-//    private fun formatPrice(price: Int): String {
-//        return try {
-//            val floatPrice = price.toFloat()
-//            val intPrice = floatPrice.toInt()
-//            String.format("%,d", intPrice).replace(",", " ")
-//        } catch (e: NumberFormatException) {
-//            "0" // Return "0" if parsing fails
-//        }
-//    }
 
     private fun roundToStartOfDay(timestamp: Long): Long {
         val calendar = Calendar.getInstance(TimeZone.getDefault())

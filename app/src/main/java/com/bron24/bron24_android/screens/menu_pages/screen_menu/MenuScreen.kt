@@ -4,14 +4,9 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material3.ripple
-import androidx.compose.ui.draw.clip
-import com.bron24.bron24_android.screens.main.theme.GreenNormal
-import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,16 +14,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,8 +34,9 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.bron24.bron24_android.screens.main.theme.GrayLighter
-import com.bron24.bron24_android.screens.main.theme.Success
+import com.bron24.bron24_android.screens.main.theme.GreenNormal
 import com.bron24.bron24_android.screens.main.theme.White
+import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePage
 import com.bron24.bron24_android.screens.menu_pages.map_page.YandexMapPage
 import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPage
@@ -133,7 +129,6 @@ fun RowScope.ItemBottomTab(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(top = 5.dp),
                 ) {
                     Icon(
                         painter = tab.options.icon!!,
@@ -145,10 +140,10 @@ fun RowScope.ItemBottomTab(
                         text = tab.options.title,
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 10.sp,
-                        lineHeight = 16.sp,
+                        fontSize = 12.sp,
+                        lineHeight = 14.sp,
                         color = if (check) GreenNormal else GrayLighter,
-                        modifier = Modifier.padding(top = 3.dp)
+                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
             }

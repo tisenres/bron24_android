@@ -19,10 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bron24.bron24_android.domain.entity.order.Order
-import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.domain.entity.order.Order
+import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable

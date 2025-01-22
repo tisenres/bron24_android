@@ -46,7 +46,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,13 +73,13 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.domain.entity.booking.Booking
-import com.bron24.bron24_android.domain.entity.booking.TimeSlot
-import com.bron24.bron24_android.helper.extension.PhoneNumberVisualTransformation
-import com.bron24.bron24_android.helper.extension.formatDate
-import com.bron24.bron24_android.helper.extension.formatWithSpansPhoneNumber
+import com.bron24.bron24_android.helper.util.PhoneNumberVisualTransformation
+import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 data class BookingConfirmationScreen(val bookingInfo:VenueOrderInfo):Screen{
     @Composable
@@ -106,41 +105,21 @@ fun BookingConfirmationContent(
     var selectedPaymentMethod by remember { mutableStateOf("Cash") }
     var appliedPromoCode by remember { mutableStateOf<String?>(null) }
 
-//    val booking by viewModel.booking.collectAsState()
-//    val isLoading by viewModel.isLoading.collectAsState()
-//    val secondPhoneNumber by viewModel.secondPhoneNumber.collectAsState()
-//    val isBookingConfirmed by viewModel.isBookingConfirmed.collectAsState()
-
     val scrollState = rememberLazyListState()
 
-    // Since we want the toolbar to always be visible, we can set toolbarVisible to true
     val toolbarVisible = true
-
-//    LaunchedEffect(isBookingConfirmed) {
-//        if (isBookingConfirmed == true && booking != null) {
-//            onConfirmClick(
-//                booking!!.orderId,
-//                booking!!.venueName ?: "",
-//                booking!!.bookingDate,
-//                booking!!.sector,
-//                booking!!.timeSlots
-//            )
-//        }
-//    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Place AnimatedToolbar at the top with height of 40 dp
         AnimatedToolbar(
             visible = toolbarVisible,
             title = "Booking information",
             onBackClick = {intent.invoke(BookingConfirmationContract.Intent.Back)},
             modifier = Modifier
                 .fillMaxWidth()
-//                .height(50.dp)
                 .zIndex(1f)
         )
 
@@ -201,7 +180,6 @@ fun BookingConfirmationContent(
         }
     }
 
-    // Show the bottom sheets using ModalBottomSheet from material3
     if (showPaymentMethods) {
         PaymentMethodsBottomSheet(
             onDismiss = {
@@ -235,7 +213,6 @@ private fun AnimatedToolbar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Since we set visible to true, the toolbar will always be visible
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn(),
@@ -308,7 +285,6 @@ fun BookingInfoCard(
                 BookingDetail("TOTAL HOURS", (booking.totalHours.toString() + " hours"))
                 Spacer(modifier = Modifier.height(15.dp))
 
-                // Add TimeSlots Column
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -361,7 +337,7 @@ fun BookingInfoCard(
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 BookingDetail("FULL NAME", booking.firstName + " " + booking.lastName)
                 Spacer(modifier = Modifier.height(15.dp))
-                BookingDetail("FIRST NUMBER", booking.phoneNumber.formatWithSpansPhoneNumber())
+                BookingDetail("FIRST NUMBER", booking.phoneNumber.formatPhoneNumber())
                 Spacer(modifier = Modifier.height(15.dp))
                 SecondNumberField(
                     value = secondPhoneNumber,
@@ -913,18 +889,15 @@ fun PromoCodeBottomSheet(
     }
 }
 
-//fun formatWithSpansPhoneNumber(phoneNumber: String): String {
-//    val countryCode = "+998"
-//    return if (phoneNumber.length >= 12) {
-//        val part1 = phoneNumber.substring(3, 5)
-//        val part2 = phoneNumber.substring(5, 8)
-//        val part3 = phoneNumber.substring(8, 10)
-//        val part4 = phoneNumber.substring(10, 12)
-//        "$countryCode $part1 $part2 $part3 $part4"
-//    } else {
-//        phoneNumber
-//    }
-//}
+fun formatDate(inputDate: String): String {
+    // Define the input and output date formats
+    val inputFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val outputFormatter = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+
+    // Parse the input date and format it to the desired output
+    val parsedDate = inputFormatter.parse(inputDate)
+    return outputFormatter.format(parsedDate)
+}
 
 @Preview
 @Composable

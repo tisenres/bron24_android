@@ -1,11 +1,9 @@
-package com.bron24.bron24_android.helper.extension
+package com.bron24.bron24_android.helper.util
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class PhoneNumberVisualTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
@@ -36,14 +34,4 @@ class PhoneNumberVisualTransformation : VisualTransformation {
 
         return TransformedText(AnnotatedString(output), phoneNumberOffsetTranslator)
     }
-}
-
-fun formatDate(inputDate: String): String {
-    // Define the input and output date formats
-    val inputFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    val outputFormatter = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-
-    // Parse the input date and format it to the desired output
-    val parsedDate = inputFormatter.parse(inputDate)
-    return outputFormatter.format(parsedDate)
 }

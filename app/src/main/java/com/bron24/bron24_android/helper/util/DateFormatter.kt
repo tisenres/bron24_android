@@ -1,5 +1,14 @@
 package com.bron24.bron24_android.helper.util
 
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+
+private val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale.getDefault())
+private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
 fun formatTime(sliderValue: Float): String {
     val totalMinutes = (sliderValue * 1440).toInt() // 1440 = 24 * 60
     val adjustedMinutes = (totalMinutes / 30) * 30 //30 minutlik vaqt intervali
@@ -15,13 +24,13 @@ fun formatMoney(sliderValue: Float): Int {
 }
 
 fun formatDate(millis: Long): String {
-    val date = java.util.Date(millis)
-    val formatter = java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.getDefault())
+    val date = Date(millis)
+    val formatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
     return formatter.format(date)
 }
 
 fun String.stringToInt(): Int {
-    if(isEmpty()) return 0
+    if (isEmpty()) return 0
     return replace(" ", "").toInt()
 }
 
@@ -34,3 +43,42 @@ fun String.formatPhoneNumber(): String {
     return "$countryCode $part1 $part2 $part3 $part4"
 }
 
+fun String.isValidUzbekPhoneNumber(): Boolean {
+    val regex = "^\\+998[0-9]{9}$".toRegex()
+    return regex.matches(this)
+}
+
+fun formatISODateTimeToHourString(isoDateTime: String): String = try {
+
+    val isoFormats = arrayOf(
+        "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+        "yyyy-MM-dd'T'HH:mm:ssZ",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+        "yyyy-MM-dd'T'HH:mm:ssXXX",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+    )
+
+    var parsedDate: Date? = null
+
+    for (format in isoFormats) {
+        val sdf = SimpleDateFormat(format, Locale.getDefault())
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        try {
+            parsedDate = sdf.parse(isoDateTime)
+            if (parsedDate != null) {
+                break
+            }
+        } catch (e: ParseException) {
+
+        }
+    }
+
+    if (parsedDate != null) {
+        timeFormat.format(parsedDate)
+    } else {
+        isoDateTime
+    }
+} catch (e: Exception) {
+    isoDateTime
+}
