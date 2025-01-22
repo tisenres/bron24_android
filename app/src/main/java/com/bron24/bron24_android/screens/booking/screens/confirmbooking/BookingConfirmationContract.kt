@@ -16,7 +16,7 @@ interface BookingConfirmationContract {
         val booking:Booking? = null,
         val fullName:String = "",
         val phoneNumber:String = "",
-        val secondPhoneNumber: String = "",
+        val secondPhoneNumber: String? = null,
         val isCheckPhoneNumber:Boolean = false,
         val venueOrderInfo: VenueOrderInfo?= null
     )

@@ -12,7 +12,7 @@ data class VenueOrderInfo(
     val sector: String,
     val timeSlots: List<TimeSlot>,
     val resTimeSlot: List<String> = emptyList(),
-    val secondPhone:String = "",
+    val secondPhone:String? = "",
     val orderId:List<String> = emptyList(),
     val success:Boolean = false
 ):Parcelable

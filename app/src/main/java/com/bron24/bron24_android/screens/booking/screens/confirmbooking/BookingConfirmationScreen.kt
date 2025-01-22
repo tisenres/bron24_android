@@ -139,7 +139,7 @@ fun BookingConfirmationContent(
             ) {
                 item {
                     uiState.value.booking?.let {
-                        BookingInfoCard( it, uiState.value.secondPhoneNumber){
+                        BookingInfoCard( it, uiState.value.secondPhoneNumber?:""){
                             intent.invoke(BookingConfirmationContract.Intent.UpdatePhone(it))
                         }
                         Spacer(modifier = Modifier.height(15.dp))

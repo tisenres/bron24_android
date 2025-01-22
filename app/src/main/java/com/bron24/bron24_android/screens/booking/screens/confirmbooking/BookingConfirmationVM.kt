@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.booking.screens.confirmbooking
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.common.VenueOrderInfo
@@ -7,6 +8,7 @@ import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.usecases.booking.ConfirmBookingUseCase
 import com.bron24.bron24_android.domain.usecases.booking.CreateBookingUseCase
 import com.bron24.bron24_android.helper.util.isValidUzbekPhoneNumber
+import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -38,7 +40,7 @@ class BookingConfirmationVM @Inject constructor(
                     it.onSuccess {
                         direction.moveToNext(it)
                     }.onFailure {
-
+                        postSideEffect(it.message?:"")
                     }
                 }.launchIn(viewModelScope)
             }
@@ -48,6 +50,11 @@ class BookingConfirmationVM @Inject constructor(
                     reduce { state.copy(secondPhoneNumber = intent.phone) }
                 }
             }
+        }
+    }
+    private fun postSideEffect(message: String) {
+        intent {
+            postSideEffect(BookingConfirmationContract.SideEffect(message))
         }
     }
 
@@ -65,22 +72,3 @@ class BookingConfirmationVM @Inject constructor(
         )
 
 }
-
-//class BookingConfirmationModel @Inject constructor(
-//    private val createBookingUseCase: CreateBookingUseCase,
-//    private val confirmBookingUseCase: ConfirmBookingUseCase,
-//) {
-//    suspend fun fetchBookingDetails(
-//        venueId: Int,
-//        date: String,
-//        sector: String,
-//        timeSlots: List<TimeSlot>
-//    ): Booking {
-//        val booking = createBookingUseCase.execute(venueId, date, sector, timeSlots)
-//        return booking
-//    }
-//
-//    suspend fun confirmBooking(): Boolean {
-//        return confirmBookingUseCase.execute()
-//    }
-//}

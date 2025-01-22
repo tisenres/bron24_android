@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.usecases.orders.GetOrdersByStatusUseCase
 import com.bron24.bron24_android.domain.usecases.orders.GetOrdersUseCase
+import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -47,6 +48,12 @@ class OrdersPageVM @Inject constructor(
             .onEach { reduce { state.copy(itemData = it) } }
             .onCompletion { reduce { state.copy(isLoading = false) } }
             .launchIn(viewModelScope)
+    }
+
+    private fun postSideEffect(message: String) {
+        intent {
+            postSideEffect(OrdersPageContract.SideEffect(message))
+        }
     }
 
     override val container =

@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.domain.usecases.booking
 
+import android.util.Log
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.domain.repository.BookingRepository
 import kotlinx.coroutines.flow.Flow
@@ -16,5 +17,7 @@ class ConfirmBookingUseCase @Inject constructor(
        if (info.success){
            emit(Result.success(info))
        }else emit(Result.failure(Exception("error!")))
-    }.catch { emit(Result.failure(it)) }
+    }.catch {
+       Log.d("AAA", "invoke: ${it.message}")
+        emit(Result.failure(it)) }
 }
