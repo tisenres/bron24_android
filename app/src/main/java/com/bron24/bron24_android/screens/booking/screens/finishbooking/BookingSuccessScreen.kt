@@ -4,12 +4,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -39,87 +38,94 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.screens.booking.screens.confirmbooking.ConfirmButton
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.yandex.mapkit.logo.VerticalAlignment
-
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class BookingSuccessScreen(private val info: VenueOrderInfo):Screen{
+class BookingSuccessScreen(private val info: VenueOrderInfo) : Screen {
     @Composable
     override fun Content() {
-        val viewModel:BookingSuccessContract.ViewModel = getViewModel<BookingSuccessVM>()
+        val viewModel: BookingSuccessContract.ViewModel = getViewModel<BookingSuccessVM>()
         BookingSuccessContent(
             info = rememberUpdatedState(newValue = info),
             intent = viewModel::onDispatchers
         )
     }
-
 }
 
 @Composable
 fun BookingSuccessContent(
     info: State<VenueOrderInfo>,
-    intent:(BookingSuccessContract.Intent)->Unit
+    intent: (BookingSuccessContract.Intent) -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 19.dp, vertical = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.weight(1f))
+//            item { Spacer(modifier = Modifier.weight(1f)) }
 
-            Image(
-                painter = painterResource(id = R.drawable.success_booking),
-                contentDescription = "Booking Success",
-                modifier = Modifier
-                    .size(290.dp)
-            )
-
-            Spacer(modifier = Modifier.height(45.dp))
-
-            Text(
-                text = "Success!",
-                color = Color(0xFF3C2E56),
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 30.sp,
-                    color = Color(0xFF3C2E56),
-                    lineHeight = 40.sp,
-                ),
-            )
-
-            Spacer(modifier = Modifier.height(27.dp))
-
-            BookingInfoCard(info.value){
-
+            item {
+                Image(
+                    painter = painterResource(id = R.drawable.success_booking),
+                    contentDescription = "Booking Success",
+                    modifier = Modifier
+                        .size(290.dp)
+                )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+//            Spacer(modifier = Modifier.height(45.dp))
 
-            ConfirmButton(
-                isEnabled = true,
-                title = "My orders",
-                onClick = {
-                    intent.invoke(BookingSuccessContract.Intent.ClickOrder)
-                }
-            )
-            Spacer(modifier = Modifier.height(3.dp))
+            item {
+                Text(
+                    text = "Success!",
+                    color = Color(0xFF3C2E56),
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 30.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 40.sp,
+                    ),
+                )
+            }
 
-            MainPageButton(
-                isEnabled = true,
-                title = "Main page",
-                onClick = {
-                    intent.invoke(BookingSuccessContract.Intent.ClickMenu)
+//            Spacer(modifier = Modifier.height(27.dp))
+
+            item {
+                BookingInfoCard(info.value) {
+
                 }
-            )
+            }
+
+//            Spacer(modifier = Modifier.weight(1f))
+
+            item {
+                ConfirmButton(
+                    isEnabled = true,
+                    title = "My orders",
+                    onClick = {
+                        intent.invoke(BookingSuccessContract.Intent.ClickOrder)
+                    }
+                )
+            }
+//            Spacer(modifier = Modifier.height(3.dp))
+
+            item {
+                MainPageButton(
+                    isEnabled = true,
+                    title = "Main page",
+                    onClick = {
+                        intent.invoke(BookingSuccessContract.Intent.ClickMenu)
+                    }
+                )
+            }
         }
     }
 }
@@ -144,7 +150,7 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
                     .padding(end = 56.dp)
             ) {
                 Text(
-                    text = "Your order number",
+                    text = "Order details",
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -152,28 +158,14 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
                         color = Color.Black,
                         lineHeight = 20.sp,
                     ),
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = 20.dp)
                 )
-                LazyColumn() {
-                    items(info.orderId.size){
-                        Text(
-                            text = info.orderId[it],
-                            style = TextStyle(
-                                fontFamily = gilroyFontFamily,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 16.sp,
-                                color = Color.Black,
-                                lineHeight = 20.sp,
-                            ),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
-                    }
-                }
+
                 Text(
                     text = info.venueName,
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 16.sp,
                         color = Color.Black,
                         lineHeight = 20.sp,
@@ -184,12 +176,42 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
                     text = formatDate(info.date),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
+                        fontWeight = FontWeight.ExtraBold,
                         fontSize = 16.sp,
                         color = Color.Black,
                         lineHeight = 20.sp,
                     ),
+                    modifier = Modifier.padding(bottom = 20.dp)
                 )
+
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    items(info.orderId.size) { index ->
+                        Text(
+                            text = "Order ID: " + info.orderId[index],
+                            style = TextStyle(
+                                fontFamily = gilroyFontFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 16.sp,
+                                color = Color.Black,
+                                lineHeight = 20.sp,
+                            ),
+                            modifier = Modifier.padding(bottom = 5.dp)
+                        )
+                        Text(
+                            text = "Time: " + info.resTimeSlot[index],
+                            style = TextStyle(
+                                fontFamily = gilroyFontFamily,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 16.sp,
+                                color = Color.Black,
+                                lineHeight = 20.sp,
+                            ),
+                        )
+                    }
+                }
+
             }
             Box(
                 modifier = Modifier
