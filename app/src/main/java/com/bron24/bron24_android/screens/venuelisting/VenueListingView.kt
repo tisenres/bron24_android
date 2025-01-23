@@ -37,7 +37,7 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.VenueItem
 import com.bron24.bron24_android.components.items.VenueLoadingPlaceholder
 import com.bron24.bron24_android.domain.entity.venue.Venue
-import com.bron24.bron24_android.screens.adssection.AdsSection
+import com.bron24.bron24_android.screens.adssection.SpecialOfferCarousel
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 
@@ -88,7 +88,8 @@ fun VenueListingView(
         ) {
             item(key = "ads") {
                 Spacer(modifier = Modifier.height(16.dp))
-                AdsSection(imageUrls = state.value.offers.map { it.image })
+                SpecialOfferCarousel(uiState = state)
+//                AdsSection(imageUrls = state.value.offers.map { it.image })
             }
             item(key = "title") {
                 Row(

@@ -52,7 +52,7 @@ class HomePageVM @Inject constructor(
                 }.launchIn(viewModelScope)
 
                 getSpecialOfferUseCase.invoke().onEach {
-                    reduce { state.copy(offers = it) }
+                    reduce { state.copy(specialOffers = it) }
                 }.launchIn(viewModelScope)
             }
 
@@ -79,7 +79,7 @@ class HomePageVM @Inject constructor(
         }.launchIn(viewModelScope)
 
         getSpecialOfferUseCase.invoke().onEach {
-            reduce { state.copy(offers = it) }
+            reduce { state.copy(specialOffers = it) }
         }.launchIn(viewModelScope)
     }
 

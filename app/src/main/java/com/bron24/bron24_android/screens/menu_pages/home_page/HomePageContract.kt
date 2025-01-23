@@ -18,7 +18,7 @@ interface HomePageContract {
         val initial: Boolean = false,
         val firstName: String = "",
         val itemData: List<Venue> = emptyList(),
-        val offers: List<SpecialOffer> = emptyList(),
+        val specialOffers: List<SpecialOffer> = emptyList(),
         val selectedSort: String? = null,
         val userLocation: Location = Location(33.33, 33.33)
     )
