@@ -3,6 +3,7 @@ package com.bron24.bron24_android.screens.auth.sms_otp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.data.local.preference.LocalStorage
+import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.usecases.auth.AuthenticateUserUseCase
@@ -35,26 +36,45 @@ class OTPInputScreenVM @Inject constructor(
                 ).onStart {
                     reduce { state.copy(isLoading = true) }
                 }.onEach {
-                    reduce { state.copy(isLoading = false) }
+                    reduce { state.copy(isLoading = false, otpCode = "") }
                     it.onSuccess {
-                        if (it.userExists) {
-                            authenticateUserUseCase.invoke(
-                                User(
-                                    localStorage.firstName,
-                                    localStorage.lastName,
-                                    intent.phoneNumber.substring(1)
-                                ),
-                                userExists = true
-                            ).onEach {
-                                it.onSuccess {
-                                    direction.moveToMenu()
+                        when(it.result){
+                            OTPStatusCode.CORRECT_OTP -> {
+                                if (it.userExists) {
+                                    authenticateUserUseCase.invoke(
+                                        User(
+                                            localStorage.firstName,
+                                            localStorage.lastName,
+                                            intent.phoneNumber.substring(1)
+                                        ),
+                                        userExists = true
+                                    ).onEach {
+                                        it.onSuccess {
+                                            direction.moveToMenu()
+                                        }
+                                    }.launchIn(viewModelScope)
+                                } else {
+                                    direction.moveToRegister(intent.phoneNumber.substring(1))
                                 }
-                            }.launchIn(viewModelScope)
-                        } else {
-                            direction.moveToRegister(intent.phoneNumber.substring(1))
+                            }
+                            OTPStatusCode.INCORRECT_OTP -> {
+                                reduce { state.copy(otpCode = "") }
+                                postSideEffect(code = OTPStatusCode.INCORRECT_OTP)
+                            }
+                            OTPStatusCode.NETWORK_ERROR -> {
+                                postSideEffect(code = OTPStatusCode.NETWORK_ERROR)
+                            }
+                            OTPStatusCode.UNKNOWN_ERROR -> {
+                                postSideEffect(code = OTPStatusCode.UNKNOWN_ERROR)
+                            }
+
+                            OTPStatusCode.BANNED_USER -> {
+                                postSideEffect(code = OTPStatusCode.BANNED_USER)
+                            }
                         }
+
                     }.onFailure {
-                        postSideEffect(it.message.toString())
+                        postSideEffect(message = it.message.toString())
                     }
                 }.launchIn(viewModelScope)
             }
@@ -64,11 +84,11 @@ class OTPInputScreenVM @Inject constructor(
                     it.onSuccess {
                         when (it.result) {
                             PhoneNumberResponseStatusCode.SUCCESS -> {
-                                reduce { state.copy(refreshTime = 90, otpCode = "") }
+
                             }
 
                             PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
-                                postSideEffect("Bog'lanishda muammo yuzaga keldi iltimos keyinroq urinib ko'ring!")
+                                postSideEffect(OTPStatusCode.NETWORK_ERROR)
                             }
 
                             PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER -> {
@@ -76,25 +96,29 @@ class OTPInputScreenVM @Inject constructor(
                             }
 
                             PhoneNumberResponseStatusCode.NETWORK_ERROR -> {
-                                postSideEffect("Internetni tekshiring!")
+                                postSideEffect(OTPStatusCode.NETWORK_ERROR)
                             }
 
                             PhoneNumberResponseStatusCode.UNKNOWN_ERROR -> {
-                                postSideEffect("Unknown error!")
+                                postSideEffect(OTPStatusCode.UNKNOWN_ERROR)
                             }
                         }
 
                     }.onFailure {
-                        postSideEffect(it.message.toString())
+                        postSideEffect(message = it.message.toString())
                     }
                 }.launchIn(viewModelScope)
+            }
+
+            is OTPInputContract.Intent.OTPCode -> {
+                reduce { state.copy(otpCode = intent.otpCode) }
             }
         }
     }
 
-    private fun postSideEffect(message: String) {
+    private fun postSideEffect(code: OTPStatusCode = OTPStatusCode.CORRECT_OTP, message:String ="") {
         intent {
-            postSideEffect(OTPInputContract.SideEffect(message))
+            postSideEffect(OTPInputContract.SideEffect(status = code, message = message))
         }
     }
 

@@ -1,8 +1,8 @@
 package com.bron24.bron24_android.data.repository
 
 import android.util.Log
+import androidx.compose.ui.input.key.Key.Companion.U
 import com.bron24.bron24_android.data.network.apiservices.AuthApi
-import com.bron24.bron24_android.data.network.dto.auth.RefreshTokenDto
 import com.bron24.bron24_android.data.network.mappers.toDomainEntity
 import com.bron24.bron24_android.data.network.mappers.toLoginNetworkModel
 import com.bron24.bron24_android.data.network.mappers.toNetworkModel
@@ -13,14 +13,11 @@ import com.bron24.bron24_android.domain.entity.auth.OTPRequest
 import com.bron24.bron24_android.domain.entity.auth.PhoneNumberResponse
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.domain.entity.auth.enums.PhoneNumberResponseStatusCode
-import com.bron24.bron24_android.domain.entity.user.UpdateProfile
 import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.repository.AuthRepository
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import com.bron24.bron24_android.helper.util.presentation.AuthEvent
 import com.bron24.bron24_android.helper.util.presentation.GlobalAuthEventBus
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -91,31 +88,14 @@ class AuthRepositoryImpl @Inject constructor(
     private fun handleHttpExceptionOTP(e: HttpException): OTPCodeResponse {
         return when (e.code()) {
             400 -> {
-                Log.d("AuthRepository", "400 error")
                 OTPCodeResponse(OTPStatusCode.INCORRECT_OTP, false)
+            }
+            429-> {
+                OTPCodeResponse(OTPStatusCode.BANNED_USER,false)
             }
             else -> OTPCodeResponse(OTPStatusCode.UNKNOWN_ERROR, false)
         }
     }
-
-//    override suspend fun refreshAndSaveTokens(refreshToken: String): Boolean {
-//        return try {
-//            val refreshTokenDto = RefreshTokenDto(refreshToken)
-//            val tokens = authApi.updateToken(refreshTokenDto)
-//
-//
-//            if (tokens.data.accessToken?.isNotEmpty()?:"" && tokens.refreshToken.isNotEmpty()) {
-//                tokenRepository.saveTokens(tokens.accessToken, tokens.refreshToken)
-//                true
-//            } else {
-//                Log.e("AuthRepository", "Received empty tokens from server")
-//                false
-//            }
-//        } catch (e: Exception) {
-//            Log.e("AuthRepository", "Error during token refresh", e)
-//            false
-//        }
-//    }
 
     override fun handleRefreshFailure() {
         Log.e("AuthRepository", "handleRefreshFailure")

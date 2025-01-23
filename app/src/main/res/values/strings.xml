@@ -87,4 +87,5 @@
     <string name="save_change">Save changes</string>
     <string name="order">Order</string>
     <string name="hours">hours</string>
+    <string name="banned_user">Too many attempts, please try again later</string>
 </resources>

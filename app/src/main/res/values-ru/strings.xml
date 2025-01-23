@@ -84,6 +84,8 @@
     <string name="edit_profile">Редактировать</string>
     <string name="personal">Профиль</string>
     <string name="delete_acc">Удалить аккаунт</string>
-    <string name="save_change">Сохранить</string>
-    <string name="order">Заказы</string>
+    <string name="save_change">Сохранять</string>
+    <string name="order">Заказ</string>
+    <string name="hours">час</string>
+    <string name="banned_user">Слишком много попыток. Повторите попытку позже.</string>
 </resources>
