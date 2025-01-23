@@ -33,6 +33,7 @@ class PhoneNumberScreenVM @Inject constructor(
                             when (status.result) {
                                 PhoneNumberResponseStatusCode.SUCCESS -> {
                                     direction.moveToNext(phoneNumber = intent.phoneNumber)
+                                    reduce { state.copy(isValidPhoneNumber = false) }
                                 }
 
                                 PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
@@ -63,6 +64,8 @@ class PhoneNumberScreenVM @Inject constructor(
             is PhoneNumberScreenContract.Intent.UpdatePhone -> {
                 if(intent.phoneNumber.isValidUzbekPhoneNumber()){
                     reduce { state.copy(isValidPhoneNumber = true) }
+                }else{
+                    reduce { state.copy(isValidPhoneNumber = false) }
                 }
             }
         }

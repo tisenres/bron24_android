@@ -4,5 +4,6 @@ enum class OTPStatusCode {
     CORRECT_OTP,
     INCORRECT_OTP,
     NETWORK_ERROR,
-    UNKNOWN_ERROR
+    UNKNOWN_ERROR,
+    BANNED_USER
 }

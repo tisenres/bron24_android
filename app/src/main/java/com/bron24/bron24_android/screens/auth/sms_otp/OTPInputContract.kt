@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.screens.auth.sms_otp
 
+import com.bron24.bron24_android.data.network.dto.auth.OTPRequestDto
+import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
@@ -14,7 +16,7 @@ interface OTPInputContract {
         val isLoading:Boolean = false
     )
 
-    class SideEffect(val message:String)
+    class SideEffect(val status:OTPStatusCode = OTPStatusCode.CORRECT_OTP, val message:String = "")
 
     interface Direction{
         suspend fun moveToMenu()
@@ -31,6 +33,7 @@ interface OTPInputContract {
             val phoneNumber:String,
             val otpCode:Int
         ):Intent
+        data class OTPCode(val otpCode: String):Intent
     }
 
 }
