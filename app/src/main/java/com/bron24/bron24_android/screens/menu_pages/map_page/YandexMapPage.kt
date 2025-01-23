@@ -9,13 +9,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SwipeToDismissBox
@@ -31,10 +30,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -134,159 +135,184 @@ fun YandexMapPageContent(
     val defaultLocation =
         Point(state.value.userLocation.latitude, state.value.userLocation.longitude)
 
-    AndroidView(
-        factory = { context ->
-            MapView(context).also { view ->
-                mapView = view
-                mapObjects = view.map.mapObjects
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Map View
+        AndroidView(
+            factory = { context ->
+                MapView(context).also { view ->
+                    mapView = view
+                    mapObjects = view.map.mapObjects
 
-                view.map.isZoomGesturesEnabled = true
-                view.map.isRotateGesturesEnabled = true
-                view.map.isTiltGesturesEnabled = true
-                view.map.isScrollGesturesEnabled = true
+                    view.map.isZoomGesturesEnabled = true
+                    view.map.isRotateGesturesEnabled = true
+                    view.map.isTiltGesturesEnabled = true
+                    view.map.isScrollGesturesEnabled = true
 
-                view.map.move(
-                    CameraPosition(defaultLocation, 15f, 0f, 0f), // Corrected syntax
-                    Animation(Animation.Type.LINEAR, 0f), // No animation
-                    null
-                )
-            }
-        },
-        modifier = Modifier.fillMaxSize(),
-        update = { view ->
-            mapObjects?.let { objects ->
-                // Remove old placemarks
-                placemarks.forEach { placemark ->
-                    (placemark.userData as? MapObjectTapListener)?.let { listener ->
-                        placemark.removeTapListener(listener)
-                    }
-                    objects.remove(placemark)
+                    view.map.move(
+                        CameraPosition(defaultLocation, 15f, 0f, 0f), // Corrected syntax
+                        Animation(Animation.Type.LINEAR, 0f), // No animation
+                        null
+                    )
                 }
-                // Update user location
-                defaultLocation.let { location ->
-                    val userPoint = Point(location.latitude, location.longitude)
-                    userLocationObject?.let { objects.remove(it) }
-                    userLocationObject = objects.addPlacemark(userPoint).apply {
-                        setIcon(ImageProvider.fromResource(context, R.drawable.ic_star))
-                        setIconStyle(IconStyle().setAnchor(PointF(0.5f, 0.5f)))
+            },
+            modifier = Modifier.fillMaxSize(),
+            update = { view ->
+                mapObjects?.let { objects ->
+                    // Remove old placemarks
+                    placemarks.forEach { placemark ->
+                        (placemark.userData as? MapObjectTapListener)?.let { listener ->
+                            placemark.removeTapListener(listener)
+                        }
+                        objects.remove(placemark)
                     }
+                    // Update user location
+                    defaultLocation.let { location ->
+                        val userPoint = Point(location.latitude, location.longitude)
+                        userLocationObject?.let { objects.remove(it) }
+                        userLocationObject = objects.addPlacemark(userPoint).apply {
+                            setIcon(ImageProvider.fromResource(context, R.drawable.ic_star))
+                            setIconStyle(IconStyle().setAnchor(PointF(0.5f, 0.5f)))
+                        }
 
-                    // Move camera to user location if it's the first time
-                    if (view.map.cameraPosition.target == defaultLocation) {
-                        view.map.move(
-                            CameraPosition(userPoint, 15f, 0f, 0f),
-                            Animation(Animation.Type.SMOOTH, 1f),
-                            null
-                        )
-                    }
-                }
-//                val venues = listOf(VenueCoordinates(1, "denov", "40", "33"))
-
-                // Add new venue markers
-                placemarks = state.value.venueCoordinates.map { venue ->
-                    val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                    val placemark = objects.addPlacemark(point)
-                    val isSelected = venue.venueId == 1
-                    val markerIcon = if (isSelected) {
-                        R.drawable.baseline_location_on_24_red
-                    } else {
-                        R.drawable.baseline_location_on_24_green
-                    }
-                    val drawable = ContextCompat.getDrawable(context, markerIcon)
-//                    val bitmap = drawable?.let {
-//                        getBitmapFromDrawable(it, if (isSelected) 1.8f else 1.5f)
-//                    }
-                    val bitmap = drawable?.let {
-                        getBitmapFromDrawable(it, if (isSelected) 1.8f else 1.5f)
-                    }
-                    placemark.setIcon(ImageProvider.fromBitmap(bitmap))
-
-                    placemark.setIcon(ImageProvider.fromBitmap(bitmap))
-                    placemark.userData = venue.venueId
-                    val tapListener = MapObjectTapListener { mapObject, point ->
-                        if (mapObject.isValid) {
-                            //onMarkerClick(venue.venueId)
-                            centerCameraOnMarker(view.map, point)
-                            true
-                        } else {
-                            false
+                        // Move camera to user location if it's the first time
+                        if (view.map.cameraPosition.target == defaultLocation) {
+                            view.map.move(
+                                CameraPosition(userPoint, 15f, 0f, 0f),
+                                Animation(Animation.Type.SMOOTH, 1f),
+                                null
+                            )
                         }
                     }
-                    placemark.addTapListener(tapListener)
-                    placemark
+                    // Add new venue markers
+                    placemarks = state.value.venueCoordinates.map { venue ->
+                        val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
+                        val placemark = objects.addPlacemark(point)
+                        val isSelected = venue.venueId == 1
+                        val markerIcon = if (isSelected) {
+                            R.drawable.baseline_location_on_24_red
+                        } else {
+                            R.drawable.baseline_location_on_24_green
+                        }
+                        val drawable = ContextCompat.getDrawable(context, markerIcon)
+                        val bitmap = drawable?.let {
+                            getBitmapFromDrawable(it, if (isSelected) 1.8f else 1.5f)
+                        }
+                        placemark.setIcon(ImageProvider.fromBitmap(bitmap!!))
+                        placemark.userData = venue.venueId
+                        val tapListener = MapObjectTapListener { mapObject, point ->
+                            if (mapObject.isValid) {
+                                //onMarkerClick(venue.venueId)
+                                centerCameraOnMarker(view.map, point)
+                                true
+                            } else {
+                                false
+                            }
+                        }
+                        placemark.addTapListener(tapListener)
+                        placemark
+                    }
+                }
+                view.map.addCameraListener { _, cameraPosition, _, _ ->
+                    //onCameraPositionChanged(cameraPosition)
                 }
             }
-            view.map.addCameraListener { _, cameraPosition, _, _ ->
-//                onCameraPositionChanged(cameraPosition)
+        )
+
+        // Zoom and Location Buttons
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopEnd) // Align to the top-right corner
+                .padding(16.dp), // Add padding
+            horizontalAlignment = Alignment.End // Align buttons to the end (right)
+        ) {
+            // Zoom In Button
+            IconButton(
+                onClick = {
+                    mapView?.map?.move(
+                        CameraPosition(
+                            mapView?.map?.cameraPosition?.target ?: defaultLocation,
+                            (mapView?.map?.cameraPosition?.zoom ?: 13f) + 1f, // Zoom in
+                            0f,
+                            0f
+                        ),
+                        Animation(Animation.Type.SMOOTH, 0.5f),
+                        null
+                    )
+                },
+                modifier = Modifier
+                    .background(Color.White
+                        .copy(alpha = 0.7f))
+                    .shadow(elevation = 0.4.dp)// Semi-transparent black background
+                    .padding(8.dp) // Add padding
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.add),
+                    contentDescription = "Zoom In",
+                    tint = Color.White // White icon
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp)) // Add space between buttons
+
+            // Zoom Out Button
+            IconButton(
+                onClick = {
+                    mapView?.map?.move(
+                        CameraPosition(
+                            mapView?.map?.cameraPosition?.target ?: defaultLocation,
+                            (mapView?.map?.cameraPosition?.zoom ?: 13f) - 1f, // Zoom out
+                            0f,
+                            0f
+                        ),
+                        Animation(Animation.Type.SMOOTH, 0.5f),
+                        null
+                    )
+                },
+                modifier = Modifier
+                    .background(Color.Black.copy(alpha = 0.7f)) // Semi-transparent black background
+                    .padding(8.dp) // Add padding
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.remove),
+                    contentDescription = "Zoom Out",
+                    tint = Color.White // White icon
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp)) // Add space between buttons
+
+            // Current Location Button
+            IconButton(
+                onClick = {
+                    mapView?.map?.move(
+                        CameraPosition(
+                            defaultLocation, // User's current location
+                            15f, // Zoom level
+                            0f,
+                            0f
+                        ),
+                        Animation(Animation.Type.SMOOTH, 0.5f),
+                        null
+                    )
+                },
+                modifier = Modifier
+                    .background(Color.Black.copy(alpha = 0.7f)) // Semi-transparent black background
+                    .padding(8.dp) // Add padding
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.near_me),
+                    contentDescription = "Current Location",
+                    tint = Color.White // White icon
+                )
             }
         }
-    )
+    }
 
+    // Handle lifecycle
     DisposableEffect(Unit) {
         mapView?.onStart()
         onDispose {
             mapView?.onStop()
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .padding(16.dp),
-        horizontalAlignment = Alignment.End
-    ) {
-        IconButton(onClick = {
-            mapView?.map?.move(
-                CameraPosition(
-                    mapView?.map?.cameraPosition?.target ?: defaultLocation,
-                    (mapView?.map?.cameraPosition?.zoom ?: 13f) + 1f, // Zoom in
-                    0f,
-                    0f
-                ),
-                Animation(Animation.Type.SMOOTH, 0.5f),
-                null
-            )
-        }) {
-            Icon(
-                Icons.Outlined.Add,
-                modifier = Modifier.background(Color.Black),
-                contentDescription = "Zoom In"
-            )
-        }
-        IconButton(onClick = {
-            mapView?.map?.move(
-                CameraPosition(
-                    mapView?.map?.cameraPosition?.target ?: defaultLocation,
-                    (mapView?.map?.cameraPosition?.zoom ?: 13f) - 1f, // Zoom out
-                    0f,
-                    0f
-                ),
-                Animation(Animation.Type.SMOOTH, 0.5f),
-                null
-            )
-        }) {
-            Icon(
-                Icons.Filled.Check,
-                modifier = Modifier.background(Color.Black),
-                contentDescription = "Zoom Out"
-            )
-        }
-        IconButton(onClick = {
-            mapView?.map?.move(
-                CameraPosition(
-                    defaultLocation, // User's current location
-                    15f, // Zoom level
-                    0f,
-                    0f
-                ),
-                Animation(Animation.Type.SMOOTH, 0.5f),
-                null
-            )
-        }) {
-            Icon(
-                Icons.Default.LocationOn,
-                modifier = Modifier.background(Color.Black),
-                contentDescription = "Current Location"
-            )
         }
     }
 

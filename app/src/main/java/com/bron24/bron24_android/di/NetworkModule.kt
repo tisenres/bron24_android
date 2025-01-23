@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.bron24.bron24_android.BuildConfig
 import com.bron24.bron24_android.data.network.interceptors.HttpInterceptor
-import com.bron24.bron24_android.data.network.interceptors.NoConnectivityException
 import com.bron24.bron24_android.domain.repository.TokenRepository
 import com.bron24.bron24_android.domain.usecases.language.GetSelectedLanguageUseCase
 import com.bron24.bron24_android.helper.util.AuthAuthenticator
