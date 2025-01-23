@@ -9,16 +9,16 @@ import org.orbitmvi.orbit.ContainerHost
 
 interface YandexMapPageContract {
     interface ViewModel : ContainerHost<UIState, SideEffect> {
-        fun onDispatchers(intent: Intent):Job
-        fun initData():Job
+        fun onDispatchers(intent: Intent): Job
+        fun initData(): Job
     }
 
     data class UIState(
-        val venueCoordinates:List<VenueCoordinates> = emptyList(),
+        val venueCoordinates: List<VenueCoordinates> = emptyList(),
         val venueDetails: VenueDetails? = null,
-        val isLoading:Boolean = false,
+        val isLoading: Boolean = false,
         val checkPermission: LocationPermissionState = LocationPermissionState.DENIED,
-        val userLocation: Location = Location(42.23,43.33)
+        val userLocation: Location = Location(42.23, 43.33)
     )
 
     data class SideEffect(
@@ -26,11 +26,12 @@ interface YandexMapPageContract {
     )
 
     sealed interface Intent {
-        data class ClickLocation(val location: VenueCoordinates):Intent
-        data class ClickItem(val venueDetails: VenueDetails):Intent
-        data object CheckPermission:Intent
+        data class ClickLocation(val location: VenueCoordinates) : Intent
+        data class ClickItem(val venueDetails: VenueDetails) : Intent
+        data object CheckPermission : Intent
     }
-    interface Direction{
+
+    interface Direction {
         suspend fun back()
         suspend fun moveToInfo(venueDetails: VenueDetails)
     }
