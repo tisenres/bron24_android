@@ -15,20 +15,21 @@ import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
+
 @HiltViewModel
 class YandexMapPageVM @Inject constructor(
     private val getVenuesCoordinatesUseCase: GetVenuesCoordinatesUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
     private val getVenueDetailsUseCase: GetVenueDetailsUseCase
-): ViewModel(),YandexMapPageContract.ViewModel {
+) : ViewModel(), YandexMapPageContract.ViewModel {
     override fun onDispatchers(intent: YandexMapPageContract.Intent): Job = intent {
 
     }
 
     override fun initData(): Job = intent {
         checkLocationPermissionUseCase.invoke().onEach {
-            when(it){
+            when (it) {
                 LocationPermissionState.GRANTED -> {
                     getCurrentLocationUseCase.execute().onEach {
                         reduce { state.copy(userLocation = it) }
@@ -37,17 +38,22 @@ class YandexMapPageVM @Inject constructor(
                         reduce { state.copy(venueCoordinates = it) }
                     }.launchIn(viewModelScope)
                 }
+
                 LocationPermissionState.DENIED -> {
                     postSideEffect("Error checking location permission denied!")
                 }
             }
         }.launchIn(viewModelScope)
     }
+
     private fun postSideEffect(message: String) {
         intent {
             postSideEffect(YandexMapPageContract.SideEffect(message))
         }
     }
 
-    override val container = container<YandexMapPageContract.UIState, YandexMapPageContract.SideEffect>(YandexMapPageContract.UIState())
+    override val container =
+        container<YandexMapPageContract.UIState, YandexMapPageContract.SideEffect>(
+            YandexMapPageContract.UIState()
+        )
 }

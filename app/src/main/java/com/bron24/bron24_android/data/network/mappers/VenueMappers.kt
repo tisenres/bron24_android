@@ -108,7 +108,7 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
 fun SpecialOfferDto.toDomainModel(): SpecialOffer {
     return SpecialOffer(
         id = id ?: 0,
-        image = image ?: "",
+        imageUrl = image ?: "",
         createdAt = createdAt ?: "",
         validUntil = validUntil ?: ""
     )

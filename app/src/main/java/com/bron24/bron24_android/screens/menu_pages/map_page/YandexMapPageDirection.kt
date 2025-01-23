@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class YandexMapPageDirection @Inject constructor(
     private val appNavigator: AppNavigator
-):YandexMapPageContract.Direction {
+) : YandexMapPageContract.Direction {
     override suspend fun back() {
         appNavigator.back()
     }
