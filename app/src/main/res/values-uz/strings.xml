@@ -86,4 +86,6 @@
     <string name="delete_acc">Hisobni o\'chirish</string>
     <string name="save_change">O\'zgarishlarni saqlang</string>
     <string name="order">Buyurtma</string>
+    <string name="hours">soat</string>
+    <string name="banned_user">Juda ko\'p urinish bo\'ldi birozdan kegin qayta xarakat qiling</string>
 </resources>

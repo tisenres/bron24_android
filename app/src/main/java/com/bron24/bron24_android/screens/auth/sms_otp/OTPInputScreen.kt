@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.screens.auth.sms_otp
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -57,16 +60,49 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.components.items.LoadingScreen
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.google.android.play.integrity.internal.w
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
-class OTPInputScreen(val phoneNumber:String):Screen{
+class OTPInputScreen(val phoneNumber: String) : Screen {
     @Composable
     override fun Content() {
-        val viewModel:OTPInputContract.ViewModel = getViewModel<OTPInputScreenVM>()
+        val viewModel: OTPInputContract.ViewModel = getViewModel<OTPInputScreenVM>()
         val uiState = viewModel.collectAsState()
-        OTPInputScreenContent(phoneNumber = phoneNumber, state = uiState,viewModel::onDispatchers)
+        val ban = stringResource(id = R.string.banned_user)
+        viewModel.collectSideEffect {
+            if (it.message.isNotEmpty()) {
+                ToastManager.showToast(it.message ?: "", type = ToastType.INFO)
+            }
+            when (it.status) {
+                OTPStatusCode.CORRECT_OTP -> {
+
+                }
+
+                OTPStatusCode.INCORRECT_OTP -> {
+                    ToastManager.showToast("Tasdiqlash kodi xato kiritildi!", type = ToastType.ERROR)
+                }
+
+                OTPStatusCode.NETWORK_ERROR -> {
+                    ToastManager.showToast("Internet bilan muammo yuzaga keldi!", type = ToastType.WARNING)
+                }
+
+                OTPStatusCode.UNKNOWN_ERROR -> {
+                    ToastManager.showToast("Xatolik birozdan kegin qayta urinib ko'ring!", type = ToastType.WARNING)
+                }
+
+                OTPStatusCode.BANNED_USER -> {
+                    ToastManager.showToast(message = ban, type = ToastType.ERROR)
+                }
+            }
+        }
+        OTPInputScreenContent(phoneNumber = phoneNumber, state = uiState, viewModel::onDispatchers)
     }
 }
 
@@ -75,7 +111,7 @@ class OTPInputScreen(val phoneNumber:String):Screen{
 fun OTPInputScreenContent(
     phoneNumber: String,
     state: State<OTPInputContract.UIState>,
-    intent:(OTPInputContract.Intent)->Unit
+    intent: (OTPInputContract.Intent) -> Unit
 ) {
     var otp by remember { mutableStateOf("") }
     var resendCounter by remember { mutableIntStateOf(state.value.refreshTime) }
@@ -99,11 +135,11 @@ fun OTPInputScreenContent(
         }
     }
 
-    // Ensure keyboard is shown and focus is requested as soon as the composable is launched
-//    LaunchedEffect(Unit) {
-//        focusRequester.requestFocus()
-//        keyboardController?.show()
-//    }
+    //Ensure keyboard is shown and focus is requested as soon as the composable is launched
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -125,7 +161,7 @@ fun OTPInputScreenContent(
                     .height(64.dp),
             ) {
                 EnhancedBackButton(
-                    onClick = {intent.invoke(OTPInputContract.Intent.RequestOTP(phoneNumber,otp.toInt()))},
+                    onClick = { intent.invoke(OTPInputContract.Intent.ClickBack) },
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
 
@@ -164,10 +200,11 @@ fun OTPInputScreenContent(
             Spacer(modifier = Modifier.height(40.dp))
 
             OTPTextField(
-                otp = otp,
+                otp = state.value.otpCode,
                 onOtpChange = { newOtp ->
                     if (newOtp.length <= 4) {
                         otp = newOtp
+                        intent.invoke(OTPInputContract.Intent.OTPCode(newOtp))
                         val otpValue = newOtp.toIntOrNull()
                     }
                 },
@@ -176,8 +213,9 @@ fun OTPInputScreenContent(
                     .fillMaxWidth()
                     .focusRequester(focusRequester)
             )
-            if(otp.length==4){
-                intent.invoke(OTPInputContract.Intent.RequestOTP(phoneNumber,otp.toInt()))
+            if (otp.length == 4) {
+                intent.invoke(OTPInputContract.Intent.RequestOTP(phoneNumber, otp.toInt()))
+                otp = ""
             }
 
             Spacer(modifier = Modifier.height(36.dp)) // Push the resend section to the bottom
@@ -218,7 +256,8 @@ fun OTPInputScreenContent(
                 } else {
                     UnderlinedResendButton(
                         onClick = {
-                           intent.invoke(OTPInputContract.Intent.ClickRestart(phoneNumber))
+                            intent.invoke(OTPInputContract.Intent.ClickRestart(phoneNumber))
+                            resendCounter = state.value.refreshTime
                         },
                     )
 
@@ -234,7 +273,6 @@ fun OTPInputScreenContent(
                     }
                 }
             }
-
 //            LaunchedEffect(authState) {
 //                when (authState) {
 //                    is AuthState.Loading -> {
@@ -308,23 +346,17 @@ fun EnhancedBackButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
+
+    IconButton(
+        onClick = onClick,
         modifier = modifier
-            .size(44.dp)
-            .clip(CircleShape)
-            .background(Color.Transparent)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(),
-                onClick = onClick
-            )
+
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_arrow_back),
             contentDescription = "Back",
             modifier = Modifier
-                .size(32.dp)
-                .align(Alignment.Center)
+                .size(24.dp)
         )
     }
 }
