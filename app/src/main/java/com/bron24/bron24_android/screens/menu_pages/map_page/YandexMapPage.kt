@@ -9,12 +9,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SwipeToDismissBox
@@ -30,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -222,87 +226,104 @@ fun YandexMapPageContent(
         Column(
             modifier = Modifier
                 .align(Alignment.TopEnd) // Align to the top-right corner
-                .padding(16.dp), // Add padding
+                .padding(top = 28.dp, end = 14.dp), // Add padding
             horizontalAlignment = Alignment.End // Align buttons to the end (right)
         ) {
-            // Zoom In Button
-            IconButton(
-                onClick = {
-                    mapView?.map?.move(
-                        CameraPosition(
-                            mapView?.map?.cameraPosition?.target ?: defaultLocation,
-                            (mapView?.map?.cameraPosition?.zoom ?: 13f) + 1f, // Zoom in
-                            0f,
-                            0f
-                        ),
-                        Animation(Animation.Type.SMOOTH, 0.5f),
-                        null
-                    )
-                },
+
+            Box(
                 modifier = Modifier
-                    .background(Color.White
-                        .copy(alpha = 0.7f))
-                    .shadow(elevation = 0.4.dp)// Semi-transparent black background
-                    .padding(8.dp) // Add padding
+                    .shadow(
+                        elevation = 10.dp,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .background(Color.White) // Fully opaque white
+                    .size(50.dp)
+                    .clickable {
+                        mapView?.map?.move(
+                            CameraPosition(
+                                mapView?.map?.cameraPosition?.target ?: defaultLocation,
+                                (mapView?.map?.cameraPosition?.zoom ?: 13f) + 1f, // Zoom in
+                                0f,
+                                0f
+                            ),
+                            Animation(Animation.Type.SMOOTH, 0.5f),
+                            null
+                        )
+                    }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.add),
-                    contentDescription = "Zoom In",
-                    tint = Color.White // White icon
+                    contentDescription = "Zoom Out",
+                    tint = Color.Black.copy(alpha = 0.8f),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp)) // Add space between buttons
+            Spacer(modifier = Modifier.height(12.dp)) // Add space between buttons
 
-            // Zoom Out Button
-            IconButton(
-                onClick = {
-                    mapView?.map?.move(
-                        CameraPosition(
-                            mapView?.map?.cameraPosition?.target ?: defaultLocation,
-                            (mapView?.map?.cameraPosition?.zoom ?: 13f) - 1f, // Zoom out
-                            0f,
-                            0f
-                        ),
-                        Animation(Animation.Type.SMOOTH, 0.5f),
-                        null
-                    )
-                },
+            Box(
                 modifier = Modifier
-                    .background(Color.Black.copy(alpha = 0.7f)) // Semi-transparent black background
-                    .padding(8.dp) // Add padding
+                    .shadow(
+                        elevation = 10.dp,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .background(Color.White) // Fully opaque white
+                    .size(50.dp)
+                    .clickable {
+                        mapView?.map?.move(
+                            CameraPosition(
+                                mapView?.map?.cameraPosition?.target ?: defaultLocation,
+                                (mapView?.map?.cameraPosition?.zoom ?: 13f) - 1f, // Zoom out
+                                0f,
+                                0f
+                            ),
+                            Animation(Animation.Type.SMOOTH, 0.5f),
+                            null
+                        )
+                    }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.remove),
                     contentDescription = "Zoom Out",
-                    tint = Color.White // White icon
+                    tint = Color.Black.copy(alpha = 0.8f),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp)
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp)) // Add space between buttons
+            Spacer(modifier = Modifier.height(80.dp))
 
-            // Current Location Button
-            IconButton(
-                onClick = {
-                    mapView?.map?.move(
-                        CameraPosition(
-                            defaultLocation, // User's current location
-                            15f, // Zoom level
-                            0f,
-                            0f
-                        ),
-                        Animation(Animation.Type.SMOOTH, 0.5f),
-                        null
-                    )
-                },
+            Box(
                 modifier = Modifier
-                    .background(Color.Black.copy(alpha = 0.7f)) // Semi-transparent black background
-                    .padding(8.dp) // Add padding
+                    .shadow(
+                        elevation = 10.dp,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .background(Color.White) // Fully opaque white
+                    .size(50.dp)
+                    .clickable {
+                        mapView?.map?.move(
+                            CameraPosition(
+                                defaultLocation,
+                                15f,
+                                0f,
+                                0f
+                            ),
+                            Animation(Animation.Type.SMOOTH, 0.5f),
+                            null
+                        )
+                    }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.near_me),
-                    contentDescription = "Current Location",
-                    tint = Color.White // White icon
+                    contentDescription = "Zoom Out",
+                    tint = Color.Black.copy(alpha = 0.8f),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
                 )
             }
         }
@@ -388,10 +409,40 @@ fun centerCameraOnMarker(map: Map, point: Point) {
     )
 }
 
-@Preview(showBackground = true)
+@Preview()
 @Composable
 fun YandexMapPagePreview() {
-    Banner()
+//    IconButton(
+//        onClick = {},
+//        modifier = Modifier
+//            .size(50.dp)
+//            .clip(RoundedCornerShape(10.dp))
+//            .background(Color.White.copy(alpha = 0.7f))
+//            .shadow(elevation = 0.4.dp)
+//    ) {
+//        Icon(
+//            painter = painterResource(id = R.drawable.remove),
+//            contentDescription = "Zoom Out",
+//            tint = Color.Black,
+//            modifier = Modifier.size(45.dp)
+//        )
+//    }
+    IconButton(
+        onClick = {},
+        modifier = Modifier
+            .size(50.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color.White.copy(alpha = 0.8f))
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.add),
+            contentDescription = "Zoom Out",
+            tint = Color.Black.copy(alpha = 0.8f),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        )
+    }
 }
 
 
