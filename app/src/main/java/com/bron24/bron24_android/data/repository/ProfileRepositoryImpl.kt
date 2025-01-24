@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.repository
 
+import androidx.compose.ui.input.key.Key.Companion.U
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.data.network.apiservices.ProfileApi
 import com.bron24.bron24_android.domain.entity.user.DeleteAcc
@@ -38,5 +39,10 @@ class ProfileRepositoryImpl @Inject constructor(
         }catch (e:Exception){
             Result.failure(e)
         }
+    }
+
+    override suspend fun logoutProfile(): Result<Unit>  {
+        localStorage.openMenu = false
+        return Result.success(Unit)
     }
 }
