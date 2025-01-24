@@ -46,6 +46,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -85,58 +86,13 @@ object YandexMapPage : Tab {
 }
 
 @Composable
-fun Banner() {
-    AndroidView(
-        factory = { context ->
-            MapView(context).apply {
-                val originalBitmap = BitmapFactory.decodeResource(
-                    context.resources,
-                    R.drawable.kids_playing_soccer_cartoon
-                )
-                val resizedBitmap =
-                    Bitmap.createScaledBitmap(originalBitmap, 100, 100, true) // 100x100 o‘lcham
-                val imageProvider = ImageProvider.fromBitmap(resizedBitmap)
-
-                map.move(
-                    CameraPosition(
-                        Point(41.2995, 69.2401), // Toshkent koordinatalari
-                        12.0f, // Zoom darajasi
-                        0.0f, // Tilt
-                        0.0f  // Azimuth
-                    )
-                )
-                map.mapObjects.addPlacemark(
-                    Point(41.2995, 69.2401), // Marker koordinatalari,
-                    imageProvider
-                )
-                map.isZoomGesturesEnabled = true
-
-            }
-        },
-        update = { mapView ->
-            // Xarita parametrlarini o'zgartirish yoki yangilash uchun
-        }
-    )
-}
-
-@Composable
 fun YandexMapPageContent(
     state: State<YandexMapPageContract.UIState>,
     intent: (YandexMapPageContract.Intent) -> Unit
 ) {
-    val showVenueDetails by remember { mutableStateOf(false) }
     val context = LocalContext.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
     var mapObjects by remember { mutableStateOf<MapObjectCollection?>(null) }
-//    var userLocationObject by remember { mutableStateOf<MapObject?>(null) }
-//    var placemarks by remember { mutableStateOf<List<MapObject>>(emptyList()) }
-//    var placemarksNew by remember { mutableStateOf<List<PlacemarkMapObject>>(emptyList()) }
-
-//    val userLocation by remember {
-//        mutableStateOf(
-//            value = Point(state.value.userLocation.latitude, state.value.userLocation.longitude)
-//        )
-//    }
 
     val userLocation = state.value.userLocation.let {
         Point(it.latitude, it.longitude)
@@ -159,18 +115,18 @@ fun YandexMapPageContent(
                     )
 
                     setMarkerInStartLocation(
-                        mapView!!,
                         mapObjects!!,
                         userLocation,
-                        context
+                        context,
                     )
                     state.value.venueCoordinates.map { venue ->
                         val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
                         setStadiumMarker(
                             mapView!!,
                             mapObjects!!,
-                            point,
-                            context
+                            (point to venue),
+                            context,
+                            intent
                         )
                     }
                 }
@@ -178,18 +134,18 @@ fun YandexMapPageContent(
             modifier = Modifier.fillMaxSize(),
             update = { view ->
                 setMarkerInStartLocation(
-                    mapView!!,
                     mapObjects!!,
                     userLocation,
-                    context
+                    context,
                 )
                 state.value.venueCoordinates.map { venue ->
                     val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
                     setStadiumMarker(
                         mapView!!,
                         mapObjects!!,
-                        point,
-                        context
+                        (point to venue),
+                        context,
+                        intent
                     )
                 }
             }
@@ -211,8 +167,21 @@ fun YandexMapPageContent(
         }
 
         // Venue details
+
         AnimatedVisibility(
-            visible = showVenueDetails,
+            visible = state.value.venueDetails != null,
+            enter = slideInVertically(initialOffsetY = { it }),
+            exit = slideOutVertically(targetOffsetY = { it }),
+            modifier = Modifier
+        ) {
+            val venueDetails = state.value.venueDetails
+            if (venueDetails != null) {
+                MapVenueDetails(venueDetails) {}
+            }
+        }
+
+        AnimatedVisibility(
+            visible = state.value.venueDetails != null,
             enter = slideInVertically(initialOffsetY = { it }),
             exit = slideOutVertically(targetOffsetY = { it }),
             modifier = Modifier
@@ -220,7 +189,6 @@ fun YandexMapPageContent(
             val dismissState = rememberSwipeToDismissBoxState(
                 confirmValueChange = { dismissValue ->
                     if (dismissValue == SwipeToDismissBoxValue.StartToEnd || dismissValue == SwipeToDismissBoxValue.EndToStart) {
-//                        showVenueDetails = false
 //                        mapViewModel.clearSelectedVenue()
                         true
                     } else {
@@ -243,6 +211,7 @@ fun YandexMapPageContent(
                 }
             )
         }
+
         LaunchedEffect(userLocation) {
             userLocation.let { location ->
                 mapView?.map?.move(
@@ -366,7 +335,11 @@ fun ZoomControls(modifier: Modifier, mapView: MapView?, userLocation: Point) {
     }
 }
 
-private fun setMarkerInStartLocation(mapView: MapView, mapObjects: MapObjectCollection, location: Point, context: Context) {
+private fun setMarkerInStartLocation(
+    mapObjects: MapObjectCollection,
+    location: Point,
+    context: Context,
+) {
     val originalBitmap = BitmapFactory.decodeResource(
         context.resources,
         R.drawable.location_red
@@ -383,13 +356,18 @@ private fun setMarkerInStartLocation(mapView: MapView, mapObjects: MapObjectColl
     )
 
     placemark.addTapListener { _, _ ->
-        centerCameraOnMarker(mapView, location)
         Toast.makeText(context, "Marker clicked at: ${location.latitude}, ${location.longitude}", Toast.LENGTH_SHORT).show()
         true
     }
 }
 
-fun setStadiumMarker(mapView: MapView, mapObjects: MapObjectCollection, point: Point, context: Context) {
+fun setStadiumMarker(
+    mapView: MapView,
+    mapObjects: MapObjectCollection,
+    point: Pair<Point, VenueCoordinates>,
+    context: Context,
+    intent: (YandexMapPageContract.Intent) -> Unit
+) {
     val originalBitmap = BitmapFactory.decodeResource(
         context.resources,
         R.drawable.location_green
@@ -398,7 +376,7 @@ fun setStadiumMarker(mapView: MapView, mapObjects: MapObjectCollection, point: P
     val imageProvider = ImageProvider.fromBitmap(resizedBitmap)
 
     val placemark = mapObjects.addPlacemark(
-        point,
+        point.first,
         imageProvider,
         IconStyle().apply {
             scale = 0.5f
@@ -406,9 +384,9 @@ fun setStadiumMarker(mapView: MapView, mapObjects: MapObjectCollection, point: P
     )
 
     placemark.addTapListener { _, _ ->
-
-        centerCameraOnMarker(mapView, point)
-        Toast.makeText(context, "Marker clicked at: ${point.latitude}, ${point.longitude}", Toast.LENGTH_SHORT).show()
+        centerCameraOnMarker(mapView, point.first)
+        intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
+        Toast.makeText(context, "Marker clicked at: ${point.first.latitude}, ${point.first.longitude}", Toast.LENGTH_SHORT).show()
         true
     }
 }

@@ -7,12 +7,10 @@ import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissio
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesCoordinatesUseCase
-import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
@@ -23,8 +21,18 @@ class YandexMapPageVM @Inject constructor(
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
     private val getVenueDetailsUseCase: GetVenueDetailsUseCase
 ) : ViewModel(), YandexMapPageContract.ViewModel {
-    override fun onDispatchers(intent: YandexMapPageContract.Intent): Job = intent {
 
+    override fun onDispatchers(intent: YandexMapPageContract.Intent): Job = intent {
+        when (intent) {
+            is YandexMapPageContract.Intent.ClickMarker -> {
+                getVenueDetailsUseCase.invoke(venueId = intent.location.venueId).onEach {
+                    reduce { state.copy(venueDetails = it) }
+                }.launchIn(viewModelScope)
+            }
+
+            YandexMapPageContract.Intent.CheckPermission -> TODO()
+            is YandexMapPageContract.Intent.ClickVenueBook -> TODO()
+        }
     }
 
     override fun initData(): Job = intent {
@@ -34,6 +42,7 @@ class YandexMapPageVM @Inject constructor(
                     getCurrentLocationUseCase.execute().onEach {
                         reduce { state.copy(userLocation = it) }
                     }.launchIn(viewModelScope)
+
                     getVenuesCoordinatesUseCase.invoke().onEach {
                         reduce { state.copy(venueCoordinates = it) }
                     }.launchIn(viewModelScope)
