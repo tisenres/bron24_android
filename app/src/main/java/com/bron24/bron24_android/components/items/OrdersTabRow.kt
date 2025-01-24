@@ -126,9 +126,9 @@ fun OrderCard(
         border = BorderStroke(1.dp, Color(0xFFD9D9D9)),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = modifier,
-        onClick = onClick
+        onClick = onClick,
     ) {
-        Column {
+        Column(modifier = Modifier, verticalArrangement = Arrangement.Center) {
             OrderImage(imageUrl = order.previewImage)
             OrderContent(order = order)
         }

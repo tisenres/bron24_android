@@ -32,6 +32,9 @@ class ProfileRepositoryImpl @Inject constructor(
             val result = profileApi.deleteAccount(DeleteAcc(type?:"hard"))
             if(result.success){
                 localStorage.openMenu = false
+                localStorage.firstName =""
+                localStorage.lastName = ""
+                localStorage.phoneNumber = ""
                 Result.success(result.message)
             }else{
                 Result.failure(Exception("Unknown error!"))
@@ -43,6 +46,9 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun logoutProfile(): Result<Unit>  {
         localStorage.openMenu = false
+        localStorage.firstName =""
+        localStorage.lastName = ""
+        localStorage.phoneNumber = ""
         return Result.success(Unit)
     }
 }

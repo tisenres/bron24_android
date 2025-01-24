@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.menu_pages.orders_page
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.components.items.OrdersType
@@ -18,35 +19,50 @@ import javax.inject.Inject
 class OrdersPageVM @Inject constructor(
     private val getOrdersByStatusUseCase: GetOrdersByStatusUseCase
 ) : ViewModel(), OrdersPageContract.ViewModel {
-    override fun onDispatchers(intent: OrdersPageContract.Intent): Job = intent {
+    override fun onDispatchers(intent: OrdersPageContract.Intent): Job = intent{
         when(intent){
             OrdersPageContract.Intent.ClickHistory -> {
-                getOrdersByStatusUseCase.invoke("history")
-                    .onStart { reduce { state.copy(isLoading = true) } }
-                    .onEach { reduce { state.copy(itemData = it, selected = OrdersType.HISTORY) } }
-                    .onCompletion { reduce { state.copy(isLoading = false) } }
-                    .launchIn(viewModelScope)
+                reduce { state.copy(isLoading = true) }
+                history()
             }
             OrdersPageContract.Intent.ClickUpcoming -> {
-                getOrdersByStatusUseCase.invoke("INPROCESS")
-                    .onStart { reduce { state.copy(isLoading = true) } }
-                    .onEach { reduce { state.copy(itemData = it, selected = OrdersType.UPCOMING) } }
-                    .onCompletion { reduce { state.copy(isLoading = false) } }
-                    .launchIn(viewModelScope)
+                reduce { state.copy(isLoading = true) }
+                upComing()
             }
 
             is OrdersPageContract.Intent.ClickItemOrder -> {
 
             }
+            is OrdersPageContract.Intent.Refresh -> {
+                when(intent.type){
+                    OrdersType.UPCOMING -> {
+                        reduce { state.copy(refresh = true) }
+                        upComing()
+                    }
+                    OrdersType.HISTORY -> {
+                        reduce { state.copy(refresh = true) }
+                        history()
+                    }
+                }
+            }
         }
     }
-
-    override fun initData(): Job = intent {
+    private fun upComing():Job = intent{
+        Log.d("AAA", "upComing: up comming")
         getOrdersByStatusUseCase.invoke("INPROCESS")
-            .onStart { reduce { state.copy(isLoading = true) } }
             .onEach { reduce { state.copy(itemData = it, selected = OrdersType.UPCOMING) } }
-            .onCompletion { reduce { state.copy(isLoading = false) } }
+            .onCompletion { reduce { state.copy(isLoading = false, refresh = false)} }
             .launchIn(viewModelScope)
+    }
+    private fun history():Job = intent{
+        getOrdersByStatusUseCase.invoke("history")
+            .onEach { reduce { state.copy(itemData = it, selected = OrdersType.HISTORY) } }
+            .onCompletion { reduce { state.copy(isLoading = false, refresh = false) }}
+            .launchIn(viewModelScope)
+    }
+
+    override fun initData():Job = intent{
+        upComing()
     }
 
     private fun postSideEffect(message: String) {

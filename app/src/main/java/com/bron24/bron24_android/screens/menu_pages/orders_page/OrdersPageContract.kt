@@ -15,6 +15,7 @@ interface OrdersPageContract {
         val selected:OrdersType = OrdersType.UPCOMING,
         val updateUiState:Boolean = true,
         val isLoading:Boolean = true,
+        val refresh:Boolean = false,
         val itemData:List<Order> = emptyList()
     )
 
@@ -26,6 +27,7 @@ interface OrdersPageContract {
         data object ClickHistory:Intent
         data object ClickUpcoming:Intent
         data class ClickItemOrder(val orderId:Int):Intent
+        data class Refresh(val type:OrdersType) :Intent
     }
 
     interface Direction{
