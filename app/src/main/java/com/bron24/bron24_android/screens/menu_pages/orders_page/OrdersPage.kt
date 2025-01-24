@@ -50,6 +50,7 @@ import com.bron24.bron24_android.screens.main.theme.Purple
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import org.orbitmvi.orbit.compose.collectAsState
+import javax.inject.Singleton
 
 
 object OrdersPage : Tab {
@@ -85,6 +86,7 @@ fun OrdersPageContent(
 ) {
 
     var selectedOption by rememberSaveable { mutableStateOf(OrdersType.UPCOMING) }
+    selectedOption = state.value.selected
 
     val upcomingListState = rememberLazyListState()
     val historyListState = rememberLazyListState()
@@ -101,8 +103,12 @@ fun OrdersPageContent(
     val selectedListState by remember {
         derivedStateOf {
             when (selectedOption) {
-                OrdersType.UPCOMING -> upcomingListState
-                OrdersType.HISTORY -> historyListState
+                OrdersType.UPCOMING ->{
+                    upcomingListState
+                }
+                OrdersType.HISTORY -> {
+                    historyListState
+                }
             }
         }
     }
