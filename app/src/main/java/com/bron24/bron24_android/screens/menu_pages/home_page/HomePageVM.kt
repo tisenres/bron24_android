@@ -63,24 +63,26 @@ class HomePageVM @Inject constructor(
     }
 
     override fun initData() = intent {
-        getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
-            it.onSuccess {
-                if (filterOptions != null) {
-                    filterResult()
+        if (state.initial){
+            getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
+                it.onSuccess {
+                    if (filterOptions != null) {
+                        filterResult()
+                    }
+                    reduce { state.copy(isLoading = false, itemData = it) }
+                }.onFailure {
+                    postSideEffect(it.message.toString())
                 }
-                reduce { state.copy(isLoading = false, itemData = it) }
-            }.onFailure {
-                postSideEffect(it.message.toString())
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
-        getCurrentLocationUseCase.execute().onEach {
-            reduce { state.copy(userLocation = it) }
-        }.launchIn(viewModelScope)
+            getCurrentLocationUseCase.execute().onEach {
+                reduce { state.copy(userLocation = it) }
+            }.launchIn(viewModelScope)
 
-        getSpecialOfferUseCase.invoke().onEach {
-            reduce { state.copy(specialOffers = it) }
-        }.launchIn(viewModelScope)
+            getSpecialOfferUseCase.invoke().onEach {
+                reduce { state.copy(specialOffers = it) }
+            }.launchIn(viewModelScope)
+        }
     }
 
     private fun filterResult() = intent {

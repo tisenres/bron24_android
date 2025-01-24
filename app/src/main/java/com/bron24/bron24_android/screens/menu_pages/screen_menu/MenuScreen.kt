@@ -90,8 +90,7 @@ fun RowScope.ItemBottomTab(
     tab: Tab?
 ) {
     val tabNavigator = LocalTabNavigator.current
-    val check = tab == tabNavigator.current
-
+    var check = tab == tabNavigator.current
     if (tab != null) {
         Column(
             modifier = Modifier

@@ -15,7 +15,7 @@ interface HomePageContract {
 
     data class UIState(
         val isLoading: Boolean = true,
-        val initial: Boolean = false,
+        val initial: Boolean = true,
         val firstName: String = "",
         val itemData: List<Venue> = emptyList(),
         val specialOffers: List<SpecialOffer> = emptyList(),
