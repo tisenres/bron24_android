@@ -4,9 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,9 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -168,49 +162,49 @@ fun YandexMapPageContent(
 
         // Venue details
 
-        AnimatedVisibility(
-            visible = state.value.venueDetails != null,
-            enter = slideInVertically(initialOffsetY = { it }),
-            exit = slideOutVertically(targetOffsetY = { it }),
-            modifier = Modifier
-        ) {
-            val venueDetails = state.value.venueDetails
-            if (venueDetails != null) {
-                MapVenueDetails(venueDetails) {}
-            }
-        }
+//        AnimatedVisibility(
+//            visible = state.value.venueDetails != null,
+//            enter = slideInVertically(initialOffsetY = { it }),
+//            exit = slideOutVertically(targetOffsetY = { it }),
+//            modifier = Modifier
+//        ) {
+//            val venueDetails = state.value.venueDetails
+//            if (venueDetails != null) {
+//                MapVenueDetails(venueDetails) {}
+//            }
+//        }
+//
+//        AnimatedVisibility(
+//            visible = state.value.venueDetails != null,
+//            enter = slideInVertically(initialOffsetY = { it }),
+//            exit = slideOutVertically(targetOffsetY = { it }),
+//            modifier = Modifier
+//        ) {
+//            val dismissState = rememberSwipeToDismissBoxState(
+//                confirmValueChange = { dismissValue ->
+//                    if (dismissValue == SwipeToDismissBoxValue.StartToEnd || dismissValue == SwipeToDismissBoxValue.EndToStart) {
+////                        mapViewModel.clearSelectedVenue()
+//                        true
+//                    } else {
+//                        false
+//                    }
+//                }
+//            )
 
-        AnimatedVisibility(
-            visible = state.value.venueDetails != null,
-            enter = slideInVertically(initialOffsetY = { it }),
-            exit = slideOutVertically(targetOffsetY = { it }),
-            modifier = Modifier
-        ) {
-            val dismissState = rememberSwipeToDismissBoxState(
-                confirmValueChange = { dismissValue ->
-                    if (dismissValue == SwipeToDismissBoxValue.StartToEnd || dismissValue == SwipeToDismissBoxValue.EndToStart) {
-//                        mapViewModel.clearSelectedVenue()
-                        true
-                    } else {
-                        false
-                    }
-                }
-            )
-
-            SwipeToDismissBox(
-                state = dismissState,
-                backgroundContent = { /* Optional background content */ },
-                content = {
-//                    SmallVenueDetailsScreen(
-//                        viewModel = mapViewModel,
-//                        onClose = {
-//                            showVenueDetails = false
-//                            mapViewModel.clearSelectedVenue()
-//                        }
-//                    )
-                }
-            )
-        }
+//            SwipeToDismissBox(
+//                state = dismissState,
+//                backgroundContent = { /* Optional background content */ },
+//                content = {
+////                    SmallVenueDetailsScreen(
+////                        viewModel = mapViewModel,
+////                        onClose = {
+////                            showVenueDetails = false
+////                            mapViewModel.clearSelectedVenue()
+////                        }
+////                    )
+//                }
+//            )
+//        }
 
         LaunchedEffect(userLocation) {
             userLocation.let { location ->
@@ -314,7 +308,7 @@ fun ZoomControls(modifier: Modifier, mapView: MapView?, userLocation: Point) {
                     mapView?.map?.move(
                         CameraPosition(
                             userLocation,
-                            15f,
+                            14f,
                             0f,
                             0f
                         ),
