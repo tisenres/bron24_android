@@ -22,6 +22,8 @@ import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageCont
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageDirection
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerContract
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerDirection
+import com.bron24.bron24_android.screens.orderdetails.OrderDetailsContact
+import com.bron24.bron24_android.screens.orderdetails.OrderDetailsDirection
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenContract
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenDirection
 import com.bron24.bron24_android.screens.search.search_screen.SearchScreenContract
@@ -94,5 +96,8 @@ interface DirectionModule {
 
     @[Binds ViewModelScoped]
     fun bindsEditProfileDirection(impl: EditProfileDirection): EditProfileContract.Direction
+
+    @[Binds ViewModelScoped]
+    fun bindsOrderDetailsDirection(impl: OrderDetailsDirection): OrderDetailsContact.Direction
 
 }
