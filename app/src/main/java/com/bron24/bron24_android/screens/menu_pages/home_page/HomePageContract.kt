@@ -30,12 +30,12 @@ interface HomePageContract {
         data object ClickFilter : Intent
         data class SelectedSort(val name: String) : Intent
         data object Refresh : Intent
-        data class ClickItem(val venueId: Int, val rate: Double) : Intent
+        data class ClickItem(val venueId: Int) : Intent
     }
 
     interface Direction {
         suspend fun moveToSearch()
         suspend fun moveToFilter(block: (FilterOptions) -> Unit)
-        suspend fun moveToDetails(venueId: Int, rate: Double)
+        suspend fun moveToDetails(venueId: Int)
     }
 }

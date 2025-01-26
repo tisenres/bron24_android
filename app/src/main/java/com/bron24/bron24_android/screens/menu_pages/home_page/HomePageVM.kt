@@ -57,7 +57,7 @@ class HomePageVM @Inject constructor(
             }
 
             is HomePageContract.Intent.ClickItem -> {
-                direction.moveToDetails(intent.venueId, intent.rate)
+                direction.moveToDetails(intent.venueId)
             }
         }
     }

@@ -80,7 +80,7 @@ fun HomePageContent(
                 refreshVenue = { intent.invoke(HomePageContract.Intent.Refresh) },
                 clickSort = { intent.invoke(HomePageContract.Intent.SelectedSort(it)) })
             {
-                intent.invoke(HomePageContract.Intent.ClickItem(it.venueId,it.rate))
+                intent.invoke(HomePageContract.Intent.ClickItem(it.venueId))
             }
         }
     }
