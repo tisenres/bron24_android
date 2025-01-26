@@ -70,6 +70,7 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.helper.util.NetworkConnection
+import com.bron24.bron24_android.helper.util.presentation.listener
 import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.Error
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemDivider
@@ -298,7 +299,7 @@ fun CustomAppBar(
     backgroundColor: Color? = null,
     startIcons: @Composable (() -> Unit)? = null,
     actions: @Composable (() -> Unit)? = null,
-    listener: () -> Unit
+    listenerBack: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -309,7 +310,7 @@ fun CustomAppBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (startIcons != null) {
-            IconButton(onClick = listener) {
+            IconButton(onClick = listenerBack) {
                 startIcons.invoke()
             }
         }

@@ -19,6 +19,7 @@ data class VenueDetails(
     val description: String,
     val workingHoursFrom: String,
     val workingHoursTill: String,
+    val rate:Double,
     val contact1: String,
     val contact2: String,
     val createdAt: String,

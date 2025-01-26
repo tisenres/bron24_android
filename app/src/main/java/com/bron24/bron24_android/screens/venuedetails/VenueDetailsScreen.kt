@@ -117,7 +117,7 @@ import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
 
-data class VenueDetailsScreen(val venueId: Int,val rate: Double) :Screen{
+data class VenueDetailsScreen(val venueId: Int) :Screen{
     @Composable
     override fun Content() {
         val viewModel:VenueDetailsContract.ViewModel = getViewModel<VenueDetailsVM>()
@@ -125,14 +125,13 @@ data class VenueDetailsScreen(val venueId: Int,val rate: Double) :Screen{
             viewModel.initData(venueId)
         }
         val uiState = viewModel.collectAsState()
-        VenueDetailsScreenContent(venueId,rate,state = uiState,viewModel::onDispatchers)
+        VenueDetailsScreenContent(venueId,state = uiState,viewModel::onDispatchers)
     }
 
 }
 @Composable
 fun VenueDetailsScreenContent(
     venueId: Int,
-    rate: Double,
     state:State<VenueDetailsContract.UIState>,
     intent:(VenueDetailsContract.Intent)->Unit
 ) {
@@ -151,7 +150,6 @@ fun VenueDetailsScreenContent(
             onMapClick = {lan,long->
                 intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan,long)))
             },
-            rate = rate,
             onOrderClick = {
                 openOrder = true
 ////                    state.venueDetails.venueId,
@@ -208,7 +206,6 @@ fun BookingBottomSheet(
 
 @Composable
 fun VenueDetailsContent(
-    rate: Double,
     details: VenueDetails?,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
@@ -246,7 +243,6 @@ fun VenueDetailsContent(
             }
             item(key = "headerSection") {
                 HeaderSection(
-                    rate = rate,
                     details = details,
                     onMapClick = onMapClick,
                     onCopyAddressClick = {
@@ -430,7 +426,6 @@ fun SectionTitle(text: String) {
 
 @Composable
 fun HeaderSection(
-    rate: Double,
     details: VenueDetails?,
     onMapClick: (Double, Double) -> Unit,
     onCopyAddressClick: () -> Unit
@@ -444,7 +439,7 @@ fun HeaderSection(
         Spacer(modifier = Modifier.height(14.dp))
         AddressAndPhoneSection(details, onCopyAddressClick)
         Spacer(modifier = Modifier.height(14.dp))
-        RatingSection(details,rate)
+        RatingSection(details)
     }
 }
 
@@ -773,9 +768,9 @@ fun InfoRow(icon: Int, text: String) {
 }
 
 @Composable
-fun RatingSection(details: VenueDetails?,rate:Double) {
+fun RatingSection(details: VenueDetails?) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        repeat((rate).toInt()) { index ->
+        repeat((details?.rate?:1).toInt()) { index ->
             Icon(
                 painter = painterResource(id = R.drawable.ic_star),
                 contentDescription = "Star",
@@ -786,7 +781,7 @@ fun RatingSection(details: VenueDetails?,rate:Double) {
         }
         Spacer(modifier = Modifier.width(7.dp))
         Text(
-            text = rate.toString(),
+            text = details?.rate.toString(),
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
@@ -1076,7 +1071,7 @@ fun MapSection(details: VenueDetails?) {
             .clip(RoundedCornerShape(10.dp))
             .clickable {
                 details?.let { venue ->
-                    openMapWithOptions(context, venue.latitude, venue.longitude, "asdas")
+                    openMapWithOptions(context, venue.latitude, venue.longitude, venue.venueName)
                 }
             }
     ) {
@@ -1180,7 +1175,7 @@ fun MapSection(details: VenueDetails?) {
                             context,
                             venue.latitude,
                             venue.longitude,
-                            "dsds"
+                            venue.venueName
                         )
                     }
                 }
@@ -1347,56 +1342,3 @@ fun PricingSection(
         }
     }
 }
-
-//@Preview(widthDp = 390, heightDp = 793, showBackground = true)
-//@Composable
-//private fun VenueDetailsPreview() {
-//    VenueDetailsContent(
-//        details = VenueDetails(
-//            venueId = 1,
-//            address = Address(
-//                id = 6,
-//                addressName = "Bunyodkor street, 18",
-//                district = "SASASAS",
-//                closestMetroStation = "Novza"
-//            ),
-//            city = City(id = 5, cityName = "Tashkent"),
-//            infrastructure = Infrastructure(
-//                id = 9,
-//                lockerRoom = true,
-//                stands = "FDFDFGD",
-//                shower = true,
-//                parking = true
-//            ),
-//            venueOwner = VenueOwner(
-//                id = 9,
-//                ownerName = "Owner Name",
-//                tinNumber = 1223243,
-//                contact1 = "454545",
-//                contact2 = "232323"
-//            ),
-//            venueName = "Bunyodkor kompleksi",
-//            venueType = "out",
-//            venueSurface = "Grass",
-//            peopleCapacity = 12,
-//            sportType = "Football",
-//            pricePerHour = "100",
-//            description = "A large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent a large stadium in Tashkent",
-//            workingHoursFrom = "9:00",
-//            workingHoursTill = "23:00",
-//            contact1 = "+998 77 806 0278",
-//            contact2 = "+998 77 806 0288",
-//            createdAt = "2021-01-01",
-//            updatedAt = "2023-01-01",
-//            imageUrl = listOf(
-//                "https://www.google.com/imgres?q=football%20stadium&imgurl=https%3A%2F%2Fmedia.istockphoto.com%2Fid%2F1502846052%2Fphoto%2Ftextured-soccer-game-field-with-neon-fog-center-midfield.jpg%3Fs%3D612x612%26w%3D0%26k%3D20%26c%3DLPSo6ps1NfZ_xviL0tmhnnrcLjjFXAQhsYr3qAOfviY%3D&imgrefurl=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Ffootball-stadium&docid=LF8uWOsT77kHrM&tbnid=tb_4tkdFa4tgxM&vet=12ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA..i&w=612&h=344&hcb=2&ved=2ahUKEwjb-N6y2JSIAxWKQvEDHW0UJrEQM3oECGQQAA",
-//            ),
-//            latitude = 65.23232323,
-//            longitude = 46.23232323
-//        ),
-//        {},
-//        {},
-//        {},
-//        {.0, 0.0}
-//    )
-//}
