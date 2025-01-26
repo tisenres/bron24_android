@@ -17,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OrdersPageVM @Inject constructor(
-    private val getOrdersByStatusUseCase: GetOrdersByStatusUseCase
+    private val getOrdersByStatusUseCase: GetOrdersByStatusUseCase,
+    private val direction:OrdersPageContract.Direction
 ) : ViewModel(), OrdersPageContract.ViewModel {
     override fun onDispatchers(intent: OrdersPageContract.Intent): Job = intent{
         when(intent){
@@ -31,7 +32,7 @@ class OrdersPageVM @Inject constructor(
             }
 
             is OrdersPageContract.Intent.ClickItemOrder -> {
-
+                direction.moveToInfo(intent.orderId)
             }
             is OrdersPageContract.Intent.Refresh -> {
                 when(intent.type){

@@ -26,8 +26,8 @@ import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 
 @Composable
-fun OrderDetailsImagePager(imageUrls:String, modifier: Modifier = Modifier) {
-    val pagerState = rememberPagerState(pageCount = { 1 })
+fun OrderDetailsImagePager(imageUrls:List<String>, modifier: Modifier = Modifier) {
+    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
     Box(
         modifier = modifier
             .height(180.dp)
@@ -39,11 +39,11 @@ fun OrderDetailsImagePager(imageUrls:String, modifier: Modifier = Modifier) {
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            Image(imageUrl = imageUrls, page = page)
+            Image(imageUrl = imageUrls[page], page = page)
         }
         ImageOverlay(
             currentPage = pagerState.currentPage,
-            totalPages = 1,
+            totalPages = imageUrls.size,
         )
     }
 }

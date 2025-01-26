@@ -35,14 +35,15 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
-fun OrderDetailHeader(order: Order, modifier: Modifier = Modifier) {
+fun OrderDetailHeader(order: OrderDetails?, modifier: Modifier = Modifier) {
     val title = buildString {
-        append(order.venueName)
+        append(order?.venueName)
         append(", Sector ")
-        append(order.sector)
+        append(order?.sector)
     }
     Column(modifier = modifier) {
         Text(
@@ -55,7 +56,7 @@ fun OrderDetailHeader(order: Order, modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = "№ ${order.id}",
+            text = "№ ${order?.id}",
             fontSize = 10.sp,
             fontFamily = gilroyFontFamily,
             fontWeight = FontWeight.Normal,
@@ -66,8 +67,8 @@ fun OrderDetailHeader(order: Order, modifier: Modifier = Modifier) {
         OrderPrice(price = "")
         Spacer(modifier = Modifier.height(6.dp))
         OrderDateTime(
-            date = order.bookingDate,
-            time = " ${order.timeSlot.startTime} - ${order.timeSlot.endTime}"
+            date = order?.bookingDate?:"",
+            time = " ${order?.timeSlot?.startTime} - ${order?.timeSlot?.endTime}"
         )
         Spacer(modifier = Modifier.height(6.dp))
         //OrderAddress(address = order.address.addressName)

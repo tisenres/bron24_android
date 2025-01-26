@@ -31,6 +31,6 @@ interface OrdersPageContract {
     }
 
     interface Direction{
-        suspend fun moveToInfo(orderId: Long)
+        suspend fun moveToInfo(orderId: Int)
     }
 }

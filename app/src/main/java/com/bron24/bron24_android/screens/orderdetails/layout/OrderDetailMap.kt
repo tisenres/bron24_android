@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,9 +44,14 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.Order
+import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.bron24.bron24_android.screens.menu_pages.map_page.getBitmapFromDrawable
+import com.bron24.bron24_android.screens.orderdetails.OrderDetailsContact
+import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -54,7 +60,7 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 
 @Composable
-fun OrderDetailMap(order: Order, modifier: Modifier = Modifier) {
+fun OrderDetailMap(state: State<OrderDetailsContact.UIState>, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
@@ -98,104 +104,117 @@ fun OrderDetailMap(order: Order, modifier: Modifier = Modifier) {
             }
             .background(Color(0xffFAFAFA))
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        if(state.value.isLoading){
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
-                    .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
-            ) {
-                mapView?.let { map ->
-                    AndroidView(
-                        factory = { map },
-                        modifier = Modifier.fillMaxSize(),
-                        update = { view ->
-                            try {
-                                val venueLocation = Point(34.00,34.00)
-                                view.map.move(
-                                    CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
-                                    Animation(Animation.Type.SMOOTH, 0.3f),
-                                    null
-                                )
-                                view.map.mapObjects.clear()
-
-                                val placemark = view.map.mapObjects.addPlacemark(venueLocation)
-                                val markerIcon = R.drawable.baseline_location_on_24_red
-                                val drawable = ContextCompat.getDrawable(context, markerIcon)
-                                val bitmap = drawable?.let {
-                                    getBitmapFromDrawable(it, 1.5f)
-                                }
-                                placemark.setIcon(ImageProvider.fromBitmap(bitmap))
-
-                                // Disable user interaction with the map
-                                view.map.isScrollGesturesEnabled = false
-                                view.map.isZoomGesturesEnabled = false
-                                view.map.isTiltGesturesEnabled = false
-                                view.map.isRotateGesturesEnabled = false
-
-                                errorMessage = null
-                            } catch (e: Exception) {
-                                Log.e("MapSection", "Error updating map: ${e.message}")
-                                errorMessage = "Error loading map: ${e.message}"
-                            }
-                        }
-                    )
-                }
-                errorMessage?.let {
-                    Text(
-                        text = it,
-                        color = Color.Red,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(16.dp)
-                    )
-                }
-            }
-
-            MapDetails(order)
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 0.5.dp,
-                color = Color(0xFFD4D4D4)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmer()
+                    .background(Color.Gray.copy(alpha = 0.2f))
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 6.dp, bottom = 12.dp)
-                    .padding(horizontal = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+        }else{
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = "Take a route",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 12.sp,
-                        color = Color(0xFF3C2E56),
-                        lineHeight = 14.7.sp
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+                ) {
+                    mapView?.let { map ->
+                        AndroidView(
+                            factory = { map },
+                            modifier = Modifier.fillMaxSize(),
+                            update = { view ->
+                                state.value.order?.let {order->
+                                    try {
+                                        val venueLocation = Point(order.latitude, order.longitude)
+                                        view.map.move(
+                                            CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
+                                            Animation(Animation.Type.SMOOTH, 0.4f),
+                                            null
+                                        )
+                                        view.map.mapObjects.clear()
+
+                                        val placemark = view.map.mapObjects.addPlacemark(venueLocation)
+                                        val markerIcon = R.drawable.baseline_location_on_24_red
+                                        val drawable = ContextCompat.getDrawable(context, markerIcon)
+                                        val bitmap = drawable?.let {
+                                            getBitmapFromDrawable(it,1.5f)
+                                        }
+                                        placemark.setIcon(ImageProvider.fromBitmap(bitmap))
+
+                                        // Disable user interaction with the map
+                                        view.map.isScrollGesturesEnabled = false
+                                        view.map.isZoomGesturesEnabled = false
+                                        view.map.isTiltGesturesEnabled = false
+                                        view.map.isRotateGesturesEnabled = false
+
+                                        errorMessage = null
+                                    } catch (e: Exception) {
+                                        Log.e("MapSection", "Error updating map: ${e.message}")
+                                        errorMessage = "Error loading map: ${e.message}"
+                                    }
+                                }
+
+                            }
+                        )
+                    }
+                    errorMessage?.let {
+                        Text(
+                            text = it,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(16.dp)
+                        )
+                    }
+                }
+
+                MapDetails(state)
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 0.5.dp,
+                    color = Color(0xFFD4D4D4)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp, bottom = 12.dp)
+                        .padding(horizontal = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Take a route",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 12.sp,
+                            color = Color(0xFF3C2E56),
+                            lineHeight = 14.7.sp
+                        )
                     )
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_right),
-                    contentDescription = "Open in Maps",
-                    modifier = Modifier.size(14.dp)
-                )
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_right),
+                        contentDescription = "Open in Maps",
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
             }
         }
-
-        // Clickable overlay
+        //Clickable overlay
         Box(
             modifier = Modifier
                 .matchParentSize()
                 .clickable {
-                    order?.let { venue ->
+                    state.value.order?.let { venue ->
                         openMapWithOptions(
                             context,
-                            34.00,
-                            34.00,
+                            latitude = venue.latitude,
+                            longitude = venue.longitude,
                             venue.venueName
                         )
                     }
@@ -242,14 +261,34 @@ private fun getBitmapFromDrawable(drawable: Drawable, scaleFactor: Float = 1.5f)
 
 
 @Composable
-private fun MapDetails(order: Order) {
+private fun MapDetails(state: State<OrderDetailsContact.UIState>) {
+    if (state.value.isLoading) {
+        Box(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .fillMaxWidth(0.6f)
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .shimmer()
+                .background(Color.Gray.copy(alpha = 0.2f))
+        )
+        Box(
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .fillMaxWidth(0.6f)
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .shimmer()
+                .background(Color.Gray.copy(alpha = 0.2f))
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
     ) {
         Text(
-            text =  " " + order.sector,
+            text = " " + state.value.order?.sector,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -261,7 +300,7 @@ private fun MapDetails(order: Order) {
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.mingcute_navigation_fill,
-            text = "8.9 km from you",
+            text = "${state.value.order?.distance} km from you",
             tintColor = Color(0xFFB7B3B3),
         )
         Spacer(modifier = Modifier.height(4.dp))

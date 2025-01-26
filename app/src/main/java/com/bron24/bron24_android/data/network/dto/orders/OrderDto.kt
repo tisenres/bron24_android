@@ -37,6 +37,43 @@ data class OrderDto(
     val venueName:String
 ) : Parcelable
 
+data class OrderDetailsDto(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("time_slot")
+    val timeSlot: TimeSlotDto,
+    @SerializedName("booking_date")
+    val bookingDate: String,
+    @SerializedName("sector")
+    val sector: String,
+    @SerializedName("status")
+    val status: String,
+    @SerializedName("hours")
+    val hours: String,
+    @SerializedName("phone_number_1")
+    val phoneNumber1:String,
+    @SerializedName("phone_number_2")
+    val phoneNumber2: String,
+    @SerializedName("order_id")
+    val orderId: String,
+    @SerializedName("payment")
+    val payment: String,
+    @SerializedName("user")
+    val user: Int,
+    @SerializedName("venue_id")
+    val venueId: Int,
+    @SerializedName("status_name")
+    val statusName:String,
+    @SerializedName("venue_name")
+    val venueName:String,
+    @SerializedName("latitude")
+    val latitude:Double,
+    @SerializedName("longitude")
+    val longitude:Double,
+    @SerializedName("Distance")
+    val distance:Float
+)
+
 @Parcelize
 @Keep
 data class TimeSlotDto(
