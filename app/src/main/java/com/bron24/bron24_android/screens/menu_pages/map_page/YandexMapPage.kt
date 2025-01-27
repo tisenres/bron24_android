@@ -2,7 +2,7 @@ package com.bron24.bron24_android.screens.menu_pages.map_page
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +36,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
@@ -44,7 +45,6 @@ import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
@@ -332,21 +332,14 @@ fun ZoomControls(modifier: Modifier, mapView: MapView?, userLocation: Point) {
 private fun setMarkerInStartLocation(
     mapObjects: MapObjectCollection,
     location: Point,
-    context: Context,
+    context: Context
 ) {
-    val originalBitmap = BitmapFactory.decodeResource(
-        context.resources,
-        R.drawable.location_red
-    )
-    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 300, 300, true)
-    val imageProvider = ImageProvider.fromBitmap(resizedBitmap)
+
+    val marker = createBitmapFromVector(R.drawable.location_pin_svg, context)
 
     val placemark = mapObjects.addPlacemark(
         location,
-        imageProvider,
-        IconStyle().apply {
-            scale = 0.5f
-        }
+        ImageProvider.fromBitmap(marker)
     )
 
     placemark.addTapListener { _, _ ->
@@ -362,19 +355,12 @@ fun setStadiumMarker(
     context: Context,
     intent: (YandexMapPageContract.Intent) -> Unit
 ) {
-    val originalBitmap = BitmapFactory.decodeResource(
-        context.resources,
-        R.drawable.location_green
-    )
-    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 300, 300, true)
-    val imageProvider = ImageProvider.fromBitmap(resizedBitmap)
+
+    val marker = createBitmapFromVector(R.drawable.green_location_pin, context)
 
     val placemark = mapObjects.addPlacemark(
         point.first,
-        imageProvider,
-        IconStyle().apply {
-            scale = 0.5f
-        }
+        ImageProvider.fromBitmap(marker)
     )
 
     placemark.addTapListener { _, _ ->
@@ -385,6 +371,18 @@ fun setStadiumMarker(
     }
 }
 
+private fun createBitmapFromVector(art: Int, context: Context): Bitmap? {
+    val drawable = ContextCompat.getDrawable(context, art) ?: return null
+    val bitmap = Bitmap.createBitmap(
+        drawable.intrinsicWidth,
+        drawable.intrinsicHeight,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
+}
 
 fun centerCameraOnMarker(mapView: MapView, point: Point) {
     val offsetY = 0.002
