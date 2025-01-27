@@ -1,30 +1,65 @@
 package com.bron24.bron24_android.domain.usecases.venue
 
-import android.util.Log
+import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.domain.repository.OrdersRepository
 import com.bron24.bron24_android.domain.repository.VenueRepository
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetVenueDetailsUseCase @Inject constructor(
     private val venueRepository: VenueRepository,
+    private val ordersRepository: OrdersRepository,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
-    private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase
+    private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(venueId: Int): Flow<VenueDetails> = flow {
-        getCurrentLocationUseCase.execute().collect{
-           val data = venueRepository.getVenueDetailsById(venueId,it.latitude,it.longitude)
-            if(data!=null){
-                emit(data)
+    operator fun invoke(venueId: Int): Flow<Pair<VenueDetails, List<String>>> = flow{
+        checkLocationPermissionUseCase.invoke().collect{
+            when(it){
+                LocationPermissionState.GRANTED -> {
+                    getCurrentLocationUseCase.execute().collect{
+                        val venueDetails = venueRepository.getVenueDetailsById(venueId, longitude = it.longitude, latitude = it.latitude)
+                        emitAll(venueDetails.flatMapConcat { data ->
+                            flow {
+                                val images = venueRepository.getVenuePictures(venueId)
+                                emit(Pair(first = data, second = images))
+                            }
+                        })
+                    }
+                }
+                LocationPermissionState.DENIED -> {
+
+                }
             }
         }
+    }
+}
+//        checkLocationPermissionUseCase.invoke().flatMapLatest {
+//            when (it) {
+////                LocationPermissionState.GRANTED -> {
+////                    getCurrentLocationUseCase.execute().flatMapLatest {location->
+////                        val orderData = venueRepository.getVenueDetailsById(venueId, latitude =location )
+////
+////                    }
+////
+////                }
+////                LocationPermissionState.DENIED -> {
+////
+////                }
+//            }
+//        }
+//    }.catch {  }.collect{
+//
+//    }
+
+
 //        checkLocationPermissionUseCase.invoke()
 //            .flatMapLatest { permissionState ->
 //                when (permissionState) {
@@ -42,7 +77,6 @@ class GetVenueDetailsUseCase @Inject constructor(
 //            .collect { venueDetails ->
 //                emit(venueDetails)
 //            }
-    }
 
 //    private fun getVenueDetailsWithLocation(venueId: Int, latitude: Double?, longitude: Double?): Flow<VenueDetails> = flow {
 //        val venue = venueRepository.getVenueDetailsById(venueId, latitude, longitude)
@@ -52,4 +86,4 @@ class GetVenueDetailsUseCase @Inject constructor(
 //            emit(venueWithPictures)
 //        }
 //    }
-}
+
