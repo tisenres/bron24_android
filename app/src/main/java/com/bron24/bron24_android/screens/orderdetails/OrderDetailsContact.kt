@@ -21,7 +21,7 @@ interface OrderDetailsContact {
     class SideEffect(val message:String)
 
     sealed interface Intent{
-        data object ClickMoveTo:Intent
+        data class ClickMoveTo(val id:Int):Intent
         data object Back :Intent
         data class ClickCancel(val id: Int):Intent
     }

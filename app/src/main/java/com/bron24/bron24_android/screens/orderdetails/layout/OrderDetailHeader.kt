@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
@@ -35,6 +36,7 @@ import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.domain.entity.order.OrderAddress
 import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
@@ -57,22 +59,20 @@ fun OrderDetailHeader(order: OrderDetails?, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = "№ ${order?.id}",
-            fontSize = 10.sp,
+            fontSize = 14.sp,
             fontFamily = gilroyFontFamily,
             fontWeight = FontWeight.Normal,
             lineHeight = 15.sp,
             color = Color(0xFF949494)
         )
         Spacer(modifier = Modifier.height(6.dp))
-        OrderPrice(price = "")
+        OrderPrice(price = order?.cost?:"")
         Spacer(modifier = Modifier.height(6.dp))
         OrderDateTime(
             date = order?.bookingDate?:"",
             time = " ${order?.timeSlot?.startTime} - ${order?.timeSlot?.endTime}"
         )
-        Spacer(modifier = Modifier.height(6.dp))
-        //OrderAddress(address = order.address.addressName)
-        Spacer(modifier = Modifier.height(6.dp))
+        OrderAddress(address = "${order?.address?.district}")
     }
 }
 
@@ -81,7 +81,7 @@ fun OrderDetailHeader(order: OrderDetails?, modifier: Modifier = Modifier) {
 private fun OrderPrice(price: String) {
     OrderInfoItem(
         icon = R.drawable.icon_cost,
-        text = price + " ${stringResource(R.string.som)}",
+        text ="$price ${stringResource(R.string.som)}",
         modifier = Modifier,
         contentDescription = "Price"
     )
@@ -89,7 +89,9 @@ private fun OrderPrice(price: String) {
 
 @Composable
 private fun OrderDateTime(date: String, time: String) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+    Row(modifier = Modifier
+        .padding(bottom = 6.dp)
+        .fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
         OrderInfoItem(
             icon = R.drawable.baseline_calendar_today_24,
             text = date,
@@ -105,6 +107,7 @@ private fun OrderDateTime(date: String, time: String) {
         )
     }
 }
+
 
 @Composable
 private fun OrderInfoItem(
@@ -134,7 +137,7 @@ private fun OrderInfoItem(
 @Composable
 private fun OrderAddress(address: String) {
     val context = LocalContext.current
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 8.dp)) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_location_pin_24),
             contentDescription = "Location",
@@ -143,7 +146,8 @@ private fun OrderAddress(address: String) {
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            modifier = Modifier,
+            modifier = Modifier.weight(0.8f),
+            maxLines = 1,
             text = address,
             style = TextStyle(fontSize = 14.sp, color = Color(0xFF949494))
         )
@@ -159,20 +163,23 @@ private fun OrderAddress(address: String) {
 
         ) {
             Text(
-                "Copy",
-                fontSize = 12.sp,
+                text = stringResource(id = R.string.copy),
+                fontSize = 13.sp,
+                maxLines = 1,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.drawBehind {
-                    val strokeWidthPx = 1.dp.toPx()
-                    val verticalOffset = size.height - 2.sp.toPx()
-                    drawLine(
-                        color = Color(0xFF0067FF),
-                        strokeWidth = strokeWidthPx,
-                        start = Offset(0f, verticalOffset),
-                        end = Offset(size.width, verticalOffset)
-                    )
-                },
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .drawBehind {
+                        val strokeWidthPx = 1.dp.toPx()
+                        val verticalOffset = size.height - 2.sp.toPx()
+                        drawLine(
+                            color = Color(0xFF0067FF),
+                            strokeWidth = strokeWidthPx,
+                            start = Offset(0f, verticalOffset),
+                            end = Offset(size.width, verticalOffset)
+                        )
+                    },
             )
         }
     }

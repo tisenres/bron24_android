@@ -1,18 +1,23 @@
 package com.bron24.bron24_android.screens.orderdetails.layout
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +31,7 @@ import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
+@SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun OrderDetailContacts(order: OrderDetails?, modifier: Modifier) {
     val context = LocalContext.current
@@ -42,12 +48,13 @@ fun OrderDetailContacts(order: OrderDetails?, modifier: Modifier) {
                 modifier = Modifier.weight(1f)
             )
             Column {
-                if (order?.phoneNumber1.isNullOrEmpty()) {
+                if (order?.phoneNumber1?.isNotEmpty() == true) {
+
                     Text(
-                        text = order?.phoneNumber1?.formatPhoneNumber()?:"",
-                        modifier = Modifier.clickable {
-                            openDialer(context, order?.phoneNumber1?.formatPhoneNumber()?:"")
-                        },
+                        text = order.phoneNumber1.formatPhoneNumber()?:"",
+                        modifier = Modifier.clip(RoundedCornerShape(6.dp)).clickable {
+                            openDialer(context, order.phoneNumber1.formatPhoneNumber()?:"")
+                        }.padding(horizontal = 8.dp),
                         fontSize = 12.sp,
                         color = Color(0xff32B768),
                         fontFamily = gilroyFontFamily,
@@ -55,7 +62,7 @@ fun OrderDetailContacts(order: OrderDetails?, modifier: Modifier) {
                         textDecoration = TextDecoration.Underline
                     )
                 }
-                if (!order?.phoneNumber2.isNullOrEmpty()) {
+                if (order?.phoneNumber2?.isNotEmpty() == true) {
                     Text(
                         text = order?.phoneNumber2?.formatPhoneNumber()?:"",
                         modifier = Modifier.clickable {

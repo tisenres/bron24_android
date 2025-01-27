@@ -28,6 +28,8 @@ data class OrderDetails(
     val sector: String,
     val status: String,
     val hours: String,
+    val cost:String,
+    val address: OrderAddress,
     val phoneNumber1:String,
     val phoneNumber2: String,
     val orderId: String,
@@ -38,7 +40,7 @@ data class OrderDetails(
     val venueName:String,
     val latitude:Double,
     val longitude:Double,
-    val distance:Float
+    val distance:Double
 )
 
 @Keep

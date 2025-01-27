@@ -51,6 +51,7 @@ import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.menu_pages.map_page.getBitmapFromDrawable
 import com.bron24.bron24_android.screens.orderdetails.OrderDetailsContact
+import com.google.android.play.integrity.internal.f
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -288,7 +289,7 @@ private fun MapDetails(state: State<OrderDetailsContact.UIState>) {
             .padding(horizontal = 10.dp)
     ) {
         Text(
-            text = " " + state.value.order?.sector,
+            text = "${state.value.order?.address?.district} ${state.value.order?.address?.addressName}",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -300,13 +301,13 @@ private fun MapDetails(state: State<OrderDetailsContact.UIState>) {
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.mingcute_navigation_fill,
-            text = "${state.value.order?.distance} km from you",
+            text = "${String.format("%.2f",state.value.order?.distance?:10)} km from you",
             tintColor = Color(0xFFB7B3B3),
         )
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.ic_metro,
-            text = "",
+            text = state.value.order?.address?.closestMetroStation?:"",
             tintColor = Color(0xFFD43535),
         )
     }
