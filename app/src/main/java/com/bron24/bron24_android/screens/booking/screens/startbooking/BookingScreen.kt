@@ -59,12 +59,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.booking.DateItem
 import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.priceToInt
-import com.bron24.bron24_android.components.toast.ToastManager
-import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import java.util.Calendar
@@ -73,10 +73,10 @@ import java.util.Calendar
 fun BookingScreen(
     viewModel: BookingViewModel = hiltViewModel(),
     venueId: Int,
-    venueName:String,
+    venueName: String,
     sectors: List<String>,
     pricePerHour: String,
-    onOrderClick: (Int, String,String, String, List<TimeSlot>) -> Unit
+    onOrderClick: (Int, String, String, String, List<TimeSlot>) -> Unit
 ) {
 
     val selectedDate by viewModel.selectedDate.collectAsState()
@@ -485,7 +485,9 @@ fun AvailableTimesSection(
     getAvailableTimesState: BookingState
 ) {
     Column(
-        modifier = Modifier.padding(horizontal = 20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Text(
@@ -519,7 +521,7 @@ fun AvailableTimesSection(
                     FlowRow(
                         maxItemsInEachRow = 3,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         timeSlots.forEach { timeSlot ->
                             TimeSlotItem(
@@ -570,7 +572,7 @@ fun EmptyTimeSlots() {
 @Composable
 fun TimeSlotItem(
     timeSlot: TimeSlot,
-    onTimeSelected: () -> Unit
+    onTimeSelected: () -> Unit,
 ) {
     val backgroundColor = when {
         timeSlot.isSelected -> Color(0xFF32B768)
@@ -586,7 +588,7 @@ fun TimeSlotItem(
     Box(
         modifier = Modifier
             .padding(bottom = 17.dp)
-            .width(110.dp)
+            .widthIn(min = 110.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
             .clickable(

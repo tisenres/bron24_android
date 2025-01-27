@@ -3,7 +3,6 @@ package com.bron24.bron24_android.screens.menu_pages.map_page
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -215,14 +214,10 @@ fun YandexMapPageContent(
 //        }
 
         LaunchedEffect(userLocation) {
-            // If the first update time is 0 (indicating no previous update)
             if (firstUpdateTime.value == 0L) {
-                firstUpdateTime.value = System.currentTimeMillis() // Store the time of first update
+                firstUpdateTime.value = System.currentTimeMillis()
             }
-
-            // Check if 3000 milliseconds have passed since the first update
             if (System.currentTimeMillis() - firstUpdateTime.value <= 3000L) {
-                Log.d("AAA", "YandexMapPageContent: $userLocation")
                 userLocation.let { location ->
                     mapView?.map?.move(
                         CameraPosition(
@@ -233,7 +228,6 @@ fun YandexMapPageContent(
                 }
             }
         }
-
     }
 }
 
