@@ -3,6 +3,7 @@ package com.bron24.bron24_android.screens.menu_pages.map_page
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,7 +46,10 @@ import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.MapObjectCollection
+import com.yandex.mapkit.map.MapObjectTapListener
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import org.orbitmvi.orbit.compose.collectAsState
@@ -87,6 +91,8 @@ fun YandexMapPageContent(
     val context = LocalContext.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
     var mapObjects by remember { mutableStateOf<MapObjectCollection?>(null) }
+    val mapObjectListeners by remember { mutableStateOf<MutableMap<Point, MapObjectTapListener>>(mutableMapOf()) }
+    val firstUpdateTime = remember { mutableStateOf<Long>(0L) }
 
     val userLocation = state.value.userLocation.let {
         Point(it.latitude, it.longitude)
@@ -120,7 +126,8 @@ fun YandexMapPageContent(
                             mapObjects!!,
                             (point to venue),
                             context,
-                            intent
+                            intent,
+                            mapObjectListeners
                         )
                     }
                 }
@@ -139,7 +146,8 @@ fun YandexMapPageContent(
                         mapObjects!!,
                         (point to venue),
                         context,
-                        intent
+                        intent,
+                        mapObjectListeners
                     )
                 }
             }
@@ -207,15 +215,25 @@ fun YandexMapPageContent(
 //        }
 
         LaunchedEffect(userLocation) {
-            userLocation.let { location ->
-                mapView?.map?.move(
-                    CameraPosition(
-                        Point(location.latitude, location.longitude),
-                        15f, 0f, 0f
-                    ),
-                )
+            // If the first update time is 0 (indicating no previous update)
+            if (firstUpdateTime.value == 0L) {
+                firstUpdateTime.value = System.currentTimeMillis() // Store the time of first update
+            }
+
+            // Check if 3000 milliseconds have passed since the first update
+            if (System.currentTimeMillis() - firstUpdateTime.value <= 3000L) {
+                Log.d("AAA", "YandexMapPageContent: $userLocation")
+                userLocation.let { location ->
+                    mapView?.map?.move(
+                        CameraPosition(
+                            Point(location.latitude, location.longitude),
+                            15f, 0f, 0f
+                        ),
+                    )
+                }
             }
         }
+
     }
 }
 
@@ -334,18 +352,11 @@ private fun setMarkerInStartLocation(
     location: Point,
     context: Context
 ) {
-
     val marker = createBitmapFromVector(R.drawable.location_pin_svg, context)
-
-    val placemark = mapObjects.addPlacemark(
+    mapObjects.addPlacemark(
         location,
         ImageProvider.fromBitmap(marker)
     )
-
-    placemark.addTapListener { _, _ ->
-        Toast.makeText(context, "Marker clicked at: ${location.latitude}, ${location.longitude}", Toast.LENGTH_SHORT).show()
-        true
-    }
 }
 
 fun setStadiumMarker(
@@ -353,9 +364,9 @@ fun setStadiumMarker(
     mapObjects: MapObjectCollection,
     point: Pair<Point, VenueCoordinates>,
     context: Context,
-    intent: (YandexMapPageContract.Intent) -> Unit
+    intent: (YandexMapPageContract.Intent) -> Unit,
+    mapObjectListeners: MutableMap<Point, MapObjectTapListener> = mutableMapOf()
 ) {
-
     val marker = createBitmapFromVector(R.drawable.green_location_pin, context)
 
     val placemark = mapObjects.addPlacemark(
@@ -363,11 +374,18 @@ fun setStadiumMarker(
         ImageProvider.fromBitmap(marker)
     )
 
-    placemark.addTapListener { _, _ ->
-        centerCameraOnMarker(mapView, point.first)
-        intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
-        Toast.makeText(context, "Marker clicked at: ${point.first.latitude}, ${point.first.longitude}", Toast.LENGTH_SHORT).show()
-        true
+    // Only add listener if one doesn't exist for this point
+    if (!mapObjectListeners.containsKey(point.first)) {
+        val listener = MapObjectTapListener { _, _ ->
+            centerCameraOnMarker(mapView, point.first)
+            animateMarker(context, placemark)
+            intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
+            Toast.makeText(context, "Marker clicked at: ${point.first.latitude}, ${point.first.longitude}", Toast.LENGTH_SHORT).show()
+            true
+        }
+
+        mapObjectListeners[point.first] = listener
+        placemark.addTapListener(listener)
     }
 }
 
@@ -382,6 +400,20 @@ private fun createBitmapFromVector(art: Int, context: Context): Bitmap? {
     drawable.setBounds(0, 0, canvas.width, canvas.height)
     drawable.draw(canvas)
     return bitmap
+}
+
+private fun animateMarker(
+    context: Context,
+    placemark: PlacemarkMapObject
+) {
+
+    placemark.isVisible = false
+
+    placemark.setIconStyle(
+        IconStyle().apply {
+            scale = 0.5f
+        }
+    )
 }
 
 fun centerCameraOnMarker(mapView: MapView, point: Point) {

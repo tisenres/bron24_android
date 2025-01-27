@@ -25,13 +25,23 @@ class YandexMapPageVM @Inject constructor(
     override fun onDispatchers(intent: YandexMapPageContract.Intent): Job = intent {
         when (intent) {
             is YandexMapPageContract.Intent.ClickMarker -> {
-                getVenueDetailsUseCase.invoke(venueId = intent.location.venueId).onEach {
-                    reduce { state.copy(venueDetails = it) }
+                getVenueDetailsUseCase.invoke(venueId = intent.location.venueId).onEach { venueDetails ->
+                    reduce { state.copy(venueDetails = venueDetails) }
                 }.launchIn(viewModelScope)
             }
-
-            YandexMapPageContract.Intent.CheckPermission -> TODO()
-            is YandexMapPageContract.Intent.ClickVenueBook -> TODO()
+            is YandexMapPageContract.Intent.CheckPermission -> {
+                checkLocationPermissionUseCase.invoke().onEach { permissionState ->
+                    reduce { state.copy(checkPermission = permissionState) }
+                    if (permissionState == LocationPermissionState.GRANTED) {
+                        initData()
+                    } else {
+                        postSideEffect("Permission Denied")
+                    }
+                }.launchIn(viewModelScope)
+            }
+            is YandexMapPageContract.Intent.ClickVenueBook -> {
+                postSideEffect("Venue booking clicked: ${intent.venueDetails.venueName}")
+            }
         }
     }
 
