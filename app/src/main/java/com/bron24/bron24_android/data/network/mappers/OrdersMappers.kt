@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.data.network.mappers
 
+import android.location.Address
+import com.bron24.bron24_android.data.network.dto.orders.AddressDto
 import com.bron24.bron24_android.data.network.dto.orders.OrderDetailsDto
 import com.bron24.bron24_android.data.network.dto.orders.OrderDto
 import com.bron24.bron24_android.data.network.dto.orders.TimeSlotDto
@@ -37,7 +39,9 @@ fun OrderDetailsDto.toDomainModel(): OrderDetails = OrderDetails(
     phoneNumber2 = phoneNumber2,
     orderId = orderId,
     payment = payment,
+    cost = cost,
     user = user,
+    address = address.toDomain(),
     venueId = venueId,
     statusName = statusName,
     venueName = venueName,
@@ -50,3 +54,10 @@ fun OrderDetailsDto.toDomainModel(): OrderDetails = OrderDetails(
 fun List<OrderDto>.toDomainModel(): List<Order> {
     return this.map { it.toDomainModel() }
 }
+
+fun AddressDto.toDomain():OrderAddress = OrderAddress(
+    id = id,
+    addressName = addressName,
+    district = district,
+    closestMetroStation = closestMetroStation
+)

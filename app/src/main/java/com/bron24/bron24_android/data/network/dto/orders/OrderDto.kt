@@ -44,8 +44,12 @@ data class OrderDetailsDto(
     val timeSlot: TimeSlotDto,
     @SerializedName("booking_date")
     val bookingDate: String,
+    @SerializedName("address")
+    val address:AddressDto,
     @SerializedName("sector")
     val sector: String,
+    @SerializedName("cost")
+    val cost:String,
     @SerializedName("status")
     val status: String,
     @SerializedName("hours")
@@ -70,8 +74,8 @@ data class OrderDetailsDto(
     val latitude:Double,
     @SerializedName("longitude")
     val longitude:Double,
-    @SerializedName("Distance")
-    val distance:Float
+    @SerializedName("distance")
+    val distance:Double
 )
 
 @Parcelize
