@@ -3,7 +3,9 @@ package com.bron24.bron24_android.screens.menu_pages.map_page
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -167,51 +171,47 @@ fun YandexMapPageContent(
             }
         }
 
-        // Venue details
+        AnimatedVisibility(
+            visible = state.value.venueDetails != null,
+            enter = slideInVertically(initialOffsetY = { it }),
+            exit = slideOutVertically(targetOffsetY = { it }),
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
 
-//        AnimatedVisibility(
-//            visible = state.value.venueDetails != null,
-//            enter = slideInVertically(initialOffsetY = { it }),
-//            exit = slideOutVertically(targetOffsetY = { it }),
-//            modifier = Modifier
-//        ) {
-//            val venueDetails = state.value.venueDetails
-//            if (venueDetails != null) {
-//                MapVenueDetails(venueDetails) {}
-//            }
-//        }
+            val venueDetails = state.value.venueDetails
+            if (venueDetails != null) {
+                MapVenueDetails(
+                    venueDetails = venueDetails,
+                    modifier = Modifier
+                ) {}
+            }
+
+            val dismissState = rememberSwipeToDismissBoxState(
+                confirmValueChange = { dismissValue ->
+                    if (dismissValue == SwipeToDismissBoxValue.StartToEnd || dismissValue == SwipeToDismissBoxValue.EndToStart) {
+ //                       mapViewModel.clearSelectedVenue()
+                        true
+                    } else {
+                        false
+                    }
+                }
+            )
 //
-//        AnimatedVisibility(
-//            visible = state.value.venueDetails != null,
-//            enter = slideInVertically(initialOffsetY = { it }),
-//            exit = slideOutVertically(targetOffsetY = { it }),
-//            modifier = Modifier
-//        ) {
-//            val dismissState = rememberSwipeToDismissBoxState(
-//                confirmValueChange = { dismissValue ->
-//                    if (dismissValue == SwipeToDismissBoxValue.StartToEnd || dismissValue == SwipeToDismissBoxValue.EndToStart) {
-////                        mapViewModel.clearSelectedVenue()
-//                        true
-//                    } else {
-//                        false
-//                    }
-//                }
-//            )
-
 //            SwipeToDismissBox(
 //                state = dismissState,
 //                backgroundContent = { /* Optional background content */ },
 //                content = {
-////                    SmallVenueDetailsScreen(
-////                        viewModel = mapViewModel,
-////                        onClose = {
-////                            showVenueDetails = false
-////                            mapViewModel.clearSelectedVenue()
-////                        }
-////                    )
+//                    SmallVenueDetailsScreen(
+//                        viewModel = mapViewModel,
+//                        onClose = {
+//                            showVenueDetails = false
+//                            mapViewModel.clearSelectedVenue()
+//                        }
+//                    )
 //                }
 //            )
 //        }
+        }
 
         LaunchedEffect(userLocation) {
             if (firstUpdateTime.value == 0L) {
@@ -374,7 +374,6 @@ fun setStadiumMarker(
             centerCameraOnMarker(mapView, point.first)
             animateMarker(context, placemark)
             intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
-            Toast.makeText(context, "Marker clicked at: ${point.first.latitude}, ${point.first.longitude}", Toast.LENGTH_SHORT).show()
             true
         }
 

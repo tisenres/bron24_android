@@ -95,6 +95,7 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         workingHoursTill = workingHoursTill,
         contact1 = contact1,
         contact2 = contact2,
+        slots = slots,
         createdAt = createdAt,
         updatedAt = updatedAt,
         imageUrl = previewImg,

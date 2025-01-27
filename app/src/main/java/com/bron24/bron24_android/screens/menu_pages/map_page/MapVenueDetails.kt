@@ -73,17 +73,18 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun MapVenueDetails(
     venueDetails: VenueDetails,
-    onBookPressed: () -> Unit,
+    modifier: Modifier,
+    onOrderPressed: () -> Unit,
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
-    val isLoading by remember { derivedStateOf { venueDetails == null } }
+    val isLoading by remember { derivedStateOf { false } }
 
     if (isLoading) {
-        LoadingScreen()
+        LoadingScreen(modifier)
     } else {
         SmallDetailsContent(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+            modifier = modifier.padding(horizontal = 10.dp, vertical = 5.dp),
             venueDetails = venueDetails,
             onFavoriteClick = { isFavorite = !isFavorite },
             onCopyAddressClick = {
@@ -92,14 +93,15 @@ fun MapVenueDetails(
                     venueDetails.address.addressName
                 )
             },
+            onOrderPressed = onOrderPressed
         )
     }
 }
 
 @Composable
-fun LoadingScreen() {
+fun LoadingScreen(modifier: Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(300.dp)
             .clip(RoundedCornerShape(10.dp))
@@ -187,6 +189,7 @@ fun SmallDetailsContent(
     venueDetails: VenueDetails?,
     onFavoriteClick: () -> Unit,
     onCopyAddressClick: () -> Unit,
+    onOrderPressed: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -198,14 +201,18 @@ fun SmallDetailsContent(
             .background(Color.White)
     ) {
         SmallImageSection(
-            imageUrls = listOf(venueDetails?.imageUrl ?: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.reformsports.com%2Fwhy-do-they-sprinkle-football-pitches%2F&psig=AOvVaw0ySGjgQox6UGKgtGCoY45Z&ust=1737820026401000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCIj70JzajosDFQAAAAAdAAAAABAE", "https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.reformsports.com%2Fwhy-do-they-sprinkle-football-pitches%2F&psig=AOvVaw0ySGjgQox6UGKgtGCoY45Z&ust=1737820026401000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCIj70JzajosDFQAAAAAdAAAAABAE"),
+            imageUrls = listOf(
+                venueDetails?.imageUrl
+                    ?: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.reformsports.com%2Fwhy-do-they-sprinkle-football-pitches%2F&psig=AOvVaw0ySGjgQox6UGKgtGCoY45Z&ust=1737820026401000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCIj70JzajosDFQAAAAAdAAAAABAE",
+                "https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.reformsports.com%2Fwhy-do-they-sprinkle-football-pitches%2F&psig=AOvVaw0ySGjgQox6UGKgtGCoY45Z&ust=1737820026401000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCIj70JzajosDFQAAAAAdAAAAABAE"
+            ),
             onShareClick = { shareVenueDetails(context, venueDetails) },
             onFavoriteClick
         )
         Spacer(modifier = Modifier.height(12.dp))
         SmallHeaderSection(venueDetails, onCopyAddressClick)
         Spacer(modifier = Modifier.height(12.dp))
-        SmallPricingSection(venueDetails)
+        SmallPricingSection(venueDetails, onOrderPressed)
     }
 }
 
@@ -433,7 +440,7 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
 fun AvailableSlots(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.baseline_event_available_24,
-        text = "12 available slots"
+        text = details?.slots.toString() + " " + stringResource(id = R.string.hours),
     )
 }
 
@@ -441,7 +448,7 @@ fun AvailableSlots(details: VenueDetails?) {
 fun DistanceRow(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.mingcute_navigation_fill,
-        text = "2.3 km from you"
+        text = String.format("%.1f km ${stringResource(id = R.string.from_you )}",details?.distance?:0.0),
     )
 }
 
@@ -554,7 +561,10 @@ fun SmallRatingSection(venueDetails: VenueDetails?) {
 }
 
 @Composable
-fun SmallPricingSection(venueDetails: VenueDetails?) {
+fun SmallPricingSection(
+    venueDetails: VenueDetails?,
+    onOrderPressed: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -573,7 +583,7 @@ fun SmallPricingSection(venueDetails: VenueDetails?) {
             ),
         )
         Button(
-            onClick = { /* Order action */ },
+            onClick = { onOrderPressed() },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier

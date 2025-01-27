@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.menu_pages.map_page
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
@@ -27,8 +28,10 @@ class YandexMapPageVM @Inject constructor(
             is YandexMapPageContract.Intent.ClickMarker -> {
                 getVenueDetailsUseCase.invoke(venueId = intent.location.venueId).onEach { venueDetails ->
                     reduce { state.copy(venueDetails = venueDetails) }
+                    Log.d("TAGAGSDHSHDHSD", "onDispatchers: $venueDetails")
                 }.launchIn(viewModelScope)
             }
+
             is YandexMapPageContract.Intent.CheckPermission -> {
                 checkLocationPermissionUseCase.invoke().onEach { permissionState ->
                     reduce { state.copy(checkPermission = permissionState) }
@@ -39,9 +42,11 @@ class YandexMapPageVM @Inject constructor(
                     }
                 }.launchIn(viewModelScope)
             }
+
             is YandexMapPageContract.Intent.ClickVenueBook -> {
                 postSideEffect("Venue booking clicked: ${intent.venueDetails.venueName}")
             }
+
         }
     }
 
