@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.data.repository
 
-import android.util.Log
 import com.bron24.bron24_android.data.local.db.FavouriteDao
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.network.mappers.toDomainModel
@@ -63,19 +62,12 @@ class VenueRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getVenueDetailsById(
+    override fun getVenueDetailsById(
         venueId: Int,
         latitude: Double?,
         longitude: Double?
-    ): VenueDetails? = withContext(Dispatchers.IO) {
-//        try {
-        Log.d("AAA", "getVenueDetailsById: try")
-        Log.d("AAA", "getVenueDetailsById: ${apiService.getVenueDetails(venueId, latitude, longitude)}")
-        apiService.getVenueDetails(venueId, latitude, longitude)?.data?.toDomainModel()
-//        } catch (e: Exception) {
-//            Log.d("AAA", "getVenueDetailsById: ")
-//            null
-//        }
+    ): Flow<VenueDetails> = flow{
+        emit(apiService.getVenueDetails(venueId, latitude, longitude).data.toDomainModel())
     }
 
     override suspend fun searchVenues(

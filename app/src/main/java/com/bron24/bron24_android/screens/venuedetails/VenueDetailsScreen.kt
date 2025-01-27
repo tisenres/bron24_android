@@ -40,6 +40,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -96,6 +98,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.components.items.LoadingScreen
@@ -108,6 +111,9 @@ import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScr
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.bron24.bron24_android.screens.orderdetails.layout.ShimmerLayout
+import com.google.android.play.integrity.internal.t
+import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -117,59 +123,55 @@ import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
 
-data class VenueDetailsScreen(val venueId: Int) :Screen{
+data class VenueDetailsScreen(val venueId: Int) : Screen {
     @Composable
     override fun Content() {
-        val viewModel:VenueDetailsContract.ViewModel = getViewModel<VenueDetailsVM>()
+        val viewModel: VenueDetailsContract.ViewModel = getViewModel<VenueDetailsVM>()
         remember {
             viewModel.initData(venueId)
         }
         val uiState = viewModel.collectAsState()
-        VenueDetailsScreenContent(venueId,state = uiState,viewModel::onDispatchers)
+        VenueDetailsScreenContent(venueId, state = uiState, viewModel::onDispatchers)
     }
 
 }
+
 @Composable
 fun VenueDetailsScreenContent(
     venueId: Int,
-    state:State<VenueDetailsContract.UIState>,
-    intent:(VenueDetailsContract.Intent)->Unit
+    state: State<VenueDetailsContract.UIState>,
+    intent: (VenueDetailsContract.Intent) -> Unit
 ) {
     var openOrder by remember {
         mutableStateOf(false)
     }
-    if(state.value.isLoading){
-        LoadingScreen()
-    }else{
-        VenueDetailsContent(
-            details = state.value.venue,
-            onBackClick = {
-                intent.invoke(VenueDetailsContract.Intent.ClickBack)
-            },
-            onFavoriteClick = { /* Implement favorite functionality */ },
-            onMapClick = {lan,long->
-                intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan,long)))
-            },
-            onOrderClick = {
-                openOrder = true
-////                    state.venueDetails.venueId,
-//                    state.venueDetails.sectors,
-//                    state.venueDetails.pricePerHour
-            }
-        )
-    }
-    if(openOrder){
+    VenueDetailsContent(
+        state = state,
+        onBackClick = {
+            intent.invoke(VenueDetailsContract.Intent.ClickBack)
+        },
+        onFavoriteClick = { /* Implement favorite functionality */ },
+        onMapClick = { lan, long ->
+            intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan, long)))
+        },
+        onOrderClick = {
+            openOrder = true
+        }
+    )
+//    }
+    if (openOrder) {
         BookingBottomSheet(
             venueId = venueId,
-            venueName = state.value.venue?.venueName?:"",
-            sectors = state.value.venue?.sectors?: emptyList(),
-            pricePerHour = state.value.venue?.pricePerHour?:"",
+            venueName = state.value.venue?.venueName ?: "",
+            sectors = state.value.venue?.sectors ?: emptyList(),
+            pricePerHour = state.value.venue?.pricePerHour ?: "",
             onDismiss = { openOrder = false },
-        ){
+        ) {
             intent.invoke(VenueDetailsContract.Intent.ClickOrder(it))
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingBottomSheet(
@@ -178,7 +180,7 @@ fun BookingBottomSheet(
     sectors: List<String>,
     pricePerHour: String,
     onDismiss: () -> Unit,
-    listener:(VenueOrderInfo)->Unit
+    listener: (VenueOrderInfo) -> Unit
 ) {
     val viewModel: BookingViewModel = hiltViewModel()
     val sheetState = rememberModalBottomSheetState()
@@ -194,19 +196,17 @@ fun BookingBottomSheet(
             sectors = sectors,
             pricePerHour = pricePerHour,
             viewModel = viewModel,
-            onOrderClick = { venueId,venueName,date, sector, timeSlots ->
-                listener.invoke(VenueOrderInfo(venueId=venueId,venueName = venueName,date=date, sector = sector, timeSlots = timeSlots))
+            onOrderClick = { venueId, venueName, date, sector, timeSlots ->
+                listener.invoke(VenueOrderInfo(venueId = venueId, venueName = venueName, date = date, sector = sector, timeSlots = timeSlots))
             },
         )
     }
 }
 
 
-
-
 @Composable
 fun VenueDetailsContent(
-    details: VenueDetails?,
+    state: State<VenueDetailsContract.UIState>,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     onOrderClick: () -> Unit,
@@ -227,6 +227,7 @@ fun VenueDetailsContent(
             .fillMaxSize()
             .background(Color.White)
     ) {
+
         LazyColumn(
             state = scrollState,
             modifier = Modifier.fillMaxSize(),
@@ -234,49 +235,135 @@ fun VenueDetailsContent(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item(key = "imageSection") {
-                VenueImageSection(
-                    imageUrl = details?.imageUrl ?: "",
-                    onBackClick = onBackClick,
-                    onShareClick = { shareVenueDetails(context, details) },
-                    onFavoriteClick = onFavoriteClick
-                )
+                if (state.value.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(230.dp)
+                            .shimmer()
+                            .background(Color.Gray.copy(alpha = 0.2f))
+                    )
+                } else {
+                    VenueImageSection(
+                        imageUrls = state.value.imageUrls,
+                        onBackClick = onBackClick,
+                        onShareClick = { shareVenueDetails(context, state.value.venue) },
+                        onFavoriteClick = onFavoriteClick
+                    )
+                }
+
             }
             item(key = "headerSection") {
-                HeaderSection(
-                    details = details,
-                    onMapClick = onMapClick,
-                    onCopyAddressClick = {
-                        copyAddressToClipboard(context, details?.address?.addressName)
+                if (state.value.isLoading) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(bottom = 6.dp)
+                                    .padding(horizontal = 16.dp)
+                                    .fillMaxWidth(0.6f)
+                                    .height(20.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .shimmer()
+                                    .background(Color.Gray.copy(alpha = 0.2f))
+                            )
+                            Spacer(modifier = Modifier.weight(0.2f))
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp)
+                                    .padding(bottom = 6.dp)
+                                    .size(40.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .shimmer()
+                                    .background(Color.Gray.copy(alpha = 0.2f))
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .padding(bottom = 6.dp)
+                                .padding(horizontal = 16.dp)
+                                .fillMaxWidth(0.5f)
+                                .height(20.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .shimmer()
+                                .background(Color.Gray.copy(alpha = 0.2f))
+                        )
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 6.dp)
+                                .fillMaxWidth(0.4f)
+                                .height(20.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .shimmer()
+                                .background(Color.Gray.copy(alpha = 0.2f))
+                        )
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 16.dp)
+                                .fillMaxWidth(0.4f)
+                                .height(20.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .shimmer()
+                                .background(Color.Gray.copy(alpha = 0.2f))
+                        )
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 12.dp)
+                                .fillMaxWidth(0.6f)
+                                .height(20.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .shimmer()
+                                .background(Color.Gray.copy(alpha = 0.2f))
+                        )
                     }
-                )
+                } else {
+                    HeaderSection(
+                        details = state.value.venue,
+                        onMapClick = onMapClick,
+                        onCopyAddressClick = {
+                            copyAddressToClipboard(context, state.value.venue?.address?.addressName)
+                        }
+                    )
+                }
+
             }
             item(key = "infrastructureSection") {
                 InfrastructureSection(
-                    details = details?.copy(
-                        workingHoursFrom = formatISODateTimeToHourString(details.workingHoursFrom),
-                        workingHoursTill = formatISODateTimeToHourString(details.workingHoursTill)
-                    )
+                    state = state
                 )
             }
-            item(key = "descriptionSection") { DescriptionSection(details) }
-            item(key = "mapSection") { MapSection(details = details) }
-            item(key = "spacer") {
-                Spacer(modifier = Modifier.height(80.dp))
+            item(key = "descriptionSection") {
+                if (state.value.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 12.dp)
+                            .fillMaxWidth(0.6f)
+                            .height(20.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .shimmer()
+                            .background(Color.Gray.copy(alpha = 0.2f))
+                    )
+                } else {
+                    DescriptionSection(state)
+                }
             }
+            item(key = "mapSection") { MapSection(state) }
         }
-
         AnimatedToolbar(
             visible = toolbarVisible,
-            title = details?.venueName?:"",
+            title = state.value.venue?.venueName ?: "",
             onBackClick = onBackClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(toolbarHeight)
                 .zIndex(1f)
         )
-
         PricingSection(
-            details = details,
+            state,
             onOrderClick = onOrderClick,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -384,16 +471,16 @@ fun shareVenueDetails(context: Context, details: VenueDetails?) {
 }
 
 @Composable
-fun DescriptionSection(details: VenueDetails?) {
+fun DescriptionSection(state: State<VenueDetailsContract.UIState>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        SectionTitle(text = stringResource(id = R.string.Additional_info))
+        SectionTitle(state = state, text = stringResource(id = R.string.Additional_info))
         Spacer(modifier = Modifier.height(15.dp))
         Text(
-            text = "asdasdsa skdlsdn kdlfskdjln sksdlnncsdjl" ?: "",
+            text = state.value.venue?.description?:"",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -409,19 +496,32 @@ fun DescriptionSection(details: VenueDetails?) {
 }
 
 @Composable
-fun SectionTitle(text: String) {
-    Text(
-        text = text,
-        style = TextStyle(
-            fontFamily = gilroyFontFamily,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 20.sp,
-            color = Color(0xFF3C2E56),
-            lineHeight = 25.sp,
-        ),
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
+fun SectionTitle(state: State<VenueDetailsContract.UIState>, text: String) {
+    if (state.value.isLoading) {
+        Box(
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .fillMaxWidth(0.6f)
+                .height(20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .shimmer()
+                .background(Color.Gray.copy(alpha = 0.2f))
+        )
+    } else {
+        Text(
+            text = text,
+            style = TextStyle(
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 20.sp,
+                color = Color(0xFF3C2E56),
+                lineHeight = 25.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+
 }
 
 @Composable
@@ -436,21 +536,19 @@ fun HeaderSection(
             .padding(horizontal = 16.dp)
     ) {
         TitleSection(details, onMapClick)
-        Spacer(modifier = Modifier.height(14.dp))
         AddressAndPhoneSection(details, onCopyAddressClick)
-        Spacer(modifier = Modifier.height(14.dp))
         RatingSection(details)
     }
 }
 
 @Composable
 fun VenueImageSection(
-    imageUrl:String,
+    imageUrls: List<String>,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
     onFavoriteClick: () -> Unit
 ) {
-    //val pagerState = rememberPagerState(pageCount = { imageUrls.size })
+    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
 
     Box(
         modifier = Modifier
@@ -458,10 +556,15 @@ fun VenueImageSection(
             .fillMaxWidth()
             .background(Color.Gray)
     ) {
-        VenueImage(imageUrl = imageUrl)
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            VenueImage(imageUrl = imageUrls[page], page = page)
+        }
         ImageOverlay(
-            currentPage = 1,
-            totalPages = 1,
+            currentPage = pagerState.currentPage,
+            totalPages = pagerState.pageCount,
             onBackClick = onBackClick,
             onShareClick = onShareClick,
             onFavoriteClick = onFavoriteClick
@@ -470,10 +573,16 @@ fun VenueImageSection(
 }
 
 @Composable
-fun VenueImage(imageUrl: String) {
+fun VenueImage(imageUrl: String, page: Int) {
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .placeholder(R.drawable.placeholder)
+            .build()
+    )
     Image(
-        painter = rememberAsyncImagePainter(model = imageUrl),
-        contentDescription = "Venue Image",
+        painter = painter,
+        contentDescription = "Venue Image $page",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
     )
@@ -625,12 +734,14 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
 @Composable
 fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .padding(bottom = 14.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = details?.venueName?:"",
+            text = details?.venueName ?: "",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -665,9 +776,8 @@ fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
 
 @Composable
 fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Unit) {
-    Column {
+    Column(modifier = Modifier.padding(bottom = 14.dp)) {
         AddressRow(details, onCopyAddressClick)
-        Spacer(modifier = Modifier.height(4.dp))
         AvailableSlots(details)
         Spacer(modifier = Modifier.height(4.dp))
         DistanceRow(details)
@@ -677,6 +787,7 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
 @Composable
 fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
     Row(
+        modifier = Modifier.padding(bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -770,7 +881,7 @@ fun InfoRow(icon: Int, text: String) {
 @Composable
 fun RatingSection(details: VenueDetails?) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        repeat((details?.rate?:1).toInt()) { index ->
+        repeat((details?.rate ?: 1).toInt()) { index ->
             Icon(
                 painter = painterResource(id = R.drawable.ic_star),
                 contentDescription = "Star",
@@ -828,22 +939,23 @@ fun RatingSection(details: VenueDetails?) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InfrastructureSection(details: VenueDetails?) {
+fun InfrastructureSection(state: State<VenueDetailsContract.UIState>) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<Pair<String, Int>?>(null) }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        SectionTitle(text = "Facilities")
+        SectionTitle(state = state, text = "Facilities")
         Spacer(modifier = Modifier.height(15.dp))
-        FacilitiesGrid(details) { text, icon ->
+        FacilitiesGrid(state) { text, icon ->
             selectedItem = text to icon
             showBottomSheet = true
         }
     }
+
+
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -858,62 +970,112 @@ fun InfrastructureSection(details: VenueDetails?) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FacilitiesGrid(details: VenueDetails?, onItemClick: (String, Int) -> Unit) {
+fun FacilitiesGrid(state: State<VenueDetailsContract.UIState>, onItemClick: (String, Int) -> Unit) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        details?.let { venue ->
-            InfrastructureItem(
-                venue.venueType.capitalize(),
-                null,
-                R.drawable.baseline_stadium_24,
-                onItemClick
+        if (state.value.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.25f)
+                    .height(56.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmer()
+                    .background(Color.Gray.copy(alpha = 0.2f))
             )
-            InfrastructureItem(
-                "${venue.peopleCapacity} ${stringResource(id = R.string.players)}",
-                null,
-                R.drawable.game_icons_soccer_kick,
-                onItemClick
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.22f)
+                    .height(56.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmer()
+                    .background(Color.Gray.copy(alpha = 0.2f))
             )
-            venue.infrastructure.forEach {
-                  if(it.id==3){
-                    InfrastructureItem(
-                        stringResource(id = R.string.changing_room),
-                        it.description,
-                        R.drawable.mingcute_coathanger_fill,
-                        onItemClick
-                    )
-                  }
-//                }
-//                if (infrastructure.stands.isNotBlank()) {
-                //}
-                //if (infrastructure.shower) {
-                   // InfrastructureItem(stringResource(id = R.string.shower), R.drawable.baseline_shower_24, onItemClick)
-//                }
-//                if (infrastructure.parking) {
-                   // InfrastructureItem(stringResource(id = R.string.parking), R.drawable.baseline_local_parking_24, onItemClick)
-//                }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.25f)
+                    .height(56.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmer()
+                    .background(Color.Gray.copy(alpha = 0.2f))
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.3f)
+                    .height(56.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmer()
+                    .background(Color.Gray.copy(alpha = 0.2f))
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.25f)
+                    .height(56.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmer()
+                    .background(Color.Gray.copy(alpha = 0.2f))
+            )
+        } else {
+            state.value.venue?.let { venue ->
+                InfrastructureItem(
+                    venue.venueType.capitalize(),
+                    null,
+                    R.drawable.baseline_stadium_24,
+                    onItemClick
+                )
+                InfrastructureItem(
+                    "${venue.peopleCapacity} ${stringResource(id = R.string.players)}",
+                    null,
+                    R.drawable.game_icons_soccer_kick,
+                    onItemClick
+                )
+                venue.infrastructure.forEach {
+                    if (it.staticName == "locker_room") {
+                        InfrastructureItem(
+                            stringResource(id = R.string.changing_room),
+                            it.description,
+                            R.drawable.mingcute_coathanger_fill,
+                            onItemClick
+                        )
+                    }
+                    if (it.staticName == "shower") {
+                        InfrastructureItem(
+                            text = stringResource(id = R.string.shower),
+                            info = it.description,
+                            iconRes = R.drawable.baseline_shower_24,
+                            onClick = onItemClick
+                        )
+                    }
+                    if (it.staticName == "parking") {
+                        InfrastructureItem(
+                            text = stringResource(id = R.string.parking),
+                            info = it.description,
+                            iconRes = R.drawable.baseline_local_parking_24,
+                            onClick = onItemClick
+                        )
+                    }
+                }
+                InfrastructureItem(
+                    venue.venueSurface.capitalize(),
+                    null,
+                    R.drawable.baseline_grass_24,
+                    onItemClick
+                )
+                InfrastructureItem(
+                    "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
+                    null,
+                    R.drawable.baseline_access_time_filled_24,
+                    onItemClick
+                )
             }
-            InfrastructureItem(
-                venue.venueSurface.capitalize(),
-                null,
-                R.drawable.baseline_grass_24,
-                onItemClick
-            )
-            InfrastructureItem(
-                "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
-                null,
-                R.drawable.baseline_access_time_filled_24,
-                onItemClick
-            )
         }
     }
 }
 
 @Composable
-fun InfrastructureItem(text: String,info:String? = null, iconRes: Int, onClick: (String, Int) -> Unit) {
+fun InfrastructureItem(text: String, info: String? = null, iconRes: Int, onClick: (String, Int) -> Unit) {
     var isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 1.1f else 1f,
@@ -941,7 +1103,7 @@ fun InfrastructureItem(text: String,info:String? = null, iconRes: Int, onClick: 
             .background(backgroundColor)
             .clickable {
                 isPressed = true
-                onClick(info?:text, iconRes)
+                onClick(info ?: text, iconRes)
             }
             .padding(8.dp)
             .scale(scale)
@@ -1029,7 +1191,7 @@ fun InfrastructureItemDetails(text: String?, iconRes: Int?) {
 }
 
 @Composable
-fun MapSection(details: VenueDetails?) {
+fun MapSection(state: State<VenueDetailsContract.UIState>) {
     val context = LocalContext.current
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
@@ -1070,107 +1232,137 @@ fun MapSection(details: VenueDetails?) {
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(10.dp))
             .clickable {
-                details?.let { venue ->
+                state.value.venue?.let { venue ->
                     openMapWithOptions(context, venue.latitude, venue.longitude, venue.venueName)
                 }
             }
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+        if (state.value.isLoading) {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmer()
+                        .background(Color.Gray.copy(alpha = 0.2f))
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth(0.4f)
+                        .height(20.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmer()
+                        .background(Color.Gray.copy(alpha = 0.2f))
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .height(20.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmer()
+                        .background(Color.Gray.copy(alpha = 0.2f))
+                )
+            }
+
+        } else {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                mapView?.let { map ->
-                    AndroidView(
-                        factory = { map },
-                        modifier = Modifier.fillMaxSize(),
-                        update = { view ->
-                            details?.let { venue ->
-                                try {
-                                    val venueLocation = Point(venue.latitude, venue.longitude)
-                                    view.map.move(
-                                        CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
-                                        Animation(Animation.Type.SMOOTH, 0.3f),
-                                        null
-                                    )
-                                    view.map.mapObjects.clear()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+                ) {
+                    mapView?.let { map ->
+                        AndroidView(
+                            factory = { map },
+                            modifier = Modifier.fillMaxSize(),
+                            update = { view ->
+                                state.value.venue?.let { venue ->
+                                    try {
+                                        val venueLocation = Point(venue.latitude, venue.longitude)
+                                        view.map.move(
+                                            CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
+                                            Animation(Animation.Type.SMOOTH, 0.3f),
+                                            null
+                                        )
+                                        view.map.mapObjects.clear()
 
-                                    val placemark = view.map.mapObjects.addPlacemark(venueLocation)
-                                    val markerIcon = R.drawable.baseline_location_on_24_red
-                                    val drawable = ContextCompat.getDrawable(context, markerIcon)
-                                    val bitmap = drawable?.let {
-                                        getBitmapFromDrawable(it, 1.5f)
+                                        val placemark = view.map.mapObjects.addPlacemark(venueLocation)
+                                        val markerIcon = R.drawable.baseline_location_on_24_red
+                                        val drawable = ContextCompat.getDrawable(context, markerIcon)
+                                        val bitmap = drawable?.let {
+                                            getBitmapFromDrawable(it, 1.5f)
+                                        }
+                                        placemark.setIcon(ImageProvider.fromBitmap(bitmap))
+
+                                        // Disable user interaction with the map
+                                        view.map.isScrollGesturesEnabled = false
+                                        view.map.isZoomGesturesEnabled = false
+                                        view.map.isTiltGesturesEnabled = false
+                                        view.map.isRotateGesturesEnabled = false
+
+                                        errorMessage = null
+                                    } catch (e: Exception) {
+                                        Log.e("MapSection", "Error updating map: ${e.message}")
+                                        errorMessage = "Error loading map: ${e.message}"
                                     }
-                                    placemark.setIcon(ImageProvider.fromBitmap(bitmap))
-
-                                    // Disable user interaction with the map
-                                    view.map.isScrollGesturesEnabled = false
-                                    view.map.isZoomGesturesEnabled = false
-                                    view.map.isTiltGesturesEnabled = false
-                                    view.map.isRotateGesturesEnabled = false
-
-                                    errorMessage = null
-                                } catch (e: Exception) {
-                                    Log.e("MapSection", "Error updating map: ${e.message}")
-                                    errorMessage = "Error loading map: ${e.message}"
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
+                    errorMessage?.let {
+                        Text(
+                            text = it,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(16.dp)
+                        )
+                    }
                 }
-                errorMessage?.let {
-                    Text(
-                        text = it,
-                        color = Color.Red,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(16.dp)
-                    )
-                }
-            }
 
-            MapDetails(details)
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 0.5.dp,
-                color = Color(0xFFD4D4D4)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 6.dp, bottom = 12.dp)
-                    .padding(horizontal = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.Open_in_maps),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        color = Color(0xFF3C2E56),
-                        lineHeight = 18.sp
+                MapDetails(state.value.venue)
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 0.5.dp,
+                    color = Color(0xFFD4D4D4)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp, bottom = 12.dp)
+                        .padding(horizontal = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.Open_in_maps),
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = Color(0xFF3C2E56),
+                            lineHeight = 18.sp
+                        )
                     )
-                )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_right),
-                    contentDescription = "Open in Maps",
-                    modifier = Modifier.size(14.dp)
-                )
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_right),
+                        contentDescription = "Open in Maps",
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
             }
         }
-
         // Clickable overlay
         Box(
             modifier = Modifier
                 .matchParentSize()
                 .clickable {
-                    details?.let { venue ->
+                    state.value.venue?.let { venue ->
                         openMapWithOptions(
                             context,
                             venue.latitude,
@@ -1250,7 +1442,7 @@ private fun MapDetails(details: VenueDetails?) {
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.mingcute_navigation_fill,
-            text = String.format("%.1f km ${stringResource(id = R.string.from_you )}",details?.distance?:0.0),
+            text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
             tintColor = Color(0xFFD9D9D9),
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -1292,7 +1484,7 @@ private fun DistanceInfo(icon: Int, text: String, tintColor: Color) {
 
 @Composable
 fun PricingSection(
-    details: VenueDetails?,
+    state: State<VenueDetailsContract.UIState>,
     onOrderClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -1310,16 +1502,28 @@ fun PricingSection(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "${details?.pricePerHour} ${stringResource(id = R.string.som_per_hour)}",
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 18.sp,
-                    color = Color(0xFF3C2E56),
-                    lineHeight = 22.05.sp
-                ),
-            )
+            if (state.value.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .height(34.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmer()
+                        .background(Color.Gray.copy(alpha = 0.2f))
+                )
+            } else {
+                Text(
+                    text = "${state.value.venue?.pricePerHour} ${stringResource(id = R.string.som_per_hour)}",
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 18.sp,
+                        color = Color(0xFF3C2E56),
+                        lineHeight = 22.05.sp
+                    ),
+                )
+            }
+
             Button(
                 onClick = onOrderClick,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),

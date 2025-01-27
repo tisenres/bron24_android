@@ -21,7 +21,7 @@ interface VenueRepository {
 
     suspend fun getVenuesCoordinates(): List<VenueCoordinates>
     suspend fun getVenuePictures(venueId: Int): List<String>
-    suspend fun getVenueDetailsById(venueId: Int, latitude: Double?, longitude: Double?): VenueDetails?
+    fun getVenueDetailsById(venueId: Int, latitude: Double?, longitude: Double?): Flow<VenueDetails>
     suspend fun searchVenues(query: String?, latitude: Double?, longitude: Double?): List<Venue>
     fun getAllFavourite(): Flow<List<Favourite>>
     fun addFavourite(favourite: Favourite): Flow<Result<Unit>>
