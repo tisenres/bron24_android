@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.orderdetails
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.usecases.orders.CancelOrderUseCase
@@ -21,8 +22,8 @@ class OrderDetailsVM @Inject constructor(
 ) : ViewModel(), OrderDetailsContact.ViewModel {
     override fun onDispatchers(intent: OrderDetailsContact.Intent): Job = intent {
         when (intent) {
-            OrderDetailsContact.Intent.ClickMoveTo -> {
-
+            is OrderDetailsContact.Intent.ClickMoveTo -> {
+                direction.moveToNext(intent.id)
             }
 
             OrderDetailsContact.Intent.Back -> {
@@ -44,7 +45,8 @@ class OrderDetailsVM @Inject constructor(
             .onStart {
                 reduce { state.copy(isLoading = true) }
             }.onEach {
-                reduce { state.copy(order = it.first, imageUrls = it.second) }
+                Log.d("AAA", "initData: ${it.second}")
+                reduce { state.copy(order = it.first, imageUrls = it.second, isLoading = false) }
                 when (it.first.status) {
                     "INPROCESS" -> {
                         reduce { state.copy(isCancelling = true, isCanceled = true) }
@@ -54,8 +56,6 @@ class OrderDetailsVM @Inject constructor(
                         reduce { state.copy(isCancelling = false) }
                     }
                 }
-            }.onCompletion {
-                reduce { state.copy(isLoading = false) }
             }.launchIn(viewModelScope)
     }
 

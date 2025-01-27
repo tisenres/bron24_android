@@ -42,6 +42,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.CustomAppBar
+import com.bron24.bron24_android.domain.entity.order.OrderAddress
 import com.bron24.bron24_android.screens.main.theme.Black61
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -108,7 +109,7 @@ fun OrderDetailsContent(
             state = state,
             modifier = Modifier,
             navigateToVenueDetails = {
-
+                intent.invoke(OrderDetailsContact.Intent.ClickMoveTo(state.value.order?.venueId?:0))
             }
         )
 
@@ -150,42 +151,40 @@ private fun OrderDetailsItem(
                 Column(modifier = Modifier.fillMaxSize()) {
                     Box(
                         modifier = Modifier
+                            .padding(bottom = 6.dp)
                             .fillMaxWidth(0.8f)
                             .height(20.dp)
                             .clip(RoundedCornerShape(4.dp))
                             .shimmer()
                             .background(Color.Gray.copy(alpha = 0.2f))
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
                     Box(
                         modifier = Modifier
+                            .padding(bottom = 6.dp)
                             .fillMaxWidth(0.5f)
                             .height(20.dp)
                             .clip(RoundedCornerShape(4.dp))
                             .shimmer()
                             .background(Color.Gray.copy(alpha = 0.2f))
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
                     Box(
                         modifier = Modifier
+                            .padding(bottom = 6.dp)
                             .fillMaxWidth(0.5f)
                             .height(20.dp)
                             .clip(RoundedCornerShape(4.dp))
                             .shimmer()
                             .background(Color.Gray.copy(alpha = 0.2f))
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
                     Box(
                         modifier = Modifier
+                            .padding(bottom = 12.dp)
                             .fillMaxWidth(0.5f)
                             .height(20.dp)
                             .clip(RoundedCornerShape(4.dp))
                             .shimmer()
                             .background(Color.Gray.copy(alpha = 0.2f))
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    //OrderAddress(address = order.address.addressName)
-                    Spacer(modifier = Modifier.height(6.dp))
                 }
             }else{
                 OrderDetailHeader(
@@ -244,9 +243,11 @@ private fun OrderDetailsItem(
                 Box(modifier = Modifier.fillMaxWidth()) {
                     TextButton(
                         modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(start = 24.dp, end = 24.dp),
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .align(Alignment.Center),
                         onClick = navigateToVenueDetails,
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF6D6D6D))
                     ) {
                         Text(
@@ -258,7 +259,6 @@ private fun OrderDetailsItem(
                     }
                 }
             }
-
         }
     }
 }

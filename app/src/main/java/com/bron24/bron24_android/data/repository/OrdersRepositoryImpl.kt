@@ -21,8 +21,8 @@ class OrdersRepositoryImpl @Inject constructor(
         emit(response) // assuming the endpoint returns OrdersResponse
     }.flowOn(Dispatchers.IO)
 
-    override fun getOrderDetails(id: Int): Flow<ResponseOrderDetailsDto> = flow {
-        val response = api.getOrderDetails(id)
+    override fun getOrderDetails(id: Int,latitude:Double?,longitude:Double?): Flow<ResponseOrderDetailsDto> = flow {
+        val response = api.getOrderDetails(id, latitude = latitude,longitude = longitude)
         emit(response)
     }.flowOn(Dispatchers.IO)
 
