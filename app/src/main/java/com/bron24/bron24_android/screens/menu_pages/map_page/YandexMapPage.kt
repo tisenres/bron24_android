@@ -6,39 +6,32 @@ import android.graphics.Canvas
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import cafe.adriel.voyager.hilt.getViewModel
@@ -56,9 +49,8 @@ import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import org.orbitmvi.orbit.compose.collectAsState
-
-private const val MAX_ZOOM_LEVEL = 20f
-private const val MIN_ZOOM_LEVEL = 5f
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 private const val TAG = "YandexMapPage"
 
@@ -97,7 +89,8 @@ fun YandexMapPageContent(
     var mapView by remember { mutableStateOf<MapView?>(null) }
     var mapObjects by remember { mutableStateOf<MapObjectCollection?>(null) }
     val mapObjectListeners by remember { mutableStateOf<MutableMap<Point, MapObjectTapListener>>(mutableMapOf()) }
-    val firstUpdateTime = remember { mutableStateOf<Long>(0L) }
+    val firstUpdateTime = remember { mutableLongStateOf(0L) }
+    var venueCardIsVisible by remember { mutableStateOf(false) }
 
     val userLocation = state.value.userLocation.let {
         Point(it.latitude, it.longitude)
@@ -132,7 +125,7 @@ fun YandexMapPageContent(
                             (point to venue),
                             context,
                             intent,
-                            mapObjectListeners
+                            mapObjectListeners,
                         )
                     }
                 }
@@ -152,7 +145,7 @@ fun YandexMapPageContent(
                         (point to venue),
                         context,
                         intent,
-                        mapObjectListeners
+                        mapObjectListeners,
                     )
                 }
             }
@@ -164,15 +157,6 @@ fun YandexMapPageContent(
             userLocation = userLocation
         )
 
-        DisposableEffect(Unit) {
-            mapView?.onStart()
-            onDispose {
-                mapView?.onStop()
-                mapView?.map?.mapObjects?.clear()
-                mapView = null
-            }
-        }
-
         AnimatedVisibility(
             visible = state.value.venueDetails != null,
             enter = slideInVertically(initialOffsetY = { it }),
@@ -180,39 +164,24 @@ fun YandexMapPageContent(
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
 
-            val venueDetails = state.value.venueDetails
-            if (venueDetails != null) {
-                MapVenueDetails(
-                    venueDetails = venueDetails,
-                    modifier = Modifier
-                ) {}
-            }
-
-            val dismissState = rememberSwipeToDismissBoxState(
-                confirmValueChange = { dismissValue ->
-                    if (dismissValue == SwipeToDismissBoxValue.StartToEnd || dismissValue == SwipeToDismissBoxValue.EndToStart) {
-                        //                       mapViewModel.clearSelectedVenue()
-                        true
+            SwipeToDismissVertical(
+                content = {
+                    val venueDetails = state.value.venueDetails
+                    if (venueDetails != null) {
+                        MapVenueDetails(
+                            venueDetails = venueDetails,
+                            modifier = Modifier
+                        ) {
+                            intent.invoke(YandexMapPageContract.Intent.ClickVenueBook(venueDetails = venueDetails))
+                        }
                     } else {
-                        false
+                        CircularProgressIndicator()
                     }
+                },
+                onDismiss = {
+                    venueCardIsVisible = false
                 }
             )
-//
-//            SwipeToDismissBox(
-//                state = dismissState,
-//                backgroundContent = { /* Optional background content */ },
-//                content = {
-//                    SmallVenueDetailsScreen(
-//                        viewModel = mapViewModel,
-//                        onClose = {
-//                            showVenueDetails = false
-//                            mapViewModel.clearSelectedVenue()
-//                        }
-//                    )
-//                }
-//            )
-//        }
         }
 
         LaunchedEffect(userLocation) {
@@ -230,116 +199,40 @@ fun YandexMapPageContent(
                 }
             }
         }
+
+        DisposableEffect(Unit) {
+            mapView?.onStart()
+            onDispose {
+                mapView?.onStop()
+                mapView?.map?.mapObjects?.clear()
+                mapView = null
+            }
+        }
     }
 }
 
 @Composable
-fun ZoomControls(modifier: Modifier, mapView: MapView?, userLocation: Point) {
-    Column(
-        modifier = modifier
-            .padding(top = 28.dp, end = 14.dp),
-        horizontalAlignment = Alignment.End
-    ) {
+fun SwipeToDismissVertical(
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    var offsetY by remember { mutableFloatStateOf(0f) }
+    val maxOffset = 500f
 
-        Box(
-            modifier = Modifier
-                .shadow(
-                    elevation = 10.dp,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .background(Color.White)
-                .size(60.dp)
-                .clickable {
-                    val currentZoom = mapView?.map?.cameraPosition?.zoom ?: 13f
-                    if (currentZoom < MAX_ZOOM_LEVEL) {
-                        mapView?.map?.move(
-                            CameraPosition(
-                                mapView.map?.cameraPosition?.target ?: userLocation,
-                                currentZoom + 1f,
-                                0f,
-                                0f
-                            ),
-                            Animation(Animation.Type.SMOOTH, 0.5f),
-                            null
-                        )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .pointerInput(Unit) {
+                detectVerticalDragGestures { _, dragAmount ->
+                    offsetY += dragAmount
+                    if (abs(offsetY) > maxOffset) {
+                        onDismiss()
                     }
                 }
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.add),
-                contentDescription = "Zoom Out",
-                tint = Color.Black.copy(alpha = 0.8f),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Box(
-            modifier = Modifier
-                .shadow(
-                    elevation = 10.dp,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .background(Color.White)
-                .size(60.dp)
-                .clickable {
-                    mapView?.map?.move(
-                        CameraPosition(
-                            mapView.map?.cameraPosition?.target ?: userLocation,
-                            (mapView.map?.cameraPosition?.zoom ?: 13f) - 1f,
-                            0f,
-                            0f
-                        ),
-                        Animation(Animation.Type.SMOOTH, 0.5f),
-                        null
-                    )
-                }
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.remove),
-                contentDescription = "Zoom Out",
-                tint = Color.Black.copy(alpha = 0.8f),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(120.dp))
-
-        Box(
-            modifier = Modifier
-                .shadow(
-                    elevation = 10.dp,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .background(Color.White)
-                .size(60.dp)
-                .clickable {
-                    mapView?.map?.move(
-                        CameraPosition(
-                            userLocation,
-                            14f,
-                            0f,
-                            0f
-                        ),
-                        Animation(Animation.Type.SMOOTH, 0.5f),
-                        null
-                    )
-                }
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.near_me),
-                contentDescription = "Zoom Out",
-                tint = Color.Black.copy(alpha = 0.8f),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(15.dp)
-            )
-        }
+            }
+            .offset { IntOffset(0, offsetY.roundToInt()) }
+    ) {
+        content()
     }
 }
 
@@ -361,7 +254,7 @@ fun setStadiumMarker(
     point: Pair<Point, VenueCoordinates>,
     context: Context,
     intent: (YandexMapPageContract.Intent) -> Unit,
-    mapObjectListeners: MutableMap<Point, MapObjectTapListener> = mutableMapOf()
+    mapObjectListeners: MutableMap<Point, MapObjectTapListener> = mutableMapOf(),
 ) {
     val marker = createBitmapFromVector(R.drawable.green_location_pin, context)
 
@@ -370,13 +263,12 @@ fun setStadiumMarker(
         ImageProvider.fromBitmap(marker)
     )
 
-    // Only add listener if one doesn't exist for this point
     if (!mapObjectListeners.containsKey(point.first)) {
+
         val listener = MapObjectTapListener { _, _ ->
             centerCameraOnMarker(mapView, point.first)
             updateMarkerAppearance(placemark, context, isHighlighted = true)
 
-            placemark.useAnimation().play()
             intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
             true
         }
@@ -387,21 +279,30 @@ fun setStadiumMarker(
 }
 
 fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Context, isHighlighted: Boolean) {
-    if (isHighlighted) {
-        placemark.setIcon(ImageProvider.fromResource(context, R.drawable.red_location_pin))
-        placemark.setIconStyle(
-            IconStyle().apply {
-                scale = 2f
-            }
-        )
-    } else {
-        placemark.setIcon(ImageProvider.fromResource(context, R.drawable.green_location_pin))
-        placemark.setIconStyle(
-            IconStyle().apply {
-                scale = 1f
-            }
-        )
-    }
+
+    val drawable = if (isHighlighted) R.drawable.red_location_pin else R.drawable.green_location_pin
+    val customScale = if (isHighlighted) 1.25f else 0.8f
+
+    val bitmap = createBitmapFromVector(drawable, context)
+
+    placemark.setIcon(
+        ImageProvider.fromBitmap(bitmap),
+
+        IconStyle().apply {
+            scale = customScale
+        }
+    )
+}
+
+fun centerCameraOnMarker(mapView: MapView, point: Point) {
+    val offsetY = 0.004
+    val newPoint = Point(point.latitude - offsetY, point.longitude)
+
+    mapView.map.move(
+        CameraPosition(newPoint, 15f, 0f, 0f),
+        Animation(Animation.Type.SMOOTH, 0.5f),
+        null
+    )
 }
 
 private fun createBitmapFromVector(art: Int, context: Context): Bitmap? {
@@ -415,17 +316,6 @@ private fun createBitmapFromVector(art: Int, context: Context): Bitmap? {
     drawable.setBounds(0, 0, canvas.width, canvas.height)
     drawable.draw(canvas)
     return bitmap
-}
-
-fun centerCameraOnMarker(mapView: MapView, point: Point) {
-    val offsetY = 0.004
-    val newPoint = Point(point.latitude - offsetY, point.longitude)
-
-    mapView.map.move(
-        CameraPosition(newPoint, 15f, 0f, 0f),
-        Animation(Animation.Type.SMOOTH, 0.5f),
-        null
-    )
 }
 
 @Preview
