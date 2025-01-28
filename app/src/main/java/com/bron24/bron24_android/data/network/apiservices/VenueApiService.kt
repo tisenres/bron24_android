@@ -33,7 +33,7 @@ interface VenueApiService {
         @Path("id") id: Int,
         @Query("lat") latitude: Double? = null,
         @Query("lon") longitude: Double? = null
-    ): VenueDetailsResponseDto?
+    ): VenueDetailsResponseDto
 
     @GET("api/v1/venues/search")
     suspend fun searchVenues(

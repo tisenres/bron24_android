@@ -9,11 +9,7 @@ import javax.inject.Inject
 class LogoutUseCase @Inject constructor(
     private val profileRepository: ProfileRepository
 ) {
-    operator fun invoke():Flow<Result<String>> = flow<Result<String>> {
-        profileRepository.deleteProfile("soft").onSuccess {
-            emit(Result.success("Log out success!"))
-        }.onFailure {
-            emit(Result.failure(it))
-        }
+    operator fun invoke():Flow<Result<Unit>> = flow{
+        emit(profileRepository.logoutProfile())
     }.catch { emit(Result.failure(it)) }
 }

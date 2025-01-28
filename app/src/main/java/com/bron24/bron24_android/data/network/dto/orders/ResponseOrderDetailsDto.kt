@@ -7,5 +7,5 @@ import com.google.gson.annotations.SerializedName
 data class ResponseOrderDetailsDto(
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
-    @SerializedName("data") val data: OrderDto
+    @SerializedName("data") val data: OrderDetailsDto
 )

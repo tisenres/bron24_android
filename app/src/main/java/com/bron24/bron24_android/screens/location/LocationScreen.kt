@@ -73,6 +73,7 @@ fun LocationRequestScreenContent(
             if (isGranted) {
                 intent(LocationScreenContract.Intent.ClickAllow)
             } else {
+                intent.invoke(LocationScreenContract.Intent.ClickDeny)
                 ToastManager.showToast("Dasturdan to'liq foydalanishni istasangiz joylashuv uchun ruxsat bering!",ToastType.INFO)
             }
         }
@@ -155,7 +156,9 @@ fun LocationRequestScreenContent(
             )
 
             EnhancedOutlinedButton(
-                onClick = { ToastManager.showToast("Dasturdan to'liq foydalanishni istasangiz joylashuv uchun ruxsat bering!",ToastType.INFO) },
+                onClick = {
+                    intent.invoke(LocationScreenContract.Intent.ClickDeny)
+                },
             )
         }
     }

@@ -93,6 +93,7 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         pricePerHour = pricePerHour.formatPrice(),
         workingHoursFrom = workingHoursFrom,
         workingHoursTill = workingHoursTill,
+        rate = rate,
         contact1 = contact1,
         contact2 = contact2,
         slots = slots,

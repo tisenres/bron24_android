@@ -13,5 +13,5 @@ data class Venue(
     val distance: Double,
     val slots:Int,
     val previewImage: String?,
-    val favourite:Boolean
+    val favourite:Boolean,
 ):Parcelable

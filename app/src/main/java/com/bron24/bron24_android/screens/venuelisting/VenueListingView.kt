@@ -2,7 +2,9 @@ package com.bron24.bron24_android.screens.venuelisting
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -27,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -40,6 +44,7 @@ import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.screens.adssection.SpecialOfferCarousel
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
+import com.valentinilk.shimmer.shimmer
 
 //var filterCallback: (FilterOptions) -> Unit = {}
 
@@ -68,13 +73,12 @@ fun VenueListingView(
         onRefresh = {
             refreshVenue.invoke()
         },
-        isRefreshing = state.value.isLoading,
+        isRefreshing = state.value.refresh,
         modifier = modifier,
         indicator = {
-            Log.d("AAA", "VenueListingView: ${state.value.isLoading}")
             PullToRefreshDefaults.Indicator(
                 state = pullRefreshState,
-                isRefreshing = state.value.isLoading,
+                isRefreshing = state.value.refresh,
                 color = Color(0xFF32B768),
                 containerColor = Color.White,
                 modifier = Modifier.align(Alignment.TopCenter)
@@ -83,12 +87,23 @@ fun VenueListingView(
     ) {
         LazyColumn(
             state = listState,
-            contentPadding = PaddingValues(horizontal = 16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             item(key = "ads") {
-                Spacer(modifier = Modifier.height(16.dp))
-                SpecialOfferCarousel(uiState = state)
+                if(state.value.isLoading){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .shimmer()
+                            .background(Color.Gray.copy(alpha = 0.2f))
+                    )
+                }else{
+                    SpecialOfferCarousel(uiState = state)
+                }
+
 //                AdsSection(imageUrls = state.value.offers.map { it.image })
             }
             item(key = "title") {

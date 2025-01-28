@@ -1,21 +1,25 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
+import cafe.adriel.voyager.hilt.ScreenModelKey
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.domain.entity.offers.SpecialOffer
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.Venue
+import com.bron24.bron24_android.screens.util.AppViewModel
+import com.bron24.bron24_android.screens.util.ScreenModelImpl
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface HomePageContract {
-    interface ViewModel : ContainerHost<UIState, SideEffect> {
+    @ScreenModelImpl(HomePageVM::class)
+    interface ViewModel : AppViewModel<UIState,SideEffect> {
         fun onDispatchers(intent: Intent): Job
-        fun initData(): Job
     }
 
     data class UIState(
         val isLoading: Boolean = true,
-        val initial: Boolean = false,
+        val initial: Boolean = true,
+        val refresh:Boolean = false,
         val firstName: String = "",
         val itemData: List<Venue> = emptyList(),
         val specialOffers: List<SpecialOffer> = emptyList(),
@@ -30,12 +34,12 @@ interface HomePageContract {
         data object ClickFilter : Intent
         data class SelectedSort(val name: String) : Intent
         data object Refresh : Intent
-        data class ClickItem(val venueId: Int, val rate: Double) : Intent
+        data class ClickItem(val venueId: Int) : Intent
     }
 
     interface Direction {
         suspend fun moveToSearch()
         suspend fun moveToFilter(block: (FilterOptions) -> Unit)
-        suspend fun moveToDetails(venueId: Int, rate: Double)
+        suspend fun moveToDetails(venueId: Int)
     }
 }

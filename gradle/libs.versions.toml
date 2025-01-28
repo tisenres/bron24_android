@@ -40,6 +40,7 @@ morflyCompose = "0.1.0"
 com-google-devtools-ksp = "2.0.20-1.0.24"
 pluto = "2.2.2"
 timber = "5.0.1"
+gamesActivity = "3.0.5"
 
 [libraries]
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
@@ -111,6 +112,7 @@ pluto-network-interceptor-okhttp = { group = "com.plutolib.plugins", name = "net
 pluto-network-interceptor-okhttp-no-op = { group = "com.plutolib.plugins", name = "network-interceptor-okhttp-no-op", version.ref = "pluto" }
 
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+androidx-games-activity = { group = "androidx.games", name = "games-activity", version.ref = "gamesActivity" }
 
 
 [plugins]

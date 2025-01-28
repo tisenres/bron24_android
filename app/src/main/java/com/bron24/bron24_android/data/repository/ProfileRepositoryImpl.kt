@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.repository
 
+import androidx.compose.ui.input.key.Key.Companion.U
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.data.network.apiservices.ProfileApi
 import com.bron24.bron24_android.domain.entity.user.DeleteAcc
@@ -31,6 +32,9 @@ class ProfileRepositoryImpl @Inject constructor(
             val result = profileApi.deleteAccount(DeleteAcc(type?:"hard"))
             if(result.success){
                 localStorage.openMenu = false
+                localStorage.firstName =""
+                localStorage.lastName = ""
+                localStorage.phoneNumber = ""
                 Result.success(result.message)
             }else{
                 Result.failure(Exception("Unknown error!"))
@@ -38,5 +42,13 @@ class ProfileRepositoryImpl @Inject constructor(
         }catch (e:Exception){
             Result.failure(e)
         }
+    }
+
+    override suspend fun logoutProfile(): Result<Unit>  {
+        localStorage.openMenu = false
+        localStorage.firstName =""
+        localStorage.lastName = ""
+        localStorage.phoneNumber = ""
+        return Result.success(Unit)
     }
 }

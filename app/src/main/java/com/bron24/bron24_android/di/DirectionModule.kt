@@ -22,6 +22,8 @@ import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageCont
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageDirection
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerContract
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerDirection
+import com.bron24.bron24_android.screens.orderdetails.OrderDetailsContact
+import com.bron24.bron24_android.screens.orderdetails.OrderDetailsDirection
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenContract
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenDirection
 import com.bron24.bron24_android.screens.search.search_screen.SearchScreenContract
@@ -34,65 +36,70 @@ import com.bron24.bron24_android.screens.splash.SplashScreenContract
 import com.bron24.bron24_android.screens.splash.SplashScreenDirection
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsDirection
-import dagger.Binds
+import dagger.Provides
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
 
 @Module
-@InstallIn(ViewModelComponent::class)
-interface DirectionModule {
+@InstallIn(SingletonComponent::class)
+class DirectionModule {
 
-    @[Binds ViewModelScoped]
-    fun bindsLanguageSelDirection(impl: LanguageSelDirection): LanguageSelContract.Direction
+    @[Provides Singleton]
+    fun bindsLanguageSelDirection(impl: LanguageSelDirection): LanguageSelContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsOnBoardDirection(impl: OnBoardPagerDirection): OnBoardPagerContract.Direction
+    @[Provides  Singleton]
+    fun bindsOnBoardDirection(impl: OnBoardPagerDirection): OnBoardPagerContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsPhoneNumberDirection(impl: PhoneNumberScreenDirection): PhoneNumberScreenContract.Direction
+    @[Provides  Singleton]
+    fun bindsPhoneNumberDirection(impl: PhoneNumberScreenDirection): PhoneNumberScreenContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsOTPInputDirection(impl: OTPInputScreenDirection): OTPInputContract.Direction
+    @[Provides  Singleton]
+    fun bindsOTPInputDirection(impl: OTPInputScreenDirection): OTPInputContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsSplashDirection(impl: SplashScreenDirection): SplashScreenContract.Direction
+    @[Provides  Singleton]
+    fun bindsSplashDirection(impl: SplashScreenDirection): SplashScreenContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsHomePageDirection(impl: HomePageDirection): HomePageContract.Direction
+    @[Provides  Singleton]
+    fun bindsHomePageDirection(impl: HomePageDirection): HomePageContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsFilterDirection(impl: FilterScreenDirection): FilterScreenContract.Direction
+    @[Provides  Singleton]
+    fun bindsFilterDirection(impl: FilterScreenDirection): FilterScreenContract.Direction =impl
 
-    @[Binds ViewModelScoped]
-    fun bindsRegisterDirection(impl: RegisterScreenDirection): RegisterScreenContract.Direction
+    @[Provides  Singleton]
+    fun bindsRegisterDirection(impl: RegisterScreenDirection): RegisterScreenContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsProfilePageDirection(impl: ProfilePageDirection): ProfilePageContract.Direction
+    @[Provides  Singleton]
+    fun bindsProfilePageDirection(impl: ProfilePageDirection): ProfilePageContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsLanguageDirection(impl: LanguageDirection): LanguageContract.Direction
+    @[Provides  Singleton]
+    fun bindsLanguageDirection(impl: LanguageDirection): LanguageContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsLocationDirection(impl: LocationScreenDirection): LocationScreenContract.Direction
+    @[Provides  Singleton]
+    fun bindsLocationDirection(impl: LocationScreenDirection): LocationScreenContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsSearchDirection(impl: SearchScreenDirection): SearchScreenContract.Direction
+    @[Provides  Singleton]
+    fun bindsSearchDirection(impl: SearchScreenDirection): SearchScreenContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsOrderPageDirection(impl: OrdersPageDirection): OrdersPageContract.Direction
+    @[Provides  Singleton]
+    fun bindsOrderPageDirection(impl: OrdersPageDirection): OrdersPageContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsVenueDetailsDirection(impl: VenueDetailsDirection): VenueDetailsContract.Direction
+    @[Provides  Singleton]
+    fun bindsVenueDetailsDirection(impl: VenueDetailsDirection): VenueDetailsContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsBookingConfirmDirection(impl: BookingConfirmationDirection): BookingConfirmationContract.Direction
+    @[Provides  Singleton]
+    fun bindsBookingConfirmDirection(impl: BookingConfirmationDirection): BookingConfirmationContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsBookingSuccessDirection(impl: BookingSuccessDirection): BookingSuccessContract.Direction
+    @[Provides  Singleton]
+    fun bindsBookingSuccessDirection(impl: BookingSuccessDirection): BookingSuccessContract.Direction = impl
 
-    @[Binds ViewModelScoped]
-    fun bindsEditProfileDirection(impl: EditProfileDirection): EditProfileContract.Direction
+    @[Provides  Singleton]
+    fun bindsEditProfileDirection(impl: EditProfileDirection): EditProfileContract.Direction = impl
+
+    @[Provides  Singleton]
+    fun bindsOrderDetailsDirection(impl: OrderDetailsDirection): OrderDetailsContact.Direction = impl
 
 }
