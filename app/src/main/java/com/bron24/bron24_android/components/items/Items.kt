@@ -398,6 +398,7 @@ fun ItemProfileTask(
             color = Black,
             modifier = Modifier.padding(horizontal = 12.dp)
         )
+        endIcon?.invoke()
     }
 }
 

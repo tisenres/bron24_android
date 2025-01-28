@@ -282,7 +282,7 @@ private fun OrderAddress(address: String) {
 }
 
 @Composable
-private fun OrderStatus(status: OrderStatus) {
+private fun OrderStatusItem(status: OrderStatus) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier

@@ -9,16 +9,13 @@ import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.domain.entity.order.OrderAddress
 import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.domain.entity.order.OrderStatus
-import com.bron24.bron24_android.domain.entity.order.TimeSlot
-import com.bron24.bron24_android.helper.util.formatPrice
-import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 
 fun OrderDto.toDomainModel(): Order = Order(
     id  =id,
     timeSlot =timeSlot,
     bookingDate = bookingDate,
     sector = sector,
-    status = status,
+    status = if(status == "INPROCESS"){OrderStatus.IN_PROCESS}else if(status=="COMPLETED") OrderStatus.COMPLETED else OrderStatus.CANCELLED,
     hours = hours,
     orderId = orderId,
     payment = payment,

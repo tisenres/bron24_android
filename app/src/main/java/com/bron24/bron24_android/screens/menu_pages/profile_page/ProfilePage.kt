@@ -310,81 +310,65 @@ fun ProfilePageContent(
         ModalBottomSheet(
             onDismissRequest = { openBottomSheet = false },
             sheetState = bottomSheetState,
-            containerColor = White
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
+            containerColor = White,
+            tonalElevation = 100.dp,
+
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Contact Us",
+                    textAlign = TextAlign.Center,
+                    color = Black,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.gilroy_bold)),
+                    modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
+                )
+
+                ItemProfileTask(
+                    text = "Telegram",
+                    modifier = Modifier.fillMaxWidth().height(40.dp),
+                    startIcons = {
+                        Icon(
+                            painter = painterResource(R.drawable.icon_telegram),
+                            contentDescription = "",
+                            modifier = Modifier,
+                        )
+                    },
+                    endIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_up_right),
+                            contentDescription = "",
+                            modifier = Modifier
+                        )
+                    }
                 ) {
-                    Text(
-                        text = "Contact Us",
-                        textAlign = TextAlign.Center,
-                        color = Black,
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.gilroy_bold)),
-                        modifier = Modifier.padding(vertical = 4.dp),
-                    )
+
                 }
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .clickable {}
-                        .border(
-                            width = 1.dp,
-                            color = GrayLighter,
-                            shape = RoundedCornerShape(10.dp)
+                ItemProfileTask(
+                    text = "Contact Number",
+                    modifier = Modifier.fillMaxWidth().height(40.dp),
+                    startIcons = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_phone),
+                            contentDescription = "",
+                            modifier = Modifier
                         )
-                        .padding(10.dp)) {
-                    Icon(
-                        painter = painterResource(R.drawable.icon_telegram),
-                        contentDescription = "",
-                        modifier = Modifier.padding(2.dp)
-                    )
-                    Text(
-                        text = "Telegram",
-                        color = Black,
-                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-                        fontSize = 14.sp
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_up_right),
-                        contentDescription = "",
-                        modifier = Modifier.padding(2.dp)
-                    )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .clickable {}
-                        .border(
-                            width = 1.dp,
-                            color = GrayLighter,
-                            shape = RoundedCornerShape(10.dp)
+
+                    },
+                    endIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_up_right),
+                            contentDescription = "",
+                            modifier = Modifier
                         )
-                        .padding(10.dp)) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_phone),
-                        contentDescription = "",
-                        modifier = Modifier.padding(2.dp)
-                    )
-                    Text(
-                        text = "Contact Number",
-                        color = Black,
-                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-                        fontSize = 14.sp
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_up_right),
-                        contentDescription = "",
-                        modifier = Modifier.padding(2.dp)
-                    )
+                    }
+                ) {
+
                 }
             }
         }

@@ -9,6 +9,7 @@ import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.formatPrice
 import com.bron24.bron24_android.screens.booking.states.BookingState
+import com.google.android.play.integrity.internal.m
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,8 +29,12 @@ class BookingViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow(System.currentTimeMillis())
     val selectedDate: StateFlow<Long> = _selectedDate.asStateFlow()
 
+    private var countTimeSlot: Int = 0
+
     private val _selectedDateIndex = MutableStateFlow(-1)
     val selectedDateIndex: StateFlow<Int> = _selectedDateIndex.asStateFlow()
+    private val _checkSelected = MutableStateFlow(false)
+    val checkSelected:StateFlow<Boolean> = _checkSelected
 
     private val _selectedSector = MutableStateFlow<Sector?>(null)
     val selectedSector: StateFlow<Sector?> = _selectedSector.asStateFlow()

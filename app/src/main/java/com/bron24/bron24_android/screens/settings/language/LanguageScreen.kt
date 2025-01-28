@@ -23,6 +23,7 @@ import com.bron24.bron24_android.components.items.CustomAppBar
 import com.bron24.bron24_android.components.items.ItemLanguage
 import com.bron24.bron24_android.helper.util.setLanguage
 import com.bron24.bron24_android.screens.main.theme.Black17
+import com.bron24.bron24_android.screens.main.theme.White
 import org.orbitmvi.orbit.compose.collectAsState
 
 
