@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,12 +36,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter.State.Empty.painter
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemBackGround
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.google.android.play.integrity.internal.c
 import com.valentinilk.shimmer.shimmer
 
 @Composable
@@ -47,9 +52,6 @@ fun VenueItem(
     venue: Venue,
     listener: (Venue) -> Unit,
 ) {
-    val isLoading by remember {
-        mutableStateOf(false)
-    }
 
     Column(
         modifier = Modifier
@@ -60,14 +62,10 @@ fun VenueItem(
                 listener.invoke(venue)
             }
     ) {
-        if (isLoading) {
-            VenueLoadingPlaceholder()
-        } else {
-            VenueImageSection(venue)
-            VenueTitleRow(venue)
-            VenueDetailsRow(venue)
-            VenueFooter(venue)
-        }
+        VenueImageSection(venue)
+        VenueTitleRow(venue)
+        VenueDetailsRow(venue)
+        VenueFooter(venue)
     }
 }
 
@@ -132,29 +130,32 @@ fun VenueLoadingPlaceholder() {
 
 @Composable
 fun VenueImageSection(venue: Venue) {
+    var showLoading by remember {
+        mutableStateOf(false)
+    }
     Box(
         modifier = Modifier
             .height(162.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(venue.previewImage ?: "")
-                .placeholder(R.drawable.placeholder)
-                .scale(Scale.FILL)
-                .crossfade(true)
-                .build(),
-            contentDescription = "Venue Image",
+        if (showLoading) {
+            InitPhoto()
+        }
+        Image(
+            modifier = Modifier.fillMaxWidth(),
+            painter = rememberAsyncImagePainter(
+                model = venue.previewImage,
+                onLoading = {
+                    showLoading = true
+                },
+                onSuccess = {
+                    showLoading = false
+                },
+            ),
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            contentDescription = venue.venueName,
         )
-//        AnimatedFavoriteButton(
-//            onFavoriteClick,
-//            modifier = Modifier
-//                .align(Alignment.TopEnd)
-//                .padding(5.dp)
-//        )
     }
 }
 

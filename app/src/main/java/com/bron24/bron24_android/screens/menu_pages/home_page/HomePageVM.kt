@@ -1,7 +1,10 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
+import android.util.Log
+import androidx.compose.ui.util.trace
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
@@ -14,15 +17,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@HiltViewModel
 class HomePageVM @Inject constructor(
     private val direction: HomePageContract.Direction,
     private val localStorage: LocalStorage,
     private val getVenuesUseCase: GetVenuesUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val getSpecialOfferUseCase: GetSpecialOfferUseCase
-) : ViewModel(), HomePageContract.ViewModel {
+) : HomePageContract.ViewModel {
     private var filterOptions: FilterOptions? = null
 
     init {
@@ -42,45 +45,24 @@ class HomePageVM @Inject constructor(
 
             HomePageContract.Intent.Refresh -> {
                 getVenuesUseCase.invoke().onStart {
-                    reduce { state.copy(isLoading = true) }
+                    reduce { state.copy(isLoading = true, refresh = true) }
                 }.onEach {
                     it.onSuccess {
-                        reduce { state.copy(isLoading = false, itemData = it) }
+                        reduce { state.copy(isLoading = false, itemData = it, refresh = false) }
                     }.onFailure {
                         postSideEffect(it.message.toString())
                     }
-                }.launchIn(viewModelScope)
+                }.launchIn(screenModelScope)
 
                 getSpecialOfferUseCase.invoke().onEach {
                     reduce { state.copy(specialOffers = it) }
-                }.launchIn(viewModelScope)
+                }.launchIn(screenModelScope)
             }
 
             is HomePageContract.Intent.ClickItem -> {
-                direction.moveToDetails(intent.venueId, intent.rate)
+                direction.moveToDetails(intent.venueId)
             }
         }
-    }
-
-    override fun initData() = intent {
-        getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
-            it.onSuccess {
-                if (filterOptions != null) {
-                    filterResult()
-                }
-                reduce { state.copy(isLoading = false, itemData = it) }
-            }.onFailure {
-                postSideEffect(it.message.toString())
-            }
-        }.launchIn(viewModelScope)
-
-        getCurrentLocationUseCase.execute().onEach {
-            reduce { state.copy(userLocation = it) }
-        }.launchIn(viewModelScope)
-
-        getSpecialOfferUseCase.invoke().onEach {
-            reduce { state.copy(specialOffers = it) }
-        }.launchIn(viewModelScope)
     }
 
     private fun filterResult() = intent {
@@ -90,10 +72,10 @@ class HomePageVM @Inject constructor(
             }.onFailure {
                 postSideEffect(it.message.toString())
             }
-        }.launchIn(viewModelScope)
+        }.launchIn(screenModelScope)
         getCurrentLocationUseCase.execute().onEach {
             reduce { state.copy(userLocation = it) }
-        }.launchIn(viewModelScope)
+        }.launchIn(screenModelScope)
     }
 
     private fun postSideEffect(message: String) {
@@ -103,5 +85,32 @@ class HomePageVM @Inject constructor(
     }
 
     override val container =
-        container<HomePageContract.UIState, HomePageContract.SideEffect>(HomePageContract.UIState(firstName = localStorage.firstName))
+        container<HomePageContract.UIState, HomePageContract.SideEffect>(
+            initialState = HomePageContract.UIState(
+                firstName = localStorage.firstName
+            )
+        ) {
+            Log.d("AAA","onCreate")
+            intent {
+                reduce { state.copy(initial = false) }
+                getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
+                    it.onSuccess {
+                        if (filterOptions != null) {
+                            filterResult()
+                        }
+                        reduce { state.copy(isLoading = false, itemData = it) }
+                    }.onFailure {
+                        postSideEffect(it.message.toString())
+                    }
+                }.launchIn(screenModelScope)
+
+                getCurrentLocationUseCase.execute().onEach {
+                    reduce { state.copy(userLocation = it) }
+                }.launchIn(screenModelScope)
+
+                getSpecialOfferUseCase.invoke().onEach {
+                    reduce { state.copy(specialOffers = it) }
+                }.launchIn(screenModelScope)
+            }
+        }
 }

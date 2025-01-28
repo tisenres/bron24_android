@@ -9,6 +9,7 @@ import com.bron24.bron24_android.domain.entity.user.User
 import com.bron24.bron24_android.domain.usecases.auth.AuthenticateUserUseCase
 import com.bron24.bron24_android.domain.usecases.auth.RequestOTPUseCase
 import com.bron24.bron24_android.domain.usecases.auth.VerifyOTPUseCase
+import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -23,7 +24,8 @@ class OTPInputScreenVM @Inject constructor(
     private val direction: OTPInputContract.Direction,
     private val verifyOTPUseCase: VerifyOTPUseCase,
     private val authenticateUserUseCase: AuthenticateUserUseCase,
-    private val localStorage: LocalStorage
+    private val localStorage: LocalStorage,
+    private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase
 ) : ViewModel(), OTPInputContract.ViewModel {
     override fun onDispatchers(intent: OTPInputContract.Intent): Job = intent {
         when (intent) {
@@ -50,7 +52,7 @@ class OTPInputScreenVM @Inject constructor(
                                         userExists = true
                                     ).onEach {
                                         it.onSuccess {
-                                            direction.moveToMenu()
+                                            direction.moveToNext()
                                         }
                                     }.launchIn(viewModelScope)
                                 } else {

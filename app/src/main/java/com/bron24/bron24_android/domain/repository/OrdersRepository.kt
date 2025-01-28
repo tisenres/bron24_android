@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface OrdersRepository {
     fun getOrders(): Flow<ResponseOrdersDto>
 
-    fun getOrderDetails(id: Int): Flow<ResponseOrderDetailsDto>
+    fun getOrderDetails(id: Int,latitude:Double? = null,longitude:Double? = null): Flow<ResponseOrderDetailsDto>
 
     fun cancelOrder(id: Int): Flow<ResponseCancelOrderDto>
 

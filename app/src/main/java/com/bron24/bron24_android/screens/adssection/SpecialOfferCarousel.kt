@@ -1,29 +1,38 @@
 package com.bron24.bron24_android.screens.adssection
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.bron24.bron24_android.components.items.LoadingScreen
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.delay
@@ -56,6 +65,8 @@ fun SpecialOfferCarousel(
     HorizontalPager(
         state = pagerState,
         modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
             .clip(RoundedCornerShape(10.dp)),
         pageSpacing = 20.dp
     ) {
@@ -80,15 +91,30 @@ fun OfferImage(imageRes: String) {
                 .shimmer()
                 .background(Color.Gray.copy(alpha = 0.2f))
         )
-        AsyncImage(
-            model = ImageRequest.Builder(context)
-                .data(imageRes)
-                .scale(Scale.FILL)
-                .crossfade(true)
-                .build(),
-            contentDescription = "Special offers",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize(),
+        var showLoading by remember {
+            mutableStateOf(false)
+        }
+        if(showLoading){
+            Box(modifier = Modifier.fillMaxSize()){
+                CircularProgressIndicator(
+                    color = Color(0xFF32B768),
+                    modifier = Modifier.align(Alignment.Center).size(32.dp)
+                )
+            }
+        }
+        Image(
+            modifier = Modifier.fillMaxWidth(),
+            painter = rememberAsyncImagePainter(
+                model = imageRes,
+                onLoading = {
+                    showLoading = true
+                },
+                onSuccess = {
+                    showLoading = false
+                },
+            ),
+            contentDescription = imageRes,
+            contentScale = ContentScale.Crop
         )
     }
 }

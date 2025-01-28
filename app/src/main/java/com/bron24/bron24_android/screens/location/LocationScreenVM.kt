@@ -28,7 +28,7 @@ class LocationScreenVM @Inject constructor(
                 direction.moveToNext()
             }
             LocationScreenContract.Intent.ClickDeny -> {
-                postSideEffect("")
+                direction.moveToNext()
             }
         }
     }

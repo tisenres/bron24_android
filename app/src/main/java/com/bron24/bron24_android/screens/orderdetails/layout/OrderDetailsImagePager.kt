@@ -14,6 +14,10 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,13 +25,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.components.items.InitPhoto
 
 @Composable
-fun OrderDetailsImagePager(imageUrls:String, modifier: Modifier = Modifier) {
-    val pagerState = rememberPagerState(pageCount = { 1 })
+fun OrderDetailsImagePager(imageUrls:List<String>, modifier: Modifier = Modifier) {
+    val pagerState = rememberPagerState(pageCount = { imageUrls.size })
     Box(
         modifier = modifier
             .height(180.dp)
@@ -39,25 +45,25 @@ fun OrderDetailsImagePager(imageUrls:String, modifier: Modifier = Modifier) {
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            Image(imageUrl = imageUrls, page = page)
+            Image(imageUrl = imageUrls[page], page = page)
         }
         ImageOverlay(
             currentPage = pagerState.currentPage,
-            totalPages = 1,
+            totalPages = imageUrls.size,
         )
     }
 }
 
 @Composable
 fun Image(imageUrl: String, page: Int) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(imageUrl)
-            .placeholder(R.drawable.placeholder)
-            .build()
-    )
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+    if(isLoading){
+        InitPhoto()
+    }
     Image(
-        painter = painter,
+        painter = rememberAsyncImagePainter(model = imageUrl, onLoading = {isLoading = true}, onSuccess = {isLoading = false}),
         contentDescription = "Venue Image $page",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()

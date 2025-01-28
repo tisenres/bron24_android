@@ -54,7 +54,6 @@ class ProfilePageVM @Inject constructor(
                     reduce { state.copy(isLoading = true) }
                 }.onEach {
                     it.onSuccess {
-                        postSideEffect(it)
                         direction.moveToPhoneScreen()
                     }.onFailure {
                         postSideEffect(it.message ?: "Unknown error!")

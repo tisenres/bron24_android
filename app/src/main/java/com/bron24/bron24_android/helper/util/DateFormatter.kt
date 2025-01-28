@@ -48,7 +48,7 @@ fun String.isValidUzbekPhoneNumber(): Boolean {
     return regex.matches(this)
 }
 
-fun formatISODateTimeToHourString(isoDateTime: String): String = try {
+fun String.formatISODateTimeToHourString(): String = try {
 
     val isoFormats = arrayOf(
         "yyyy-MM-dd'T'HH:mm:ss'Z'",
@@ -65,7 +65,7 @@ fun formatISODateTimeToHourString(isoDateTime: String): String = try {
         val sdf = SimpleDateFormat(format, Locale.getDefault())
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         try {
-            parsedDate = sdf.parse(isoDateTime)
+            parsedDate = sdf.parse(this)
             if (parsedDate != null) {
                 break
             }
@@ -77,8 +77,8 @@ fun formatISODateTimeToHourString(isoDateTime: String): String = try {
     if (parsedDate != null) {
         timeFormat.format(parsedDate)
     } else {
-        isoDateTime
+        this
     }
 } catch (e: Exception) {
-    isoDateTime
+    this
 }

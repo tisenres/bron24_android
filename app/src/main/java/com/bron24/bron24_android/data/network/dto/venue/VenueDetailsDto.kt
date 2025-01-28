@@ -23,6 +23,7 @@ data class VenueDetailsDto(
     @SerializedName("description") val description: String,
     @SerializedName("working_hours_from") val workingHoursFrom: String,
     @SerializedName("working_hours_till") val workingHoursTill: String,
+    @SerializedName("rate") val rate:Double,
     @SerializedName("contact_1") val contact1: String,
     @SerializedName("contact_2") val contact2: String,
     @SerializedName("created_at") val createdAt: String,

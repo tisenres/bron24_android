@@ -40,7 +40,7 @@ private fun FavoriteScreenContent(
     ) {
         CustomAppBar(title = "Favorites", startIcons = {
             Icon(painter = painterResource(R.drawable.baseline_arrow_back_24), contentDescription = "")
-        }, listener = {
+        }, listenerBack = {
 
         })
         LazyColumn(contentPadding = PaddingValues(bottom = 16.dp)) {

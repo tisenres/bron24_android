@@ -16,11 +16,15 @@ interface OrdersApi {
     suspend fun getOrders(): ResponseOrdersDto
 
     @GET("/api/v1/orders/{id}")
-    suspend fun getOrderDetails(@Path("id") orderId: Int): ResponseOrderDetailsDto
+    suspend fun getOrderDetails(
+        @Path("id") orderId: Int,
+        @Query("lat") latitude: Double? = null,
+        @Query("lon") longitude: Double? = null
+        ): ResponseOrderDetailsDto
 
     @GET("/api/v1/orders/")
     suspend fun getOrdersByStatus(@Query("status") status:String):ResponseOrdersDto
 
-    @POST("/api/v1/orders/cancel")
+    @POST("/api/v1/orders/cancel/")
     suspend fun cancelOrder(@Body body: RequestCancelOrderDto): ResponseCancelOrderDto
 }

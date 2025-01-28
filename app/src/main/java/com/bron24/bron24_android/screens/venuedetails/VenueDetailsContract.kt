@@ -15,8 +15,9 @@ interface VenueDetailsContract {
     }
 
     data class UIState(
-        val isLoading: Boolean = false,
+        val isLoading: Boolean = true,
         val venue: VenueDetails? = null,
+        val imageUrls:List<String> = emptyList()
     )
 
     class SideEffect(val message: String)
