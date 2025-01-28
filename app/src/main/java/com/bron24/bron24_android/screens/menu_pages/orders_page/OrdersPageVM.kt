@@ -49,15 +49,16 @@ class OrdersPageVM @Inject constructor(
         }
     }
     private fun upComing():Job = intent{
-        Log.d("AAA", "upComing: up comming")
+        reduce { state.copy(selected = OrdersType.UPCOMING) }
         getOrdersByStatusUseCase.invoke("INPROCESS")
-            .onEach { reduce { state.copy(itemData = it, selected = OrdersType.UPCOMING) } }
+            .onEach { reduce { state.copy(itemData = it) } }
             .onCompletion { reduce { state.copy(isLoading = false, refresh = false)} }
             .launchIn(viewModelScope)
     }
     private fun history():Job = intent{
+        reduce { state.copy(selected = OrdersType.HISTORY) }
         getOrdersByStatusUseCase.invoke("history")
-            .onEach { reduce { state.copy(itemData = it, selected = OrdersType.HISTORY) } }
+            .onEach { reduce { state.copy(itemData = it) } }
             .onCompletion { reduce { state.copy(isLoading = false, refresh = false) }}
             .launchIn(viewModelScope)
     }

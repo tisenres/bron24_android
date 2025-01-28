@@ -95,10 +95,10 @@ fun EditProfileScreenContent(
         mutableStateOf(false)
     }
     var firstName by remember {
-        mutableStateOf(uiState.value.firstName)
+        mutableStateOf("")
     }
     var lastName by remember {
-        mutableStateOf(uiState.value.lastName)
+        mutableStateOf("")
     }
     if (uiState.value.isLoading) {
         LoadingScreen()
@@ -185,7 +185,7 @@ fun EditProfileScreenContent(
                 modifier = Modifier
                     .padding(top = 12.dp)
                     .padding(horizontal = 20.dp),
-                hint = "",
+                hint = "first name",
                 text = firstName,
                 listener = {},
                 onValueChange = {
@@ -193,7 +193,7 @@ fun EditProfileScreenContent(
                 }
             )
             Text(
-                text = uiState.value.lastName,
+                text = "Last name",
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
                     .padding(top = 20.dp),
@@ -206,7 +206,7 @@ fun EditProfileScreenContent(
                 modifier = Modifier
                     .padding(top = 12.dp)
                     .padding(horizontal = 20.dp),
-                hint = "",
+                hint = "last name",
                 text = lastName,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 listener = {},
