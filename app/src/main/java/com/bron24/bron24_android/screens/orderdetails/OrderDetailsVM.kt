@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.usecases.orders.CancelOrderUseCase
 import com.bron24.bron24_android.domain.usecases.orders.GetOrderDetailsUseCase
+import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -31,12 +32,19 @@ class OrderDetailsVM @Inject constructor(
             }
 
             is OrderDetailsContact.Intent.ClickCancel -> {
-                cancelOrderUseCase.invoke(intent.id)
-                    .onStart {
-                    }.onEach {
-                       direction.back()
-                    }.launchIn(viewModelScope)
+                cancelOrderUseCase.invoke(intent.id).onEach {
+                    it.onSuccess {
+                        direction.back()
+                    }.onFailure {
+                        postSideEffect(message = it.message?:"")
+                    }
+                }.launchIn(viewModelScope)
             }
+        }
+    }
+    private fun postSideEffect(message: String) {
+        intent {
+            postSideEffect(OrderDetailsContact.SideEffect(message))
         }
     }
 
@@ -45,7 +53,7 @@ class OrderDetailsVM @Inject constructor(
             .onStart {
                 reduce { state.copy(isLoading = true) }
             }.onEach {
-                Log.d("AAA", "initData: ${it.second}")
+//                Log.d("AAA", "initData: ${it.second}")
                 reduce { state.copy(order = it.first, imageUrls = it.second, isLoading = false) }
                 when (it.first.status) {
                     "INPROCESS" -> {

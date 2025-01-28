@@ -36,8 +36,7 @@ class VenueDetailsVM @Inject constructor(
             .onStart { reduce { state.copy(isLoading = true) } }
             .onEach {
                 reduce { state.copy(isLoading = false, venue = it.first, imageUrls = it.second) }
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
     override val container = container<VenueDetailsContract.UIState, VenueDetailsContract.SideEffect>(VenueDetailsContract.UIState())

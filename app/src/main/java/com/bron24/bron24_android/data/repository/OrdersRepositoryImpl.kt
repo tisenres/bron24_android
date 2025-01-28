@@ -27,8 +27,14 @@ class OrdersRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override fun cancelOrder(id: Int): Flow<ResponseCancelOrderDto> = flow {
-        val response = api.cancelOrder(RequestCancelOrderDto(id))
-        emit(response)
+        try {
+            val response = api.cancelOrder(RequestCancelOrderDto(id))
+            emit(response)
+        }catch (e:Exception){
+
+        }
+
+
     }.flowOn(Dispatchers.IO)
 
     override fun getOrdersByStatus(status: String): Flow<ResponseOrdersDto> = flow {

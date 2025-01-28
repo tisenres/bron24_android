@@ -42,6 +42,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.CustomAppBar
+import com.bron24.bron24_android.components.items.CustomDialog
 import com.bron24.bron24_android.domain.entity.order.OrderAddress
 import com.bron24.bron24_android.screens.main.theme.Black61
 import com.bron24.bron24_android.screens.main.theme.White
@@ -71,6 +72,10 @@ fun OrderDetailsContent(
     state: State<OrderDetailsContact.UIState>,
     intent: (OrderDetailsContact.Intent) -> Unit
 ) {
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,30 +94,38 @@ fun OrderDetailsContent(
                 if (state.value.isCanceled) {
                     TextButton(
                         onClick = {
-                            intent.invoke(OrderDetailsContact.Intent.Back)
+                            showDialog = true
                         },
                         enabled = state.value.isCancelling,
                         colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFF24E1E))
                     ) {
-                        if (!state.value.isCancelling) {
-                            CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                        } else {
-                            Text("Cancel order", color = Color.Red)
-                        }
+                        Text("Cancel order", color = Color.Red)
                     }
                 }
             }
         ) {
             intent.invoke(OrderDetailsContact.Intent.Back)
         }
+
         OrderDetailsItem(
             state = state,
             modifier = Modifier,
             navigateToVenueDetails = {
-                intent.invoke(OrderDetailsContact.Intent.ClickMoveTo(state.value.order?.venueId?:0))
+                intent.invoke(OrderDetailsContact.Intent.ClickMoveTo(state.value.order?.venueId ?: 0))
             }
         )
 
+    }
+    if(showDialog){
+        CustomDialog(
+            message = "Siz orderni bekor qilmoqchimisiz?",
+            yes = "Yes",
+            no = "No",
+            onDismiss = { showDialog = false }
+        ) {
+            intent.invoke(OrderDetailsContact.Intent.ClickCancel(state.value.order?.id?:0))
+            showDialog = false
+        }
     }
 }
 
@@ -129,7 +142,7 @@ private fun OrderDetailsItem(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            if (state.value.isLoading){
+            if (state.value.isLoading) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -138,7 +151,7 @@ private fun OrderDetailsItem(
                         .shimmer()
                         .background(Color.Gray.copy(alpha = 0.2f))
                 )
-            }else{
+            } else {
                 OrderDetailsImagePager(
                     imageUrls = state.value.imageUrls,
                     modifier = Modifier
@@ -147,7 +160,7 @@ private fun OrderDetailsItem(
 
         }
         item {
-            if(state.value.isLoading){
+            if (state.value.isLoading) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Box(
                         modifier = Modifier
@@ -186,7 +199,7 @@ private fun OrderDetailsItem(
                             .background(Color.Gray.copy(alpha = 0.2f))
                     )
                 }
-            }else{
+            } else {
                 OrderDetailHeader(
                     order = state.value.order,
                     modifier = Modifier
@@ -196,13 +209,13 @@ private fun OrderDetailsItem(
         }
         item {
             OrderDetailMap(
-                state =state,
+                state = state,
                 modifier = Modifier
             )
         }
 
         item {
-            if(state.value.isLoading){
+            if (state.value.isLoading) {
                 Box(
                     modifier = Modifier
                         .padding(bottom = 16.dp)
@@ -220,7 +233,7 @@ private fun OrderDetailsItem(
                         .shimmer()
                         .background(Color.Gray.copy(alpha = 0.2f))
                 )
-            }else{
+            } else {
                 OrderDetailContacts(
                     order = state.value.order,
                     modifier = Modifier
@@ -229,7 +242,7 @@ private fun OrderDetailsItem(
         }
 
         item {
-            if(state.value.isLoading){
+            if (state.value.isLoading) {
                 Box(
                     modifier = Modifier
                         .padding(top = 16.dp)
@@ -239,7 +252,7 @@ private fun OrderDetailsItem(
                         .shimmer()
                         .background(Color.Gray.copy(alpha = 0.2f))
                 )
-            }else{
+            } else {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     TextButton(
                         modifier = Modifier

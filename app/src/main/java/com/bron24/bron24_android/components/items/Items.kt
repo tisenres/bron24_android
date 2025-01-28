@@ -70,7 +70,6 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.helper.util.NetworkConnection
-import com.bron24.bron24_android.helper.util.presentation.listener
 import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.Error
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemDivider
@@ -113,6 +112,18 @@ fun ItemsPreview() {
     }
 }
 
+@Composable
+fun InitPhoto(){
+    Box(modifier = Modifier.fillMaxSize().background(color = White)) {
+        CircularProgressIndicator(
+            color = Color(0xFF32B768),
+            modifier = Modifier
+                .background(color = White)
+                .align(Alignment.Center)
+                .size(28.dp)
+        )
+    }
+}
 @Composable
 fun ErrorNetWork(networkConnection: NetworkConnection) {
 
@@ -472,7 +483,7 @@ fun CheckBox(
     }
 }
 @Composable
-fun CustomDialog(message:String,onDismiss: () -> Unit, onConfirm: () -> Unit) {
+fun CustomDialog(message:String,yes:String,no:String,onDismiss: () -> Unit, onConfirm: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Box(
             modifier = Modifier
@@ -487,7 +498,7 @@ fun CustomDialog(message:String,onDismiss: () -> Unit, onConfirm: () -> Unit) {
                     .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Are you sure you want to\n$message?",
+                    text = message,
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
                     color = Black,
@@ -501,13 +512,19 @@ fun CustomDialog(message:String,onDismiss: () -> Unit, onConfirm: () -> Unit) {
                         .height(1.dp)
                         .background(color = FavoriteItemDivider)
                 )
-                TextButton(onClick = onConfirm) {
+                TextButton(
+                    onClick = onConfirm,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                        .fillMaxWidth()
+                ) {
                     Text(
-                        text = message,
+                        text = yes,
                         color = Error,
                         fontSize = 16.sp,
                         fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                     )
                 }
                 Box(
@@ -517,13 +534,21 @@ fun CustomDialog(message:String,onDismiss: () -> Unit, onConfirm: () -> Unit) {
                         .height(1.dp)
                         .background(color = FavoriteItemDivider)
                 )
-                TextButton(onClick = onDismiss) {
+                TextButton(
+                    onClick = onDismiss,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                        .fillMaxWidth()
+                ) {
                     Text(
-                        text = "Cansel",
+                        text = no,
                         color = Black,
                         fontSize = 16.sp,
                         fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
+
                     )
                 }
             }

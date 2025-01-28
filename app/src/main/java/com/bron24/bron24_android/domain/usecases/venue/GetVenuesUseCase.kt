@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-private const val TAG = "GetVenuesUseCase"
-
 class GetVenuesUseCase @Inject constructor(
     private val repository: VenueRepository,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
@@ -25,42 +23,40 @@ class GetVenuesUseCase @Inject constructor(
         sort: String? = null,
         filterOptions: FilterOptions? = null
     ): Flow<Result<List<Venue>>> = flow {
-        try {
-            checkLocationPermissionUseCase.invoke().collect { permissionState ->
-                when (permissionState) {
-                    LocationPermissionState.GRANTED -> {
-                        getCurrentLocationUseCase.execute().collect { location ->
-                            val venues = repository.getVenues(
-                                latitude = location.latitude,
-                                longitude = location.longitude,
-                                sort = sort,
-                                availableTime = filterOptions?.availableTime,
-                                minPrice = filterOptions?.minPrice,
-                                maxPrice = filterOptions?.maxPrice,
-                                infrastructure = filterOptions?.infrastructure,
-                                district = filterOptions?.district,
-                            )
-                            emit(Result.success(venues))
-                        }
-                    }
-                    LocationPermissionState.DENIED -> {
+        checkLocationPermissionUseCase.invoke().collect { permissionState ->
+            when (permissionState) {
+                LocationPermissionState.GRANTED -> {
+                    getCurrentLocationUseCase.execute().collect { location ->
+                        Log.d("AAA", "invoke: Grented")
                         val venues = repository.getVenues(
-                            latitude = null,
-                            longitude = null,
+                            latitude = location.latitude,
+                            longitude = location.longitude,
                             sort = sort,
                             availableTime = filterOptions?.availableTime,
                             minPrice = filterOptions?.minPrice,
                             maxPrice = filterOptions?.maxPrice,
                             infrastructure = filterOptions?.infrastructure,
-                            district = filterOptions?.district
+                            district = filterOptions?.district,
                         )
                         emit(Result.success(venues))
                     }
                 }
+
+                LocationPermissionState.DENIED -> {
+                    Log.d("AAA", "invoke: = Denied")
+                    val venues = repository.getVenues(
+                        latitude = null,
+                        longitude = null,
+                        sort = sort,
+                        availableTime = filterOptions?.availableTime,
+                        minPrice = filterOptions?.minPrice,
+                        maxPrice = filterOptions?.maxPrice,
+                        infrastructure = filterOptions?.infrastructure,
+                        district = filterOptions?.district,
+                    )
+                    emit(Result.success(venues))
+                }
             }
-        } catch (e: Exception) {
-            // Log the error if needed
-            emit(Result.success(emptyList()))
         }
     }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)
 }

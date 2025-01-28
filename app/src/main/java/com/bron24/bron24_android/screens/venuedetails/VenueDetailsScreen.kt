@@ -51,6 +51,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -97,10 +98,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
+import com.bron24.bron24_android.components.items.InitPhoto
 import com.bron24.bron24_android.components.items.LoadingScreen
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
@@ -574,14 +577,20 @@ fun VenueImageSection(
 
 @Composable
 fun VenueImage(imageUrl: String, page: Int) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(imageUrl)
-            .placeholder(R.drawable.placeholder)
-            .build()
-    )
+//    val painter = rememberAsyncImagePainter(
+//        model = ImageRequest.Builder(LocalContext.current)
+//            .data(imageUrl)
+//            .placeholder(R.drawable.placeholder)
+//            .build()
+//    )
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+    if(isLoading){
+        InitPhoto()
+    }
     Image(
-        painter = painter,
+        painter = rememberAsyncImagePainter(model = imageUrl, onLoading = { isLoading = true}, onSuccess = { isLoading = false}),
         contentDescription = "Venue Image $page",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()

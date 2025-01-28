@@ -44,13 +44,10 @@ object HomePage : Tab {
                 icon = icon
             )
         }
-
-
     @Composable
     override fun Content() {
         val viewModel:HomePageContract.ViewModel = hiltScreenModel()
         val state = viewModel.collectAsState()
-        Log.d("AAA", "Content: init")
         HomePageContent(state = state, intent = viewModel::onDispatchers)
     }
 }

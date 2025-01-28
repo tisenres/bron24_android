@@ -20,22 +20,33 @@ class GetVenueDetailsUseCase @Inject constructor(
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(venueId: Int): Flow<Pair<VenueDetails, List<String>>> = flow{
-        checkLocationPermissionUseCase.invoke().collect{
-            when(it){
+    operator fun invoke(venueId: Int): Flow<Pair<VenueDetails, List<String>>> = flow {
+        checkLocationPermissionUseCase.invoke().collect {
+            when (it) {
                 LocationPermissionState.GRANTED -> {
-                    getCurrentLocationUseCase.execute().collect{
+                    getCurrentLocationUseCase.execute().collect {
                         val venueDetails = venueRepository.getVenueDetailsById(venueId, longitude = it.longitude, latitude = it.latitude)
-                        emitAll(venueDetails.flatMapConcat { data ->
+                        emitAll(
+                            venueDetails.flatMapConcat { data ->
+                                flow {
+                                    val images = venueRepository.getVenuePictures(venueId)
+                                    emit(Pair(first = data, second = images))
+                                }
+                            }
+                        )
+                    }
+                }
+
+                LocationPermissionState.DENIED -> {
+                    val venueDetails = venueRepository.getVenueDetailsById(venueId, longitude = null, latitude = null)
+                    emitAll(
+                        venueDetails.flatMapConcat { data ->
                             flow {
                                 val images = venueRepository.getVenuePictures(venueId)
                                 emit(Pair(first = data, second = images))
                             }
-                        })
-                    }
-                }
-                LocationPermissionState.DENIED -> {
-
+                        }
+                    )
                 }
             }
         }

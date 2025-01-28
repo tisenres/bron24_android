@@ -25,6 +25,6 @@ interface OrdersApi {
     @GET("/api/v1/orders/")
     suspend fun getOrdersByStatus(@Query("status") status:String):ResponseOrdersDto
 
-    @POST("/api/v1/orders/cancel")
+    @POST("/api/v1/orders/cancel/")
     suspend fun cancelOrder(@Body body: RequestCancelOrderDto): ResponseCancelOrderDto
 }

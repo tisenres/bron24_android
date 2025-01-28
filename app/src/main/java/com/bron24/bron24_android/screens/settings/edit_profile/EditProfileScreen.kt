@@ -271,6 +271,8 @@ fun EditProfileScreenContent(
     if(showDialog){
         CustomDialog(
             message = "Delete",
+            yes = "Delete",
+            no = "Cancel",
             onDismiss = { showDialog = false })
         {
             intent.invoke(EditProfileContract.Intent.ClickDeleteAcc)

@@ -140,14 +140,7 @@ fun VenueImageSection(venue: Venue) {
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
         if (showLoading) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(
-                    color = Color(0xFF32B768),
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(32.dp)
-                )
-            }
+            InitPhoto()
         }
         Image(
             modifier = Modifier.fillMaxWidth(),

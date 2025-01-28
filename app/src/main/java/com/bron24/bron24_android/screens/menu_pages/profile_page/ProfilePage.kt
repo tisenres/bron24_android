@@ -392,6 +392,8 @@ fun ProfilePageContent(
     if (showDialog) {
         CustomDialog(
             message = "Logout",
+            yes = "Logout",
+            no = "Cancel",
             onDismiss = { showDialog = false },
             onConfirm = { intent.invoke(ProfilePageContract.Intent.ClickLogout) })
     }

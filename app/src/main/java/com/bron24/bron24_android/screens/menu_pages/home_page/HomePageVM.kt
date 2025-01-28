@@ -90,6 +90,7 @@ class HomePageVM @Inject constructor(
                 firstName = localStorage.firstName
             )
         ) {
+            Log.d("AAA","onCreate")
             intent {
                 reduce { state.copy(initial = false) }
                 getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {
