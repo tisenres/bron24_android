@@ -60,6 +60,8 @@ import org.orbitmvi.orbit.compose.collectAsState
 private const val MAX_ZOOM_LEVEL = 20f
 private const val MIN_ZOOM_LEVEL = 5f
 
+private const val TAG = "YandexMapPage"
+
 object YandexMapPage : Tab {
     private fun readResolve(): Any = YandexMapPage
     override val options: TabOptions
@@ -189,7 +191,7 @@ fun YandexMapPageContent(
             val dismissState = rememberSwipeToDismissBoxState(
                 confirmValueChange = { dismissValue ->
                     if (dismissValue == SwipeToDismissBoxValue.StartToEnd || dismissValue == SwipeToDismissBoxValue.EndToStart) {
- //                       mapViewModel.clearSelectedVenue()
+                        //                       mapViewModel.clearSelectedVenue()
                         true
                     } else {
                         false
@@ -372,13 +374,33 @@ fun setStadiumMarker(
     if (!mapObjectListeners.containsKey(point.first)) {
         val listener = MapObjectTapListener { _, _ ->
             centerCameraOnMarker(mapView, point.first)
-            animateMarker(context, placemark)
+            updateMarkerAppearance(placemark, context, isHighlighted = true)
+
+            placemark.useAnimation().play()
             intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
             true
         }
 
         mapObjectListeners[point.first] = listener
         placemark.addTapListener(listener)
+    }
+}
+
+fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Context, isHighlighted: Boolean) {
+    if (isHighlighted) {
+        placemark.setIcon(ImageProvider.fromResource(context, R.drawable.red_location_pin))
+        placemark.setIconStyle(
+            IconStyle().apply {
+                scale = 2f
+            }
+        )
+    } else {
+        placemark.setIcon(ImageProvider.fromResource(context, R.drawable.green_location_pin))
+        placemark.setIconStyle(
+            IconStyle().apply {
+                scale = 1f
+            }
+        )
     }
 }
 
@@ -395,22 +417,8 @@ private fun createBitmapFromVector(art: Int, context: Context): Bitmap? {
     return bitmap
 }
 
-private fun animateMarker(
-    context: Context,
-    placemark: PlacemarkMapObject
-) {
-
-    placemark.isVisible = false
-
-    placemark.setIconStyle(
-        IconStyle().apply {
-            scale = 0.5f
-        }
-    )
-}
-
 fun centerCameraOnMarker(mapView: MapView, point: Point) {
-    val offsetY = 0.002
+    val offsetY = 0.004
     val newPoint = Point(point.latitude - offsetY, point.longitude)
 
     mapView.map.move(
