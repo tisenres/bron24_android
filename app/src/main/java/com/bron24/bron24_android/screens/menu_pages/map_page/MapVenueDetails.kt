@@ -266,8 +266,8 @@ fun ImageOverlay(
                 icon = Icons.Default.Share,
                 contentDescription = "Share"
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
+//            Spacer(modifier = Modifier.width(8.dp))
+//            AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
         }
         BottomIndicators(
             currentPage = currentPage,

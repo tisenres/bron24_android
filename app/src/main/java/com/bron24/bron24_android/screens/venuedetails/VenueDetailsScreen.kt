@@ -51,7 +51,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -98,24 +97,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.components.items.InitPhoto
-import com.bron24.bron24_android.components.items.LoadingScreen
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.orderdetails.layout.ShimmerLayout
-import com.google.android.play.integrity.internal.t
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -161,7 +154,7 @@ fun VenueDetailsScreenContent(
             openOrder = true
         }
     )
-//    }
+
     if (openOrder) {
         BookingBottomSheet(
             venueId = venueId,
@@ -629,8 +622,8 @@ fun ImageOverlay(
                     icon = Icons.Default.Share,
                     contentDescription = "Share"
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
+//                Spacer(modifier = Modifier.width(12.dp))
+//                AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
             }
         }
         BottomIndicators(

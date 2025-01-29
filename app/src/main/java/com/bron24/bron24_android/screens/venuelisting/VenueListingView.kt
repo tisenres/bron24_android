@@ -1,7 +1,6 @@
 package com.bron24.bron24_android.screens.venuelisting
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -91,7 +90,7 @@ fun VenueListingView(
             modifier = Modifier.fillMaxSize()
         ) {
             item(key = "ads") {
-                if(state.value.isLoading){
+                if (state.value.isLoading) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -100,7 +99,7 @@ fun VenueListingView(
                             .shimmer()
                             .background(Color.Gray.copy(alpha = 0.2f))
                     )
-                }else{
+                } else {
                     SpecialOfferCarousel(uiState = state)
                 }
 
@@ -131,14 +130,14 @@ fun VenueListingView(
                 }
             }
             if (state.value.isLoading) {
-                // Display shimmer placeholders while loading
-                items(5) { // Arbitrary number of placeholders
+                items(5) {
                     VenueLoadingPlaceholder()
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             } else {
                 items(state.value.itemData) { venue ->
-                    VenueItem(venue = venue, listener = listenerItem)
+                    VenueItem(venue = venue, onFavoritesClick = listenerItem)
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }

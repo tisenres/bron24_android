@@ -3,6 +3,7 @@ package com.bron24.bron24_android.screens.menu_pages.map_page
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -99,6 +100,7 @@ fun YandexMapPageContent(
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = { context ->
+                Log.d(TAG, "Factory was called")
                 MapView(context).also { view ->
                     mapView = view
                     mapObjects = view.map.mapObjects
@@ -111,45 +113,32 @@ fun YandexMapPageContent(
                     view.map.move(
                         CameraPosition(userLocation, 15f, 0f, 0f)
                     )
-
-                    setMarkerInStartLocation(
-                        mapObjects!!,
-                        userLocation,
-                        context,
-                    )
-                    state.value.venueCoordinates.map { venue ->
-                        val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                        setStadiumMarker(
-                            mapView!!,
-                            mapObjects!!,
-                            (point to venue),
-                            context,
-                            intent,
-                            mapObjectListeners,
-                        )
-                    }
                 }
             },
             modifier = Modifier.fillMaxSize(),
             update = { view ->
-                setMarkerInStartLocation(
-                    mapObjects!!,
-                    userLocation,
-                    context,
-                )
-                state.value.venueCoordinates.map { venue ->
+                // No-op to prevent unnecessary updates
+            }
+        )
+
+        LaunchedEffect(mapObjects) {
+            mapObjects?.let { objects ->
+                setMarkerInStartLocation(objects, userLocation, context)
+                state.value.venueCoordinates.forEach { venue ->
                     val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
                     setStadiumMarker(
                         mapView!!,
-                        mapObjects!!,
+                        objects,
                         (point to venue),
                         context,
                         intent,
-                        mapObjectListeners,
+                        mapObjectListeners
                     )
                 }
+
+//                mapView?.map?.invalidate()
             }
-        )
+        }
 
         ZoomControls(
             modifier = Modifier.align(Alignment.TopEnd),
@@ -163,7 +152,6 @@ fun YandexMapPageContent(
             exit = slideOutVertically(targetOffsetY = { it }),
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
-
             SwipeToDismissVertical(
                 content = {
                     val venueDetails = state.value.venueDetails
@@ -243,11 +231,22 @@ private fun setMarkerInStartLocation(
     location: Point,
     context: Context
 ) {
+    if (mapObjects == null) {
+        Log.e(TAG, "mapObjects is null")
+        return
+    }
+
     val marker = createBitmapFromVector(R.drawable.location_pin_svg, context)
+    if (marker == null) {
+        Log.e(TAG, "Failed to create bitmap from vector")
+        return
+    }
+
     mapObjects.addPlacemark(
         location,
         ImageProvider.fromBitmap(marker)
     )
+    Log.d(TAG, "Marker added at location: $location")
 }
 
 fun setStadiumMarker(
@@ -266,11 +265,9 @@ fun setStadiumMarker(
     )
 
     if (!mapObjectListeners.containsKey(point.first)) {
-
         val listener = MapObjectTapListener { _, _ ->
             centerCameraOnMarker(mapView, point.first)
             updateMarkerAppearance(placemark, context, isHighlighted = true)
-
             intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
             true
         }
@@ -281,7 +278,6 @@ fun setStadiumMarker(
 }
 
 fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Context, isHighlighted: Boolean) {
-
     val drawable = if (isHighlighted) R.drawable.red_location_pin else R.drawable.green_location_pin
     val customScale = if (isHighlighted) 1.25f else 0.8f
 
@@ -289,7 +285,6 @@ fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Context, isHi
 
     placemark.setIcon(
         ImageProvider.fromBitmap(bitmap),
-
         IconStyle().apply {
             scale = customScale
         }

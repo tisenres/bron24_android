@@ -19,7 +19,8 @@ interface YandexMapPageContract {
         val isLoading: Boolean = false,
         val checkPermission: LocationPermissionState = LocationPermissionState.DENIED,
         val userLocation: Location = Location(42.23, 43.33),
-        val imageUrls: List<String> = emptyList()
+        val imageUrls: List<String> = emptyList(),
+        val currentSelectedMarker: VenueCoordinates? = null
     )
 
     data class SideEffect(

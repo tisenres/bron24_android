@@ -279,7 +279,6 @@ fun DateSection(
     visibleMonthYear: String,
     onDateSelected: (Long) -> Unit,
     onMonthClick: () -> Unit,
-//    onVisibleDatesChanged: (DateItem) -> Unit,
     scrollState: ScrollState,
     selectedDateIndex: Int
 ) {
@@ -292,16 +291,11 @@ fun DateSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
-                .padding(3.dp)
-                .clickable(
-                    onClick = {
-                        Log.d("DateSection", "Month clicked")
-                        onMonthClick()
-                    }),
+                .padding(3.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Date",
+                text = stringResource(R.string.date),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.ExtraBold,
@@ -313,25 +307,37 @@ fun DateSection(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f)
             )
-            Image(
-                painter = painterResource(id = R.drawable.baseline_calendar_today_24),
-                contentDescription = "Calendar",
-                modifier = Modifier.size(16.dp),
-                colorFilter = ColorFilter.tint(Color(0xFF949494)),
-            )
-            Text(
-                visibleMonthYear,
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = Color(0xFF949494),
-                    lineHeight = 20.sp,
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(start = 7.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable(
+                        onClick = {
+                            Log.d("DateSection", "Month clicked")
+                            onMonthClick()
+                        }
+                    )
+                    .padding(8.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_calendar_today_24),
+                    contentDescription = "Calendar",
+                    modifier = Modifier.size(16.dp),
+                    colorFilter = ColorFilter.tint(Color(0xFF949494)),
+                )
+                Text(
+                    visibleMonthYear,
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color(0xFF949494),
+                        lineHeight = 20.sp,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(start = 7.dp)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
@@ -521,7 +527,7 @@ fun AvailableTimesSection(
                     FlowRow(
                         maxItemsInEachRow = 3,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.Start
                     ) {
                         timeSlots.forEach { timeSlot ->
                             TimeSlotItem(
@@ -552,7 +558,7 @@ fun EmptyTimeSlots() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.sad_ball), // Make sure to add this icon to your drawables
+            painter = painterResource(id = R.drawable.sad_ball),
             contentDescription = "No available time slots",
             modifier = Modifier.size(120.dp)
         )
@@ -587,7 +593,7 @@ fun TimeSlotItem(
 
     Box(
         modifier = Modifier
-            .padding(bottom = 17.dp)
+            .padding(bottom = 17.dp, end = 13.dp)
             .widthIn(min = 110.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
@@ -598,13 +604,10 @@ fun TimeSlotItem(
             .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-//        val startTimeInMillis = parseTimeString(timeSlot.startTime)
-//        val endTimeInMillis = parseTimeString(timeSlot.endTime)
         val startTimeInMillis = timeSlot.startTime
         val endTimeInMillis = timeSlot.endTime
 
         Text(
-//            text = formatTimeSlot(startTimeInMillis, endTimeInMillis),
             text = "$startTimeInMillis - $endTimeInMillis",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
@@ -678,7 +681,7 @@ private fun BookingScreenPreview() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Date",
+                text = stringResource(R.string.date),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.ExtraBold,
