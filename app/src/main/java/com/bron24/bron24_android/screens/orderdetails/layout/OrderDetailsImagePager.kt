@@ -23,13 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import com.bron24.bron24_android.R
-import com.bron24.bron24_android.components.items.InitPhoto
+import com.bron24.bron24_android.components.items.LoadingPlaceholder
 
 @Composable
 fun OrderDetailsImagePager(imageUrls:List<String>, modifier: Modifier = Modifier) {
@@ -60,7 +56,7 @@ fun Image(imageUrl: String, page: Int) {
         mutableStateOf(false)
     }
     if(isLoading){
-        InitPhoto()
+        LoadingPlaceholder()
     }
     Image(
         painter = rememberAsyncImagePainter(model = imageUrl, onLoading = {isLoading = true}, onSuccess = {isLoading = false}),

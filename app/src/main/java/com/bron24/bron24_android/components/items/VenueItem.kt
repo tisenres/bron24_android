@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.components.items
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -132,7 +133,7 @@ fun VenueImageSection(venue: Venue) {
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
         if (showLoading) {
-            InitPhoto()
+            LoadingPlaceholder()
         }
         Image(
             modifier = Modifier.fillMaxWidth(),
@@ -151,6 +152,7 @@ fun VenueImageSection(venue: Venue) {
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun VenueDetailsRow(venue: Venue) {
     Row(
@@ -173,19 +175,22 @@ fun VenueDetailsRow(venue: Venue) {
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
-        Text(
-            text = String.format("%.1f", venue.distance) + " " + stringResource(id = R.string.km),
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                color = Color(0xFF949494),
-                lineHeight = 21.sp,
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(start = 10.dp)
-        )
+        if(venue.distance.toInt()!=0){
+            Text(
+                text = String.format("%.1f", venue.distance) + " " + stringResource(id = R.string.km),
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    color = Color(0xFF949494),
+                    lineHeight = 21.sp,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        }
+
     }
 }
 
@@ -266,7 +271,7 @@ fun VenueFooter(venue: Venue) {
                     painter = painterResource(id = R.drawable.ic_dollar),
                     contentDescription = "Price Icon",
                     modifier = Modifier
-                        .size(14.dp)
+                        .size(16.dp)
                         .align(Alignment.CenterVertically)
                 )
                 Text(

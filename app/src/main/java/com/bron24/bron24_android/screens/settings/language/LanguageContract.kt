@@ -14,6 +14,7 @@ interface LanguageContract {
     val isLoading: Boolean = false,
     val languageList: List<Language> = mutableListOf(),
     var selectedLanguageIndex: Int = 0,
+    val selectedLanguage:Language = Language("uz","O`zbek"),
     val error: String = ""
   )
 

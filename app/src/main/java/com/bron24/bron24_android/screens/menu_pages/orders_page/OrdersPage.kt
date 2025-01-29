@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.screens.menu_pages.orders_page
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -94,8 +95,6 @@ fun OrdersPageContent(
     intent: (OrdersPageContract.Intent) -> Unit
 ) {
 
-
-
     val upcomingListState = rememberLazyListState()
     val historyListState = rememberLazyListState()
     var selectedOption by rememberSaveable { mutableStateOf(OrdersType.UPCOMING) }
@@ -103,15 +102,10 @@ fun OrdersPageContent(
     selectedOption = state.value.selected
 
     val tab = LocalTabNavigator.current
+    BackHandler {
+        tab.current = HomePage
+    }
 
-//    val selectedOrders by remember {
-//        derivedStateOf {
-//            when (selectedOption) {
-//                OrdersType.UPCOMING -> upcomingOrders
-//                OrdersType.HISTORY -> historyOrders
-//            }
-//        }
-//    }
     val selectedListState by remember {
         derivedStateOf {
             when (selectedOption) {
@@ -214,19 +208,47 @@ fun OrdersList(
     refresh:Boolean,
     onClick: (order: Order) -> Unit,
 ) {
-        if (stateUi.value.itemData.isEmpty()){
+    if(stateUi.value.selected==OrdersType.UPCOMING){
+        if (stateUi.value.inProcess.isEmpty()){
             EmptyOrdersList{
                 clickBooking.invoke()
             }
         }else{
             LazyColumn(state = state, verticalArrangement = Arrangement.spacedBy(16.dp), contentPadding = PaddingValues(vertical = 24.dp)) {
-                if (stateUi.value.itemData.isEmpty()) {
+                if (stateUi.value.inProcess.isEmpty()) {
                     item {
 
                     }
                 }else{
                     if(!refresh)
-                        items(stateUi.value.itemData) { order ->
+                        items(stateUi.value.inProcess) { order ->
+                            OrderCard(
+                                order = order, modifier = Modifier.fillMaxSize(),
+                                onClick = { onClick(order) })
+                        }
+                    else{
+                        items(5){
+                            VenueLoadingPlaceholder()
+                        }
+                    }
+                }
+
+            }
+        }
+    }else{
+        if (stateUi.value.history.isEmpty()){
+            EmptyOrdersList{
+                clickBooking.invoke()
+            }
+        }else{
+            LazyColumn(state = state, verticalArrangement = Arrangement.spacedBy(16.dp), contentPadding = PaddingValues(vertical = 24.dp)) {
+                if (stateUi.value.history.isEmpty()) {
+                    item {
+
+                    }
+                }else{
+                    if(!refresh)
+                        items(stateUi.value.history) { order ->
                             OrderCard(
                                 order = order, modifier = Modifier.fillMaxSize(),
                                 onClick = { onClick(order) })
@@ -241,12 +263,19 @@ fun OrdersList(
             }
         }
     }
+    val inProg = stateUi.value.inProcess
+    val history = stateUi.value.history
+
+
+    }
 
 @Composable
 fun EmptyOrdersList(onButtonClick: () -> Unit = {}) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier.fillMaxSize().align(Alignment.Center),
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

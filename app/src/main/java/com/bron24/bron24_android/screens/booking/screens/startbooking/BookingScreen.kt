@@ -67,6 +67,7 @@ import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.priceToInt
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import java.sql.Time
 import java.util.Calendar
 
 @Composable
@@ -94,7 +95,9 @@ fun BookingScreen(
     val showDatePicker by viewModel.showDatePicker.collectAsState()
 
     var isOrderEnabled by remember { mutableStateOf(false) }
-
+    var counter by remember {
+        mutableStateOf(selectedTimeSlots.size<2)
+    }
     val sectorEnums = sectors.map { sectorString ->
         Sector.valueOf(sectorString)
     }
@@ -102,6 +105,8 @@ fun BookingScreen(
     LaunchedEffect(selectedTimeSlots) {
         isOrderEnabled = selectedTimeSlots.isNotEmpty()
     }
+
+
 
     LaunchedEffect(showDatePicker) {
         if (showDatePicker) {
@@ -146,6 +151,7 @@ fun BookingScreen(
         viewModel.getAvailableTimes(venueId)
     }
 
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -176,7 +182,8 @@ fun BookingScreen(
             AvailableTimesSection(
                 timeSlots = availableTimeSlots,
                 onTimeSelected = viewModel::selectTimeSlot,
-                getAvailableTimesState = getAvailableTimesState
+                getAvailableTimesState = getAvailableTimesState,
+                selectedTimeSlot = selectedTimeSlots
             )
         }
 
@@ -487,8 +494,9 @@ fun PricingSection(
 @Composable
 fun AvailableTimesSection(
     timeSlots: List<TimeSlot>,
+    selectedTimeSlot: Set<TimeSlot>,
     onTimeSelected: (TimeSlot) -> Unit,
-    getAvailableTimesState: BookingState
+    getAvailableTimesState: BookingState,
 ) {
     Column(
         modifier = Modifier
@@ -532,7 +540,11 @@ fun AvailableTimesSection(
                         timeSlots.forEach { timeSlot ->
                             TimeSlotItem(
                                 timeSlot = timeSlot,
-                                onTimeSelected = { onTimeSelected(timeSlot) }
+                                onTimeSelected = {
+                                    if(selectedTimeSlot.contains(timeSlot)){
+                                        onTimeSelected(timeSlot)
+                                    }else if(selectedTimeSlot.size< 2 )onTimeSelected(timeSlot)
+                                }
                             )
                         }
                     }

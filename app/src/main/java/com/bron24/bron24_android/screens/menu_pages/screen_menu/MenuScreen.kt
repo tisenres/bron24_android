@@ -104,6 +104,7 @@ fun RowScope.ItemBottomTab(
             Box(
                 modifier = Modifier
                     .size(72.dp)
+                    .clip(shape = CircleShape)
                     .background(Color.Transparent),
                 contentAlignment = Alignment.Center
             ) {

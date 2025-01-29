@@ -10,7 +10,7 @@ data class Order(
     val timeSlot: TimeSlotDto,
     val bookingDate: String,
     val sector: String,
-    val status: String,
+    val status: OrderStatus,
     val hours: String,
     val orderId: String,
     val payment: String,

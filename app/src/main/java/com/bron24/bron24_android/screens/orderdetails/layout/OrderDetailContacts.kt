@@ -1,11 +1,7 @@
 package com.bron24.bron24_android.screens.orderdetails.layout
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,12 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bron24.bron24_android.components.toast.ToastManager
-import com.bron24.bron24_android.components.toast.ToastType
-import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import openDialer
 
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
@@ -82,12 +76,4 @@ fun OrderDetailContacts(order: OrderDetails?, modifier: Modifier) {
     }
 }
 
-private fun openDialer(context: Context, phoneNumber: String) {
-    val u = Uri.parse("tel:" + phoneNumber)
-    val i = Intent(Intent.ACTION_DIAL, u)
-    try {
-        context.startActivity(i)
-    } catch (s: Exception) {
-        ToastManager.showToast("An error occurred", ToastType.ERROR)
-    }
-}
+
