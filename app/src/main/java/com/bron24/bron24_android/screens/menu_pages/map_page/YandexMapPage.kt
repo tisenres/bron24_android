@@ -170,10 +170,12 @@ fun YandexMapPageContent(
                     if (venueDetails != null) {
                         MapVenueDetails(
                             venueDetails = venueDetails,
-                            modifier = Modifier
-                        ) {
-                            intent.invoke(YandexMapPageContract.Intent.ClickVenueBook(venueDetails = venueDetails))
-                        }
+                            modifier = Modifier,
+                            onOrderPressed = {
+                                intent.invoke(YandexMapPageContract.Intent.ClickVenueBook(venueDetails = venueDetails))
+                            },
+                            imageUrls = state.value.imageUrls
+                        )
                     } else {
                         CircularProgressIndicator()
                     }

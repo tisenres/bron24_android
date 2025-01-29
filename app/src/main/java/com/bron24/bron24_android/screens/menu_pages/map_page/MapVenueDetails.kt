@@ -75,6 +75,7 @@ fun MapVenueDetails(
     venueDetails: VenueDetails,
     modifier: Modifier,
     onOrderPressed: () -> Unit,
+    imageUrls: List<String>
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
@@ -93,7 +94,8 @@ fun MapVenueDetails(
                     venueDetails.address.addressName
                 )
             },
-            onOrderPressed = onOrderPressed
+            onOrderPressed = onOrderPressed,
+            imageUrls = imageUrls
         )
     }
 }
@@ -189,7 +191,8 @@ fun SmallDetailsContent(
     venueDetails: VenueDetails?,
     onFavoriteClick: () -> Unit,
     onCopyAddressClick: () -> Unit,
-    onOrderPressed: () -> Unit
+    onOrderPressed: () -> Unit,
+    imageUrls: List<String>
 ) {
 
     val context = LocalContext.current
@@ -201,11 +204,7 @@ fun SmallDetailsContent(
             .background(Color.White)
     ) {
         SmallImageSection(
-            imageUrls = listOf(
-                venueDetails?.imageUrl
-                    ?: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.reformsports.com%2Fwhy-do-they-sprinkle-football-pitches%2F&psig=AOvVaw0ySGjgQox6UGKgtGCoY45Z&ust=1737820026401000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCIj70JzajosDFQAAAAAdAAAAABAE",
-                "https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.reformsports.com%2Fwhy-do-they-sprinkle-football-pitches%2F&psig=AOvVaw0ySGjgQox6UGKgtGCoY45Z&ust=1737820026401000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCIj70JzajosDFQAAAAAdAAAAABAE"
-            ),
+            imageUrls = imageUrls,
             onShareClick = { shareVenueDetails(context, venueDetails) },
             onFavoriteClick
         )

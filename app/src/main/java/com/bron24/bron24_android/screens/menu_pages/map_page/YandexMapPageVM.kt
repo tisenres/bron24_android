@@ -27,7 +27,7 @@ class YandexMapPageVM @Inject constructor(
         when (intent) {
             is YandexMapPageContract.Intent.ClickMarker -> {
                 getVenueDetailsUseCase.invoke(venueId = intent.location.venueId).onEach { venueDetails ->
-                    reduce { state.copy(venueDetails = venueDetails.first) }
+                    reduce { state.copy(venueDetails = venueDetails.first, imageUrls = venueDetails.second) }
                     Log.d("TAGAGSDHSHDHSD", "onDispatchers: $venueDetails")
                 }.launchIn(viewModelScope)
             }
