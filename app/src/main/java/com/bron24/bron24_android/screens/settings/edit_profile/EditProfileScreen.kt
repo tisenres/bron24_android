@@ -110,7 +110,7 @@ fun EditProfileScreenContent(
                 .background(color = White)
         ) {
             CustomAppBar(
-                title = "Edit profile",
+                title = stringResource(id = R.string.edit_profile),
                 startIcons = {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "icons")
                 }
@@ -165,7 +165,7 @@ fun EditProfileScreenContent(
             }
 
             Text(
-                text = "Personal",
+                text = stringResource(id = R.string.personal),
                 modifier = Modifier.padding(horizontal = 20.dp),
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Bold,
