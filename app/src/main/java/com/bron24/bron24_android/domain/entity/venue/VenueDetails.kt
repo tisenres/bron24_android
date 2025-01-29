@@ -24,9 +24,10 @@ data class VenueDetails(
     val contact2: String,
     val createdAt: String,
     val updatedAt: String,
+    val slots: Int,
     var imageUrl: String,
     val latitude: Double,
     val longitude: Double,
     val distance: Double,
     val sectors: List<String>
-):Parcelable
+) : Parcelable

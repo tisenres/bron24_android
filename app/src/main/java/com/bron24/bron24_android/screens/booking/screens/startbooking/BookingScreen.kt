@@ -59,12 +59,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.booking.DateItem
 import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.priceToInt
-import com.bron24.bron24_android.components.toast.ToastManager
-import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import java.sql.Time
@@ -74,10 +74,10 @@ import java.util.Calendar
 fun BookingScreen(
     viewModel: BookingViewModel = hiltViewModel(),
     venueId: Int,
-    venueName:String,
+    venueName: String,
     sectors: List<String>,
     pricePerHour: String,
-    onOrderClick: (Int, String,String, String, List<TimeSlot>) -> Unit
+    onOrderClick: (Int, String, String, String, List<TimeSlot>) -> Unit
 ) {
 
     val selectedDate by viewModel.selectedDate.collectAsState()
@@ -286,7 +286,6 @@ fun DateSection(
     visibleMonthYear: String,
     onDateSelected: (Long) -> Unit,
     onMonthClick: () -> Unit,
-//    onVisibleDatesChanged: (DateItem) -> Unit,
     scrollState: ScrollState,
     selectedDateIndex: Int
 ) {
@@ -299,16 +298,11 @@ fun DateSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
-                .padding(3.dp)
-                .clickable(
-                    onClick = {
-                        Log.d("DateSection", "Month clicked")
-                        onMonthClick()
-                    }),
+                .padding(3.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Date",
+                text = stringResource(R.string.date),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.ExtraBold,
@@ -320,25 +314,37 @@ fun DateSection(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f)
             )
-            Image(
-                painter = painterResource(id = R.drawable.baseline_calendar_today_24),
-                contentDescription = "Calendar",
-                modifier = Modifier.size(16.dp),
-                colorFilter = ColorFilter.tint(Color(0xFF949494)),
-            )
-            Text(
-                visibleMonthYear,
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = Color(0xFF949494),
-                    lineHeight = 20.sp,
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(start = 7.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable(
+                        onClick = {
+                            Log.d("DateSection", "Month clicked")
+                            onMonthClick()
+                        }
+                    )
+                    .padding(8.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_calendar_today_24),
+                    contentDescription = "Calendar",
+                    modifier = Modifier.size(16.dp),
+                    colorFilter = ColorFilter.tint(Color(0xFF949494)),
+                )
+                Text(
+                    visibleMonthYear,
+                    style = TextStyle(
+                        fontFamily = gilroyFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color(0xFF949494),
+                        lineHeight = 20.sp,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(start = 7.dp)
+                )
+            }
         }
         Spacer(modifier = Modifier.height(20.dp))
         Row(
@@ -493,7 +499,9 @@ fun AvailableTimesSection(
     getAvailableTimesState: BookingState,
 ) {
     Column(
-        modifier = Modifier.padding(horizontal = 20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Text(
@@ -527,7 +535,7 @@ fun AvailableTimesSection(
                     FlowRow(
                         maxItemsInEachRow = 3,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.Start
                     ) {
                         timeSlots.forEach { timeSlot ->
                             TimeSlotItem(
@@ -562,7 +570,7 @@ fun EmptyTimeSlots() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.sad_ball), // Make sure to add this icon to your drawables
+            painter = painterResource(id = R.drawable.sad_ball),
             contentDescription = "No available time slots",
             modifier = Modifier.size(120.dp)
         )
@@ -582,7 +590,7 @@ fun EmptyTimeSlots() {
 @Composable
 fun TimeSlotItem(
     timeSlot: TimeSlot,
-    onTimeSelected: () -> Unit
+    onTimeSelected: () -> Unit,
 ) {
     val backgroundColor = when {
         timeSlot.isSelected -> Color(0xFF32B768)
@@ -597,8 +605,8 @@ fun TimeSlotItem(
 
     Box(
         modifier = Modifier
-            .padding(bottom = 17.dp)
-            .width(110.dp)
+            .padding(bottom = 17.dp, end = 13.dp)
+            .widthIn(min = 110.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
             .clickable(
@@ -608,13 +616,10 @@ fun TimeSlotItem(
             .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-//        val startTimeInMillis = parseTimeString(timeSlot.startTime)
-//        val endTimeInMillis = parseTimeString(timeSlot.endTime)
         val startTimeInMillis = timeSlot.startTime
         val endTimeInMillis = timeSlot.endTime
 
         Text(
-//            text = formatTimeSlot(startTimeInMillis, endTimeInMillis),
             text = "$startTimeInMillis - $endTimeInMillis",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
@@ -688,7 +693,7 @@ private fun BookingScreenPreview() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Date",
+                text = stringResource(R.string.date),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.ExtraBold,

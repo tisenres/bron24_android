@@ -31,9 +31,10 @@ data class VenueDetailsDto(
     @SerializedName("latitude") val latitude: String,
     @SerializedName("longitude") val longitude: String,
     @SerializedName("sector_number") val sectorNumber: Int,
-    @SerializedName("preview_image") val  previewImg:String,
-    @SerializedName("play_whole_stadium") val playWhole:Boolean,
+    @SerializedName("available_time_slots") val slots: Int,
+    @SerializedName("preview_image") val previewImg: String,
+    @SerializedName("play_whole_stadium") val playWhole: Boolean,
     @SerializedName("distance") val distance: Double,
-    @SerializedName("share_link") val shareLink:String,
+    @SerializedName("share_link") val shareLink: String,
     @SerializedName("sectors") val sectors: List<String>
 )

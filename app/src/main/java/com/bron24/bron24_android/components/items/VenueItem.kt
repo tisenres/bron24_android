@@ -43,7 +43,7 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun VenueItem(
     venue: Venue,
-    listener: (Venue) -> Unit,
+    onFavoritesClick: (Venue) -> Unit,
 ) {
 
     Column(
@@ -52,7 +52,7 @@ fun VenueItem(
             .clip(RoundedCornerShape(10.dp))
             .background(color = FavoriteItemBackGround)
             .clickable {
-                listener.invoke(venue)
+                onFavoritesClick.invoke(venue)
             }
     ) {
         VenueImageSection(venue)

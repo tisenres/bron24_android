@@ -154,7 +154,7 @@ fun VenueDetailsScreenContent(
             openOrder = true
         }
     )
-//    }
+
     if (openOrder) {
         BookingBottomSheet(
             venueId = venueId,
@@ -622,8 +622,8 @@ fun ImageOverlay(
                     icon = Icons.Default.Share,
                     contentDescription = "Share"
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
+//                Spacer(modifier = Modifier.width(12.dp))
+//                AnimatedFavoriteButton(onFavoriteClick = onFavoriteClick)
             }
         }
         BottomIndicators(

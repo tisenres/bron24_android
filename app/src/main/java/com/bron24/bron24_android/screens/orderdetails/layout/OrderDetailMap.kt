@@ -44,14 +44,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.order.Order
-import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.bron24.bron24_android.screens.menu_pages.map_page.getBitmapFromDrawable
 import com.bron24.bron24_android.screens.orderdetails.OrderDetailsContact
-import com.google.android.play.integrity.internal.f
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory

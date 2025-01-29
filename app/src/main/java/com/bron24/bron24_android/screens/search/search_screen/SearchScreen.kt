@@ -85,9 +85,11 @@ fun SearchScreenContent(
         }
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(color = White)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = White)
+    ) {
         SearchBarSection(
             query = query,
             focusManager = focusManager,
@@ -128,7 +130,7 @@ fun SearchScreenContent(
                     modifier = Modifier.padding(top = 20.dp)
                 )
             }
-        }else{
+        } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -137,13 +139,12 @@ fun SearchScreenContent(
                 if (state.value.isLoading) {
                     items(5) {
                         VenueLoadingPlaceholder()
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                     }
                 } else {
                     items(state.value.searchResult) { venue ->
-                       VenueItem(venue = venue){
-
-                       }
+                        VenueItem(venue = venue, onFavoritesClick = {})
+                        Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
 

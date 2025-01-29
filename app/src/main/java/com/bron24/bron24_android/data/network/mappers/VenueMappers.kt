@@ -96,6 +96,7 @@ fun VenueDetailsDto.toDomainModel(): VenueDetails {
         rate = rate,
         contact1 = contact1,
         contact2 = contact2,
+        slots = slots,
         createdAt = createdAt,
         updatedAt = updatedAt,
         imageUrl = previewImg,

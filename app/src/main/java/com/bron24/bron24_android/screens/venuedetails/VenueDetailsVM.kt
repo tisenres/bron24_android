@@ -1,8 +1,6 @@
 package com.bron24.bron24_android.screens.venuedetails
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,7 +8,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
