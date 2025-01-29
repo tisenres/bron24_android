@@ -51,7 +51,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -98,24 +97,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
-import com.bron24.bron24_android.components.items.InitPhoto
-import com.bron24.bron24_android.components.items.LoadingScreen
+import com.bron24.bron24_android.components.items.LoadingPlaceholder
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.orderdetails.layout.ShimmerLayout
-import com.google.android.play.integrity.internal.t
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -587,7 +580,7 @@ fun VenueImage(imageUrl: String, page: Int) {
         mutableStateOf(false)
     }
     if(isLoading){
-        InitPhoto()
+        LoadingPlaceholder()
     }
     Image(
         painter = rememberAsyncImagePainter(model = imageUrl, onLoading = { isLoading = true}, onSuccess = { isLoading = false}),
@@ -789,7 +782,10 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
         AddressRow(details, onCopyAddressClick)
         AvailableSlots(details)
         Spacer(modifier = Modifier.height(4.dp))
-        DistanceRow(details)
+        if(details?.distance?.toInt()!=0){
+            DistanceRow(details)
+        }
+
     }
 }
 
@@ -1449,11 +1445,13 @@ private fun MapDetails(details: VenueDetails?) {
             ),
         )
         Spacer(modifier = Modifier.height(4.dp))
-        DistanceInfo(
-            icon = R.drawable.mingcute_navigation_fill,
-            text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
-            tintColor = Color(0xFFD9D9D9),
-        )
+        if(details?.distance?.toInt()!=0){
+            DistanceInfo(
+                icon = R.drawable.mingcute_navigation_fill,
+                text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
+                tintColor = Color(0xFFD9D9D9),
+            )
+        }
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.ic_metro,
@@ -1532,25 +1530,35 @@ fun PricingSection(
                     ),
                 )
             }
-
-            Button(
-                onClick = onOrderClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .height(47.dp)
-                    .width(157.dp)
-            ) {
-                Text(
-                    text = "Order",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
-                        color = Color.White,
-                        lineHeight = 16.8.sp,
-                    )
+            if(state.value.isLoading){
+                Box(
+                    modifier = Modifier
+                        .width(157.dp)
+                        .height(47.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .shimmer()
+                        .background(Color.Gray.copy(alpha = 0.2f))
                 )
+            }else{
+                Button(
+                    onClick = onOrderClick,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .height(47.dp)
+                        .width(157.dp)
+                ) {
+                    Text(
+                        text = "Order",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            color = Color.White,
+                            lineHeight = 16.8.sp,
+                        )
+                    )
+                }
             }
         }
     }

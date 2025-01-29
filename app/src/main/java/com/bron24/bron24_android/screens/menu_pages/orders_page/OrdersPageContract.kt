@@ -16,7 +16,8 @@ interface OrdersPageContract {
         val updateUiState:Boolean = true,
         val isLoading:Boolean = true,
         val refresh:Boolean = false,
-        val itemData:List<Order> = emptyList()
+        val history:List<Order> = emptyList(),
+        val inProcess:List<Order> = emptyList()
     )
 
     data class SideEffect(

@@ -299,11 +299,13 @@ private fun MapDetails(state: State<OrderDetailsContact.UIState>) {
             ),
         )
         Spacer(modifier = Modifier.height(4.dp))
-        DistanceInfo(
-            icon = R.drawable.mingcute_navigation_fill,
-            text = "${String.format("%.2f",state.value.order?.distance?:10)} km from you",
-            tintColor = Color(0xFFB7B3B3),
-        )
+        if(state.value.order?.distance?.toInt()!=0){
+            DistanceInfo(
+                icon = R.drawable.mingcute_navigation_fill,
+                text = "${String.format("%.2f",state.value.order?.distance?:10)} km from you",
+                tintColor = Color(0xFFB7B3B3),
+            )
+        }
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.ic_metro,

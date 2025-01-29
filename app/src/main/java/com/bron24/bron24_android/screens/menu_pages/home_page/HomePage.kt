@@ -25,6 +25,7 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.SearchView
 import com.bron24.bron24_android.screens.main.theme.Success
+import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenContent
 import com.bron24.bron24_android.screens.util.hiltScreenModel
 import com.bron24.bron24_android.screens.venuelisting.VenueListingView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController

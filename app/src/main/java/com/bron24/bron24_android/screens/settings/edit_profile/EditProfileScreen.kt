@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathSegment
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -95,10 +96,10 @@ fun EditProfileScreenContent(
         mutableStateOf(false)
     }
     var firstName by remember {
-        mutableStateOf(uiState.value.firstName)
+        mutableStateOf("")
     }
     var lastName by remember {
-        mutableStateOf(uiState.value.lastName)
+        mutableStateOf("")
     }
     if (uiState.value.isLoading) {
         LoadingScreen()
@@ -109,7 +110,7 @@ fun EditProfileScreenContent(
                 .background(color = White)
         ) {
             CustomAppBar(
-                title = "Edit profile",
+                title = stringResource(id = R.string.edit_profile),
                 startIcons = {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "icons")
                 }
@@ -164,7 +165,7 @@ fun EditProfileScreenContent(
             }
 
             Text(
-                text = "Personal",
+                text = stringResource(id = R.string.personal),
                 modifier = Modifier.padding(horizontal = 20.dp),
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Bold,
@@ -172,7 +173,7 @@ fun EditProfileScreenContent(
                 color = Black
             )
             Text(
-                text = "First name",
+                text = stringResource(id = R.string.first_name),
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
                     .padding(top = 24.dp),
@@ -185,7 +186,7 @@ fun EditProfileScreenContent(
                 modifier = Modifier
                     .padding(top = 12.dp)
                     .padding(horizontal = 20.dp),
-                hint = "",
+                hint = stringResource(id = R.string.first_name),
                 text = firstName,
                 listener = {},
                 onValueChange = {
@@ -193,7 +194,7 @@ fun EditProfileScreenContent(
                 }
             )
             Text(
-                text = uiState.value.lastName,
+                text = stringResource(id = R.string.last_name),
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
                     .padding(top = 20.dp),
@@ -206,7 +207,7 @@ fun EditProfileScreenContent(
                 modifier = Modifier
                     .padding(top = 12.dp)
                     .padding(horizontal = 20.dp),
-                hint = "",
+                hint = stringResource(id = R.string.last_name),
                 text = lastName,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 listener = {},
@@ -215,7 +216,7 @@ fun EditProfileScreenContent(
                 }
             )
             Text(
-                text = "Phone number",
+                text = stringResource(id = R.string.phone_number),
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
                     .padding(top = 20.dp),
@@ -229,7 +230,7 @@ fun EditProfileScreenContent(
                     .padding(top = 12.dp)
                     .padding(horizontal = 20.dp),
                 hint = "",
-                text = "883410807",
+                text = uiState.value.phoneNumber.substring(3),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 listener = {},
                 onValueChange = {},
@@ -250,7 +251,7 @@ fun EditProfileScreenContent(
                 )
             ) {
                 Text(
-                    text = "Delete account",
+                    text = stringResource(id = R.string.delete_acc),
                     fontSize = 14.sp,
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -260,7 +261,7 @@ fun EditProfileScreenContent(
             }
             Spacer(modifier = Modifier.weight(1f))
             AppButton(
-                text = "Save Changes",
+                text = stringResource(id = R.string.save_change),
                 enable = firstName.isNotEmpty().and(lastName.isNotEmpty()),
                 modifier = Modifier.padding(horizontal = 20.dp)
             ) {

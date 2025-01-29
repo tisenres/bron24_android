@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.components.items
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,14 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -35,16 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Scale
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.screens.main.theme.FavoriteItemBackGround
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.google.android.play.integrity.internal.c
 import com.valentinilk.shimmer.shimmer
 
 @Composable
@@ -140,7 +133,7 @@ fun VenueImageSection(venue: Venue) {
             .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
     ) {
         if (showLoading) {
-            InitPhoto()
+            LoadingPlaceholder()
         }
         Image(
             modifier = Modifier.fillMaxWidth(),
@@ -159,6 +152,7 @@ fun VenueImageSection(venue: Venue) {
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun VenueDetailsRow(venue: Venue) {
     Row(
@@ -181,19 +175,22 @@ fun VenueDetailsRow(venue: Venue) {
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
-        Text(
-            text = String.format("%.1f", venue.distance) + " " + stringResource(id = R.string.km),
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                color = Color(0xFF949494),
-                lineHeight = 21.sp,
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(start = 10.dp)
-        )
+        if(venue.distance.toInt()!=0){
+            Text(
+                text = String.format("%.1f", venue.distance) + " " + stringResource(id = R.string.km),
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    color = Color(0xFF949494),
+                    lineHeight = 21.sp,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        }
+
     }
 }
 
@@ -274,7 +271,7 @@ fun VenueFooter(venue: Venue) {
                     painter = painterResource(id = R.drawable.ic_dollar),
                     contentDescription = "Price Icon",
                     modifier = Modifier
-                        .size(14.dp)
+                        .size(16.dp)
                         .align(Alignment.CenterVertically)
                 )
                 Text(

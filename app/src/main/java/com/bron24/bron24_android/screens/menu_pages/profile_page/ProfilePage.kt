@@ -25,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -45,7 +46,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -61,7 +64,10 @@ import com.bron24.bron24_android.components.items.CustomAppBar
 import com.bron24.bron24_android.components.items.CustomDialog
 import com.bron24.bron24_android.components.items.ItemEditProfile
 import com.bron24.bron24_android.components.items.ItemProfileTask
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.user.User
+import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.White
@@ -69,6 +75,7 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import openDialer
 import org.orbitmvi.orbit.compose.collectAsState
 
 object ProfilePage : Tab {
@@ -125,7 +132,7 @@ fun ProfilePageContent(
             .fillMaxSize()
             .background(color = White)
     ) {
-        CustomAppBar(title = "Profile", actions = {
+        CustomAppBar(title = stringResource(id = R.string.profile), actions = {
             ItemEditProfile {
                 if (isClickable) {
                     intent(ProfilePageContract.Intent.OpenEdit)
@@ -190,7 +197,7 @@ fun ProfilePageContent(
                 }
             }
             Text(
-                text = "Profile",
+                text = stringResource(id = R.string.profile),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = gilroyFontFamily,
@@ -211,7 +218,7 @@ fun ProfilePageContent(
                     modifier = Modifier.size(20.dp)
                 )
             }) {}
-            ItemProfileTask(text = "Change Language", startIcons = {
+            ItemProfileTask(text = stringResource(id = R.string.change_lan), startIcons = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_language),
                     contentDescription = "icon",
@@ -223,7 +230,7 @@ fun ProfilePageContent(
                     isClickable = false
                 }
             }
-            ItemProfileTask(text = "Favorites", startIcons = {
+            ItemProfileTask(text = stringResource(id = R.string.favorites), startIcons = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_favorite),
                     contentDescription = "icon",
@@ -231,12 +238,12 @@ fun ProfilePageContent(
                 )
             }) {
                 if (isClickable) {
-                    intent(ProfilePageContract.Intent.OpenFavorites)
+                    ToastManager.showToast("Qilinmoqda",ToastType.INFO)
                     isClickable = false
                 }
             }
             Text(
-                text = "Support",
+                text = stringResource(id = R.string.support),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = gilroyFontFamily,
@@ -245,7 +252,7 @@ fun ProfilePageContent(
                     .padding(top = 16.dp)
             )
 
-            ItemProfileTask(text = "Help", startIcons = {
+            ItemProfileTask(text = stringResource(id = R.string.help), startIcons = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_help),
                     contentDescription = "icon",
@@ -254,7 +261,7 @@ fun ProfilePageContent(
             }) {
                 openBottomSheet = true
             }
-            ItemProfileTask(text = "About Us", startIcons = {
+            ItemProfileTask(text = stringResource(id = R.string.about_us), startIcons = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_info),
                     contentDescription = "icon",
@@ -266,7 +273,7 @@ fun ProfilePageContent(
                     isClickable = false
                 }
             }
-            ItemProfileTask(text = "Add Venue", startIcons = {
+            ItemProfileTask(text = stringResource(id = R.string.add_venue), startIcons = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_add),
                     contentDescription = "icon",
@@ -296,7 +303,7 @@ fun ProfilePageContent(
                     tint = Color.Red
                 )
                 Text(
-                    text = "Logout",
+                    text = stringResource(id = R.string.logout),
                     fontSize = 14.sp,
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -306,85 +313,74 @@ fun ProfilePageContent(
             }
         }
     }
+    val context = LocalContext.current
     if (openBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { openBottomSheet = false },
             sheetState = bottomSheetState,
-            containerColor = White
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
+            containerColor = White,
+            tonalElevation = 100.dp,
+
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Contact Us",
+                    textAlign = TextAlign.Center,
+                    color = Black,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.gilroy_bold)),
+                    modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
+                )
+
+                ItemProfileTask(
+                    text = "Telegram",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp),
+                    startIcons = {
+                        Icon(
+                            painter = painterResource(R.drawable.icon_telegram),
+                            contentDescription = "",
+                            modifier = Modifier,
+                        )
+                    },
+                    endIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_up_right),
+                            contentDescription = "",
+                            modifier = Modifier
+                        )
+                    }
                 ) {
-                    Text(
-                        text = "Contact Us",
-                        textAlign = TextAlign.Center,
-                        color = Black,
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.gilroy_bold)),
-                        modifier = Modifier.padding(vertical = 4.dp),
-                    )
+
                 }
-                Row(verticalAlignment = Alignment.CenterVertically,
+                ItemProfileTask(
+                    text = "Contact Number",
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .clickable {}
-                        .border(
-                            width = 1.dp,
-                            color = GrayLighter,
-                            shape = RoundedCornerShape(10.dp)
+                        .fillMaxWidth()
+                        .height(40.dp),
+                    startIcons = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_phone),
+                            contentDescription = "",
+                            modifier = Modifier
                         )
-                        .padding(10.dp)) {
-                    Icon(
-                        painter = painterResource(R.drawable.icon_telegram),
-                        contentDescription = "",
-                        modifier = Modifier.padding(2.dp)
-                    )
-                    Text(
-                        text = "Telegram",
-                        color = Black,
-                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-                        fontSize = 14.sp
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_up_right),
-                        contentDescription = "",
-                        modifier = Modifier.padding(2.dp)
-                    )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                        .clip(shape = RoundedCornerShape(10.dp))
-                        .clickable {}
-                        .border(
-                            width = 1.dp,
-                            color = GrayLighter,
-                            shape = RoundedCornerShape(10.dp)
+
+                    },
+                    endIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_up_right),
+                            contentDescription = "",
+                            modifier = Modifier
                         )
-                        .padding(10.dp)) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_phone),
-                        contentDescription = "",
-                        modifier = Modifier.padding(2.dp)
-                    )
-                    Text(
-                        text = "Contact Number",
-                        color = Black,
-                        fontFamily = FontFamily(Font(R.font.gilroy_semi_bold)),
-                        fontSize = 14.sp
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Icon(
-                        painter = painterResource(R.drawable.arrow_up_right),
-                        contentDescription = "",
-                        modifier = Modifier.padding(2.dp)
-                    )
+                    }
+                ) {
+                    openDialer(context,"998883410807".formatPhoneNumber())
                 }
             }
         }
