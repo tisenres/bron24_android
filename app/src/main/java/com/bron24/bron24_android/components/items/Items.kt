@@ -113,8 +113,10 @@ fun ItemsPreview() {
 }
 
 @Composable
-fun InitPhoto(){
-    Box(modifier = Modifier.fillMaxSize().background(color = White)) {
+fun LoadingPlaceholder(){
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(color = White)) {
         CircularProgressIndicator(
             color = Color(0xFF32B768),
             modifier = Modifier
@@ -344,11 +346,11 @@ fun ItemEditProfile(
 ) {
     Row(
         modifier = Modifier
-            .width(110.dp)
             .height(30.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(color = Success, shape = RoundedCornerShape(8.dp))
-            .clickable { listener() },
+            .clickable { listener() }
+            .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -359,7 +361,7 @@ fun ItemEditProfile(
             modifier = Modifier.size(20.dp)
         )
         Text(
-            text = "Edit profile",
+            text = stringResource(id = R.string.edit_profile),
             fontFamily = gilroyFontFamily,
             fontSize = 14.sp,
             color = White,
@@ -396,7 +398,9 @@ fun ItemProfileTask(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = Black,
-            modifier = Modifier.padding(horizontal = 12.dp).weight(1f)
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .weight(1f)
         )
         endIcon?.invoke()
     }

@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.components.items
 
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +29,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -142,12 +147,20 @@ fun OrderCard(
 
 @Composable
 private fun OrderImage(imageUrl: String) {
-    val model = ImageRequest.Builder(LocalContext.current)
-        .data(imageUrl)
-        .placeholder(R.drawable.placeholder)
-        .build()
+//    val model = ImageRequest.Builder(LocalContext.current)
+//        .data(imageUrl)
+//        .placeholder(R.drawable.placeholder)
+//        .build()
+    var showLoading by remember {
+        mutableStateOf(false)
+    }
     Image(
-        painter = rememberAsyncImagePainter(model),
+        painter = rememberAsyncImagePainter(imageUrl, onSuccess = {
+            showLoading = false
+        }, onLoading = {
+            showLoading = true
+        }
+        ),
         contentDescription = "Venue image",
         contentScale = ContentScale.Crop,
         modifier = Modifier

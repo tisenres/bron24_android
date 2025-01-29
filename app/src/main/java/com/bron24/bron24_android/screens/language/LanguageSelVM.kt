@@ -46,11 +46,9 @@ class LanguageSelVM @Inject constructor(
         getAvailableLanguagesUseCase.invoke().onEach {
             it.onSuccess {
                 reduce { state.copy(languages = it) }
-                Log.d("AAA", "initData: $it")
                 val selectedLanguage = getSelectedLanguageUseCase.invoke()
                 reduce { state.copy(selectedLanguage) }
             }.onFailure {
-                Log.d("AAA", "initData: ${it.message}")
             }
         }.launchIn(viewModelScope)
     }

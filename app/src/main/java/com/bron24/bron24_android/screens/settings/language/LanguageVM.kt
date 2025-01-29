@@ -35,7 +35,7 @@ class LanguageVM @Inject constructor(
         setUserLanguageUseCase.invoke(intent.language).onStart {
           reduce { state.copy(isLoading = true) }
         }.onEach {
-          reduce { state.copy(selectedLanguageIndex = intent.index) }
+          reduce { state.copy(selectedLanguageIndex = intent.index, selectedLanguage = intent.language) }
         }.onCompletion { reduce { state.copy(isLoading = false) } }.launchIn(viewModelScope)
       }
     }
@@ -48,6 +48,7 @@ class LanguageVM @Inject constructor(
       it.onSuccess {
         reduce { state.copy(languageList = it) }
         val selectedLanguage = getSelectedLanguageUseCase.invoke()
+        reduce { state.copy(selectedLanguage = selectedLanguage) }
         var langIndex = 0;
         it.forEachIndexed { index, item ->
           if (item == selectedLanguage) langIndex = index
