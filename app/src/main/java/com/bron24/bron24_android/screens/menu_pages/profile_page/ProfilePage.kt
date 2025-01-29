@@ -357,6 +357,7 @@ fun ProfilePageContent(
                             painter = painterResource(R.drawable.ic_phone),
                             contentDescription = "",
                             modifier = Modifier
+
                         )
 
                     },

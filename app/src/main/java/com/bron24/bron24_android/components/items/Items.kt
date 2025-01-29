@@ -218,7 +218,7 @@ fun ItemInputText(
                             androidx.compose.material3.Text(
                                 text = hint,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Success,
+                                color = Color.Gray,
                                 modifier = Modifier.focusable(false),
                                 fontSize = 16.sp,
                                 fontFamily = gilroyFontFamily
@@ -396,7 +396,7 @@ fun ItemProfileTask(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = Black,
-            modifier = Modifier.padding(horizontal = 12.dp)
+            modifier = Modifier.padding(horizontal = 12.dp).weight(1f)
         )
         endIcon?.invoke()
     }
