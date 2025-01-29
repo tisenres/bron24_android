@@ -25,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
@@ -62,6 +64,7 @@ import com.bron24.bron24_android.components.items.CustomDialog
 import com.bron24.bron24_android.components.items.ItemEditProfile
 import com.bron24.bron24_android.components.items.ItemProfileTask
 import com.bron24.bron24_android.domain.entity.user.User
+import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.White
@@ -69,6 +72,7 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import openDialer
 import org.orbitmvi.orbit.compose.collectAsState
 
 object ProfilePage : Tab {
@@ -306,6 +310,7 @@ fun ProfilePageContent(
             }
         }
     }
+    val context = LocalContext.current
     if (openBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { openBottomSheet = false },
@@ -357,7 +362,6 @@ fun ProfilePageContent(
                             painter = painterResource(R.drawable.ic_phone),
                             contentDescription = "",
                             modifier = Modifier
-
                         )
 
                     },
@@ -369,7 +373,7 @@ fun ProfilePageContent(
                         )
                     }
                 ) {
-
+                    openDialer(context,"998883410807".formatPhoneNumber())
                 }
             }
         }

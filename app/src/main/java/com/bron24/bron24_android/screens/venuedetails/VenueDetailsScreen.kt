@@ -789,7 +789,10 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
         AddressRow(details, onCopyAddressClick)
         AvailableSlots(details)
         Spacer(modifier = Modifier.height(4.dp))
-        DistanceRow(details)
+        if(details?.distance?.toInt()!=0){
+            DistanceRow(details)
+        }
+
     }
 }
 
@@ -1449,11 +1452,13 @@ private fun MapDetails(details: VenueDetails?) {
             ),
         )
         Spacer(modifier = Modifier.height(4.dp))
-        DistanceInfo(
-            icon = R.drawable.mingcute_navigation_fill,
-            text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
-            tintColor = Color(0xFFD9D9D9),
-        )
+        if(details?.distance?.toInt()!=0){
+            DistanceInfo(
+                icon = R.drawable.mingcute_navigation_fill,
+                text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
+                tintColor = Color(0xFFD9D9D9),
+            )
+        }
         Spacer(modifier = Modifier.height(4.dp))
         DistanceInfo(
             icon = R.drawable.ic_metro,
@@ -1532,26 +1537,38 @@ fun PricingSection(
                     ),
                 )
             }
-
-            Button(
-                onClick = onOrderClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .height(47.dp)
-                    .width(157.dp)
-            ) {
-                Text(
-                    text = "Order",
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
-                        color = Color.White,
-                        lineHeight = 16.8.sp,
-                    )
+            if(state.value.isLoading){
+                Box(
+                    modifier = Modifier
+                        .width(157.dp)
+                        .height(47.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .shimmer()
+                        .background(Color.Gray.copy(alpha = 0.2f))
                 )
+            }else{
+                Button(
+                    onClick = onOrderClick,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .height(47.dp)
+                        .width(157.dp)
+                ) {
+                    Text(
+                        text = "Order",
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            color = Color.White,
+                            lineHeight = 16.8.sp,
+                        )
+                    )
+                }
             }
+
+
         }
     }
 }

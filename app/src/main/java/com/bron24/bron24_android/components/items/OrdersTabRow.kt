@@ -32,15 +32,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.bron24.bron24_android.R
@@ -160,19 +165,15 @@ private fun OrderContent(order: Order) {
             .fillMaxSize()
     ) {
         OrderHeader(venueName = order.venueName, sector = order.sector)
-        Spacer(modifier = Modifier.height(2.dp))
-        OrderId(id = order.id.toString())
-        Spacer(modifier = Modifier.height(10.dp))
-        OrderPrice(price = "1000")
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(6.dp))
+        OrderId(id = order.orderId)
+//        OrderPrice(price = "1000")
         OrderDateTime(
             date = order.bookingDate,
-            time = " ${order.timeSlot.startTime} - ${order.timeSlot.endTime}"
+            time = "${order.timeSlot.startTime} - ${order.timeSlot.endTime}"
         )
-        Spacer(modifier = Modifier.height(5.dp))
         //OrderAddress(address = order.address.addressName)
-        Spacer(modifier = Modifier.height(7.dp))
-        //OrderStatus(status = order.status)
+        OrderStatusItem(status = order.status)
     }
 }
 
@@ -185,12 +186,17 @@ private fun OrderHeader(venueName: String, sector: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "$venueName, $sector",
+            text = "$venueName $sector",
             style = TextStyle(
-                fontSize = 14.sp,
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight(800),
+                fontSize = 16.sp,
                 color = Color(0xFF3C2E56),
-                fontWeight = FontWeight.Bold
-            )
+                lineHeight = 19.6.sp,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
         )
 
         Icon(
@@ -204,23 +210,25 @@ private fun OrderHeader(venueName: String, sector: String) {
 @Composable
 private fun OrderId(id: String) {
     Text(
+        modifier = Modifier.padding(start = 1.2.dp),
         text = "№ $id",
-        style = TextStyle(fontSize = 10.sp, color = Color(0xFF949494))
+        fontFamily = gilroyFontFamily,
+        fontWeight = FontWeight.Normal,
+        style = TextStyle(fontSize = 13.sp, color = Color(0xFF949494))
     )
 }
 
 @Composable
 private fun OrderPrice(price: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp)) {
         Icon(
             painter = painterResource(id = R.drawable.icon_cost),
             contentDescription = "Price",
             tint = Color(0xFF999999),
             modifier = Modifier.size(10.dp)
         )
-        Spacer(modifier = Modifier.width(4.dp))
-
         Text(
+            modifier = Modifier.padding(start = 4.dp),
             text = price + " ${stringResource(R.string.som)}",
             style = TextStyle(fontSize = 10.sp, color = Color(0xFF949494))
         )
@@ -229,17 +237,21 @@ private fun OrderPrice(price: String) {
 
 @Composable
 private fun OrderDateTime(date: String, time: String) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 7.dp), horizontalAlignment = Alignment.Start
+    ) {
         OrderInfoItem(
-            icon = R.drawable.baseline_calendar_today_24,
+            icon = R.drawable.ic_date_order,
             text = date,
-            modifier = Modifier
+            modifier = Modifier.fillMaxWidth()
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.height(7.dp))
         OrderInfoItem(
-            icon = R.drawable.baseline_access_time_filled_24,
+            icon = R.drawable.ic_time_order,
             text = time,
-            modifier = Modifier
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -248,18 +260,18 @@ private fun OrderDateTime(date: String, time: String) {
 private fun OrderInfoItem(icon: Int, text: String, modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = modifier.fillMaxWidth()
     ) {
         Icon(
             painter = painterResource(id = icon),
             contentDescription = null,
             tint = Color(0xFF949494),
-            modifier = Modifier.size(10.dp)
+            modifier = Modifier.size(14.dp)
         )
-        Spacer(modifier = Modifier.width(4.dp))
         Text(
+            modifier = Modifier.padding(start = 8.dp),
             text = text,
-            style = TextStyle(fontSize = 10.sp, color = Color(0xFF949494))
+            style = TextStyle(fontSize = 13.sp, color = Color(0xFF949494))
         )
     }
 }
@@ -283,11 +295,12 @@ private fun OrderAddress(address: String) {
 
 @Composable
 private fun OrderStatusItem(status: OrderStatus) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 7.dp)) {
         Box(
             modifier = Modifier
-                .size(10.dp)
-                .background(getStatusColor(status), CircleShape)
+                .size(15.dp)
+                .background(getStatusColor(status), CircleShape),
+            contentAlignment = Alignment.Center
         ) {
             Icon(
                 getStatusIcon(status),
@@ -295,15 +308,16 @@ private fun OrderStatusItem(status: OrderStatus) {
                 tint = Color.White,
                 modifier = Modifier
                     .size(9.dp)
-                    .align(Alignment.Center)
             )
         }
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = getStatusText(status),
-            style = TextStyle(fontSize = 12.sp, color = getStatusColor(status))
+            fontWeight = FontWeight.ExtraBold,
+            style = TextStyle(fontSize = 13.sp, color = getStatusColor(status))
         )
     }
+
 }
 
 private fun getStatusColor(status: OrderStatus): Color {
@@ -314,10 +328,11 @@ private fun getStatusColor(status: OrderStatus): Color {
     }
 }
 
+@Composable
 private fun getStatusIcon(status: OrderStatus): ImageVector {
     return when (status) {
-        OrderStatus.IN_PROCESS -> Icons.Default.Check
-        OrderStatus.COMPLETED -> Icons.Default.Close
+        OrderStatus.IN_PROCESS -> ImageVector.vectorResource(id = R.drawable.ic_prof)
+        OrderStatus.COMPLETED -> Icons.Default.Check
         OrderStatus.CANCELLED -> Icons.Default.Close
     }
 }
