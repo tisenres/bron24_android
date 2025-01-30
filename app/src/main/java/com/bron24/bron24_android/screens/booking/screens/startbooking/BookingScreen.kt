@@ -95,9 +95,6 @@ fun BookingScreen(
     val showDatePicker by viewModel.showDatePicker.collectAsState()
 
     var isOrderEnabled by remember { mutableStateOf(false) }
-    var counter by remember {
-        mutableStateOf(selectedTimeSlots.size<2)
-    }
     val sectorEnums = sectors.map { sectorString ->
         Sector.valueOf(sectorString)
     }
@@ -535,16 +532,12 @@ fun AvailableTimesSection(
                     FlowRow(
                         maxItemsInEachRow = 3,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         timeSlots.forEach { timeSlot ->
                             TimeSlotItem(
                                 timeSlot = timeSlot,
-                                onTimeSelected = {
-                                    if(selectedTimeSlot.contains(timeSlot)){
-                                        onTimeSelected(timeSlot)
-                                    }else if(selectedTimeSlot.size< 2 )onTimeSelected(timeSlot)
-                                }
+                                onTimeSelected = { onTimeSelected(timeSlot) }
                             )
                         }
                     }

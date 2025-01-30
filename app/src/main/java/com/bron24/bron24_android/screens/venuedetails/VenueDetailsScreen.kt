@@ -109,6 +109,8 @@ import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScr
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
+import com.bron24.bron24_android.screens.util.hiltScreenModel
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -122,33 +124,35 @@ import org.orbitmvi.orbit.compose.collectAsState
 data class VenueDetailsScreen(val venueId: Int) : Screen {
     @Composable
     override fun Content() {
-        val viewModel: VenueDetailsContract.ViewModel = getViewModel<VenueDetailsVM>()
-        remember {
-            viewModel.initData(venueId)
-        }
-        val uiState = viewModel.collectAsState()
-        VenueDetailsScreenContent(venueId, state = uiState, viewModel::onDispatchers)
+
     }
 
 }
 
 @Composable
 fun VenueDetailsScreenContent(
-    venueId: Int,
     state: State<VenueDetailsContract.UIState>,
-    intent: (VenueDetailsContract.Intent) -> Unit
+    back:()->Unit,
+    intent: (VenueOrderInfo) -> Unit
 ) {
+//    val viewModel: VenueDetailsContract.ViewModel = hiltScreenModel()
+//    remember {
+//        viewModel.initData(venueId)
+//    }
+//    val state = viewModel.collectAsState()
+
+
     var openOrder by remember {
         mutableStateOf(false)
     }
     VenueDetailsContent(
         state = state,
         onBackClick = {
-            intent.invoke(VenueDetailsContract.Intent.ClickBack)
+            back.invoke()
         },
         onFavoriteClick = { /* Implement favorite functionality */ },
         onMapClick = { lan, long ->
-            intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan, long)))
+            //intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan, long)))
         },
         onOrderClick = {
             openOrder = true
@@ -157,13 +161,13 @@ fun VenueDetailsScreenContent(
 
     if (openOrder) {
         BookingBottomSheet(
-            venueId = venueId,
+            venueId = state.value.venue?.venueId?:0,
             venueName = state.value.venue?.venueName ?: "",
             sectors = state.value.venue?.sectors ?: emptyList(),
             pricePerHour = state.value.venue?.pricePerHour ?: "",
             onDismiss = { openOrder = false },
         ) {
-            intent.invoke(VenueDetailsContract.Intent.ClickOrder(it))
+            intent.invoke(it)
         }
     }
 }

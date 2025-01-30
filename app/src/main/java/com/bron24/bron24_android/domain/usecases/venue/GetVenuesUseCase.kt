@@ -24,13 +24,30 @@ class GetVenuesUseCase @Inject constructor(
         filterOptions: FilterOptions? = null
     ): Flow<Result<List<Venue>>> = flow {
         checkLocationPermissionUseCase.invoke().collect { permissionState ->
-            when (permissionState) {
-                LocationPermissionState.GRANTED -> {
-                    getCurrentLocationUseCase.execute().collect { location ->
-                        Log.d("AAA", "invoke: Grented")
+            try {
+                when (permissionState) {
+                    LocationPermissionState.GRANTED -> {
+                        getCurrentLocationUseCase.execute().collect { location ->
+                            Log.d("AAA", "invoke: Grented")
+                            val venues = repository.getVenues(
+                                latitude = location.latitude,
+                                longitude = location.longitude,
+                                sort = sort,
+                                availableTime = filterOptions?.availableTime,
+                                minPrice = filterOptions?.minPrice,
+                                maxPrice = filterOptions?.maxPrice,
+                                infrastructure = filterOptions?.infrastructure,
+                                district = filterOptions?.district,
+                            )
+                            emit(Result.success(venues))
+                        }
+                    }
+
+                    LocationPermissionState.DENIED -> {
+                        Log.d("AAA", "invoke: = Denied")
                         val venues = repository.getVenues(
-                            latitude = location.latitude,
-                            longitude = location.longitude,
+                            latitude = null,
+                            longitude = null,
                             sort = sort,
                             availableTime = filterOptions?.availableTime,
                             minPrice = filterOptions?.minPrice,
@@ -41,21 +58,8 @@ class GetVenuesUseCase @Inject constructor(
                         emit(Result.success(venues))
                     }
                 }
+            }catch (e:Exception){
 
-                LocationPermissionState.DENIED -> {
-                    Log.d("AAA", "invoke: = Denied")
-                    val venues = repository.getVenues(
-                        latitude = null,
-                        longitude = null,
-                        sort = sort,
-                        availableTime = filterOptions?.availableTime,
-                        minPrice = filterOptions?.minPrice,
-                        maxPrice = filterOptions?.maxPrice,
-                        infrastructure = filterOptions?.infrastructure,
-                        district = filterOptions?.district,
-                    )
-                    emit(Result.success(venues))
-                }
             }
         }
     }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)

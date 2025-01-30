@@ -17,6 +17,7 @@ interface YandexMapPageContract {
         val venueCoordinates: List<VenueCoordinates> = emptyList(),
         val venueDetails: VenueDetails? = null,
         val isLoading: Boolean = false,
+        val firstOpen:Int = 0,
         val checkPermission: LocationPermissionState = LocationPermissionState.DENIED,
         val userLocation: Location = Location(42.23, 43.33),
         val imageUrls: List<String> = emptyList(),

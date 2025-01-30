@@ -112,6 +112,11 @@ class VenueRepositoryImpl @Inject constructor(
     }
 
     override fun getSpecialOffers(): Flow<List<SpecialOffer>> = flow {
-        emit(apiService.getSpecialOffers()?.data?.map { it.toDomainModel() } ?: emptyList())
+        try {
+            emit(apiService.getSpecialOffers()?.data?.map { it.toDomainModel() } ?: emptyList())
+        }catch (e:Exception){
+            emit(emptyList())
+        }
+
     }
 }

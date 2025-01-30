@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
+import androidx.annotation.DrawableRes
+import androidx.annotation.RawRes
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -39,7 +42,9 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
+import com.google.android.play.integrity.internal.m
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -100,45 +105,64 @@ fun YandexMapPageContent(
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = { context ->
-                Log.d(TAG, "Factory was called")
-                MapView(context).also { view ->
-                    mapView = view
-                    mapObjects = view.map.mapObjects
+                Log.d("MapScreen", "Factory was called")
+                MapView(context).apply {
+                    mapView = this
+                    mapObjects = map.mapObjects
 
-                    view.map.isZoomGesturesEnabled = true
-                    view.map.isRotateGesturesEnabled = true
-                    view.map.isTiltGesturesEnabled = true
-                    view.map.isScrollGesturesEnabled = true
+                    map.isZoomGesturesEnabled = true
+                    map.isRotateGesturesEnabled = true
+                    map.isTiltGesturesEnabled = true
+                    map.isScrollGesturesEnabled = true
 
-                    view.map.move(
+                    // Foydalanuvchi joylashuviga kamera yo'naltirish
+                    map.move(
                         CameraPosition(userLocation, 15f, 0f, 0f)
                     )
                 }
             },
             modifier = Modifier.fillMaxSize(),
             update = { view ->
-                // No-op to prevent unnecessary updates
+                Log.d("AAA", "YandexMapPageContent: Update")
+                view.map.mapObjects.clear()
+                mapObjects?.let {
+                    setMarkerInStartLocation(it, userLocation, context)
+                    state.value.venueCoordinates.forEach { venue ->
+                        val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
+                        setStadiumMarker(
+                            if(state.value.firstOpen==0) true else venue.selected,
+                            view,
+                            it,
+                            (point to venue),
+                            context,
+                            intent,
+                            mapObjectListeners,
+                        )
+                    }
+                }
             }
         )
 
-        LaunchedEffect(mapObjects) {
-            mapObjects?.let { objects ->
-                setMarkerInStartLocation(objects, userLocation, context)
-                state.value.venueCoordinates.forEach { venue ->
-                    val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                    setStadiumMarker(
-                        mapView!!,
-                        objects,
-                        (point to venue),
-                        context,
-                        intent,
-                        mapObjectListeners
-                    )
-                }
-
-//                mapView?.map?.invalidate()
-            }
-        }
+//        LaunchedEffect(mapObjects) {
+//            mapObjects?.let { objects ->
+//                objects.clear()
+//                setMarkerInStartLocation(objects, userLocation, context)
+//                state.value.venueCoordinates.forEach { venue ->
+//                    val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
+//                    setStadiumMarker(
+//                        venue.selected,
+//                        mapView!!,
+//                        objects,
+//                        (point to venue),
+//                        context,
+//                        intent,
+//                        mapObjectListeners
+//                    )
+//                }
+//
+////                mapView?.map?.invalidate()
+//            }
+//        }
 
         ZoomControls(
             modifier = Modifier.align(Alignment.TopEnd),
@@ -200,6 +224,21 @@ fun YandexMapPageContent(
         }
     }
 }
+fun vectorDrawableToBitmap(context: Context, @DrawableRes drawableId: Int): Bitmap {
+    val drawable = AppCompatResources.getDrawable(context, drawableId) ?: return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+
+    val bitmap = Bitmap.createBitmap(
+        drawable.intrinsicWidth,
+        drawable.intrinsicHeight,
+        Bitmap.Config.ARGB_8888
+    )
+
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+
+    return bitmap
+}
 
 @Composable
 fun SwipeToDismissVertical(
@@ -250,6 +289,7 @@ private fun setMarkerInStartLocation(
 }
 
 fun setStadiumMarker(
+    selected:Boolean,
     mapView: MapView,
     mapObjects: MapObjectCollection,
     point: Pair<Point, VenueCoordinates>,
@@ -258,6 +298,7 @@ fun setStadiumMarker(
     mapObjectListeners: MutableMap<Point, MapObjectTapListener> = mutableMapOf(),
 ) {
     val marker = createBitmapFromVector(R.drawable.green_location_pin, context)
+    val customScale = 0.8f
 
     val placemark = mapObjects.addPlacemark(
         point.first,
@@ -267,7 +308,34 @@ fun setStadiumMarker(
     if (!mapObjectListeners.containsKey(point.first)) {
         val listener = MapObjectTapListener { _, _ ->
             centerCameraOnMarker(mapView, point.first)
-            updateMarkerAppearance(placemark, context, isHighlighted = true)
+            updateMarkerAppearance(placemark, context, isHighlighted = selected)
+            intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
+            true
+        }
+
+        mapObjectListeners[point.first] = listener
+        placemark.addTapListener(listener)
+    }
+}
+fun firstOpen(
+    selected:Boolean,
+    mapObjects: MapObjectCollection,
+    point: Pair<Point, VenueCoordinates>,
+    context: Context,
+    intent: (YandexMapPageContract.Intent) -> Unit,
+    mapObjectListeners: MutableMap<Point, MapObjectTapListener> = mutableMapOf(),
+) {
+    val marker = createBitmapFromVector(R.drawable.green_location_pin, context)
+    val customScale = 0.8f
+
+    val placemark = mapObjects.addPlacemark(
+        point.first,
+        ImageProvider.fromBitmap(marker)
+    )
+
+    if (!mapObjectListeners.containsKey(point.first)) {
+        val listener = MapObjectTapListener { _, _ ->
+            updateMarkerAppearance(placemark, context, isHighlighted = selected)
             intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
             true
         }
@@ -278,7 +346,13 @@ fun setStadiumMarker(
 }
 
 fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Context, isHighlighted: Boolean) {
-    val drawable = if (isHighlighted) R.drawable.red_location_pin else R.drawable.green_location_pin
+    Log.d("AAA", "updateMarkerAppearance: ishladi")
+    val drawable = if (isHighlighted){
+        Log.d("AAA", "updateMarkerAppearance: selected")
+        R.drawable.red_location_pin
+    } else {
+        R.drawable.green_location_pin
+    }
     val customScale = if (isHighlighted) 1.25f else 0.8f
 
     val bitmap = createBitmapFromVector(drawable, context)

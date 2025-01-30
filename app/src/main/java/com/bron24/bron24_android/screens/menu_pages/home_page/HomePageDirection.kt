@@ -1,7 +1,9 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
 import com.bron24.bron24_android.common.FilterOptions
+import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.navigator.AppNavigator
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingConfirmationScreen
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreen
 import com.bron24.bron24_android.screens.search.search_screen.SearchScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
@@ -20,5 +22,9 @@ class HomePageDirection @Inject constructor(
 
     override suspend fun moveToDetails(venueId: Int) {
         appNavigator.push(VenueDetailsScreen(venueId))
+    }
+
+    override suspend fun openOrderScreen(info: VenueOrderInfo) {
+        appNavigator.push(BookingConfirmationScreen(info))
     }
 }

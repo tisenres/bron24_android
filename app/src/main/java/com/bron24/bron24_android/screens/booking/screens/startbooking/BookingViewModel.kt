@@ -67,8 +67,7 @@ class BookingViewModel @Inject constructor(
         _selectedDate.value = roundToStartOfDay(timestamp)
         updateSelectedDate(timestamp)
         updateVisibleMonthYear(timestamp)
-        Log.d("BookingViewModel", "Selected Date: ${_selectedDate.value}")
-        Log.d("BookingViewModel", "Selected Date Index: ${_selectedDateIndex.value}")
+        _selectedTimeSlots.value = mutableSetOf()
     }
 
     private fun updateSelectedDate(selectedTimestamp: Long) {

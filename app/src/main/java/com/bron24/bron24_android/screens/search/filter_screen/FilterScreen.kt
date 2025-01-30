@@ -86,7 +86,7 @@ data class FilterScreen(val block: (FilterOptions) -> Unit) : Screen {
     override fun Content() {
         val viewModel: FilterScreenContract.ViewModel = getViewModel<FilterScreenVM>()
         val uiState = viewModel.collectAsState()
-        FilterScreenContent(block = block, state = uiState, intent = viewModel::onDispatchers)
+//        FilterScreenContent(block = block, state = uiState, intent = viewModel::onDispatchers)
     }
 
 }
@@ -94,9 +94,8 @@ data class FilterScreen(val block: (FilterOptions) -> Unit) : Screen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreenContent(
-    block: (FilterOptions) -> Unit,
-    state: State<FilterScreenContract.UIState>,
-    intent: (FilterScreenContract.Intent) -> Unit
+    clickBack:()->Unit,
+    filterOptions: (FilterOptions) -> Unit,
 ) {
     var selParking by remember { mutableStateOf(false) }
     var selRoom by remember { mutableStateOf(false) }
@@ -176,7 +175,9 @@ fun FilterScreenContent(
                     color = Success
                 )
             }
-        ) {}
+        ) {
+            clickBack.invoke()
+        }
         if (openDialog) {
             DatePickerDialog(
                 colors = DatePickerDefaults.colors(containerColor = White),
@@ -566,8 +567,7 @@ fun FilterScreenContent(
                 }
             }
             AppButton(text = "See Results", modifier = Modifier) {
-                intent.invoke(FilterScreenContract.Intent.ClickBack)
-                block.invoke(
+                filterOptions.invoke(
                     FilterOptions(
                         selectedDate,
                         minSumma,
