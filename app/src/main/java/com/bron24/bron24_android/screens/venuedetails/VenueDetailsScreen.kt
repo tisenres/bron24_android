@@ -105,6 +105,7 @@ import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -476,7 +477,7 @@ fun DescriptionSection(state: State<VenueDetailsContract.UIState>) {
         SectionTitle(state = state, text = stringResource(id = R.string.Additional_info))
         Spacer(modifier = Modifier.height(15.dp))
         Text(
-            text = state.value.venue?.description?:"",
+            text = state.value.venue?.description ?: "",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -579,11 +580,11 @@ fun VenueImage(imageUrl: String, page: Int) {
     var isLoading by remember {
         mutableStateOf(false)
     }
-    if(isLoading){
+    if (isLoading) {
         LoadingPlaceholder()
     }
     Image(
-        painter = rememberAsyncImagePainter(model = imageUrl, onLoading = { isLoading = true}, onSuccess = { isLoading = false}),
+        painter = rememberAsyncImagePainter(model = imageUrl, onLoading = { isLoading = true }, onSuccess = { isLoading = false }),
         contentDescription = "Venue Image $page",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
@@ -782,7 +783,7 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
         AddressRow(details, onCopyAddressClick)
         AvailableSlots(details)
         Spacer(modifier = Modifier.height(4.dp))
-        if(details?.distance?.toInt()!=0){
+        if (details?.distance?.toInt() != 0) {
             DistanceRow(details)
         }
 
@@ -1069,7 +1070,7 @@ fun FacilitiesGrid(state: State<VenueDetailsContract.UIState>, onItemClick: (Str
                     onItemClick
                 )
                 InfrastructureItem(
-                    "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
+                    "${venue.workingHoursFrom.formatISODateTimeToHourString()} - ${venue.workingHoursTill.formatISODateTimeToHourString()}",
                     null,
                     R.drawable.baseline_access_time_filled_24,
                     onItemClick
@@ -1290,7 +1291,7 @@ fun MapSection(state: State<VenueDetailsContract.UIState>) {
                                     try {
                                         val venueLocation = Point(venue.latitude, venue.longitude)
                                         view.map.move(
-                                            CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
+                                            CameraPosition(venueLocation, 14.0f, 0.0f, 0.0f),
                                             Animation(Animation.Type.SMOOTH, 0.3f),
                                             null
                                         )
@@ -1445,7 +1446,7 @@ private fun MapDetails(details: VenueDetails?) {
             ),
         )
         Spacer(modifier = Modifier.height(4.dp))
-        if(details?.distance?.toInt()!=0){
+        if (details?.distance?.toInt() != 0) {
             DistanceInfo(
                 icon = R.drawable.mingcute_navigation_fill,
                 text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
@@ -1530,7 +1531,7 @@ fun PricingSection(
                     ),
                 )
             }
-            if(state.value.isLoading){
+            if (state.value.isLoading) {
                 Box(
                     modifier = Modifier
                         .width(157.dp)
@@ -1539,7 +1540,7 @@ fun PricingSection(
                         .shimmer()
                         .background(Color.Gray.copy(alpha = 0.2f))
                 )
-            }else{
+            } else {
                 Button(
                     onClick = onOrderClick,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),

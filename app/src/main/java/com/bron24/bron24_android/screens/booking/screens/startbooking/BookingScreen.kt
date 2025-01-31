@@ -1,7 +1,6 @@
 package com.bron24.bron24_android.screens.booking.screens.startbooking
 
 import android.app.DatePickerDialog
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -39,10 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -67,7 +64,6 @@ import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.priceToInt
 import com.bron24.bron24_android.screens.booking.states.BookingState
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import java.sql.Time
 import java.util.Calendar
 
 @Composable
@@ -96,7 +92,7 @@ fun BookingScreen(
 
     var isOrderEnabled by remember { mutableStateOf(false) }
     var counter by remember {
-        mutableStateOf(selectedTimeSlots.size<2)
+        mutableStateOf(selectedTimeSlots.size < 2)
     }
     val sectorEnums = sectors.map { sectorString ->
         Sector.valueOf(sectorString)
@@ -106,12 +102,10 @@ fun BookingScreen(
         isOrderEnabled = selectedTimeSlots.isNotEmpty()
     }
 
-
-
     LaunchedEffect(showDatePicker) {
         if (showDatePicker) {
             val calendar = Calendar.getInstance()
-            calendar.timeInMillis = selectedDate // Use the selectedDate timestamp
+            calendar.timeInMillis = selectedDate
 
             val maxDate = Calendar.getInstance().apply {
                 add(Calendar.DAY_OF_YEAR, 29)
@@ -134,7 +128,6 @@ fun BookingScreen(
             }
 
             datePickerDialog.show()
-            Log.d("BookingScreen", "DatePicker shown with date: ${calendar.time}")
         }
     }
 
@@ -175,7 +168,6 @@ fun BookingScreen(
                 onMonthClick = {
                     viewModel.showDatePicker()
                 },
-//                onVisibleDatesChanged = { dateItem -> viewModel.updateVisibleMonthYear(dateItem) },
                 selectedDateIndex = selectedDateIndex
             )
 
@@ -211,10 +203,6 @@ fun StadiumPartSection(
     selectedSector: Sector?,
     onSectorSelected: (Sector) -> Unit
 ) {
-
-    LaunchedEffect(Unit) {
-        Log.d("BookingScreen", "Sectors: $sectors")
-    }
 
     Column(
         modifier = Modifier.padding(horizontal = 20.dp),
@@ -317,12 +305,7 @@ fun DateSection(
             Row(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
-                    .clickable(
-                        onClick = {
-                            Log.d("DateSection", "Month clicked")
-                            onMonthClick()
-                        }
-                    )
+                    .clickable(onClick = { onMonthClick() })
                     .padding(8.dp)
             ) {
                 Image(
@@ -360,12 +343,9 @@ fun DateSection(
                         onDateSelected(dateItem.timestamp)
                     },
                     modifier = Modifier.onGloballyPositioned { coordinates ->
-                        val isVisible = coordinates.boundsInRoot().let { bounds ->
+                        coordinates.boundsInRoot().let { bounds ->
                             bounds.left >= 0 && bounds.right <= coordinates.size.width
                         }
-//                        if (isVisible) {
-//                            onVisibleDatesChanged(dateItem)
-//                        }
                     }
                 )
             }
@@ -535,15 +515,16 @@ fun AvailableTimesSection(
                     FlowRow(
                         maxItemsInEachRow = 3,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         timeSlots.forEach { timeSlot ->
                             TimeSlotItem(
                                 timeSlot = timeSlot,
                                 onTimeSelected = {
-                                    if(selectedTimeSlot.contains(timeSlot)){
+                                    if (selectedTimeSlot.contains(timeSlot)) {
                                         onTimeSelected(timeSlot)
-                                    }else if(selectedTimeSlot.size< 2 )onTimeSelected(timeSlot)
+                                    } else if (selectedTimeSlot.size < 2) onTimeSelected(timeSlot)
                                 }
                             )
                         }
@@ -605,15 +586,15 @@ fun TimeSlotItem(
 
     Box(
         modifier = Modifier
-            .padding(bottom = 17.dp, end = 13.dp)
-            .widthIn(min = 110.dp)
+//            .padding(bottom = 15.dp, end = 13.dp)
+            .fillMaxWidth(0.3f)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
             .clickable(
                 enabled = timeSlot.isAvailable,
                 onClick = onTimeSelected
             )
-            .padding(vertical = 8.dp),
+            .padding(vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
         val startTimeInMillis = timeSlot.startTime
@@ -646,34 +627,15 @@ fun LoadingScreen() {
     }
 }
 
-//fun parseTimeString(time: String): Long {
-//     Parse "HH:mm:ss" to milliseconds since epoch
-//    val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-//    val date = timeFormat.parse(time) ?: throw IllegalArgumentException("Invalid time format")
-//    return date.time
-//}
-
-fun LayoutCoordinates.findChildBounds(parent: LayoutCoordinates, key: String): Rect {
-    return this.boundsInRoot()
-}
-
-//fun formatTimeSlot(startTime: String, endTime: String): String {
-//    val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-//    return "${dateFormat.format(startTime.toLong())} - ${dateFormat.format(endTime.toLong())}"
-//}
-
 fun millisToDate(timeMillis: Long): String {
-    // Create a Calendar instance and set the time in milliseconds
     val calendar = Calendar.getInstance().apply {
         timeInMillis = timeMillis
     }
 
-    // Convert Calendar to LocalDate
     val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH) + 1  // Calendar.MONTH is 0-based
+    val month = calendar.get(Calendar.MONTH) + 1
     val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-    // Format the date manually
     return String.format("%04d-%02d-%02d", year, month, day)
 }
 
