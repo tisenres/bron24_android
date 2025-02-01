@@ -30,6 +30,14 @@ class YandexMapPageVM @Inject constructor(
                     .onEach { venueDetails ->
                         if (intent.location.venueId != state.currentSelectedMarker?.venueId) reduce {
                             state.copy(
+                                firstOpen = 1,
+                                venueCoordinates = state.venueCoordinates.map {
+                                    if (it.venueId != intent.location.venueId){
+                                        it.copy(selected = true)
+                                    } else it.copy(
+                                        selected = false
+                                    )
+                                },
                                 venueDetails = venueDetails.first,
                                 currentSelectedMarker = intent.location,
                                 imageUrls = venueDetails.second

@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.data.local.preference.LocalStorage
+import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
 import com.bron24.bron24_android.domain.usecases.offers.GetSpecialOfferUseCase
+import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -24,7 +26,8 @@ class HomePageVM @Inject constructor(
     private val localStorage: LocalStorage,
     private val getVenuesUseCase: GetVenuesUseCase,
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
-    private val getSpecialOfferUseCase: GetSpecialOfferUseCase
+    private val getSpecialOfferUseCase: GetSpecialOfferUseCase,
+    private val getVenueDetailsUseCase: GetVenueDetailsUseCase
 ) : HomePageContract.ViewModel {
     private var filterOptions: FilterOptions? = null
 
@@ -60,7 +63,15 @@ class HomePageVM @Inject constructor(
             }
 
             is HomePageContract.Intent.ClickItem -> {
-                direction.moveToDetails(intent.venueId)
+                getVenueDetailsUseCase.invoke(intent.venueId)
+                    .onStart { reduce { state.copy(isLoading = true) } }
+                    .onEach {
+                        reduce { state.copy(isLoading = false, venueDetails = it.first, imageUrls = it.second) }
+                    }.launchIn(screenModelScope)
+            }
+
+            is HomePageContract.Intent.ClickOrder -> {
+                direction.openOrderScreen(intent.venueOrderInfo)
             }
         }
     }

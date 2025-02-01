@@ -109,6 +109,8 @@ import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScr
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
+import com.bron24.bron24_android.screens.util.hiltScreenModel
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -122,33 +124,35 @@ import org.orbitmvi.orbit.compose.collectAsState
 data class VenueDetailsScreen(val venueId: Int) : Screen {
     @Composable
     override fun Content() {
-        val viewModel: VenueDetailsContract.ViewModel = getViewModel<VenueDetailsVM>()
-        remember {
-            viewModel.initData(venueId)
-        }
-        val uiState = viewModel.collectAsState()
-        VenueDetailsScreenContent(venueId, state = uiState, viewModel::onDispatchers)
+
     }
 
 }
 
 @Composable
 fun VenueDetailsScreenContent(
-    venueId: Int,
     state: State<VenueDetailsContract.UIState>,
-    intent: (VenueDetailsContract.Intent) -> Unit
+    back:()->Unit,
+    intent: (VenueOrderInfo) -> Unit
 ) {
+//    val viewModel: VenueDetailsContract.ViewModel = hiltScreenModel()
+//    remember {
+//        viewModel.initData(venueId)
+//    }
+//    val state = viewModel.collectAsState()
+
+
     var openOrder by remember {
         mutableStateOf(false)
     }
     VenueDetailsContent(
         state = state,
         onBackClick = {
-            intent.invoke(VenueDetailsContract.Intent.ClickBack)
+            back.invoke()
         },
         onFavoriteClick = { /* Implement favorite functionality */ },
         onMapClick = { lan, long ->
-            intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan, long)))
+            //intent.invoke(VenueDetailsContract.Intent.ClickMap(Location(lan, long)))
         },
         onOrderClick = {
             openOrder = true
@@ -157,13 +161,13 @@ fun VenueDetailsScreenContent(
 
     if (openOrder) {
         BookingBottomSheet(
-            venueId = venueId,
+            venueId = state.value.venue?.venueId?:0,
             venueName = state.value.venue?.venueName ?: "",
             sectors = state.value.venue?.sectors ?: emptyList(),
             pricePerHour = state.value.venue?.pricePerHour ?: "",
             onDismiss = { openOrder = false },
         ) {
-            intent.invoke(VenueDetailsContract.Intent.ClickOrder(it))
+            intent.invoke(it)
         }
     }
 }
@@ -780,8 +784,7 @@ fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
 fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Unit) {
     Column(modifier = Modifier.padding(bottom = 14.dp)) {
         AddressRow(details, onCopyAddressClick)
-        AvailableSlots(details)
-        Spacer(modifier = Modifier.height(4.dp))
+        //AvailableSlots(details)
         if(details?.distance?.toInt()!=0){
             DistanceRow(details)
         }
@@ -844,7 +847,7 @@ fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
 fun AvailableSlots(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.baseline_event_available_24,
-        text = "12 ${stringResource(id = R.string.available)} slot"
+        text = "${details?.peopleCapacity} ${stringResource(id = R.string.available)} slot"
     )
 }
 
@@ -852,7 +855,7 @@ fun AvailableSlots(details: VenueDetails?) {
 fun DistanceRow(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.mingcute_navigation_fill,
-        text = String.format("%.1f", details?.distance) + " km"
+        text = String.format("%.1f", details?.distance) + " ${stringResource(id = R.string.km)}"
     )
 }
 
@@ -952,16 +955,14 @@ fun InfrastructureSection(state: State<VenueDetailsContract.UIState>) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        SectionTitle(state = state, text = "Facilities")
+        SectionTitle(state = state, text = stringResource(id = R.string.facilities))
         Spacer(modifier = Modifier.height(15.dp))
         FacilitiesGrid(state) { text, icon ->
             selectedItem = text to icon
             showBottomSheet = true
         }
     }
-
-
-
+    
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -1448,7 +1449,7 @@ private fun MapDetails(details: VenueDetails?) {
         if(details?.distance?.toInt()!=0){
             DistanceInfo(
                 icon = R.drawable.mingcute_navigation_fill,
-                text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
+                text = String.format("%.1f ${stringResource(id = R.string.km)} ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
                 tintColor = Color(0xFFD9D9D9),
             )
         }
@@ -1549,7 +1550,7 @@ fun PricingSection(
                         .width(157.dp)
                 ) {
                     Text(
-                        text = "Order",
+                        text = stringResource(id = R.string.boking),
                         style = TextStyle(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.Normal,

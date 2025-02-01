@@ -3,6 +3,7 @@ package com.bron24.bron24_android.screens.menu_pages.profile_page
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
@@ -72,6 +74,7 @@ import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.bron24.bron24_android.screens.menu_pages.home_page.HomePage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -85,7 +88,7 @@ object ProfilePage : Tab {
             val icon =
                 rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_person))
             return TabOptions(
-                index = 5u, title = "Profile", icon = icon
+                index = 5u, title = stringResource(id = R.string.profile), icon = icon
             )
         }
 
@@ -122,6 +125,10 @@ fun ProfilePageContent(
                 bottomSheetState.hide()
             }
         }
+    }
+    val tab = LocalTabNavigator.current
+    BackHandler {
+        tab.current = HomePage
     }
     LaunchedEffect(isClickable) {
         delay(300)
@@ -329,7 +336,7 @@ fun ProfilePageContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Contact Us",
+                    text = stringResource(id = R.string.contact_us),
                     textAlign = TextAlign.Center,
                     color = Black,
                     fontSize = 16.sp,
@@ -360,7 +367,7 @@ fun ProfilePageContent(
 
                 }
                 ItemProfileTask(
-                    text = "Contact Number",
+                    text = stringResource(id = R.string.contact_number),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp),

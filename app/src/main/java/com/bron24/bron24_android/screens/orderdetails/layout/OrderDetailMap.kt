@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -184,7 +185,7 @@ fun OrderDetailMap(state: State<OrderDetailsContact.UIState>, modifier: Modifier
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Take a route",
+                        text = stringResource(id = R.string.take),
                         style = TextStyle(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.ExtraBold,
@@ -195,7 +196,7 @@ fun OrderDetailMap(state: State<OrderDetailsContact.UIState>, modifier: Modifier
                     )
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_right),
-                        contentDescription = "Open in Maps",
+                        contentDescription = stringResource(id = R.string.open_map),
                         modifier = Modifier.size(14.dp)
                     )
                 }
@@ -297,7 +298,7 @@ private fun MapDetails(state: State<OrderDetailsContact.UIState>) {
         if(state.value.order?.distance?.toInt()!=0){
             DistanceInfo(
                 icon = R.drawable.mingcute_navigation_fill,
-                text = "${String.format("%.2f",state.value.order?.distance?:10)} km from you",
+                text = "${String.format("%.2f",state.value.order?.distance?:10)} ${stringResource(id = R.string.km)} ${stringResource(id = R.string.from_you)}",
                 tintColor = Color(0xFFB7B3B3),
             )
         }

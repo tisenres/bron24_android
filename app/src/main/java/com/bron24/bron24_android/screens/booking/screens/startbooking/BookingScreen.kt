@@ -95,9 +95,6 @@ fun BookingScreen(
     val showDatePicker by viewModel.showDatePicker.collectAsState()
 
     var isOrderEnabled by remember { mutableStateOf(false) }
-    var counter by remember {
-        mutableStateOf(selectedTimeSlots.size<2)
-    }
     val sectorEnums = sectors.map { sectorString ->
         Sector.valueOf(sectorString)
     }
@@ -134,7 +131,6 @@ fun BookingScreen(
             }
 
             datePickerDialog.show()
-            Log.d("BookingScreen", "DatePicker shown with date: ${calendar.time}")
         }
     }
 
@@ -211,17 +207,12 @@ fun StadiumPartSection(
     selectedSector: Sector?,
     onSectorSelected: (Sector) -> Unit
 ) {
-
-    LaunchedEffect(Unit) {
-        Log.d("BookingScreen", "Sectors: $sectors")
-    }
-
     Column(
         modifier = Modifier.padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Text(
-            "Stadium Part",
+            text = stringResource(id = R.string.stadium_part),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -319,7 +310,6 @@ fun DateSection(
                     .clip(RoundedCornerShape(10.dp))
                     .clickable(
                         onClick = {
-                            Log.d("DateSection", "Month clicked")
                             onMonthClick()
                         }
                     )
@@ -477,7 +467,7 @@ fun PricingSection(
                 enabled = isOrderEnabled
             ) {
                 Text(
-                    text = "Order",
+                    text = stringResource(id = R.string.order),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
@@ -505,7 +495,7 @@ fun AvailableTimesSection(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Text(
-            "Available times",
+            text = stringResource(id = R.string.available_times),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.ExtraBold,
@@ -535,16 +525,12 @@ fun AvailableTimesSection(
                     FlowRow(
                         maxItemsInEachRow = 3,
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         timeSlots.forEach { timeSlot ->
                             TimeSlotItem(
                                 timeSlot = timeSlot,
-                                onTimeSelected = {
-                                    if(selectedTimeSlot.contains(timeSlot)){
-                                        onTimeSelected(timeSlot)
-                                    }else if(selectedTimeSlot.size< 2 )onTimeSelected(timeSlot)
-                                }
+                                onTimeSelected = { onTimeSelected(timeSlot) }
                             )
                         }
                     }
@@ -575,7 +561,7 @@ fun EmptyTimeSlots() {
             modifier = Modifier.size(120.dp)
         )
         Text(
-            text = "No available time slots for this date",
+            text = stringResource(id = R.string.empty_info),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Medium,

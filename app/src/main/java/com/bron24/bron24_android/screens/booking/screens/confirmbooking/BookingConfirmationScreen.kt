@@ -64,6 +64,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -108,7 +109,8 @@ fun BookingConfirmationContent(
     var showPromoCode by remember { mutableStateOf(false) }
 
     // State variables for selected payment method and promo code
-    var selectedPaymentMethod by remember { mutableStateOf("Cash") }
+    val cash = stringResource(id = R.string.cash)
+    var selectedPaymentMethod by remember { mutableStateOf(cash) }
     var appliedPromoCode by remember { mutableStateOf<String?>(null) }
 
     val scrollState = rememberLazyListState()
@@ -122,7 +124,7 @@ fun BookingConfirmationContent(
     ) {
         AnimatedToolbar(
             visible = toolbarVisible,
-            title = "Booking information",
+            title = stringResource(id = R.string.booking_info),
             onBackClick = {intent.invoke(BookingConfirmationContract.Intent.Back)},
             modifier = Modifier
                 .fillMaxWidth()
@@ -285,10 +287,10 @@ fun BookingInfoCard(
                 color = Color.LightGray
             )
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                BookingDetail("DATE", formatDate(booking.bookingDate))
+                BookingDetail(stringResource(id = R.string.date_x), formatDate(booking.bookingDate))
                 Spacer(modifier = Modifier.height(15.dp))
 
-                BookingDetail("TOTAL HOURS", (booking.totalHours.toString() + " hours"))
+                BookingDetail(stringResource(id = R.string.total_hour), (booking.totalHours.toString() + " ${stringResource(id = R.string.hours)}"))
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Row(
@@ -297,7 +299,7 @@ fun BookingInfoCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "TIME",
+                        text = stringResource(id = R.string.time_x),
                         style = TextStyle(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.SemiBold,
@@ -327,10 +329,10 @@ fun BookingInfoCard(
 
                 Spacer(modifier = Modifier.height(15.dp))
                 BookingDetail(
-                    "STADIUM PART",
+                    stringResource(id = R.string.stadium_part).uppercase(Locale.getDefault()),
                     when (booking.sector) {
-                        "X" -> "Full Stadium"
-                        else -> "Sector ${booking.sector}"
+                        "X" -> stringResource(id = R.string.full_stadion)
+                        else -> "${stringResource(id = R.string.sector)} ${booking.sector}"
                     }
                 )
             }
@@ -341,9 +343,9 @@ fun BookingInfoCard(
             )
 
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                BookingDetail("FULL NAME", booking.firstName + " " + booking.lastName)
+                BookingDetail(stringResource(id = R.string.full_name), booking.firstName + " " + booking.lastName)
                 Spacer(modifier = Modifier.height(15.dp))
-                BookingDetail("FIRST NUMBER", booking.phoneNumber.formatPhoneNumber())
+                BookingDetail(stringResource(id = R.string.first_phone), booking.phoneNumber.formatPhoneNumber())
                 Spacer(modifier = Modifier.height(15.dp))
                 SecondNumberField(
                     value = secondPhoneNumber,
@@ -382,7 +384,7 @@ fun SecondNumberField(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = "SECOND NUMBER",
+            text = stringResource(id = R.string.second_phone),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.SemiBold,
@@ -605,7 +607,7 @@ fun PromoCodeButton(appliedPromoCode: String?, onClick: () -> Unit) {
                 }
                 Spacer(modifier = Modifier.width(17.dp))
                 Text(
-                    appliedPromoCode ?: "Enter promo code",
+                    appliedPromoCode ?: stringResource(id = R.string.promo_code),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
@@ -634,7 +636,7 @@ fun TotalAmount(total: String) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "TOTAL",
+            text = stringResource(id = R.string.total).toUpperCase(Locale.ROOT),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.SemiBold,
@@ -700,8 +702,9 @@ fun PaymentMethodsBottomSheet(
     onDismiss: () -> Unit,
     onPaymentMethodSelected: (String) -> Unit
 ) {
-    val paymentMethods = listOf("Cash")
-    var selectedMethod by remember { mutableStateOf("Cash") }
+    val paymentMethods = listOf(stringResource(id = R.string.cash))
+    val cash = stringResource(id = R.string.cash)
+    var selectedMethod by remember { mutableStateOf(cash) }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
@@ -714,7 +717,7 @@ fun PaymentMethodsBottomSheet(
     ) {
         Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)) {
             Text(
-                text = "Payment methods",
+                text = stringResource(id = R.string.payment),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -728,7 +731,7 @@ fun PaymentMethodsBottomSheet(
             paymentMethods.forEach { method ->
                 PaymentOption(
                     title = method,
-                    iconRes = if (method == "Cash") R.drawable.cash_pic else R.drawable.uzcard,
+                    iconRes = if (method == cash) R.drawable.cash_pic else R.drawable.uzcard,
                     isSelected = selectedMethod == method,
                     onClick = {
                         selectedMethod = method
@@ -868,7 +871,7 @@ fun PromoCodeBottomSheet(
 
                 if (promoCode.isEmpty()) {
                     Text(
-                        text = "Enter Promo Code",
+                        text = stringResource(id = R.string.promo_code),
                         style = TextStyle(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.Medium,
@@ -889,7 +892,7 @@ fun PromoCodeBottomSheet(
                         sheetState.hide()
                     }
                 },
-                title = "Apply"
+                title = stringResource(id = R.string.apply)
             )
         }
     }

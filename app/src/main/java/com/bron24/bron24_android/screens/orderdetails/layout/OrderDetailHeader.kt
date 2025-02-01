@@ -58,7 +58,7 @@ fun OrderDetailHeader(order: OrderDetails?, modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = "№ ${order?.id}",
+            text = "№ ${order?.orderId}",
             fontSize = 14.sp,
             fontFamily = gilroyFontFamily,
             fontWeight = FontWeight.Normal,

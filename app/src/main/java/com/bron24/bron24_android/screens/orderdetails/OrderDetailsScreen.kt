@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.orderdetails
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -51,6 +52,8 @@ import com.bron24.bron24_android.screens.orderdetails.layout.OrderDetailContacts
 import com.bron24.bron24_android.screens.orderdetails.layout.OrderDetailHeader
 import com.bron24.bron24_android.screens.orderdetails.layout.OrderDetailMap
 import com.bron24.bron24_android.screens.orderdetails.layout.OrderDetailsImagePager
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreenContent
 import com.valentinilk.shimmer.shimmer
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -67,6 +70,7 @@ data class OrderDetailsScreen(val id: Int) : Screen {
 
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun OrderDetailsContent(
     state: State<OrderDetailsContact.UIState>,
@@ -75,52 +79,64 @@ fun OrderDetailsContent(
     var showDialog by remember {
         mutableStateOf(false)
     }
-    
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = White)
-    ) {
-        CustomAppBar(
-            title = "",
-            startIcons = {
-                Icon(
-                    painter = painterResource(R.drawable.baseline_arrow_back_24),
-                    contentDescription = "back",
-                    tint = Black61
-                )
-            },
-            actions = {
-                if (state.value.isCanceled) {
-                    TextButton(
-                        onClick = {
-                            showDialog = true
-                        },
-                        enabled = state.value.isCancelling,
-                        colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFF24E1E))
-                    ) {
-                        Text("Cancel order", color = Color.Red)
+    var openDetails by remember {
+        mutableStateOf(false)
+    }
+
+    if(openDetails){
+        val venues = mutableStateOf(VenueDetailsContract.UIState(isLoading = state.value.isLoading, venue = state.value.venueDetails, imageUrls = state.value.imageUrls))
+        VenueDetailsScreenContent(state = venues, back = { openDetails = false }) {
+            intent.invoke(OrderDetailsContact.Intent.ClickOrder(it))
+        }
+    }else{
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = White)
+        ) {
+            CustomAppBar(
+                title = "",
+                startIcons = {
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_arrow_back_24),
+                        contentDescription = "back",
+                        tint = Black61
+                    )
+                },
+                actions = {
+                    if (state.value.isCanceled) {
+                        TextButton(
+                            onClick = {
+                                showDialog = true
+                            },
+                            enabled = state.value.isCancelling,
+                            colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFF24E1E))
+                        ) {
+                            Text(stringResource(id = R.string.cancel_order), color = Color.Red)
+                        }
                     }
                 }
+            ) {
+                intent.invoke(OrderDetailsContact.Intent.Back)
             }
-        ) {
-            intent.invoke(OrderDetailsContact.Intent.Back)
+
+            OrderDetailsItem(
+                state = state,
+                modifier = Modifier,
+                navigateToVenueDetails = {
+                    openDetails = true
+                    intent.invoke(OrderDetailsContact.Intent.OpenVenueDetails(state.value.order?.venueId ?: 0))
+                }
+            )
+
         }
-
-        OrderDetailsItem(
-            state = state,
-            modifier = Modifier,
-            navigateToVenueDetails = {
-                intent.invoke(OrderDetailsContact.Intent.ClickMoveTo(state.value.order?.venueId ?: 0))
-            }
-        )
-
     }
+
     if(showDialog){
         CustomDialog(
-            message = "Siz orderni bekor qilmoqchimisiz?",
-            yes = "Yes",
-            no = "No",
+            message = stringResource(id = R.string.cancel_dialog),
+            yes = stringResource(id = R.string.yes),
+            no = stringResource(id = R.string.no),
             onDismiss = { showDialog = false }
         ) {
             intent.invoke(OrderDetailsContact.Intent.ClickCancel(state.value.order?.id?:0))
@@ -137,7 +153,7 @@ private fun OrderDetailsItem(
 ) {
     LazyColumn(
         modifier = modifier
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -264,7 +280,7 @@ private fun OrderDetailsItem(
                         colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF6D6D6D))
                     ) {
                         Text(
-                            "View venue details",
+                            text = stringResource(id = R.string.view_deatil),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = gilroyFontFamily
