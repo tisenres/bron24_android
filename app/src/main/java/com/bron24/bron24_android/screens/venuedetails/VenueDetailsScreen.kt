@@ -96,22 +96,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.components.items.LoadingPlaceholder
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
-import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
-import com.bron24.bron24_android.screens.util.hiltScreenModel
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -120,7 +116,6 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
-import org.orbitmvi.orbit.compose.collectAsState
 
 data class VenueDetailsScreen(val venueId: Int) : Screen {
     @Composable
@@ -133,7 +128,7 @@ data class VenueDetailsScreen(val venueId: Int) : Screen {
 @Composable
 fun VenueDetailsScreenContent(
     state: State<VenueDetailsContract.UIState>,
-    back:()->Unit,
+    back: () -> Unit,
     intent: (VenueOrderInfo) -> Unit
 ) {
 //    val viewModel: VenueDetailsContract.ViewModel = hiltScreenModel()
@@ -162,7 +157,7 @@ fun VenueDetailsScreenContent(
 
     if (openOrder) {
         BookingBottomSheet(
-            venueId = state.value.venue?.venueId?:0,
+            venueId = state.value.venue?.venueId ?: 0,
             venueName = state.value.venue?.venueName ?: "",
             sectors = state.value.venue?.sectors ?: emptyList(),
             pricePerHour = state.value.venue?.pricePerHour ?: "",
@@ -437,10 +432,10 @@ private fun copyAddressToClipboard(context: Context, address: String?) {
     val clip = ClipData.newPlainText("Venue Address", address)
     clipboard?.setPrimaryClip(clip)
 
-    ToastManager.showToast(
-        "Address copied to clipboard",
-        ToastType.SUCCESS
-    )
+//    ToastManager.showToast(
+//        "Address copied to clipboard",
+//        ToastType.SUCCESS
+//    )
 }
 
 fun shareVenueDetails(context: Context, details: VenueDetails?) {
@@ -786,7 +781,7 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
     Column(modifier = Modifier.padding(bottom = 14.dp)) {
         AddressRow(details, onCopyAddressClick)
         //AvailableSlots(details)
-        if(details?.distance?.toInt()!=0){
+        if (details?.distance?.toInt() != 0) {
             DistanceRow(details)
         }
 
