@@ -9,6 +9,7 @@ import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
 import com.bron24.bron24_android.domain.usecases.venue.GetVenuesCoordinatesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -38,7 +39,7 @@ class YandexMapPageVM @Inject constructor(
                             state.copy(
                                 firstOpen = 1,
                                 venueCoordinates = state.venueCoordinates.map {
-                                    if (it.venueId != intent.location.venueId){
+                                    if (it.venueId != intent.location.venueId) {
                                         it.copy(selected = true)
                                     } else it.copy(
                                         selected = false
@@ -77,25 +78,64 @@ class YandexMapPageVM @Inject constructor(
         }
     }
 
+//    override fun initData(): Job = intent {
+//        checkLocationPermissionUseCase.invoke().onEach {
+//            when (it) {
+//                LocationPermissionState.GRANTED -> {
+//                    getCurrentLocationUseCase.execute()
+//                        .onStart {
+//                            reduce { state.copy(isLoading = true) }
+//                        }.onEach {
+//                            reduce { state.copy(userLocation = it, isLoading = false) }
+//                        }.launchIn(viewModelScope)
+//
+//                    getVenuesCoordinatesUseCase.invoke().onStart {
+//                        reduce { state.copy(isLoading = true) }
+//                    }.onEach {
+//                        reduce { state.copy(venueCoordinates = it, isLoading = false) }
+//                    }.launchIn(viewModelScope)
+//                }
+//
+//                LocationPermissionState.DENIED -> {
+//                    postSideEffect("Error checking location permission denied!")
+//                }
+//            }
+//        }.launchIn(viewModelScope)
+//    }
+
     override fun initData(): Job = intent {
-        checkLocationPermissionUseCase.invoke().onEach {
-            when (it) {
+        checkLocationPermissionUseCase.invoke().onEach { permission ->
+            when (permission) {
                 LocationPermissionState.GRANTED -> {
-                    getCurrentLocationUseCase.execute().onEach {
-                        reduce { state.copy(userLocation = it) }
-                    }.launchIn(viewModelScope)
-
-                    getVenuesCoordinatesUseCase.invoke().onEach {
-                        reduce { state.copy(venueCoordinates = it) }
-                    }.launchIn(viewModelScope)
+                    combine(
+                        getCurrentLocationUseCase.execute(),
+                        getVenuesCoordinatesUseCase.invoke()
+                    ) { currentLocation, venuesCoordinates ->
+                        currentLocation to venuesCoordinates
+                    }
+                        .onStart {
+                            reduce { state.copy(isLoading = true) }
+                        }
+                        .onEach { (currentLocation, venuesCoordinates) ->
+                            reduce {
+                                state.copy(
+                                    userLocation = currentLocation,
+                                    venueCoordinates = venuesCoordinates,
+                                    isLoading = false,
+                                    checkPermission = permission
+                                )
+                            }
+                        }
+                        .launchIn(viewModelScope)
                 }
-
                 LocationPermissionState.DENIED -> {
                     postSideEffect("Error checking location permission denied!")
+                    reduce { state.copy(checkPermission = permission) }
                 }
             }
         }.launchIn(viewModelScope)
     }
+
 
     private fun postSideEffect(message: String) {
         intent {

@@ -92,7 +92,7 @@ fun MapVenueDetails(
     ModalBottomSheet(
         onDismissRequest = { onDismiss() },
         sheetState = sheetState,
-        containerColor = Color.White
+        containerColor = Color.White,
     ) {
         if (isLoading) {
             LoadingScreen(modifier)

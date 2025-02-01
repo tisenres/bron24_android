@@ -1,7 +1,6 @@
 package com.bron24.bron24_android.screens.menu_pages.map_page
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -9,7 +8,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,6 +25,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
@@ -79,15 +78,14 @@ fun YandexMapPageContent(
     var mapView by remember { mutableStateOf<MapView?>(null) }
     var mapObjects by remember { mutableStateOf<MapObjectCollection?>(null) }
     val mapObjectListeners by remember { mutableStateOf<MutableMap<Point, MapObjectTapListener>>(mutableMapOf()) }
-    val firstUpdateTime = remember { mutableLongStateOf(0L) }
     var selectedMarker by remember { mutableStateOf<PlacemarkMapObject?>(null) }
     val venueDetails = state.value.venueDetails
+    val initDataLoaded = state.value.venueCoordinates.isNotEmpty()
+    val coroutineScope = rememberCoroutineScope()
 
     val shouldShowBottomSheet = remember(state.value.isLoading, state.value.venueDetails) {
         !state.value.isLoading && state.value.venueDetails != null
     }
-
-    val coroutineScope = rememberCoroutineScope()
 
     val userLocation = state.value.userLocation.let {
         Point(it.latitude, it.longitude)
@@ -140,15 +138,11 @@ fun YandexMapPageContent(
         )
     }
 
-    LaunchedEffect(state.value.isLoading) {
-        Log.d(TAG, "Loading: ${state.value.isLoading}")
-    }
+    // Call when all the data is fetched and when mapObjects is initialized
+    LaunchedEffect(initDataLoaded) {
+        mapObjects?.let { objects ->
 
-    LaunchedEffect(userLocation) {
-        if (firstUpdateTime.value == 0L) {
-            firstUpdateTime.value = System.currentTimeMillis()
-        }
-        if (System.currentTimeMillis() - firstUpdateTime.longValue <= 3000L) {
+            // Move camera to the location
             userLocation.let { location ->
                 mapView?.map?.move(
                     CameraPosition(
@@ -157,18 +151,16 @@ fun YandexMapPageContent(
                     ),
                 )
             }
-        }
-    }
 
-    LaunchedEffect(mapObjects, state.value.venueCoordinates) {
-        mapObjects?.let { objects ->
-            // Always set the start location marker.
-            setMarkerInStartLocation(objects, userLocation, context)
+            // Draw geolocation mark
+            if (state.value.checkPermission == LocationPermissionState.GRANTED) {
+                setMarkerInStartLocation(objects, userLocation, context)
+            }
 
-            // Add markers for each venue.
+            // Draw Venue markers
             state.value.venueCoordinates.forEach { venue ->
                 val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                setStadiumMarker(
+                setVenueMarker(
                     mapView!!,
                     objects,
                     (point to venue),
@@ -184,12 +176,6 @@ fun YandexMapPageContent(
                     }
                 )
             }
-        }
-    }
-
-    LaunchedEffect(selectedMarker) {
-        selectedMarker?.let {
-            updateMarkerAppearance(it, context, true)
         }
     }
 
@@ -216,7 +202,7 @@ private fun setMarkerInStartLocation(
     )
 }
 
-suspend fun setStadiumMarker(
+suspend fun setVenueMarker(
     mapView: MapView,
     mapObjects: MapObjectCollection,
     point: Pair<Point, VenueCoordinates>,
@@ -240,7 +226,7 @@ suspend fun setStadiumMarker(
 
     if (!mapObjectListeners.containsKey(point.first)) {
         val listener = MapObjectTapListener { _, _ ->
-            centerCameraOnMarker(mapView, point.first)
+            centerCameraOnVenueMarker(mapView, point.first)
             intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
             onMarkerSelected(placemark)
             true
@@ -267,7 +253,7 @@ suspend fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Conte
     }
 }
 
-fun centerCameraOnMarker(mapView: MapView, point: Point) {
+fun centerCameraOnVenueMarker(mapView: MapView, point: Point) {
     val offsetY = 0.004
     val newPoint = Point(point.latitude - offsetY, point.longitude)
 
@@ -277,20 +263,6 @@ fun centerCameraOnMarker(mapView: MapView, point: Point) {
         null
     )
 }
-
-//private suspend fun createBitmapFromVector(art: Int, context: Context): Bitmap? = withContext(Dispatchers.IO) {
-//    Log.d(TAG, "Creating bitmap from vector resource: $art")
-//    val drawable = ContextCompat.getDrawable(context, art) ?: return@withContext null
-//    val bitmap = Bitmap.createBitmap(
-//        drawable.intrinsicWidth,
-//        drawable.intrinsicHeight,
-//        Bitmap.Config.ARGB_8888
-//    )
-//    val canvas = Canvas(bitmap)
-//    drawable.setBounds(0, 0, canvas.width, canvas.height)
-//    drawable.draw(canvas)
-//    bitmap
-//}
 
 @Preview
 @Composable
