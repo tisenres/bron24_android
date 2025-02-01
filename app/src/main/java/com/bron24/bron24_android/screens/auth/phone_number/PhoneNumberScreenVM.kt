@@ -31,6 +31,7 @@ class PhoneNumberScreenVM @Inject constructor(
                     requestOTPUseCase.invoke(intent.phoneNumber).onEach {
                         direction.moveToNext(phoneNumber = intent.phoneNumber)
                         it.onSuccess { status ->
+                            direction.moveToNext(phoneNumber = intent.phoneNumber)
                             when (status.result) {
                                 PhoneNumberResponseStatusCode.SUCCESS -> {
                                     reduce { state.copy(isValidPhoneNumber = false) }
@@ -73,7 +74,6 @@ class PhoneNumberScreenVM @Inject constructor(
     }
 
     private fun postSideEffect(message: String) {
-        Log.d("AAA", "postSideEffect: $message")
         intent {
             postSideEffect(PhoneNumberScreenContract.SideEffect(message))
         }

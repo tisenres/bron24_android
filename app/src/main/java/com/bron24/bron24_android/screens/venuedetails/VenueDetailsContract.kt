@@ -3,11 +3,14 @@ package com.bron24.bron24_android.screens.venuedetails
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.screens.util.AppViewModel
+import com.bron24.bron24_android.screens.util.ScreenModelImpl
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface VenueDetailsContract {
-    interface ViewModel : ContainerHost<UIState, SideEffect> {
+    @ScreenModelImpl(VenueDetailsVM::class)
+    interface ViewModel : AppViewModel<UIState,SideEffect> {
         fun onDispatchers(intent: Intent): Job
         fun initData(venueId: Int): Job
     }

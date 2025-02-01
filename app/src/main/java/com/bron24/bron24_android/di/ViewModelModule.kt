@@ -3,6 +3,7 @@ package com.bron24.bron24_android.di
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.hilt.ScreenModelKey
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageVM
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsVM
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -16,4 +17,8 @@ interface ViewModelModule {
     @IntoMap
     @ScreenModelKey(HomePageVM::class)
     fun homePageViewModel(model: HomePageVM): ScreenModel
+    @Binds
+    @IntoMap
+    @ScreenModelKey(VenueDetailsVM::class)
+    fun venueDetailsViewModel(model: VenueDetailsVM): ScreenModel
 }

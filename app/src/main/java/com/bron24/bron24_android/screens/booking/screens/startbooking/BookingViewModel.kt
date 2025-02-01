@@ -64,6 +64,7 @@ class BookingViewModel @Inject constructor(
         _selectedTimeSlots.value = emptySet()
         updateSelectedDate(timestamp)
         updateVisibleMonthYear(timestamp)
+        _selectedTimeSlots.value = mutableSetOf()
     }
 
     private fun updateSelectedDate(selectedTimestamp: Long) {

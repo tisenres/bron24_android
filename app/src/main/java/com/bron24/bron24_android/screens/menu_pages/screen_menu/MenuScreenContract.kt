@@ -15,10 +15,10 @@ interface MenuScreenContract {
     class SideEffect(val message:String)
 
     sealed interface Intent{
-
+        data object MoveToPhone:Intent
     }
 
     interface Direction{
-
+        suspend fun moveToPhone()
     }
 }

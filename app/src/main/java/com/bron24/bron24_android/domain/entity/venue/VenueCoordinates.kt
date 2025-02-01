@@ -4,5 +4,6 @@ data class VenueCoordinates(
     val venueId: Int,
     val venueName: String,
     val latitude: String,
-    val longitude: String
+    val longitude: String,
+    val selected:Boolean = false
 )

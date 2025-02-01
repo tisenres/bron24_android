@@ -16,10 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -34,7 +36,7 @@ fun OrderDetailContacts(order: OrderDetails?, modifier: Modifier) {
         Spacer(modifier = Modifier.height(12.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Contacts",
+                text = stringResource(id = R.string.contacts),
                 fontSize = 14.sp,
                 color = Color.Black,
                 fontFamily = gilroyFontFamily,
@@ -46,9 +48,12 @@ fun OrderDetailContacts(order: OrderDetails?, modifier: Modifier) {
 
                     Text(
                         text = order.phoneNumber1.formatPhoneNumber()?:"",
-                        modifier = Modifier.clip(RoundedCornerShape(6.dp)).clickable {
-                            openDialer(context, order.phoneNumber1.formatPhoneNumber()?:"")
-                        }.padding(horizontal = 8.dp),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .clickable {
+                                openDialer(context, order.phoneNumber1.formatPhoneNumber() ?: "")
+                            }
+                            .padding(horizontal = 8.dp),
                         fontSize = 12.sp,
                         color = Color(0xff32B768),
                         fontFamily = gilroyFontFamily,

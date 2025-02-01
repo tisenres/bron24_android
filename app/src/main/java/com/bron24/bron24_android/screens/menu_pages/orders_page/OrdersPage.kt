@@ -40,8 +40,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -71,7 +73,7 @@ object OrdersPage : Tab {
                 rememberVectorPainter(image = ImageVector.vectorResource(id = R.drawable.ic_wallet))
             return TabOptions(
                 index = 2u,
-                title = "Orders",
+                title = stringResource(id = R.string.orders),
                 icon = icon
             )
         }
@@ -129,7 +131,7 @@ fun OrdersPageContent(
     ) {
         Spacer(modifier = Modifier.height(30.dp))
         Text(
-            "Orders",
+            stringResource(id = R.string.orders),
             fontSize = 28.sp,
             fontWeight = FontWeight.ExtraBold,
             color = Color.Black,
@@ -288,7 +290,7 @@ fun EmptyOrdersList(onButtonClick: () -> Unit = {}) {
             )
             Spacer(modifier = Modifier.height(40.dp))
             Text(
-                text = "No orders yet",
+                text = stringResource(id = R.string.no_orders_yet),
                 color = Purple,
                 fontSize = 24.sp,
                 fontFamily = gilroyFontFamily,
@@ -296,8 +298,9 @@ fun EmptyOrdersList(onButtonClick: () -> Unit = {}) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Browse our stadiums and start booking.",
+                text = stringResource(id = R.string.info_booking),
                 color = GrayLight,
+                textAlign = TextAlign.Center,
                 fontSize = 14.sp,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal
@@ -311,7 +314,7 @@ fun EmptyOrdersList(onButtonClick: () -> Unit = {}) {
                 onClick = onButtonClick
             ) {
                 Text(
-                    "Start Booking",
+                    stringResource(id = R.string.start_booking),
                     fontSize = 16.sp,
                     fontFamily = gilroyFontFamily,
                     color = White

@@ -29,10 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.bron24.bron24_android.helper.util.presentation.logOut
 import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.GreenNormal
 import com.bron24.bron24_android.screens.main.theme.White
@@ -52,6 +54,10 @@ data class MenuScreen(val tab: String? = null) : Screen {
 
     @Composable
     override fun Content() {
+        val viewModel:MenuScreenContract.ViewModel = getViewModel<MenuScreenVM>()
+        logOut {
+            viewModel.onDispatchers(MenuScreenContract.Intent.MoveToPhone)
+        }
         MenuScreenContent(current)
     }
 }
@@ -71,7 +77,7 @@ fun MenuScreenContent(
                 NavigationBar(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(64.dp),
+                        .height(72.dp),
                     containerColor = White
                 ) {
                     ItemBottomTab(tab = HomePage)

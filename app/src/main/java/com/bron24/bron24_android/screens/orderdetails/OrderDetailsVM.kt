@@ -3,8 +3,10 @@ package com.bron24.bron24_android.screens.orderdetails
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.model.screenModelScope
 import com.bron24.bron24_android.domain.usecases.orders.CancelOrderUseCase
 import com.bron24.bron24_android.domain.usecases.orders.GetOrderDetailsUseCase
+import com.bron24.bron24_android.domain.usecases.venue.GetVenueDetailsUseCase
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -19,12 +21,17 @@ import javax.inject.Inject
 class OrderDetailsVM @Inject constructor(
     private val orderDetailsUseCase: GetOrderDetailsUseCase,
     private val cancelOrderUseCase: CancelOrderUseCase,
+    private val getVenueDetailsUseCase: GetVenueDetailsUseCase,
     private val direction: OrderDetailsContact.Direction
 ) : ViewModel(), OrderDetailsContact.ViewModel {
     override fun onDispatchers(intent: OrderDetailsContact.Intent): Job = intent {
         when (intent) {
-            is OrderDetailsContact.Intent.ClickMoveTo -> {
-                direction.moveToNext(intent.id)
+            is OrderDetailsContact.Intent.OpenVenueDetails -> {
+                getVenueDetailsUseCase.invoke(intent.id)
+                    .onStart { reduce { state.copy(isLoading = true) } }
+                    .onEach {
+                        reduce { state.copy(isLoading = false, venueDetails = it.first, imageUrls = it.second) }
+                    }.launchIn(viewModelScope)
             }
 
             OrderDetailsContact.Intent.Back -> {
@@ -39,6 +46,10 @@ class OrderDetailsVM @Inject constructor(
                         postSideEffect(message = it.message?:"")
                     }
                 }.launchIn(viewModelScope)
+            }
+
+            is OrderDetailsContact.Intent.ClickOrder -> {
+                direction.moveToNext(intent.info)
             }
         }
     }

@@ -17,13 +17,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -36,9 +34,9 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,9 +45,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -86,7 +84,7 @@ data class FilterScreen(val block: (FilterOptions) -> Unit) : Screen {
     override fun Content() {
         val viewModel: FilterScreenContract.ViewModel = getViewModel<FilterScreenVM>()
         val uiState = viewModel.collectAsState()
-        FilterScreenContent(block = block, state = uiState, intent = viewModel::onDispatchers)
+//        FilterScreenContent(block = block, state = uiState, intent = viewModel::onDispatchers)
     }
 
 }
@@ -94,9 +92,9 @@ data class FilterScreen(val block: (FilterOptions) -> Unit) : Screen {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreenContent(
-    block: (FilterOptions) -> Unit,
-    state: State<FilterScreenContract.UIState>,
-    intent: (FilterScreenContract.Intent) -> Unit
+    clickBack:()->Unit,
+    resend:()->Unit,
+    filterOptions: (FilterOptions) -> Unit,
 ) {
     var selParking by remember { mutableStateOf(false) }
     var selRoom by remember { mutableStateOf(false) }
@@ -149,16 +147,16 @@ fun FilterScreenContent(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = false
     )
-    val scope = rememberCoroutineScope()
+
     var showBottomSheet by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(color = Color.White),
     ) {
 
         CustomAppBar(
-            title = "Filter",
+            title = stringResource(id = R.string.filter),
             startIcons = {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -168,15 +166,21 @@ fun FilterScreenContent(
                 )
             },
             actions = {
-                Text(
-                    text = "Reset",
-                    fontFamily = gilroyFontFamily,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Success
-                )
+                TextButton(onClick = {
+
+                }) {
+                    Text(
+                        text = stringResource(id = R.string.reset),
+                        fontFamily = gilroyFontFamily,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Success
+                    )
+                }
             }
-        ) {}
+        ) {
+            clickBack.invoke()
+        }
         if (openDialog) {
             DatePickerDialog(
                 colors = DatePickerDefaults.colors(containerColor = White),
@@ -203,7 +207,7 @@ fun FilterScreenContent(
                                 fontWeight = FontWeight.Bold,
                             )
                             AppButton(
-                                text = "Save",
+                                text = stringResource(id = R.string.save),
                                 modifier = Modifier
                                     .padding(top = 16.dp, end = 24.dp)
                                     .width(90.dp)
@@ -219,7 +223,7 @@ fun FilterScreenContent(
                     },
                     headline = {
                         Text(
-                            text = "Kerakli kunni tanlang",
+                            text = stringResource(id = R.string.change_date),
                             modifier = Modifier.padding(start = 24.dp, bottom = 16.dp),
                             color = Success,
                             fontFamily = gilroyFontFamily,
@@ -257,7 +261,7 @@ fun FilterScreenContent(
         ) {
 
             Text(
-                text = "Date",
+                text = stringResource(id = R.string.date),
                 fontSize = 16.sp,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Medium,
@@ -266,7 +270,7 @@ fun FilterScreenContent(
             )
             ItemSelectedData(
                 date = selectedDate,
-                hint = "Any date",
+                hint = stringResource(id = R.string.any_date),
                 modifier = Modifier,
                 endIcon = {
                     androidx.compose.material3.Icon(
@@ -284,7 +288,7 @@ fun FilterScreenContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Time",
+                    text = stringResource(id = R.string.time),
                     fontSize = 16.sp,
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Medium,
@@ -335,7 +339,7 @@ fun FilterScreenContent(
             )
 
             Text(
-                text = "Location",
+                text = stringResource(id = R.string.location),
                 fontSize = 16.sp,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Medium,
@@ -344,7 +348,7 @@ fun FilterScreenContent(
             )
             ItemSelectedData(
                 date = location,
-                hint = "Choose district",
+                hint = stringResource(id = R.string.choose_district),
                 modifier = Modifier,
                 endIcon = {
                     Icon(
@@ -374,7 +378,8 @@ fun FilterScreenContent(
                 ModalBottomSheet(
                     onDismissRequest = { showBottomSheet = false },
                     sheetState = sheetState,
-                    modifier = Modifier.defaultMinSize(minHeight = 300.dp)
+                    modifier = Modifier.defaultMinSize(minHeight = 300.dp),
+                    containerColor = Color.White
                 ) {
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         LazyColumn(
@@ -394,7 +399,7 @@ fun FilterScreenContent(
                             }
                         }
                         AppButton(
-                            text = "Save location",
+                            text = stringResource(id = R.string.save_lpcation),
                             modifier = Modifier
                         ) {
                             coroutineScope.launch {
@@ -407,7 +412,7 @@ fun FilterScreenContent(
             }
 
             Text(
-                text = "Price range",
+                text = stringResource(id = R.string.price_range),
                 fontSize = 16.sp,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Medium,
@@ -426,7 +431,7 @@ fun FilterScreenContent(
                     modifier = Modifier.weight(0.2f),
                     endIcon = {
                         Text(
-                            text = "so\'m",
+                            text = stringResource(id = R.string.som),
                             fontSize = 13.sp,
                             fontFamily = gilroyFontFamily,
                             color = GrayLighter
@@ -442,7 +447,7 @@ fun FilterScreenContent(
                     modifier = Modifier.weight(0.2f),
                     endIcon = {
                         Text(
-                            text = "so\'m",
+                            text = stringResource(id = R.string.som),
                             fontSize = 13.sp,
                             fontFamily = gilroyFontFamily,
                             color = GrayLighter
@@ -485,17 +490,17 @@ fun FilterScreenContent(
                 paddingVertical = 16.dp
             )
             Text(
-                text = "Venue type",
+                text = stringResource(id = R.string.venue_type),
                 fontSize = 16.sp,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Medium,
                 color = Black,
                 modifier = Modifier.padding(top = 20.dp, bottom = 4.dp)
             )
-            CheckBox("Outdoor", selOutdoor) { selOutdoor = !selOutdoor }
-            CheckBox("Indoor", selIndoor) { selIndoor = !selIndoor }
+            CheckBox(stringResource(id = R.string.outdoor), selOutdoor) { selOutdoor = !selOutdoor }
+            CheckBox(stringResource(id = R.string.indoor), selIndoor) { selIndoor = !selIndoor }
             Text(
-                text = "Infrastructure",
+                text = stringResource(id = R.string.infrastructure),
                 fontSize = 16.sp,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Medium,
@@ -505,7 +510,7 @@ fun FilterScreenContent(
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 item {
                     ItemInfosData(
-                        date = "Parking",
+                        date = stringResource(id = R.string.parking),
                         hint = "",
                         select = selParking,
                         modifier = Modifier,
@@ -530,7 +535,7 @@ fun FilterScreenContent(
                 }
                 item {
                     ItemInfosData(
-                        date = "Changing room",
+                        date = stringResource(id = R.string.changing_room),
                         hint = "",
                         select = selRoom,
                         modifier = Modifier,
@@ -548,7 +553,7 @@ fun FilterScreenContent(
                 }
                 item {
                     ItemInfosData(
-                        date = "Shower",
+                        date = stringResource(id = R.string.shower),
                         hint = "",
                         select = selShower,
                         modifier = Modifier,
@@ -565,9 +570,8 @@ fun FilterScreenContent(
                     }
                 }
             }
-            AppButton(text = "See Results", modifier = Modifier) {
-                intent.invoke(FilterScreenContract.Intent.ClickBack)
-                block.invoke(
+            AppButton(text = stringResource(id = R.string.see_result), modifier = Modifier) {
+                filterOptions.invoke(
                     FilterOptions(
                         selectedDate,
                         minSumma,
