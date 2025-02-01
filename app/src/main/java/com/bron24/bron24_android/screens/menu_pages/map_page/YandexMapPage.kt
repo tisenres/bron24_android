@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.screens.menu_pages.map_page
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -25,7 +26,6 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
@@ -36,12 +36,8 @@ import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.orbitmvi.orbit.compose.collectAsState
-
-private const val TAG = "YandexMapPage"
 
 object YandexMapPage : Tab {
     private fun readResolve(): Any = YandexMapPage
@@ -80,7 +76,8 @@ fun YandexMapPageContent(
     val mapObjectListeners by remember { mutableStateOf<MutableMap<Point, MapObjectTapListener>>(mutableMapOf()) }
     var selectedMarker by remember { mutableStateOf<PlacemarkMapObject?>(null) }
     val venueDetails = state.value.venueDetails
-    val initDataLoaded = state.value.venueCoordinates.isNotEmpty()
+    val markerInitialized = remember { mutableStateOf(false) }
+    val initDataLoaded = state.value.venueCoordinates.isNotEmpty() && state.value.userLocation != null
     val coroutineScope = rememberCoroutineScope()
 
     val shouldShowBottomSheet = remember(state.value.isLoading, state.value.venueDetails) {
@@ -88,7 +85,7 @@ fun YandexMapPageContent(
     }
 
     val userLocation = state.value.userLocation.let {
-        Point(it.latitude, it.longitude)
+        Point(it?.latitude ?: 41.311198, it?.longitude ?: 69.279746)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -140,42 +137,41 @@ fun YandexMapPageContent(
 
     // Call when all the data is fetched and when mapObjects is initialized
     LaunchedEffect(initDataLoaded) {
-        mapObjects?.let { objects ->
+        if (initDataLoaded && !markerInitialized.value) {
+            mapObjects?.let { objects ->
 
-            // Move camera to the location
-            userLocation.let { location ->
-                mapView?.map?.move(
-                    CameraPosition(
-                        Point(location.latitude, location.longitude),
-                        15f, 0f, 0f
-                    ),
-                )
-            }
+                // Move camera to the location
+                userLocation.let { location ->
+                    mapView?.map?.move(
+                        CameraPosition(
+                            Point(location.latitude, location.longitude),
+                            15f, 0f, 0f
+                        ),
+                    )
+                }
 
-            // Draw geolocation mark
-            if (state.value.checkPermission == LocationPermissionState.GRANTED) {
+                // Draw geolocation mark
                 setMarkerInStartLocation(objects, userLocation, context)
-            }
 
-            // Draw Venue markers
-            state.value.venueCoordinates.forEach { venue ->
-                val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                setVenueMarker(
-                    mapView!!,
-                    objects,
-                    (point to venue),
-                    context,
-                    intent,
-                    mapObjectListeners,
-                    onMarkerSelected = { newSelectedMarker ->
-                        coroutineScope.launch(Dispatchers.Main) {
+                // Draw Venue markers
+                state.value.venueCoordinates.forEach { venue ->
+                    val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
+                    setVenueMarker(
+                        mapView!!,
+                        objects,
+                        (point to venue),
+                        context,
+                        intent,
+                        mapObjectListeners,
+                        onMarkerSelected = { newSelectedMarker ->
                             selectedMarker?.let { updateMarkerAppearance(it, context, false) }
                             selectedMarker = newSelectedMarker
                             updateMarkerAppearance(newSelectedMarker, context, true)
                         }
-                    }
-                )
+                    )
+                }
             }
+            markerInitialized.value = true
         }
     }
 
@@ -194,6 +190,8 @@ private fun setMarkerInStartLocation(
     location: Point,
     context: Context
 ) {
+
+    Log.d("YandexMapPage", "ASHSHAHSHASHHAS")
     val bitmap = BitmapCache.getBitmap(context, R.drawable.location_pin_svg)
 
     mapObjects.addPlacemark(
@@ -202,7 +200,7 @@ private fun setMarkerInStartLocation(
     )
 }
 
-suspend fun setVenueMarker(
+fun setVenueMarker(
     mapView: MapView,
     mapObjects: MapObjectCollection,
     point: Pair<Point, VenueCoordinates>,
@@ -237,20 +235,18 @@ suspend fun setVenueMarker(
     }
 }
 
-suspend fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Context, isHighlighted: Boolean) {
+fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Context, isHighlighted: Boolean) {
     val drawable = if (isHighlighted) R.drawable.red_location_pin else R.drawable.green_location_pin
     val customScale = if (isHighlighted) 1.25f else 0.8f
 
     val bitmap = BitmapCache.getBitmap(context, drawable)
 
-    withContext(Dispatchers.Main) {
-        placemark.setIcon(
-            ImageProvider.fromBitmap(bitmap),
-            IconStyle().apply {
-                scale = customScale
-            }
-        )
-    }
+    placemark.setIcon(
+        ImageProvider.fromBitmap(bitmap),
+        IconStyle().apply {
+            scale = customScale
+        }
+    )
 }
 
 fun centerCameraOnVenueMarker(mapView: MapView, point: Point) {

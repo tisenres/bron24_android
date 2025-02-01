@@ -2,9 +2,8 @@ package com.bron24.bron24_android.data.repository
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
-import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.user.Location
+import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.repository.LocationRepository
 import com.bron24.bron24_android.helper.util.PermissionChecker
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -33,7 +32,7 @@ class LocationRepositoryImpl @Inject constructor(
 
     @SuppressLint("MissingPermission")
     override fun getCurrentLocation(): Flow<Location> = callbackFlow {
-        if(permissionChecker.hasPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)){
+        if (permissionChecker.hasPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location ->
                     if (location != null) {

@@ -19,7 +19,7 @@ interface YandexMapPageContract {
         val isLoading: Boolean = false,
         val firstOpen:Int = 0,
         val checkPermission: LocationPermissionState = LocationPermissionState.DENIED,
-        val userLocation: Location = Location(41.2995, 69.2401),
+        val userLocation: Location? = null,
         val imageUrls: List<String> = emptyList(),
         val currentSelectedMarker: VenueCoordinates? = null
     )
@@ -32,7 +32,8 @@ interface YandexMapPageContract {
         data class ClickMarker(val location: VenueCoordinates) : Intent
         data class ClickVenueBook(val venueDetails: VenueDetails) : Intent
         data object DismissVenueDetails : Intent
-        data object CheckPermission : Intent
+        data object InitData: Intent
+//        data object CheckPermission : Intent
     }
 
     interface Direction {

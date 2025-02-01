@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.menu_pages.map_page
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
@@ -23,6 +24,8 @@ class YandexMapPageVM @Inject constructor(
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase,
     private val getVenueDetailsUseCase: GetVenueDetailsUseCase
 ) : ViewModel(), YandexMapPageContract.ViewModel {
+
+    private val defaultLocation = Location(41.311198, 69.279746)
 
     override fun onDispatchers(intent: YandexMapPageContract.Intent): Job = intent {
         when (intent) {
@@ -56,15 +59,17 @@ class YandexMapPageVM @Inject constructor(
 
             }
 
-            is YandexMapPageContract.Intent.CheckPermission -> {
-                checkLocationPermissionUseCase.invoke().onEach { permissionState ->
-                    reduce { state.copy(checkPermission = permissionState) }
-                    if (permissionState == LocationPermissionState.GRANTED) {
-                        initData()
-                    } else {
-                        postSideEffect("Permission Denied")
-                    }
-                }.launchIn(viewModelScope)
+            is YandexMapPageContract.Intent.InitData -> {
+                initData()
+//                checkLocationPermissionUseCase.invoke().onEach { permissionState ->
+//                    reduce { state.copy(checkPermission = permissionState) }
+//                    initData()
+//                    if (permissionState == LocationPermissionState.GRANTED) {
+//                        initData()
+//                    } else {
+//                        postSideEffect("Permission Denied")
+//                    }
+//                }.launchIn(viewModelScope)
             }
 
             is YandexMapPageContract.Intent.DismissVenueDetails -> {
@@ -113,9 +118,7 @@ class YandexMapPageVM @Inject constructor(
                     ) { currentLocation, venuesCoordinates ->
                         currentLocation to venuesCoordinates
                     }
-                        .onStart {
-                            reduce { state.copy(isLoading = true) }
-                        }
+                        .onStart { reduce { state.copy(isLoading = true) } }
                         .onEach { (currentLocation, venuesCoordinates) ->
                             reduce {
                                 state.copy(
@@ -128,14 +131,27 @@ class YandexMapPageVM @Inject constructor(
                         }
                         .launchIn(viewModelScope)
                 }
+
                 LocationPermissionState.DENIED -> {
-                    postSideEffect("Error checking location permission denied!")
-                    reduce { state.copy(checkPermission = permission) }
+                    getVenuesCoordinatesUseCase.invoke()
+                        .onStart { reduce { state.copy(isLoading = true) } }
+                        .onEach { venuesCoordinates ->
+                            reduce {
+                                state.copy(
+                                    userLocation = defaultLocation,
+                                    venueCoordinates = venuesCoordinates,
+                                    isLoading = false,
+                                    checkPermission = permission
+                                )
+                            }
+                            postSideEffect("Permission Denied")
+                        }
+                        .launchIn(viewModelScope)
                 }
             }
-        }.launchIn(viewModelScope)
+        }
+            .launchIn(viewModelScope)
     }
-
 
     private fun postSideEffect(message: String) {
         intent {
