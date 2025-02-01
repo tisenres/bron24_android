@@ -74,13 +74,13 @@ fun OrdersTabRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         SegmentItem(
-            text = "Upcoming",
+            text = stringResource(id = R.string.up_coming),
             isSelected = selectedOption == OrdersType.UPCOMING,
             onClick = { onClick(OrdersType.UPCOMING) },
             modifier = Modifier.weight(1f)
         )
         SegmentItem(
-            text = "History",
+            text = stringResource(id = R.string.history),
             isSelected = selectedOption == OrdersType.HISTORY,
             onClick = { onClick(OrdersType.HISTORY) },
             modifier = Modifier.weight(1f)
@@ -349,11 +349,11 @@ private fun getStatusIcon(status: OrderStatus): ImageVector {
         OrderStatus.CANCELLED -> Icons.Default.Close
     }
 }
-
+@Composable
 private fun getStatusText(status: OrderStatus): String {
     return when (status) {
-        OrderStatus.IN_PROCESS -> "In process"
-        OrderStatus.COMPLETED -> "Completed"
-        OrderStatus.CANCELLED -> "Cancelled"
+        OrderStatus.IN_PROCESS -> stringResource(id = R.string.inprocess)
+        OrderStatus.COMPLETED -> stringResource(id = R.string.completed)
+        OrderStatus.CANCELLED -> stringResource(id = R.string.cancelled)
     }
 }

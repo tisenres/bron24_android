@@ -24,16 +24,5 @@ fun SetStatusBarColor(color: Color, darkIcons: Boolean = true) {
         windowInsetsController.isAppearanceLightStatusBars = darkIcons
     }
 
-//    DisposableEffect(Unit) {
-//        window.statusBarColor = color.toArgb()
-//        val windowInsetsController = WindowInsetsControllerCompat(window, view)
-//        windowInsetsController.isAppearanceLightStatusBars = darkIcons
-//
-//        onDispose {
-//            window.statusBarColor = Color.White.toArgb()
-//            val windowInsetsController = WindowInsetsControllerCompat(window, view)
-//            windowInsetsController.isAppearanceLightStatusBars = darkIcons
-//        }
-//    }
 
 }

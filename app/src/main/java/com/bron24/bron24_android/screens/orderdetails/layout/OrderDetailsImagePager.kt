@@ -34,7 +34,7 @@ fun OrderDetailsImagePager(imageUrls:List<String>, modifier: Modifier = Modifier
         modifier = modifier
             .height(180.dp)
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(Color.Gray)
     ) {
         HorizontalPager(

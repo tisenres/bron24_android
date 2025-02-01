@@ -20,6 +20,8 @@ import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPageContra
 import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPageDirection
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageDirection
+import com.bron24.bron24_android.screens.menu_pages.screen_menu.MenuScreenContract
+import com.bron24.bron24_android.screens.menu_pages.screen_menu.MenuScreenDirection
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerContract
 import com.bron24.bron24_android.screens.on_board.OnBoardPagerDirection
 import com.bron24.bron24_android.screens.orderdetails.OrderDetailsContact
@@ -62,6 +64,9 @@ class DirectionModule {
 
     @[Provides  Singleton]
     fun bindsSplashDirection(impl: SplashScreenDirection): SplashScreenContract.Direction = impl
+
+    @[Provides  Singleton]
+    fun bindsMenuScreenDirection(impl: MenuScreenDirection): MenuScreenContract.Direction = impl
 
     @[Provides  Singleton]
     fun bindsHomePageDirection(impl: HomePageDirection): HomePageContract.Direction = impl

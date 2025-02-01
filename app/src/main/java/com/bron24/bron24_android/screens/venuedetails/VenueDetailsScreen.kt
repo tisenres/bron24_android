@@ -784,8 +784,7 @@ fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
 fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Unit) {
     Column(modifier = Modifier.padding(bottom = 14.dp)) {
         AddressRow(details, onCopyAddressClick)
-        AvailableSlots(details)
-        Spacer(modifier = Modifier.height(4.dp))
+        //AvailableSlots(details)
         if(details?.distance?.toInt()!=0){
             DistanceRow(details)
         }
@@ -848,7 +847,7 @@ fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
 fun AvailableSlots(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.baseline_event_available_24,
-        text = "12 ${stringResource(id = R.string.available)} slot"
+        text = "${details?.peopleCapacity} ${stringResource(id = R.string.available)} slot"
     )
 }
 
@@ -856,7 +855,7 @@ fun AvailableSlots(details: VenueDetails?) {
 fun DistanceRow(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.mingcute_navigation_fill,
-        text = String.format("%.1f", details?.distance) + " km"
+        text = String.format("%.1f", details?.distance) + " ${stringResource(id = R.string.km)}"
     )
 }
 
@@ -956,16 +955,14 @@ fun InfrastructureSection(state: State<VenueDetailsContract.UIState>) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        SectionTitle(state = state, text = "Facilities")
+        SectionTitle(state = state, text = stringResource(id = R.string.facilities))
         Spacer(modifier = Modifier.height(15.dp))
         FacilitiesGrid(state) { text, icon ->
             selectedItem = text to icon
             showBottomSheet = true
         }
     }
-
-
-
+    
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -1452,7 +1449,7 @@ private fun MapDetails(details: VenueDetails?) {
         if(details?.distance?.toInt()!=0){
             DistanceInfo(
                 icon = R.drawable.mingcute_navigation_fill,
-                text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
+                text = String.format("%.1f ${stringResource(id = R.string.km)} ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
                 tintColor = Color(0xFFD9D9D9),
             )
         }
@@ -1553,7 +1550,7 @@ fun PricingSection(
                         .width(157.dp)
                 ) {
                     Text(
-                        text = "Order",
+                        text = stringResource(id = R.string.boking),
                         style = TextStyle(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.Normal,

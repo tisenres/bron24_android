@@ -2,9 +2,7 @@ package com.bron24.bron24_android.screens.menu_pages.home_page
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,9 +22,6 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.hilt.navigation.compose.hiltViewModel
-import cafe.adriel.voyager.core.model.rememberScreenModel
-import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
@@ -35,9 +29,7 @@ import com.bron24.bron24_android.components.items.SearchView
 import com.bron24.bron24_android.screens.main.theme.Success
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenContent
 import com.bron24.bron24_android.screens.util.hiltScreenModel
-import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContent
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
-import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreenContent
 import com.bron24.bron24_android.screens.venuelisting.VenueListingView
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -92,6 +84,10 @@ fun HomePageContent(
         FilterScreenContent(
             clickBack = {
                 openFilter = !openFilter
+            },
+            resend = {
+                openFilter = !openFilter
+
             }
         ) {
             openFilter = !openFilter

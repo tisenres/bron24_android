@@ -2,6 +2,7 @@ package com.bron24.bron24_android.screens.main
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +27,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelStoreOwner
@@ -45,6 +47,8 @@ import com.bron24.bron24_android.helper.util.presentation.AuthEvent
 import com.bron24.bron24_android.helper.util.presentation.GlobalAuthEventBus
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.data.local.preference.LocalStorage
+import com.bron24.bron24_android.helper.util.presentation.logOut
 import com.bron24.bron24_android.navigator.NavigationHandler
 import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
 import com.bron24.bron24_android.screens.splash.SplashScreen
@@ -61,6 +65,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var localeManager: LocaleManager
+
+    @Inject
+    lateinit var localStorage: LocalStorage
 
     @Inject
     lateinit var navigationHandler: NavigationHandler
@@ -102,6 +109,12 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+            }
+            val context = LocalContext.current
+            val activity = context as Activity
+            logOut {
+                localStorage.openMenu = false
+                activity.finish()
             }
 
 //            CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
