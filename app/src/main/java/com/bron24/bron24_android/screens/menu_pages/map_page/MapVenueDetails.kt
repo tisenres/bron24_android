@@ -32,8 +32,11 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -68,35 +71,45 @@ import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.bron24.bron24_android.screens.venuedetails.shareVenueDetails
 import com.valentinilk.shimmer.shimmer
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapVenueDetails(
     venueDetails: VenueDetails,
     modifier: Modifier,
     onOrderPressed: () -> Unit,
+    onDismiss: () -> Unit,
     imageUrls: List<String>
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
     val isLoading by remember { derivedStateOf { false } }
 
-    if (isLoading) {
-        LoadingScreen(modifier)
-    } else {
-        SmallDetailsContent(
-            modifier = modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-            venueDetails = venueDetails,
-            onFavoriteClick = { isFavorite = !isFavorite },
-            onCopyAddressClick = {
-                copyAddressToClipboard(
-                    context,
-                    venueDetails.address.addressName
-                )
-            },
-            onOrderPressed = onOrderPressed,
-            imageUrls = imageUrls
-        )
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = { onDismiss() },
+        sheetState = sheetState,
+        containerColor = Color.White
+    ) {
+        if (isLoading) {
+            LoadingScreen(modifier)
+        } else {
+            SmallDetailsContent(
+                venueDetails = venueDetails,
+                onFavoriteClick = { isFavorite = !isFavorite },
+                onCopyAddressClick = {
+                    copyAddressToClipboard(
+                        context,
+                        venueDetails.address.addressName
+                    )
+                },
+                onOrderPressed = onOrderPressed,
+                imageUrls = imageUrls
+            )
+        }
     }
 }
 
@@ -187,7 +200,6 @@ fun LoadingScreen(modifier: Modifier) {
 
 @Composable
 fun SmallDetailsContent(
-    modifier: Modifier,
     venueDetails: VenueDetails?,
     onFavoriteClick: () -> Unit,
     onCopyAddressClick: () -> Unit,
@@ -198,7 +210,7 @@ fun SmallDetailsContent(
     val context = LocalContext.current
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(Color.White)
@@ -429,8 +441,8 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
     Column {
         SmallAddressRow(details, onCopyAddressClick)
         Spacer(modifier = Modifier.height(4.dp))
-        AvailableSlots(details)
-        Spacer(modifier = Modifier.height(4.dp))
+//        AvailableSlots(details)
+//        Spacer(modifier = Modifier.height(4.dp))
         DistanceRow(details)
     }
 }
@@ -447,7 +459,7 @@ fun AvailableSlots(details: VenueDetails?) {
 fun DistanceRow(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.mingcute_navigation_fill,
-        text = String.format("%.1f km ${stringResource(id = R.string.from_you )}",details?.distance?:0.0),
+        text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
     )
 }
 
@@ -523,7 +535,7 @@ fun SmallAddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
 @Composable
 fun SmallRatingSection(venueDetails: VenueDetails?) {
     Row {
-        repeat(5) { index ->
+        repeat((venueDetails?.rate ?: 1).toInt()) { index ->
             Icon(
                 painter = rememberAsyncImagePainter(model = R.drawable.ic_star),
                 contentDescription = "Star",
@@ -536,7 +548,7 @@ fun SmallRatingSection(venueDetails: VenueDetails?) {
         }
         Spacer(modifier = Modifier.width(7.dp))
         Text(
-            text = "4.8",
+            text = venueDetails?.rate.toString(),
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,

@@ -50,6 +50,10 @@ class YandexMapPageVM @Inject constructor(
                 }.launchIn(viewModelScope)
             }
 
+            is YandexMapPageContract.Intent.DismissVenueDetails -> {
+                reduce { state.copy(venueDetails = null) }
+            }
+
             is YandexMapPageContract.Intent.ClickVenueBook -> {
                 postSideEffect("Venue booking clicked: ${intent.venueDetails.venueName}")
             }

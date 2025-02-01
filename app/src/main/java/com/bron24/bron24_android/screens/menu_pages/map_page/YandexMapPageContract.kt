@@ -30,6 +30,7 @@ interface YandexMapPageContract {
     sealed interface Intent {
         data class ClickMarker(val location: VenueCoordinates) : Intent
         data class ClickVenueBook(val venueDetails: VenueDetails) : Intent
+        data object DismissVenueDetails : Intent
         data object CheckPermission : Intent
     }
 
