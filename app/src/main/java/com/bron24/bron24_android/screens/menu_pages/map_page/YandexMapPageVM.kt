@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
@@ -27,15 +28,22 @@ class YandexMapPageVM @Inject constructor(
             is YandexMapPageContract.Intent.ClickMarker -> {
                 getVenueDetailsUseCase
                     .invoke(venueId = intent.location.venueId)
+                    .onStart {
+                        reduce {
+                            state.copy(isLoading = true)
+                        }
+                    }
                     .onEach { venueDetails ->
-                        if (intent.location.venueId != state.currentSelectedMarker?.venueId) reduce {
+                        reduce {
                             state.copy(
                                 venueDetails = venueDetails.first,
                                 currentSelectedMarker = intent.location,
-                                imageUrls = venueDetails.second
+                                imageUrls = venueDetails.second,
+                                isLoading = false
                             )
                         }
-                    }.launchIn(viewModelScope)
+                    }
+                    .launchIn(viewModelScope)
 
             }
 

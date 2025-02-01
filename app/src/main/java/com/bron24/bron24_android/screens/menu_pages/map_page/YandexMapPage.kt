@@ -80,12 +80,12 @@ fun YandexMapPageContent(
     var mapObjects by remember { mutableStateOf<MapObjectCollection?>(null) }
     val mapObjectListeners by remember { mutableStateOf<MutableMap<Point, MapObjectTapListener>>(mutableMapOf()) }
     val firstUpdateTime = remember { mutableLongStateOf(0L) }
-//    val venueDetails by remember { derivedStateOf { state.value.venueDetails } }
     var selectedMarker by remember { mutableStateOf<PlacemarkMapObject?>(null) }
-    val imageUrls = remember(state.value.imageUrls) { state.value.imageUrls }
-
     val venueDetails = state.value.venueDetails
-    var showBottomSheet by remember { mutableStateOf(venueDetails != null) }
+
+    val shouldShowBottomSheet = remember(state.value.isLoading, state.value.venueDetails) {
+        !state.value.isLoading && state.value.venueDetails != null
+    }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -96,7 +96,6 @@ fun YandexMapPageContent(
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = { context ->
-                Log.d(TAG, "Factory was called: Creating MapView")
                 MapView(context).also { view ->
                     mapView = view
                     mapObjects = view.map.mapObjects
@@ -109,7 +108,6 @@ fun YandexMapPageContent(
                     view.map.move(
                         CameraPosition(userLocation, 15f, 0f, 0f)
                     )
-                    Log.d(TAG, "MapView initialized and camera moved to user location: $userLocation")
                 }
             },
             modifier = Modifier.fillMaxSize()
@@ -122,35 +120,35 @@ fun YandexMapPageContent(
         )
     }
 
-    if (showBottomSheet && venueDetails != null) {
+    if (shouldShowBottomSheet) {
         MapVenueDetails(
-            venueDetails = venueDetails,
+            venueDetails = venueDetails!!,
             modifier = Modifier,
             onOrderPressed = {
-                Log.d(TAG, "Order pressed for venue: ${venueDetails.venueName}")
                 intent.invoke(YandexMapPageContract.Intent.ClickVenueBook(venueDetails = venueDetails))
             },
             onDismiss = {
-                Log.d(TAG, "BottomSheet dismissed")
-                // Reset marker appearance as before
                 selectedMarker?.let { marker ->
+                    intent.invoke(YandexMapPageContract.Intent.DismissVenueDetails)
                     coroutineScope.launch {
                         updateMarkerAppearance(marker, context, false)
                     }
+                    selectedMarker = null
                 }
-                showBottomSheet = false
-                intent.invoke(YandexMapPageContract.Intent.DismissVenueDetails)
             },
-            imageUrls = imageUrls
+            imageUrls = state.value.imageUrls
         )
+    }
+
+    LaunchedEffect(state.value.isLoading) {
+        Log.d(TAG, "Loading: ${state.value.isLoading}")
     }
 
     LaunchedEffect(userLocation) {
         if (firstUpdateTime.value == 0L) {
             firstUpdateTime.value = System.currentTimeMillis()
         }
-        if (System.currentTimeMillis() - firstUpdateTime.value <= 3000L) {
-            Log.d(TAG, "Moving camera to user location: $userLocation")
+        if (System.currentTimeMillis() - firstUpdateTime.longValue <= 3000L) {
             userLocation.let { location ->
                 mapView?.map?.move(
                     CameraPosition(
@@ -162,17 +160,14 @@ fun YandexMapPageContent(
         }
     }
 
-    LaunchedEffect(venueDetails) {
-        showBottomSheet = venueDetails != null
-    }
-
-    LaunchedEffect(mapObjects) {
+    LaunchedEffect(mapObjects, state.value.venueCoordinates) {
         mapObjects?.let { objects ->
-            Log.d(TAG, "MapObjects initialized: Adding markers")
+            // Always set the start location marker.
             setMarkerInStartLocation(objects, userLocation, context)
+
+            // Add markers for each venue.
             state.value.venueCoordinates.forEach { venue ->
                 val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-                Log.d(TAG, "Adding marker for venue: ${venue.venueName} at $point")
                 setStadiumMarker(
                     mapView!!,
                     objects,
@@ -199,10 +194,8 @@ fun YandexMapPageContent(
     }
 
     DisposableEffect(Unit) {
-        Log.d(TAG, "MapView started")
         mapView?.onStart()
         onDispose {
-            Log.d(TAG, "MapView stopped and resources cleared")
             mapView?.onStop()
             mapView?.map?.mapObjects?.clear()
             mapView = null
@@ -215,14 +208,12 @@ private fun setMarkerInStartLocation(
     location: Point,
     context: Context
 ) {
-
     val bitmap = BitmapCache.getBitmap(context, R.drawable.location_pin_svg)
 
     mapObjects.addPlacemark(
         location,
         ImageProvider.fromBitmap(bitmap)
     )
-    Log.d(TAG, "User Location Marker added at location: $location")
 }
 
 suspend fun setStadiumMarker(
@@ -234,7 +225,6 @@ suspend fun setStadiumMarker(
     mapObjectListeners: MutableMap<Point, MapObjectTapListener> = mutableMapOf(),
     onMarkerSelected: (PlacemarkMapObject) -> Unit
 ) {
-
     val bitmap = BitmapCache.getBitmap(context, R.drawable.green_location_pin)
 
     val placemark = mapObjects.addPlacemark(
@@ -250,21 +240,18 @@ suspend fun setStadiumMarker(
 
     if (!mapObjectListeners.containsKey(point.first)) {
         val listener = MapObjectTapListener { _, _ ->
-            Log.d(TAG, "Marker tapped: ${point.second.venueName}")
-            onMarkerSelected(placemark)
             centerCameraOnMarker(mapView, point.first)
             intent.invoke(YandexMapPageContract.Intent.ClickMarker(point.second))
+            onMarkerSelected(placemark)
             true
         }
 
         mapObjectListeners[point.first] = listener
         placemark.addTapListener(listener)
     }
-    Log.d(TAG, "Marker added at location: ${point.first}")
 }
 
 suspend fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Context, isHighlighted: Boolean) {
-    Log.d(TAG, "Updating marker appearance: isHighlighted = $isHighlighted")
     val drawable = if (isHighlighted) R.drawable.red_location_pin else R.drawable.green_location_pin
     val customScale = if (isHighlighted) 1.25f else 0.8f
 
@@ -281,7 +268,6 @@ suspend fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Conte
 }
 
 fun centerCameraOnMarker(mapView: MapView, point: Point) {
-    Log.d(TAG, "Centering camera on marker at: $point")
     val offsetY = 0.004
     val newPoint = Point(point.latitude - offsetY, point.longitude)
 
