@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.screens.search.filter_screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -74,6 +77,7 @@ import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.Success
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import java.util.Locale
@@ -89,39 +93,42 @@ data class FilterScreen(val block: (FilterOptions) -> Unit) : Screen {
 
 }
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterScreenContent(
-    clickBack:()->Unit,
-    resend:()->Unit,
+    state: State<HomePageContract.UIState>,
+    intent: (HomePageContract.Intent) -> Unit,
+    clickBack: () -> Unit,
+    resend: () -> Unit,
     filterOptions: (FilterOptions) -> Unit,
 ) {
-    var selParking by remember { mutableStateOf(false) }
-    var selRoom by remember { mutableStateOf(false) }
-    var selShower by remember { mutableStateOf(false) }
+    var selParking by remember { mutableStateOf(state.value.filter.selParking) }
+    var selRoom by remember { mutableStateOf(state.value.filter.selRoom) }
+    var selShower by remember { mutableStateOf(state.value.filter.selShower) }
 
     var selOutdoor by remember {
-        mutableStateOf(false)
+        mutableStateOf(state.value.filter.selOutdoor)
     }
     var selIndoor by remember {
-        mutableStateOf(false)
+        mutableStateOf(state.value.filter.selIndoor)
     }
 
-    var rangeTime by remember { mutableStateOf(0.0f..1f) }
-    var rangeSumma by remember { mutableStateOf(0.0f..1f) }
+    var rangeTime by remember { mutableStateOf(state.value.filter.rangeTime) }
+    var rangeSumma by remember { mutableStateOf(state.value.filter.rangeSumma) }
 
     var startTime by remember {
-        mutableStateOf("00:00")
+        mutableStateOf(state.value.filter.startTime)
     }
     var endTime by remember {
-        mutableStateOf("00:00")
+        mutableStateOf(state.value.filter.endTime)
     }
 
     var minSumma by remember {
-        mutableIntStateOf(0)
+        mutableIntStateOf(state.value.filter.minSumma)
     }
     var maxSumma by remember {
-        mutableIntStateOf(1000000)
+        mutableIntStateOf(state.value.filter.maxSumma)
     }
 
     var openDialog by remember {
@@ -140,9 +147,9 @@ fun FilterScreenContent(
         mutableStateOf("")
     }
     var selectLocation by remember {
-        mutableIntStateOf(-1)
+        mutableIntStateOf(state.value.filter.selectLocation)
     }
-    var selectedDate by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(state.value.filter.selectedDate) }
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = false
@@ -167,7 +174,12 @@ fun FilterScreenContent(
             },
             actions = {
                 TextButton(onClick = {
-
+                    rangeTime = 0.0f..1f
+                    rangeSumma = 0.0f..1f
+                    intent.invoke(HomePageContract.Intent.FilterIntent(
+                        filter = HomePageContract.FilterUiState()
+                    ))
+                    resend.invoke()
                 }) {
                     Text(
                         text = stringResource(id = R.string.reset),
@@ -214,7 +226,15 @@ fun FilterScreenContent(
                                     .height(36.dp)
                             ) {
                                 dateState.selectedDateMillis?.let { millis ->
-                                    selectedDate = formatDate(millis)
+                                    intent.invoke(
+                                        HomePageContract.Intent.FilterIntent(
+                                            filter = state.value.filter.copy(
+                                                selectedDate = formatDate(
+                                                    millis
+                                                )
+                                            )
+                                        )
+                                    )
                                 }
                                 openDialog = false
                             }
@@ -269,7 +289,7 @@ fun FilterScreenContent(
                 modifier = Modifier.padding(top = 12.dp)
             )
             ItemSelectedData(
-                date = selectedDate,
+                date = state.value.filter.selectedDate,
                 hint = stringResource(id = R.string.any_date),
                 modifier = Modifier,
                 endIcon = {
@@ -304,7 +324,7 @@ fun FilterScreenContent(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = startTime,
+                        text = state.value.filter.startTime,
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
                         color = GrayLight,
@@ -318,7 +338,7 @@ fun FilterScreenContent(
                         fontSize = 14.sp
                     )
                     Text(
-                        text = endTime,
+                        text = state.value.filter.endTime,
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Normal,
                         color = GrayLight,
@@ -328,11 +348,17 @@ fun FilterScreenContent(
             }
 
             RangeSlider(
-                range = rangeTime,
+                range =state.value.filter.rangeTime,
                 onRangeChange = { newRange ->
-                    rangeTime = newRange
-                    startTime = formatTime(newRange.start)
-                    endTime = formatTime(newRange.endInclusive)
+                    intent.invoke(
+                        HomePageContract.Intent.FilterIntent(
+                            filter = state.value.filter.copy(
+                                rangeTime = newRange,
+                                startTime = formatTime(newRange.start),
+                                endTime = formatTime(newRange.endInclusive)
+                            )
+                        )
+                    )
                 },
                 thumbSize = 16.dp,
                 paddingVertical = 16.dp
@@ -347,7 +373,7 @@ fun FilterScreenContent(
                 modifier = Modifier.padding(top = 24.dp)
             )
             ItemSelectedData(
-                date = location,
+                date = state.value.filter.location,
                 hint = stringResource(id = R.string.choose_district),
                 modifier = Modifier,
                 endIcon = {
@@ -393,8 +419,14 @@ fun FilterScreenContent(
                                     index = it,
                                     paddingHor = 0.dp
                                 ) {
-                                    selectLocation = it
-                                    location = list[it]
+                                    selectLocation =it
+                                    intent.invoke(
+                                        HomePageContract.Intent.FilterIntent(
+                                            filter = state.value.filter.copy(
+                                                location = list[it]
+                                            )
+                                        )
+                                    )
                                 }
                             }
                         }
@@ -426,7 +458,7 @@ fun FilterScreenContent(
                     .padding(horizontal = 24.dp)
             ) {
                 ItemSelectedData(
-                    date = minSumma.toString(),
+                    date = state.value.filter.minSumma.toString(),
                     hint = "min",
                     modifier = Modifier.weight(0.2f),
                     endIcon = {
@@ -442,7 +474,7 @@ fun FilterScreenContent(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 ItemSelectedData(
-                    date = maxSumma.toString(),
+                    date = state.value.filter.maxSumma.toString(),
                     hint = "max",
                     modifier = Modifier.weight(0.2f),
                     endIcon = {
@@ -480,11 +512,17 @@ fun FilterScreenContent(
                 )
             }
             RangeSlider(
-                range = rangeSumma,
+                range = state.value.filter.rangeSumma,
                 onRangeChange = { newRange ->
-                    rangeSumma = newRange
-                    minSumma = formatMoney(newRange.start)
-                    maxSumma = formatMoney(newRange.endInclusive)
+                    intent.invoke(
+                        HomePageContract.Intent.FilterIntent(
+                            filter = state.value.filter.copy(
+                                rangeSumma = newRange,
+                                minSumma = formatMoney(newRange.start),
+                                maxSumma = formatMoney(newRange.endInclusive)
+                            )
+                        )
+                    )
                 },
                 thumbSize = 16.dp,
                 paddingVertical = 16.dp
@@ -497,8 +535,20 @@ fun FilterScreenContent(
                 color = Black,
                 modifier = Modifier.padding(top = 20.dp, bottom = 4.dp)
             )
-            CheckBox(stringResource(id = R.string.outdoor), selOutdoor) { selOutdoor = !selOutdoor }
-            CheckBox(stringResource(id = R.string.indoor), selIndoor) { selIndoor = !selIndoor }
+            CheckBox(stringResource(id = R.string.outdoor), state.value.filter.selOutdoor) {
+                intent.invoke(HomePageContract.Intent.FilterIntent(
+                    filter = state.value.filter.copy(
+                        selOutdoor = it
+                    )
+                ))
+
+            }
+            CheckBox(stringResource(id = R.string.indoor), state.value.filter.selIndoor) {
+                intent.invoke(HomePageContract.Intent.FilterIntent(
+                filter = state.value.filter.copy(
+                    selIndoor = it
+                )
+            )) }
             Text(
                 text = stringResource(id = R.string.infrastructure),
                 fontSize = 16.sp,
@@ -512,7 +562,7 @@ fun FilterScreenContent(
                     ItemInfosData(
                         date = stringResource(id = R.string.parking),
                         hint = "",
-                        select = selParking,
+                        select = state.value.filter.selParking,
                         modifier = Modifier,
                         topIcon = {
                             Box(
@@ -530,14 +580,18 @@ fun FilterScreenContent(
                             }
                         }
                     ) {
-                        selParking = !selParking
+                        intent.invoke(HomePageContract.Intent.FilterIntent(
+                            filter = state.value.filter.copy(
+                                selParking = it
+                            )
+                        ))
                     }
                 }
                 item {
                     ItemInfosData(
                         date = stringResource(id = R.string.changing_room),
                         hint = "",
-                        select = selRoom,
+                        select = state.value.filter.selRoom,
                         modifier = Modifier,
                         topIcon = {
                             Icon(
@@ -548,14 +602,18 @@ fun FilterScreenContent(
                             )
                         }
                     ) {
-                        selRoom = !selRoom
+                        intent.invoke(HomePageContract.Intent.FilterIntent(
+                            filter = state.value.filter.copy(
+                                selRoom = it
+                            )
+                        ))
                     }
                 }
                 item {
                     ItemInfosData(
                         date = stringResource(id = R.string.shower),
                         hint = "",
-                        select = selShower,
+                        select = state.value.filter.selShower,
                         modifier = Modifier,
                         topIcon = {
                             Icon(
@@ -566,18 +624,23 @@ fun FilterScreenContent(
                             )
                         }
                     ) {
-                        selShower = !selShower
+                        intent.invoke(HomePageContract.Intent.FilterIntent(
+                            filter = state.value.filter.copy(
+                                selShower = it
+                            )
+                        ))
                     }
                 }
             }
             AppButton(text = stringResource(id = R.string.see_result), modifier = Modifier) {
                 filterOptions.invoke(
                     FilterOptions(
-                        selectedDate,
-                        minSumma,
-                        maxSumma,
-                        selRoom or selIndoor or selShower or selParking or selOutdoor,
-                        district = location
+                        state.value.filter.selectedDate.ifEmpty { null },
+                        if(state.value.filter.minSumma!=0) state.value.filter.minSumma else null,
+                        if(state.value.filter.maxSumma!=1000000) state.value.filter.maxSumma else null,
+                        selRoom || selIndoor || selShower || selParking || selOutdoor,
+
+                        district = state.value.filter.location.ifEmpty { null }
                     )
                 )
             }

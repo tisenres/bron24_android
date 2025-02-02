@@ -1,9 +1,5 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
-import android.util.Log
-import androidx.compose.ui.util.trace
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.data.local.preference.LocalStorage
@@ -73,6 +69,29 @@ class HomePageVM @Inject constructor(
             is HomePageContract.Intent.ClickOrder -> {
                 direction.openOrderScreen(intent.venueOrderInfo)
             }
+
+            is HomePageContract.Intent.FilterIntent -> {
+                reduce {
+                    state.copy(
+                        filter = state.filter.copy(
+                            selParking = intent.filter.selParking,
+                            selRoom = intent.filter.selRoom,
+                            selShower = intent.filter.selShower,
+                            selOutdoor = intent.filter.selOutdoor,
+                            selIndoor = intent.filter.selIndoor,
+                            rangeTime = intent.filter.rangeTime,
+                            rangeSumma = intent.filter.rangeSumma,
+                            startTime = intent.filter.startTime,
+                            endTime = intent.filter.endTime,
+                            minSumma = intent.filter.minSumma,
+                            maxSumma = intent.filter.maxSumma,
+                            location = intent.filter.location,
+                            selectLocation = intent.filter.selectLocation,
+                            selectedDate = intent.filter.selectedDate
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -101,7 +120,6 @@ class HomePageVM @Inject constructor(
                 firstName = localStorage.firstName
             )
         ) {
-            Log.d("AAA","onCreate")
             intent {
                 reduce { state.copy(initial = false) }
                 getVenuesUseCase.invoke(state.selectedSort, filterOptions).onEach {

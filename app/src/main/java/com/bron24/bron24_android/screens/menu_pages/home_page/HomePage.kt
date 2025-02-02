@@ -1,7 +1,10 @@
+@file:Suppress("UNUSED_CHANGED_VALUE")
+
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -68,6 +71,9 @@ fun HomePageContent(
     var openFilter by remember {
         mutableStateOf(false)
     }
+    val changeFilter = remember {
+        mutableStateOf("")
+    }
     var openVenueDetails by remember {
         mutableStateOf(false)
     }
@@ -82,14 +88,41 @@ fun HomePageContent(
     }
     if (openFilter) {
         FilterScreenContent(
+            state = state,
+            intent = intent,
             clickBack = {
                 openFilter = !openFilter
             },
             resend = {
-                openFilter = !openFilter
-
+                changeFilter.value = ""
             }
         ) {
+            var count = 0
+            if (it.maxPrice!=null) {
+
+               count++
+                Log.d("AAA", "HomePageContent: $count")
+            }
+            if(it.minPrice!=null){
+                count++
+                Log.d("AAA", "HomePageContent: $count")
+            }
+            if(it.infrastructure == true){
+                count++
+                Log.d("AAA", "HomePageContent: $count")
+            }
+            if (it.district!=null){
+                count++
+                Log.d("AAA", "HomePageContent: $count")
+            }
+            if(it.availableTime!=null){
+                count++
+                Log.d("AAA", "HomePageContent: $count")
+            }
+            if(count!=0){
+                val string = count.toString()
+                changeFilter.value = string
+            }else changeFilter.value = ""
             openFilter = !openFilter
         }
     } else if (openVenueDetails) {
@@ -114,6 +147,7 @@ fun HomePageContent(
                 SearchView(
                     name = state.value.firstName,
                     modifier = Modifier.fillMaxWidth(),
+                    changeFilter = changeFilter.value.ifEmpty { null },
                     clickSearch = {
                         intent.invoke(HomePageContract.Intent.ClickSearch)
                     },
