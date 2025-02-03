@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.repository
 
+import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.data.local.db.FavouriteDao
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.network.mappers.toDomainModel
@@ -19,23 +20,15 @@ import javax.inject.Inject
 
 
 class VenueRepositoryImpl @Inject constructor(
-    private val apiService: VenueApiService,
-    private val favouriteDao: FavouriteDao
+    private val apiService: VenueApiService, private val favouriteDao: FavouriteDao
 ) : VenueRepository {
     override suspend fun getVenues(
         latitude: Double?,
         longitude: Double?,
-        sort: String?,
-        availableTime: String?,
-        minPrice: Int?,
-        maxPrice: Int?,
-        infrastructure: Boolean?,
-        district: String?
     ): List<Venue> = withContext(Dispatchers.IO) {
         try {
             apiService.getVenues(
-                latitude, longitude, sort, availableTime,
-                minPrice, maxPrice, infrastructure, district
+                latitude, longitude,
             )?.data?.map {
                 it.toDomainModel()
             } ?: emptyList()
@@ -44,29 +37,25 @@ class VenueRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getVenuesCoordinates(): List<VenueCoordinates> =
-        withContext(Dispatchers.IO) {
-            try {
-                apiService.getVenuesCoordinates()?.map { it.toDomainModel() } ?: emptyList()
-            } catch (e: Exception) {
-                emptyList()
-            }
+    override suspend fun getVenuesCoordinates(): List<VenueCoordinates> = withContext(Dispatchers.IO) {
+        try {
+            apiService.getVenuesCoordinates()?.map { it.toDomainModel() } ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
         }
+    }
 
-    override suspend fun getVenuePictures(venueId: Int): List<String> =
-        withContext(Dispatchers.IO) {
-            try {
-                apiService.getVenuePictures(venueId)?.map { it.url } ?: emptyList()
-            } catch (e: Exception) {
-                emptyList()
-            }
+    override suspend fun getVenuePictures(venueId: Int): List<String> = withContext(Dispatchers.IO) {
+        try {
+            apiService.getVenuePictures(venueId)?.map { it.url } ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
         }
+    }
 
     override fun getVenueDetailsById(
-        venueId: Int,
-        latitude: Double?,
-        longitude: Double?
-    ): Flow<VenueDetails> = flow{
+        venueId: Int, latitude: Double?, longitude: Double?
+    ): Flow<VenueDetails> = flow {
         emit(apiService.getVenueDetails(venueId, latitude, longitude).data.toDomainModel())
     }
 
@@ -76,8 +65,7 @@ class VenueRepositoryImpl @Inject constructor(
         longitude: Double?,
     ): List<Venue> = withContext(Dispatchers.IO) {
         try {
-            apiService.searchVenues(query, latitude, longitude)
-                ?.data?.map { it.toDomainModel() } ?: emptyList()
+            apiService.searchVenues(query, latitude, longitude)?.data?.map { it.toDomainModel() } ?: emptyList()
         } catch (e: Exception) {
             emptyList()
         }
@@ -92,6 +80,29 @@ class VenueRepositoryImpl @Inject constructor(
             emit(emptyList())
         }
     }
+
+    override suspend fun getVenueByFilter(latitude: Double?, longitude: Double?, filterOptions: FilterOptions): List<Venue> =
+        withContext(Dispatchers.IO) {
+            try {
+                val res = apiService.getVenueByFilter(
+                    latitude = latitude,
+                    longitude = longitude,
+                    district = filterOptions.location.ifEmpty { null },
+                    minPrice = filterOptions.minSumma,
+                    maxPrice = filterOptions.maxSumma,
+                    venueType = if (filterOptions.selOutdoor && filterOptions.selIndoor) "box" else if (filterOptions.selOutdoor) "out" else if (filterOptions.selIndoor) "in" else "",
+                    room = filterOptions.selRoom,
+                    shower = filterOptions.selShower,
+                    parking = filterOptions.selParking,
+                    date = filterOptions.selectedDate.ifEmpty { null },
+                    startTime = filterOptions.startTime,
+                    endTime = filterOptions.endTime
+                )
+                res.data.map { it.toDomainModel() }
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
 
     override fun addFavourite(favourite: Favourite): Flow<Result<Unit>> = flow {
         try {
@@ -114,7 +125,7 @@ class VenueRepositoryImpl @Inject constructor(
     override fun getSpecialOffers(): Flow<List<SpecialOffer>> = flow {
         try {
             emit(apiService.getSpecialOffers()?.data?.map { it.toDomainModel() } ?: emptyList())
-        }catch (e:Exception){
+        } catch (e: Exception) {
             emit(emptyList())
         }
 

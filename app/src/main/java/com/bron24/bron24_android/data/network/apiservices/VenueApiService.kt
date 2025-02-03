@@ -14,16 +14,26 @@ interface VenueApiService {
     suspend fun getVenues(
         @Query("lat") latitude: Double? = null,
         @Query("lon") longitude: Double? = null,
-        @Query("sort") sort: String? = null,
-        @Query("available_time") availableTime: String? = null,
-        @Query("min_price") minPrice: Int? = null,
-        @Query("max_price") maxPrice: Int? = null,
-        @Query("infrastructure") infrastructure: Boolean? = null,
-        @Query("district") district: String? = null,
     ): VenueResponseDto?
 
     @GET("api/v1/venues/coordinates/")
     suspend fun getVenuesCoordinates(): List<VenueCoordinatesDto>?
+
+    @GET("api/v1/venues/filter/")
+    suspend fun getVenueByFilter(
+        @Query("lat") latitude: Double? = null,
+        @Query("lon") longitude: Double? = null,
+        @Query("district") district: String? = null,
+        @Query("min_price") minPrice: Int? = null,
+        @Query("max_price") maxPrice: Int? = null,
+        @Query("venue_type") venueType: String? = null,
+        @Query("infrastructure_shower") shower: Boolean? = null,
+        @Query("infrastructure_locker_room") room: Boolean? = null,
+        @Query("infrastructure_parking") parking:Boolean? = null,
+        @Query("date") date:String? = null,
+        @Query("start_time") startTime: String? = null,
+        @Query("end_time") endTime: String? = null,
+    ):VenueResponseDto
 
     @GET("api/v1/venues/pictures/{id}/")
     suspend fun getVenuePictures(@Path("id") id: Int): List<PictureDto>?

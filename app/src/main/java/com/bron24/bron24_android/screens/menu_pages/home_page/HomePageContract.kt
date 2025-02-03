@@ -28,6 +28,7 @@ interface HomePageContract {
         val isLoading: Boolean = true,
         val initial: Boolean = true,
         val refresh: Boolean = false,
+        val filterOptions: FilterOptions? = null,
         val firstName: String = "",
         val itemData: List<Venue> = emptyList(),
         val specialOffers: List<SpecialOffer> = emptyList(),
@@ -35,6 +36,8 @@ interface HomePageContract {
         val userLocation: Location = Location(33.33, 33.33),
         val venueDetails: VenueDetails? = null,
         val imageUrls: List<String> = emptyList(),
+        val count:String = "",
+        val checkBack:Boolean = false,
         val filter: FilterUiState = FilterUiState()
    )
     data class FilterUiState(
@@ -51,16 +54,17 @@ interface HomePageContract {
         val maxSumma: Int = 1000000,
         val location: String = "",
         val selectLocation: Int = -1,
-        val selectedDate: String = ""
+        val selectedDate: String = "",
     )
 
 
     class SideEffect(val message: String)
     sealed interface Intent {
         data object ClickSearch : Intent
-        data object ClickFilter : Intent
+        data class Filter(val options: FilterOptions):Intent
         data class SelectedSort(val name: String) : Intent
         data object Refresh : Intent
+        data object ClickReset:Intent
         data class ClickItem(val venueId: Int) : Intent
         data class ClickOrder(val venueOrderInfo: VenueOrderInfo) : Intent
         data class FilterIntent(

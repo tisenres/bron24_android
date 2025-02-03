@@ -1,49 +1,47 @@
 package com.bron24.bron24_android.domain.usecases.venue
 
-import android.util.Log
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.repository.VenueRepository
 import com.bron24.bron24_android.domain.usecases.location.CheckLocationPermissionUseCase
 import com.bron24.bron24_android.domain.usecases.location.GetCurrentLocationUseCase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class GetVenuesUseCase @Inject constructor(
-    private val repository: VenueRepository,
-    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
+class GetFilterUseCase @Inject constructor(
+    private val venueRepository: VenueRepository,
+    private val currentLocationUseCase: GetCurrentLocationUseCase,
     private val checkLocationPermissionUseCase: CheckLocationPermissionUseCase
-) {
-    operator fun invoke(): Flow<Result<List<Venue>>> = flow {
+){
+    operator fun invoke(filterOptions: FilterOptions):Flow<List<Venue>> = flow {
         checkLocationPermissionUseCase.invoke().collect { permissionState ->
             try {
                 when (permissionState) {
                     LocationPermissionState.GRANTED -> {
-                        getCurrentLocationUseCase.execute().collect { location ->
-                            val venues = repository.getVenues(
+                        currentLocationUseCase.execute().collect { location ->
+                            val venues = venueRepository.getVenueByFilter(
                                 latitude = location.latitude,
                                 longitude = location.longitude,
+                                filterOptions = filterOptions
                             )
-                            emit(Result.success(venues))
+                            emit(venues)
                         }
                     }
 
                     LocationPermissionState.DENIED -> {
-                        val venues = repository.getVenues(
+                        val venues = venueRepository.getVenueByFilter(
                             latitude = null,
                             longitude = null,
+                            filterOptions
                         )
-                        emit(Result.success(venues))
+                        emit(venues)
                     }
                 }
             }catch (e:Exception){
-
+                emit(emptyList())
             }
         }
-    }.catch { emit(Result.failure(it)) }.flowOn(Dispatchers.IO)
+    }
 }

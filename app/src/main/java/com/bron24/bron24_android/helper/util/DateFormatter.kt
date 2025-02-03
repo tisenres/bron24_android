@@ -10,10 +10,10 @@ private val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale.getDefault())
 private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
 fun formatTime(sliderValue: Float): String {
-    val totalMinutes = (sliderValue * 1440).toInt() // 1440 = 24 * 60
-    val adjustedMinutes = (totalMinutes / 30) * 30 //30 minutlik vaqt intervali
-    val hours = adjustedMinutes / 60
-    val minutes = adjustedMinutes % 60
+    val totalIntervals = 48 // 24 soatni 30 daqiqalik intervalga bo‘lamiz (24 * 2)
+    val selectedInterval = (sliderValue * (totalIntervals - 1)).toInt() // 0 dan 47 gacha bo‘lgan butun son
+    val hours = (selectedInterval * 30) / 60
+    val minutes = (selectedInterval * 30) % 60
     return String.format("%02d:%02d", hours, minutes)
 }
 

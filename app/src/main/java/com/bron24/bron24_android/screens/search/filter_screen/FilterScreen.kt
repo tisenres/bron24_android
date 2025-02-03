@@ -176,9 +176,11 @@ fun FilterScreenContent(
                 TextButton(onClick = {
                     rangeTime = 0.0f..1f
                     rangeSumma = 0.0f..1f
-                    intent.invoke(HomePageContract.Intent.FilterIntent(
-                        filter = HomePageContract.FilterUiState()
-                    ))
+                    intent.invoke(
+                        HomePageContract.Intent.FilterIntent(
+                            filter = HomePageContract.FilterUiState()
+                        )
+                    )
                     resend.invoke()
                 }) {
                     Text(
@@ -348,7 +350,7 @@ fun FilterScreenContent(
             }
 
             RangeSlider(
-                range =state.value.filter.rangeTime,
+                range = state.value.filter.rangeTime,
                 onRangeChange = { newRange ->
                     intent.invoke(
                         HomePageContract.Intent.FilterIntent(
@@ -419,7 +421,7 @@ fun FilterScreenContent(
                                     index = it,
                                     paddingHor = 0.dp
                                 ) {
-                                    selectLocation =it
+                                    selectLocation = it
                                     intent.invoke(
                                         HomePageContract.Intent.FilterIntent(
                                             filter = state.value.filter.copy(
@@ -536,19 +538,24 @@ fun FilterScreenContent(
                 modifier = Modifier.padding(top = 20.dp, bottom = 4.dp)
             )
             CheckBox(stringResource(id = R.string.outdoor), state.value.filter.selOutdoor) {
-                intent.invoke(HomePageContract.Intent.FilterIntent(
-                    filter = state.value.filter.copy(
-                        selOutdoor = it
+                intent.invoke(
+                    HomePageContract.Intent.FilterIntent(
+                        filter = state.value.filter.copy(
+                            selOutdoor = it
+                        )
                     )
-                ))
+                )
 
             }
             CheckBox(stringResource(id = R.string.indoor), state.value.filter.selIndoor) {
-                intent.invoke(HomePageContract.Intent.FilterIntent(
-                filter = state.value.filter.copy(
-                    selIndoor = it
+                intent.invoke(
+                    HomePageContract.Intent.FilterIntent(
+                        filter = state.value.filter.copy(
+                            selIndoor = it
+                        )
+                    )
                 )
-            )) }
+            }
             Text(
                 text = stringResource(id = R.string.infrastructure),
                 fontSize = 16.sp,
@@ -580,11 +587,13 @@ fun FilterScreenContent(
                             }
                         }
                     ) {
-                        intent.invoke(HomePageContract.Intent.FilterIntent(
-                            filter = state.value.filter.copy(
-                                selParking = it
+                        intent.invoke(
+                            HomePageContract.Intent.FilterIntent(
+                                filter = state.value.filter.copy(
+                                    selParking = it
+                                )
                             )
-                        ))
+                        )
                     }
                 }
                 item {
@@ -602,11 +611,13 @@ fun FilterScreenContent(
                             )
                         }
                     ) {
-                        intent.invoke(HomePageContract.Intent.FilterIntent(
-                            filter = state.value.filter.copy(
-                                selRoom = it
+                        intent.invoke(
+                            HomePageContract.Intent.FilterIntent(
+                                filter = state.value.filter.copy(
+                                    selRoom = it
+                                )
                             )
-                        ))
+                        )
                     }
                 }
                 item {
@@ -624,23 +635,30 @@ fun FilterScreenContent(
                             )
                         }
                     ) {
-                        intent.invoke(HomePageContract.Intent.FilterIntent(
-                            filter = state.value.filter.copy(
-                                selShower = it
+                        intent.invoke(
+                            HomePageContract.Intent.FilterIntent(
+                                filter = state.value.filter.copy(
+                                    selShower = it
+                                )
                             )
-                        ))
+                        )
                     }
                 }
             }
             AppButton(text = stringResource(id = R.string.see_result), modifier = Modifier) {
                 filterOptions.invoke(
                     FilterOptions(
-                        state.value.filter.selectedDate.ifEmpty { null },
-                        if(state.value.filter.minSumma!=0) state.value.filter.minSumma else null,
-                        if(state.value.filter.maxSumma!=1000000) state.value.filter.maxSumma else null,
-                        selRoom || selIndoor || selShower || selParking || selOutdoor,
-
-                        district = state.value.filter.location.ifEmpty { null }
+                        state.value.filter.selParking,
+                        state.value.filter.selRoom,
+                        state.value.filter.selShower,
+                        state.value.filter.selOutdoor,
+                        state.value.filter.selIndoor,
+                        state.value.filter.startTime,
+                        state.value.filter.endTime,
+                        state.value.filter.minSumma,
+                        state.value.filter.maxSumma,
+                        state.value.filter.location,
+                        state.value.filter.selectedDate
                     )
                 )
             }
