@@ -32,8 +32,11 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -61,8 +64,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.components.items.LoadingPlaceholder
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
@@ -70,33 +73,67 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.valentinilk.shimmer.shimmer
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapVenueDetails(
     venueDetails: VenueDetails,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     onOrderPressed: () -> Unit,
+    onDismiss: () -> Unit,
     imageUrls: List<String>
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
     val isLoading by remember { derivedStateOf { false } }
 
-    if (isLoading) {
-        LoadingScreen(modifier)
-    } else {
-        SmallDetailsContent(
-            modifier = modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-            venueDetails = venueDetails,
-            onFavoriteClick = { isFavorite = !isFavorite },
-            onCopyAddressClick = {
-                copyAddressToClipboard(
-                    context,
-                    venueDetails.address.addressName
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = { onDismiss() },
+        sheetState = sheetState,
+        scrimColor = Color.Black.copy(alpha = 0.32f),
+        containerColor = Color.Transparent,
+        shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp),
+        dragHandle = null
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+        ) {
+            if (isLoading) {
+                LoadingScreen(modifier)
+            } else {
+                SmallImageSection(
+                    imageUrls = imageUrls,
+                    onShareClick = { shareVenueDetails(context, venueDetails) },
+                    onFavoriteClick = { isFavorite = !isFavorite },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                 )
-            },
-            onOrderPressed = onOrderPressed,
-            imageUrls = imageUrls
-        )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .padding(top = 12.dp)
+                ) {
+                    SmallDetailsContent(
+                        venueDetails = venueDetails,
+                        onFavoriteClick = { isFavorite = !isFavorite },
+                        onCopyAddressClick = {
+                            copyAddressToClipboard(
+                                context,
+                                venueDetails.address.addressName
+                            )
+                        },
+                        onOrderPressed = onOrderPressed,
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -187,30 +224,14 @@ fun LoadingScreen(modifier: Modifier) {
 
 @Composable
 fun SmallDetailsContent(
-    modifier: Modifier,
     venueDetails: VenueDetails?,
     onFavoriteClick: () -> Unit,
     onCopyAddressClick: () -> Unit,
     onOrderPressed: () -> Unit,
-    imageUrls: List<String>
 ) {
-
-    val context = LocalContext.current
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color.White)
-    ) {
-        SmallImageSection(
-            imageUrls = imageUrls,
-            onShareClick = { shareVenueDetails(context, venueDetails) },
-            onFavoriteClick
-        )
-        Spacer(modifier = Modifier.height(12.dp))
+    Column {
         SmallHeaderSection(venueDetails, onCopyAddressClick)
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
         SmallPricingSection(venueDetails, onOrderPressed)
     }
 }
@@ -225,21 +246,21 @@ fun SmallHeaderSection(venueDetails: VenueDetails?, onCopyAddressClick: () -> Un
         SmallTitleSection(venueDetails)
         Spacer(modifier = Modifier.height(8.dp))
         AddressAndPhoneSection(venueDetails, onCopyAddressClick)
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         SmallRatingSection(venueDetails)
     }
 }
 
 @Composable
 fun VenueImage(imageUrl: String, page: Int) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(imageUrl)
-            .placeholder(R.drawable.placeholder)
-            .build()
-    )
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+    if (isLoading) {
+        LoadingPlaceholder()
+    }
     Image(
-        painter = painter,
+        painter = rememberAsyncImagePainter(model = imageUrl, onLoading = { isLoading = true }, onSuccess = { isLoading = false }),
         contentDescription = "Venue Image $page",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
@@ -324,8 +345,8 @@ fun ClickableIconButton(
             contentDescription = contentDescription,
             colorFilter = ColorFilter.tint(tint),
             modifier = Modifier
-                .fillMaxSize()
                 .padding(8.dp)
+                .fillMaxSize()
         )
     }
 }
@@ -380,20 +401,13 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
 fun SmallImageSection(
     imageUrls: List<String>,
     onShareClick: () -> Unit,
-    onFavoriteClick: () -> Unit
+    onFavoriteClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-
     val pagerState = rememberPagerState(pageCount = { imageUrls.size })
 
-    Box(
-        modifier = Modifier
-            .height(150.dp)
-            .fillMaxWidth()
-    ) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) { page ->
+    Box(modifier = modifier) { // Use passed modifier for size/clipping
+        HorizontalPager(state = pagerState) { page ->
             VenueImage(
                 imageUrl = imageUrls[page],
                 page = page
@@ -428,10 +442,13 @@ fun SmallTitleSection(venueDetails: VenueDetails?) {
 fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Unit) {
     Column {
         SmallAddressRow(details, onCopyAddressClick)
-        Spacer(modifier = Modifier.height(4.dp))
-        AvailableSlots(details)
-        Spacer(modifier = Modifier.height(4.dp))
-        DistanceRow(details)
+//        Spacer(modifier = Modifier.height(4.dp))
+//        AvailableSlots(details)
+//        Spacer(modifier = Modifier.height(4.dp))
+        if (details?.distance?.toInt() != 0) {
+            Spacer(modifier = Modifier.height(4.dp))
+            DistanceRow(details)
+        }
     }
 }
 
@@ -447,7 +464,7 @@ fun AvailableSlots(details: VenueDetails?) {
 fun DistanceRow(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.mingcute_navigation_fill,
-        text = String.format("%.1f km ${stringResource(id = R.string.from_you )}",details?.distance?:0.0),
+        text = String.format("%.1f km ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
     )
 }
 
@@ -503,44 +520,50 @@ fun SmallAddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
-        Text(
-            text = "Copy",
-            style = TextStyle(
-                fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
-                color = Color(0xFF0067FF),
-                lineHeight = 18.sp,
-                textDecoration = TextDecoration.Underline,
-            ),
+        Box(
             modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
                 .clickable(onClick = onCopyClick)
-                .padding(start = 5.dp, top = 5.dp, bottom = 5.dp, end = 10.dp)
-        )
+                .padding(
+                    horizontal = 8.dp,
+                    vertical = 6.dp,
+                )
+        ) {
+            Text(
+                text = stringResource(id = R.string.copy),
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp,
+                    color = Color(0xFF0067FF),
+                    lineHeight = 18.sp,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     }
 }
 
 @Composable
-fun SmallRatingSection(venueDetails: VenueDetails?) {
-    Row {
-        repeat(5) { index ->
+fun SmallRatingSection(details: VenueDetails?) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        repeat((details?.rate ?: 1).toInt()) { index ->
             Icon(
-                painter = rememberAsyncImagePainter(model = R.drawable.ic_star),
+                painter = painterResource(id = R.drawable.ic_star),
                 contentDescription = "Star",
                 tint = Color(0xffffb800),
                 modifier = Modifier.size(16.dp)
             )
-            if (index < 4) {
-                Spacer(modifier = Modifier.width(4.dp))
-            }
+            if (index < 4) Spacer(modifier = Modifier.width(4.dp))
         }
         Spacer(modifier = Modifier.width(7.dp))
         Text(
-            text = "4.8",
+            text = details?.rate.toString(),
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 color = Color(0xFF32B768),
                 lineHeight = 18.sp,
             )
@@ -551,7 +574,7 @@ fun SmallRatingSection(venueDetails: VenueDetails?) {
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 color = Color(0xFF949494),
                 lineHeight = 18.sp,
             )
@@ -616,10 +639,10 @@ fun copyAddressToClipboard(context: Context, address: String?) {
     val clip = ClipData.newPlainText("Venue Address", address)
     clipboard?.setPrimaryClip(clip)
 
-    ToastManager.showToast(
-        "Address copied to clipboard",
-        ToastType.SUCCESS
-    )
+//    ToastManager.showToast(
+//        "Address copied to clipboard",
+//        ToastType.SUCCESS
+//    )
 }
 
 fun shareVenueDetails(context: Context, details: VenueDetails?) {
@@ -633,11 +656,11 @@ fun shareVenueDetails(context: Context, details: VenueDetails?) {
 
     val shareText = buildString {
         appendLine("Check out this venue:")
-        appendLine("Name: ${details.venueName}")
+        appendLine("Name: ")
         appendLine("Address: ${details.address.addressName}")
         appendLine("Price: ${details.pricePerHour} per hour")
         appendLine("Working hours: ${details.workingHoursFrom} - ${details.workingHoursTill}")
-        appendLine("Description: ${details.description}")
+        appendLine("Description: ")
     }
 
     val sendIntent: Intent = Intent().apply {
@@ -650,7 +673,7 @@ fun shareVenueDetails(context: Context, details: VenueDetails?) {
     context.startActivity(shareIntent)
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun VenueDetailsPreview() {
 }

@@ -1,10 +1,8 @@
 package com.bron24.bron24_android.screens.auth.sms_otp
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
@@ -28,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -41,10 +37,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,12 +54,11 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.components.items.LoadingScreen
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.auth.enums.OTPStatusCode
+import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
-import com.google.android.play.integrity.internal.w
 import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -78,7 +71,7 @@ class OTPInputScreen(val phoneNumber: String) : Screen {
         val ban = stringResource(id = R.string.banned_user)
         viewModel.collectSideEffect {
             if (it.message.isNotEmpty()) {
-                ToastManager.showToast(it.message ?: "", type = ToastType.INFO)
+                ToastManager.showToast(it.message, type = ToastType.INFO)
             }
             when (it.status) {
                 OTPStatusCode.CORRECT_OTP -> {
@@ -117,28 +110,20 @@ fun OTPInputScreenContent(
     var resendCounter by remember { mutableIntStateOf(state.value.refreshTime) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-    var isLoading by remember { mutableStateOf(state.value.isLoading) }
+    val isLoading by remember { mutableStateOf(state.value.isLoading) }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
         keyboardController?.show()
     }
 
-    // Coroutine scope for handling the counter
     LaunchedEffect(resendCounter) {
         if (resendCounter > 0) {
             while (resendCounter > 0) {
-                delay(1000)  // Wait for 1 second
+                delay(1000)
                 resendCounter--
             }
         }
-    }
-
-    //Ensure keyboard is shown and focus is requested as soon as the composable is launched
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
     }
 
     LaunchedEffect(Unit) {
@@ -184,7 +169,7 @@ fun OTPInputScreenContent(
             Text(
                 text = stringResource(id = R.string.enter_otp_code) +
                         "\n" +
-                        phoneNumber,
+                        phoneNumber.formatPhoneNumber(),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -205,7 +190,7 @@ fun OTPInputScreenContent(
                     if (newOtp.length <= 4) {
                         otp = newOtp
                         intent.invoke(OTPInputContract.Intent.OTPCode(newOtp))
-                        val otpValue = newOtp.toIntOrNull()
+                        newOtp.toIntOrNull()
                     }
                 },
                 focusRequester = focusRequester,
@@ -218,7 +203,7 @@ fun OTPInputScreenContent(
                 otp = ""
             }
 
-            Spacer(modifier = Modifier.height(36.dp)) // Push the resend section to the bottom
+            Spacer(modifier = Modifier.height(36.dp))
 
             Box(
                 modifier = Modifier
@@ -273,46 +258,6 @@ fun OTPInputScreenContent(
                     }
                 }
             }
-//            LaunchedEffect(authState) {
-//                when (authState) {
-//                    is AuthState.Loading -> {
-//                        isVerifying = true
-//                    }
-//                    is AuthState.OTPVerified -> {
-//                        isVerifying = false
-//                        if ((authState as AuthState.OTPVerified).status == OTPStatusCode.CORRECT_OTP) {
-//                            // Clear focus and hide keyboard
-//                            focusManager.clearFocus()
-//                            keyboardController?.hide()
-//
-//                            ToastManager.showToast("OTP verified successfully", ToastType.SUCCESS)
-//                            if ((authState as AuthState.OTPVerified).userExists) {
-//                                onUserLogIn()
-//                            } else {
-//                                onUserSignUp()
-//                            }
-//                        } else {
-//                            ToastManager.showToast(
-//                                "Incorrect OTP. Please try again.",
-//                                ToastType.ERROR
-//                            )
-//                            otp = ""
-//                            focusRequester.requestFocus()
-//                            keyboardController?.show()
-//                        }
-//                    }
-//                    is AuthState.Error -> {
-//                        isVerifying = false
-//                        ToastManager.showToast(
-//                            "Error: " + (authState as AuthState.Error).message,
-//                            ToastType.ERROR
-//                        )
-//                    }
-//                    else -> {
-//                        isVerifying = false
-//                    }
-//                }
-//            }
         }
     }
 }

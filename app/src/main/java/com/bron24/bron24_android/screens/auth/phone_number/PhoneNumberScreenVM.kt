@@ -28,6 +28,7 @@ class PhoneNumberScreenVM @Inject constructor(
             is PhoneNumberScreenContract.Intent.ClickNextBtn -> {
                 if (intent.phoneNumber.isValidUzbekPhoneNumber()) {
                     requestOTPUseCase.invoke(intent.phoneNumber).onEach {
+                        direction.moveToNext(phoneNumber = intent.phoneNumber)
                         it.onSuccess { status ->
                             direction.moveToNext(phoneNumber = intent.phoneNumber)
                             when (status.result) {
