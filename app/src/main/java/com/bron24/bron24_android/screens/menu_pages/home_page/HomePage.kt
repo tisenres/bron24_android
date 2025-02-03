@@ -1,7 +1,10 @@
+@file:Suppress("UNUSED_CHANGED_VALUE")
+
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -68,6 +71,9 @@ fun HomePageContent(
     var openFilter by remember {
         mutableStateOf(false)
     }
+    val changeFilter = remember {
+        mutableStateOf("")
+    }
     var openVenueDetails by remember {
         mutableStateOf(false)
     }
@@ -82,15 +88,24 @@ fun HomePageContent(
     }
     if (openFilter) {
         FilterScreenContent(
+            state = state,
+            intent = intent,
             clickBack = {
+                if(changeFilter.value.isEmpty()&&state.value.checkBack){
+                    intent.invoke(HomePageContract.Intent.Refresh)
+                }
                 openFilter = !openFilter
             },
             resend = {
-                openFilter = !openFilter
-
+                changeFilter.value = ""
+                intent.invoke(HomePageContract.Intent.ClickReset)
             }
         ) {
+            if(state.value.count.isNotEmpty()){
+                changeFilter.value = state.value.count
+            }else changeFilter.value = ""
             openFilter = !openFilter
+            intent.invoke(HomePageContract.Intent.Filter(it))
         }
     } else if (openVenueDetails) {
         val states= mutableStateOf(VenueDetailsContract.UIState(state.value.isLoading, venue = state.value.venueDetails, imageUrls = state.value.imageUrls))
@@ -114,6 +129,7 @@ fun HomePageContent(
                 SearchView(
                     name = state.value.firstName,
                     modifier = Modifier.fillMaxWidth(),
+                    changeFilter = state.value.count.ifEmpty { null },
                     clickSearch = {
                         intent.invoke(HomePageContract.Intent.ClickSearch)
                     },

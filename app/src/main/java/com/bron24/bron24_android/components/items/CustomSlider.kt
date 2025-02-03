@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,20 +33,19 @@ fun RangeSlider(
     trackHeight: Dp = 4.dp,
     paddingVertical: Dp
 ) {
-    var startThumb by remember { mutableStateOf(range.start) }
-    var endThumb by remember { mutableStateOf(range.endInclusive) }
+    var startThumb by remember { mutableFloatStateOf(range.start) }
+    var endThumb by remember { mutableFloatStateOf(range.endInclusive) }
 
     val thumbRadius = with(LocalDensity.current) { thumbSize.toPx() / 2 }
     val trackColor = bgSuccess
     val activeTrackColor = Success
-
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(thumbSize)
-            .padding(horizontal = thumbSize/2, paddingVertical)
+            .padding(horizontal = thumbSize / 2, paddingVertical)
             .pointerInput(Unit) {
-                detectHorizontalDragGestures { change, dragAmount ->
+                detectHorizontalDragGestures { change, _ ->
                     val position = change.position.x
                     val width = size.width
 
@@ -92,4 +94,6 @@ fun RangeSlider(
             )
         }
     }
+    startThumb = range.start
+    endThumb = range.endInclusive
 }
