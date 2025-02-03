@@ -23,7 +23,9 @@ class LocationRepositoryImpl @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
     override fun checkLocationPermission(): Flow<LocationPermissionState> = flow {
-        if (permissionChecker.hasPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (permissionChecker.hasPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) ||
+            permissionChecker.hasPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        ) {
             emit(LocationPermissionState.GRANTED)
         } else {
             emit(LocationPermissionState.DENIED)
@@ -32,7 +34,10 @@ class LocationRepositoryImpl @Inject constructor(
 
     @SuppressLint("MissingPermission")
     override fun getCurrentLocation(): Flow<Location> = callbackFlow {
-        if (permissionChecker.hasPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (permissionChecker.hasPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) ||
+            permissionChecker.hasPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        ) {
+
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location ->
                     if (location != null) {

@@ -1,7 +1,9 @@
 package com.bron24.bron24_android.screens.menu_pages.map_page
 
+import android.Manifest
 import android.content.Context
-import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -26,6 +28,9 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.components.toast.ToastManager
+import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
@@ -38,6 +43,8 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
+
+const val TAG = "YandexMapPage"
 
 object YandexMapPage : Tab {
     private fun readResolve(): Any = YandexMapPage
@@ -68,7 +75,7 @@ object YandexMapPage : Tab {
 @Composable
 fun YandexMapPageContent(
     state: State<YandexMapPageContract.UIState>,
-    intent: (YandexMapPageContract.Intent) -> Unit
+    intent: (YandexMapPageContract.Intent) -> Unit,
 ) {
     val context = LocalContext.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
@@ -76,13 +83,28 @@ fun YandexMapPageContent(
     val mapObjectListeners by remember { mutableStateOf<MutableMap<Point, MapObjectTapListener>>(mutableMapOf()) }
     var selectedMarker by remember { mutableStateOf<PlacemarkMapObject?>(null) }
     val venueDetails = state.value.venueDetails
-    val markerInitialized = remember { mutableStateOf(false) }
+    val locationHasBeenChecked = remember { mutableStateOf(false) }
     val initDataLoaded = state.value.venueCoordinates.isNotEmpty() && state.value.userLocation != null
     val coroutineScope = rememberCoroutineScope()
 
     val shouldShowBottomSheet = remember(state.value.isLoading, state.value.venueDetails) {
         !state.value.isLoading && state.value.venueDetails != null
     }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                intent.invoke(YandexMapPageContract.Intent.RefreshLocation)
+            } else {
+                ToastManager.showToast(
+                    "Локация не разрешена!",
+                    ToastType.INFO
+                )
+            }
+            locationHasBeenChecked.value = true
+        }
+    )
 
     val userLocation = state.value.userLocation.let {
         Point(it?.latitude ?: 41.311198, it?.longitude ?: 69.279746)
@@ -135,9 +157,16 @@ fun YandexMapPageContent(
         )
     }
 
+    // Ask for location permission
+    LaunchedEffect(state.value.checkPermission) {
+        if (state.value.checkPermission == LocationPermissionState.DENIED) {
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
     // Call when all the data is fetched and when mapObjects is initialized
     LaunchedEffect(initDataLoaded) {
-        if (initDataLoaded && !markerInitialized.value) {
+        if (initDataLoaded) {
             mapObjects?.let { objects ->
 
                 // Move camera to the location
@@ -171,7 +200,6 @@ fun YandexMapPageContent(
                     )
                 }
             }
-            markerInitialized.value = true
         }
     }
 
@@ -190,8 +218,6 @@ private fun setMarkerInStartLocation(
     location: Point,
     context: Context
 ) {
-
-    Log.d("YandexMapPage", "ASHSHAHSHASHHAS")
     val bitmap = BitmapCache.getBitmap(context, R.drawable.location_pin_svg)
 
     mapObjects.addPlacemark(

@@ -33,7 +33,7 @@ interface YandexMapPageContract {
         data class ClickVenueBook(val venueDetails: VenueDetails) : Intent
         data object DismissVenueDetails : Intent
         data object InitData: Intent
-//        data object CheckPermission : Intent
+        data object RefreshLocation : Intent
     }
 
     interface Direction {
