@@ -26,7 +26,6 @@ class PhoneNumberScreenVM @Inject constructor(
     override fun onDispatchers(intent: PhoneNumberScreenContract.Intent): Job = intent {
         when (intent) {
             is PhoneNumberScreenContract.Intent.ClickNextBtn -> {
-                Log.d("AAA", "onDispatchers: ${intent.phoneNumber}")
                 if (intent.phoneNumber.isValidUzbekPhoneNumber()) {
                     requestOTPUseCase.invoke(intent.phoneNumber).onEach {
                         it.onSuccess { status ->

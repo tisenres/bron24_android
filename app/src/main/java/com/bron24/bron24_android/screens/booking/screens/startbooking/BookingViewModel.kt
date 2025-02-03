@@ -112,7 +112,6 @@ class BookingViewModel @Inject constructor(
                 _availableTimeSlots.value = times
                 _getAvailableTimesState.value = BookingState.Success // Update state to Success
             } catch (e: Exception) {
-                Log.e("ViewModel", "Error fetching available times", e)
                 _availableTimeSlots.value = emptyList()
                 _getAvailableTimesState.value =
                     BookingState.Error(e.message ?: "Unknown Error") // Update to Error state

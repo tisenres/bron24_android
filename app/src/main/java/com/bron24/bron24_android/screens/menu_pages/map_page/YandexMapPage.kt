@@ -3,7 +3,6 @@ package com.bron24.bron24_android.screens.menu_pages.map_page
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
 import androidx.appcompat.content.res.AppCompatResources
@@ -105,7 +104,6 @@ fun YandexMapPageContent(
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = { context ->
-                Log.d("MapScreen", "Factory was called")
                 MapView(context).apply {
                     mapView = this
                     mapObjects = map.mapObjects
@@ -123,7 +121,6 @@ fun YandexMapPageContent(
             },
             modifier = Modifier.fillMaxSize(),
             update = { view ->
-                Log.d("AAA", "YandexMapPageContent: Update")
                 view.map.mapObjects.clear()
                 mapObjects?.let {
                     setMarkerInStartLocation(it, userLocation, context)
@@ -143,26 +140,6 @@ fun YandexMapPageContent(
             }
         )
 
-//        LaunchedEffect(mapObjects) {
-//            mapObjects?.let { objects ->
-//                objects.clear()
-//                setMarkerInStartLocation(objects, userLocation, context)
-//                state.value.venueCoordinates.forEach { venue ->
-//                    val point = Point(venue.latitude.toDouble(), venue.longitude.toDouble())
-//                    setStadiumMarker(
-//                        venue.selected,
-//                        mapView!!,
-//                        objects,
-//                        (point to venue),
-//                        context,
-//                        intent,
-//                        mapObjectListeners
-//                    )
-//                }
-//
-////                mapView?.map?.invalidate()
-//            }
-//        }
 
         ZoomControls(
             modifier = Modifier.align(Alignment.TopEnd),
@@ -271,13 +248,11 @@ private fun setMarkerInStartLocation(
     context: Context
 ) {
     if (mapObjects == null) {
-        Log.e(TAG, "mapObjects is null")
         return
     }
 
     val marker = createBitmapFromVector(R.drawable.location_pin_svg, context)
     if (marker == null) {
-        Log.e(TAG, "Failed to create bitmap from vector")
         return
     }
 
@@ -285,7 +260,6 @@ private fun setMarkerInStartLocation(
         location,
         ImageProvider.fromBitmap(marker)
     )
-    Log.d(TAG, "Marker added at location: $location")
 }
 
 fun setStadiumMarker(
@@ -346,9 +320,7 @@ fun firstOpen(
 }
 
 fun updateMarkerAppearance(placemark: PlacemarkMapObject, context: Context, isHighlighted: Boolean) {
-    Log.d("AAA", "updateMarkerAppearance: ishladi")
     val drawable = if (isHighlighted){
-        Log.d("AAA", "updateMarkerAppearance: selected")
         R.drawable.red_location_pin
     } else {
         R.drawable.green_location_pin

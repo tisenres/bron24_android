@@ -121,7 +121,6 @@ fun HomePageContent(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()

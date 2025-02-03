@@ -18,6 +18,5 @@ class ConfirmBookingUseCase @Inject constructor(
            emit(Result.success(info))
        }else emit(Result.failure(Exception("error!")))
     }.catch {
-       Log.d("AAA", "invoke: ${it.message}")
         emit(Result.failure(it)) }
 }

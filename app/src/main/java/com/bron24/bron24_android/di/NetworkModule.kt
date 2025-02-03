@@ -56,7 +56,6 @@ class NetworkModule {
             .addInterceptor(httpInterceptor)
             .authenticator(authAuthenticator)
             .addNetworkInterceptor { chain ->
-                Log.d("AAA", "provideOkHttpClient: ${getSelectedLanguageUseCase.invoke().languageCode}")
                 val token = tokenRepository.getAccessToken() ?: ""
                 val lanCode = getSelectedLanguageUseCase.invoke().languageCode ?: ""
                 val newRequest = chain.request().newBuilder()

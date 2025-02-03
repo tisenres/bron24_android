@@ -717,7 +717,6 @@ fun SearchRow(
                     onFilterClick()
                 }
         ) {
-            Log.d("AAA", "SearchRow: $changeFilter")
             changeFilter?.let {
                 Box(modifier = Modifier
                     .size(14.dp)
