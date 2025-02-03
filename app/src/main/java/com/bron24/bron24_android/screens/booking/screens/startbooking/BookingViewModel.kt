@@ -1,7 +1,5 @@
 package com.bron24.bron24_android.screens.booking.screens.startbooking
 
-import android.os.Build
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bron24.bron24_android.domain.entity.booking.DateItem
@@ -9,14 +7,12 @@ import com.bron24.bron24_android.domain.entity.booking.Sector
 import com.bron24.bron24_android.domain.entity.booking.TimeSlot
 import com.bron24.bron24_android.helper.util.formatPrice
 import com.bron24.bron24_android.screens.booking.states.BookingState
-import com.google.android.play.integrity.internal.m
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.Month
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
@@ -29,10 +25,9 @@ class BookingViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow(System.currentTimeMillis())
     val selectedDate: StateFlow<Long> = _selectedDate.asStateFlow()
 
-    private var countTimeSlot: Int = 0
-
     private val _selectedDateIndex = MutableStateFlow(-1)
     val selectedDateIndex: StateFlow<Int> = _selectedDateIndex.asStateFlow()
+
     private val _checkSelected = MutableStateFlow(false)
     val checkSelected:StateFlow<Boolean> = _checkSelected
 
@@ -65,6 +60,8 @@ class BookingViewModel @Inject constructor(
 
     fun selectDate(timestamp: Long) {
         _selectedDate.value = roundToStartOfDay(timestamp)
+        _totalPrice.value = "0"
+        _selectedTimeSlots.value = emptySet()
         updateSelectedDate(timestamp)
         updateVisibleMonthYear(timestamp)
         _selectedTimeSlots.value = mutableSetOf()
@@ -97,11 +94,9 @@ class BookingViewModel @Inject constructor(
                     timeInMillis = selectedDate.value
                 }
 
-                // Use SimpleDateFormat to format the date
                 val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val formattedDate = formatter.format(calendar.time)
 
-                // Fetch available time slots
                 val times = model.getAvailableTimeSlots(
                     venueId = venueId,
                     date = formattedDate,
@@ -112,7 +107,6 @@ class BookingViewModel @Inject constructor(
                 _availableTimeSlots.value = times
                 _getAvailableTimesState.value = BookingState.Success // Update state to Success
             } catch (e: Exception) {
-                Log.e("ViewModel", "Error fetching available times", e)
                 _availableTimeSlots.value = emptyList()
                 _getAvailableTimesState.value =
                     BookingState.Error(e.message ?: "Unknown Error") // Update to Error state
@@ -190,14 +184,6 @@ class BookingViewModel @Inject constructor(
         val formattedDate = formatter.format(calendar.time)
 
         _visibleMonthYear.value = formattedDate
-    }
-
-    private fun getMonthNumber(monthName: String): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Month.valueOf(monthName.uppercase()).value
-        } else {
-            Month.valueOf(monthName.uppercase()).ordinal + 1
-        }
     }
 
     private fun roundToStartOfDay(timestamp: Long): Long {

@@ -29,6 +29,7 @@ class PhoneNumberScreenVM @Inject constructor(
                 Log.d("AAA", "onDispatchers: ${intent.phoneNumber}")
                 if (intent.phoneNumber.isValidUzbekPhoneNumber()) {
                     requestOTPUseCase.invoke(intent.phoneNumber).onEach {
+                        direction.moveToNext(phoneNumber = intent.phoneNumber)
                         it.onSuccess { status ->
                             direction.moveToNext(phoneNumber = intent.phoneNumber)
                             when (status.result) {
