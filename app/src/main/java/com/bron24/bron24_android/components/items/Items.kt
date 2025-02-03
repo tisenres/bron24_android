@@ -4,6 +4,7 @@ package com.bron24.bron24_android.components.items
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -113,10 +114,12 @@ fun ItemsPreview() {
 }
 
 @Composable
-fun LoadingPlaceholder(){
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = White)) {
+fun LoadingPlaceholder() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = White)
+    ) {
         CircularProgressIndicator(
             color = Color(0xFF32B768),
             modifier = Modifier
@@ -126,6 +129,7 @@ fun LoadingPlaceholder(){
         )
     }
 }
+
 @Composable
 fun ErrorNetWork(networkConnection: NetworkConnection) {
 
@@ -415,7 +419,7 @@ fun ItemInfosData(
     modifier: Modifier,
     topIcon: @Composable (() -> Unit)? = null,
     bottomIcon: @Composable (() -> Unit)? = null,
-    listener: () -> Unit
+    listener: (Boolean) -> Unit
 ) {
     Column(modifier = modifier
         .padding(top = 20.dp)
@@ -423,7 +427,7 @@ fun ItemInfosData(
         .background(color = if (select) GreenLight else Color.Transparent)
         .clickable(
             interactionSource = MutableInteractionSource(), indication = null
-        ) { listener.invoke() }
+        ) { listener.invoke(!select) }
         .border(
             width = 1.dp,
             color = if (select) GreenLight else GrayLighter,
@@ -450,12 +454,12 @@ fun ItemInfosData(
 
 @Composable
 fun CheckBox(
-    text: String, state: Boolean, listener: () -> Unit
+    text: String, state: Boolean, listener: (Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { listener.invoke() }, modifier = Modifier.size(32.dp)) {
+        IconButton(onClick = { listener.invoke(!state) }, modifier = Modifier.size(32.dp)) {
             Box(
                 modifier = Modifier
                     .size(24.dp)
@@ -487,8 +491,9 @@ fun CheckBox(
         )
     }
 }
+
 @Composable
-fun CustomDialog(message:String,yes:String,no:String,onDismiss: () -> Unit, onConfirm: () -> Unit) {
+fun CustomDialog(message: String, yes: String, no: String, onDismiss: () -> Unit, onConfirm: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Box(
             modifier = Modifier
@@ -578,11 +583,11 @@ fun LoadingScreen() {
 @Composable
 fun AppButton(
     text: String,
-    enable:Boolean? = null,
+    enable: Boolean? = null,
     modifier: Modifier, listener: () -> Unit
 ) {
     Button(
-        enabled = enable?:true, onClick = {
+        enabled = enable ?: true, onClick = {
             listener.invoke()
         }, colors = ButtonDefaults.buttonColors(
             containerColor = Success,
@@ -603,6 +608,7 @@ fun AppButton(
 @Composable
 fun SearchView(
     name: String,
+    changeFilter: String? = null,
     modifier: Modifier = Modifier,
     clickSearch: () -> Unit,
     clickFilter: () -> Unit
@@ -622,6 +628,7 @@ fun SearchView(
     ) {
         ProfileRow(name)
         SearchRow(
+            changeFilter,
             onSearchClick = clickSearch,
             onFilterClick = clickFilter,
         )
@@ -662,6 +669,7 @@ fun ProfileRow(firstName: String) {
 
 @Composable
 fun SearchRow(
+    changeFilter: String? = null,
     onSearchClick: () -> Unit, onFilterClick: () -> Unit
 ) {
     Row(
@@ -707,13 +715,31 @@ fun SearchRow(
                 .background(color = Color.White)
                 .clickable {
                     onFilterClick()
-                }, contentAlignment = Alignment.Center
+                }
         ) {
+            Log.d("AAA", "SearchRow: $changeFilter")
+            changeFilter?.let {
+                Box(modifier = Modifier
+                    .size(14.dp)
+                    .clip(shape = CircleShape)
+                    .background(color = Color.Red)
+                    .align(Alignment.TopEnd)){
+                    Text(
+                        text = changeFilter,
+                        color = White,
+                        fontSize = 10.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
             Image(
                 painter = painterResource(id = R.drawable.ic_filter),
                 contentDescription = "filter_icon",
                 colorFilter = ColorFilter.tint(Color(0xFF32B768)),
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(18.dp)
             )
         }
     }
