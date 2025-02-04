@@ -1,11 +1,5 @@
 package com.bron24.bron24_android.screens.menu_pages.home_page
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import cafe.adriel.voyager.hilt.ScreenModelKey
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.domain.entity.offers.SpecialOffer
@@ -16,7 +10,6 @@ import com.bron24.bron24_android.screens.util.AppViewModel
 import com.bron24.bron24_android.screens.util.ScreenModelImpl
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract.Intent
 import kotlinx.coroutines.Job
-import org.orbitmvi.orbit.ContainerHost
 
 interface HomePageContract {
     @ScreenModelImpl(HomePageVM::class)
@@ -24,7 +17,7 @@ interface HomePageContract {
         fun onDispatchers(intent: Intent): Job
     }
 
-   data class UIState (
+    data class UIState(
         val isLoading: Boolean = true,
         val initial: Boolean = true,
         val refresh: Boolean = false,
@@ -33,13 +26,14 @@ interface HomePageContract {
         val itemData: List<Venue> = emptyList(),
         val specialOffers: List<SpecialOffer> = emptyList(),
         val selectedSort: String? = null,
-        val userLocation: Location = Location(33.33, 33.33),
+        val userLocation: Location = Location(41.311198, 69.279746),
         val venueDetails: VenueDetails? = null,
         val imageUrls: List<String> = emptyList(),
-        val count:String = "",
-        val checkBack:Boolean = false,
+        val count: String = "",
+        val checkBack: Boolean = false,
         val filter: FilterUiState = FilterUiState()
-   )
+    )
+
     data class FilterUiState(
         val selParking: Boolean = false,
         val selRoom: Boolean = false,
@@ -61,14 +55,14 @@ interface HomePageContract {
     class SideEffect(val message: String)
     sealed interface Intent {
         data object ClickSearch : Intent
-        data class Filter(val options: FilterOptions):Intent
+        data class Filter(val options: FilterOptions) : Intent
         data class SelectedSort(val name: String) : Intent
         data object Refresh : Intent
-        data object ClickReset:Intent
+        data object ClickReset : Intent
         data class ClickItem(val venueId: Int) : Intent
         data class ClickOrder(val venueOrderInfo: VenueOrderInfo) : Intent
         data class FilterIntent(
-            val filter:FilterUiState
+            val filter: FilterUiState
         ) : Intent
     }
 

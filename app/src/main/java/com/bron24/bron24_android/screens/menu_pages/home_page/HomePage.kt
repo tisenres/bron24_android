@@ -4,7 +4,6 @@ package com.bron24.bron24_android.screens.menu_pages.home_page
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -78,9 +77,9 @@ fun HomePageContent(
         mutableStateOf(false)
     }
     val context = LocalContext.current
-    val activity  = context as Activity
+    val activity = context as Activity
     BackHandler {
-        when{
+        when {
             openFilter -> openFilter = false
             openVenueDetails -> openVenueDetails = false
             else -> activity.finish()
@@ -91,7 +90,7 @@ fun HomePageContent(
             state = state,
             intent = intent,
             clickBack = {
-                if(changeFilter.value.isEmpty()&&state.value.checkBack){
+                if (changeFilter.value.isEmpty() && state.value.checkBack) {
                     intent.invoke(HomePageContract.Intent.Refresh)
                 }
                 openFilter = !openFilter
@@ -101,17 +100,18 @@ fun HomePageContent(
                 intent.invoke(HomePageContract.Intent.ClickReset)
             }
         ) {
-            if(state.value.count.isNotEmpty()){
+            if (state.value.count.isNotEmpty()) {
                 changeFilter.value = state.value.count
-            }else changeFilter.value = ""
+            } else changeFilter.value = ""
             openFilter = !openFilter
             intent.invoke(HomePageContract.Intent.Filter(it))
         }
     } else if (openVenueDetails) {
-        val states= mutableStateOf(VenueDetailsContract.UIState(state.value.isLoading, venue = state.value.venueDetails, imageUrls = state.value.imageUrls))
-        VenueDetailsScreenContent(states, back =  {
+        val states =
+            mutableStateOf(VenueDetailsContract.UIState(state.value.isLoading, venue = state.value.venueDetails, imageUrls = state.value.imageUrls))
+        VenueDetailsScreenContent(states, back = {
             openVenueDetails = false
-        }){
+        }) {
             openVenueDetails = false
             intent.invoke(HomePageContract.Intent.ClickOrder(it))
         }
@@ -152,5 +152,3 @@ fun HomePageContent(
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(Success)
 }
-
-

@@ -99,17 +99,15 @@ fun VenueListingView(
                             .shimmer()
                             .background(Color.Gray.copy(alpha = 0.2f))
                     )
-                } else {
+                } else if (state.value.specialOffers.isNotEmpty()) {
                     SpecialOfferCarousel(uiState = state)
+                    Spacer(Modifier.height(16.dp))
                 }
-
-//                AdsSection(imageUrls = state.value.offers.map { it.image })
             }
             item(key = "title") {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -122,7 +120,9 @@ fun VenueListingView(
                             lineHeight = 24.sp,
                             color = Color.Black
                         ),
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(bottom = 16.dp)
                     )
 //                    SortRow(
 //                        onSortClick = { sortExpanded = true }
