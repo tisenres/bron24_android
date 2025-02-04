@@ -110,6 +110,9 @@ fun ItemsPreview() {
         ItemInputText(modifier = Modifier.padding(top = 12.dp), text = "sardor", hint = "",
             //visualTransformation = null,
             onValueChange = {}, isSelect = true, listener = {})
+        AppButton(text = "sahkds", modifier = Modifier) {
+
+        }
     }
 }
 

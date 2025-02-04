@@ -29,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
@@ -103,33 +104,10 @@ fun FilterScreenContent(
     resend: () -> Unit,
     filterOptions: (FilterOptions) -> Unit,
 ) {
-    var selParking by remember { mutableStateOf(state.value.filter.selParking) }
-    var selRoom by remember { mutableStateOf(state.value.filter.selRoom) }
-    var selShower by remember { mutableStateOf(state.value.filter.selShower) }
-
-    var selOutdoor by remember {
-        mutableStateOf(state.value.filter.selOutdoor)
-    }
-    var selIndoor by remember {
-        mutableStateOf(state.value.filter.selIndoor)
-    }
 
     var rangeTime by remember { mutableStateOf(state.value.filter.rangeTime) }
     var rangeSumma by remember { mutableStateOf(state.value.filter.rangeSumma) }
 
-    var startTime by remember {
-        mutableStateOf(state.value.filter.startTime)
-    }
-    var endTime by remember {
-        mutableStateOf(state.value.filter.endTime)
-    }
-
-    var minSumma by remember {
-        mutableIntStateOf(state.value.filter.minSumma)
-    }
-    var maxSumma by remember {
-        mutableIntStateOf(state.value.filter.maxSumma)
-    }
 
     var openDialog by remember {
         mutableStateOf(false)
@@ -143,9 +121,6 @@ fun FilterScreenContent(
         )
     }
     val coroutineScope = rememberCoroutineScope()
-    var location by remember {
-        mutableStateOf("")
-    }
     var selectLocation by remember {
         mutableIntStateOf(state.value.filter.selectLocation)
     }
@@ -207,26 +182,22 @@ fun FilterScreenContent(
                 confirmButton = { }
             ) {
                 DatePicker(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .height(40.dp),
                     title = {
-                        Row {
+                        Row(modifier = Modifier
+                            .fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = "Bron24",
-                                modifier = Modifier
-                                    .padding(top = 24.dp, start = 24.dp)
-                                    .weight(1f),
+                                modifier = Modifier,
                                 color = Success,
                                 fontFamily = gilroyFontFamily,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                             )
-                            AppButton(
-                                text = stringResource(id = R.string.save),
-                                modifier = Modifier
-                                    .padding(top = 16.dp, end = 24.dp)
-                                    .width(90.dp)
-                                    .height(36.dp)
-                            ) {
+                            Spacer(modifier = Modifier.weight(1f))
+                            TextButton(onClick = {
                                 dateState.selectedDateMillis?.let { millis ->
                                     intent.invoke(
                                         HomePageContract.Intent.FilterIntent(
@@ -239,6 +210,15 @@ fun FilterScreenContent(
                                     )
                                 }
                                 openDialog = false
+                            }, shape = RoundedCornerShape(10.dp), modifier = Modifier
+                                .height(40.dp)
+                                .align(Alignment.CenterVertically),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Success,
+                                    contentColor = White
+                                )
+                                ) {
+                                Text(text = stringResource(id = R.string.save), fontFamily = gilroyFontFamily, color = White)
                             }
                         }
 
