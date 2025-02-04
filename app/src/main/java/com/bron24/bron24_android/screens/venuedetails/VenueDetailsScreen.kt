@@ -268,15 +268,15 @@ fun VenueDetailsContent(
                                     .background(Color.Gray.copy(alpha = 0.2f))
                             )
                             Spacer(modifier = Modifier.weight(0.2f))
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 20.dp)
-                                    .padding(bottom = 6.dp)
-                                    .size(40.dp)
-                                    .clip(RoundedCornerShape(4.dp))
-                                    .shimmer()
-                                    .background(Color.Gray.copy(alpha = 0.2f))
-                            )
+//                            Box(
+//                                modifier = Modifier
+//                                    .padding(horizontal = 20.dp)
+//                                    .padding(bottom = 6.dp)
+//                                    .size(40.dp)
+//                                    .clip(RoundedCornerShape(4.dp))
+//                                    .shimmer()
+//                                    .background(Color.Gray.copy(alpha = 0.2f))
+//                            )
                         }
                         Box(
                             modifier = Modifier
@@ -760,23 +760,24 @@ fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
             modifier = Modifier.weight(1f)
         )
 
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFFF6F6F6))
-                .clickable {
-                    onMapClick(details?.latitude ?: 0.0, details?.longitude ?: 0.0)
-                }
-                .padding(10.dp)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_map_cute),
-                contentDescription = "map_icon",
-                colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        // Small Map Button which navigates to the YandexMapPage
+//        Box(
+//            modifier = Modifier
+//                .size(44.dp)
+//                .clip(RoundedCornerShape(10.dp))
+//                .background(Color(0xFFF6F6F6))
+//                .clickable {
+//                    onMapClick(details?.latitude ?: 0.0, details?.longitude ?: 0.0)
+//                }
+//                .padding(10.dp)
+//        ) {
+//            Image(
+//                painter = painterResource(id = R.drawable.ic_map_cute),
+//                contentDescription = "map_icon",
+//                colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
+//                modifier = Modifier.fillMaxSize()
+//            )
+//        }
     }
 }
 

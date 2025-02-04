@@ -52,6 +52,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -380,24 +381,31 @@ fun ItemEditProfile(
 @Composable
 fun ItemProfileTask(
     text: String,
-    modifier: Modifier? = Modifier,
-    borderColor: Color? = null,
+    modifier: Modifier = Modifier, // Use non-nullable Modifier with default
+    borderColor: Color = GrayLighter, // Avoid nullable + default
     index: Int = 0,
-    paddingHor: Dp? = null,
+    additionalIcon: Painter? = null,
+    paddingHor: Dp = 20.dp, // Non-nullable with default
     startIcons: @Composable (() -> Unit)? = null,
     endIcon: @Composable (() -> Unit)? = null,
     listener: () -> Unit
 ) {
-    Row(modifier = Modifier
-        .padding(horizontal = paddingHor ?: 20.dp)
-        .padding(top = 16.dp)
-        .fillMaxWidth()
-        .clip(RoundedCornerShape(8.dp))
-        .clickable { listener() }
-        .border(
-            color = borderColor ?: GrayLighter, width = 1.dp, shape = RoundedCornerShape(8.dp)
-        )
-        .padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier // Use the provided modifier
+            .padding(horizontal = paddingHor)
+            .padding(top = 16.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { listener() }
+            .border(
+                color = borderColor,
+                width = 1.dp,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
         startIcons?.invoke()
         Text(
             text = text,
@@ -405,10 +413,16 @@ fun ItemProfileTask(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = Black,
-            modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .weight(1f)
+            modifier = Modifier.weight(1f) // Removed horizontal padding
         )
+        additionalIcon?.let {
+            Icon(
+                painter = it,
+                contentDescription = "Soon",
+                tint = Color.Red,
+                modifier = Modifier.size(20.dp)
+            )
+        }
         endIcon?.invoke()
     }
 }
@@ -721,11 +735,13 @@ fun SearchRow(
                 }
         ) {
             changeFilter?.let {
-                Box(modifier = Modifier
-                    .size(14.dp)
-                    .clip(shape = CircleShape)
-                    .background(color = Color.Red)
-                    .align(Alignment.TopEnd)){
+                Box(
+                    modifier = Modifier
+                        .size(14.dp)
+                        .clip(shape = CircleShape)
+                        .background(color = Color.Red)
+                        .align(Alignment.TopEnd)
+                ) {
                     Text(
                         text = changeFilter,
                         color = White,

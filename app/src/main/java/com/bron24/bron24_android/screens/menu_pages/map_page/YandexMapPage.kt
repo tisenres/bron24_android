@@ -35,10 +35,6 @@ import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
-import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.screens.menu_pages.home_page.HomePage
-import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
-import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreenContent
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -93,6 +89,7 @@ fun YandexMapPageContent(
     var mapObjects by remember { mutableStateOf<MapObjectCollection?>(null) }
     val mapObjectListeners by remember { mutableStateOf<MutableMap<Point, MapObjectTapListener>>(mutableMapOf()) }
     var selectedMarker by remember { mutableStateOf<PlacemarkMapObject?>(null) }
+    val venueDetails = state.value.venueDetails
     val locationHasBeenChecked = remember { mutableStateOf(false) }
     val initDataLoaded = state.value.venueCoordinates.isNotEmpty() && state.value.userLocation != null
     val coroutineScope = rememberCoroutineScope()

@@ -2,8 +2,6 @@ package com.bron24.bron24_android.screens.booking.screens.finishbooking
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,9 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,10 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +34,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
-import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingInfoCard
 import com.bron24.bron24_android.screens.booking.screens.confirmbooking.ConfirmButton
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import java.text.SimpleDateFormat
@@ -67,74 +59,74 @@ fun BookingSuccessContent(
     BackHandler {
         intent.invoke(BookingSuccessContract.Intent.ClickMenu)
     }
-   LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 19.dp, vertical = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 19.dp, vertical = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 //            item { Spacer(modifier = Modifier.weight(1f)) }
 
-            item {
-                Image(
-                    painter = painterResource(id = R.drawable.success_booking),
-                    contentDescription = "Booking Success",
-                    modifier = Modifier
-                        .padding( bottom = 60.dp)
-                        .size(200.dp)
+        item {
+            Image(
+                painter = painterResource(id = R.drawable.success_booking),
+                contentDescription = "Booking Success",
+                modifier = Modifier
+                    .padding(bottom = 60.dp)
+                    .size(200.dp)
 
-                )
-            }
+            )
+        }
 
 //            Spacer(modifier = Modifier.height(45.dp))
 
-            item {
-                Text(
-                    text = "Success!",
+        item {
+            Text(
+                text = "Success!",
+                color = Color(0xFF3C2E56),
+                style = TextStyle(
+                    fontFamily = gilroyFontFamily,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 30.sp,
                     color = Color(0xFF3C2E56),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 30.sp,
-                        color = Color(0xFF3C2E56),
-                        lineHeight = 40.sp,
-                    ),
-                    modifier = Modifier.padding(bottom = 40.dp)
-                )
-            }
+                    lineHeight = 40.sp,
+                ),
+                modifier = Modifier.padding(bottom = 40.dp)
+            )
+        }
 
 //            Spacer(modifier = Modifier.height(27.dp))
 
-            item {
-                BookingInfoCard(info.value) {
+        item {
+            BookingInfoCard(info.value) {
 
-                }
             }
+        }
 
 
 //            Spacer(modifier = Modifier.weight(1f))
 
-            item {
-                ConfirmButton(
-                    isEnabled = true,
-                    title = "My orders",
-                    onClick = {
-                        intent.invoke(BookingSuccessContract.Intent.ClickOrder)
-                    }
-                )
-            }
+        item {
+            ConfirmButton(
+                isEnabled = true,
+                title = "My orders",
+                onClick = {
+                    intent.invoke(BookingSuccessContract.Intent.ClickOrder)
+                }
+            )
+        }
 //            Spacer(modifier = Modifier.height(3.dp))
 
-            item {
-                MainPageButton(
-                    isEnabled = true,
-                    title = "Main page",
-                    onClick = {
-                        intent.invoke(BookingSuccessContract.Intent.ClickMenu)
-                    }
-                )
-            }
+        item {
+            MainPageButton(
+                isEnabled = true,
+                title = "Main page",
+                onClick = {
+                    intent.invoke(BookingSuccessContract.Intent.ClickMenu)
+                }
+            )
         }
+    }
 
 }
 
@@ -221,27 +213,27 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
                         )
                     }
                 }
-
             }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color.White)
-                    .clickable {
-                        onMapClick
-                    }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_map_cute),
-                    contentDescription = "map_icon",
-                    colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp)
-                )
-            }
+            // Small Map Button which navigates to the YandexMapPage
+//            Box(
+//                modifier = Modifier
+//                    .align(Alignment.CenterEnd)
+//                    .size(44.dp)
+//                    .clip(RoundedCornerShape(10.dp))
+//                    .background(Color.White)
+//                    .clickable {
+//                        onMapClick
+//                    }
+//            ) {
+//                Image(
+//                    painter = painterResource(id = R.drawable.ic_map_cute),
+//                    contentDescription = "map_icon",
+//                    colorFilter = ColorFilter.tint(Color(0xFF3DDA7E)),
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .padding(10.dp)
+//                )
+//            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.bron24.bron24_android.screens.menu_pages.map_page
+package com.bron24.bron24_android.helper.util
 
 import android.content.Context
 import android.graphics.Bitmap

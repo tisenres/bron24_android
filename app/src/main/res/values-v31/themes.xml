@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.App.Starting" parent="Theme.Bron24_android">
+    <style name="Theme.Bron24_android" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowSplashScreenBackground">@color/transparent</item>
         <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
         <item name="android:windowSplashScreenAnimationDuration">0</item>

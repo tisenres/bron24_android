@@ -50,6 +50,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -231,7 +232,9 @@ fun ProfilePageContent(
                     isClickable = false
                 }
             }
-            ItemProfileTask(text = stringResource(id = R.string.favorites), startIcons = {
+            ItemProfileTask(text = stringResource(id = R.string.favorites),
+                additionalIcon = painterResource(R.drawable.baseline_access_time_filled_24),
+                startIcons = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_favorite),
                     contentDescription = "icon",
@@ -396,4 +399,15 @@ fun ProfilePageContent(
     }
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(Color.White, darkIcons = true)
+}
+
+@Preview
+@Composable
+fun Preview() {
+    Icon(
+        painter = painterResource(R.drawable.baseline_access_time_filled_24),
+        contentDescription = "Soon",
+        tint = Color.Red,
+        modifier = Modifier.size(40.dp)
+    )
 }
