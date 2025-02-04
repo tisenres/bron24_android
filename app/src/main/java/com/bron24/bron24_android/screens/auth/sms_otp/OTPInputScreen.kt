@@ -169,7 +169,7 @@ fun OTPInputScreenContent(
             Text(
                 text = stringResource(id = R.string.enter_otp_code) +
                         "\n" +
-                        phoneNumber.formatPhoneNumber(),
+                        phoneNumber.substring(1).formatPhoneNumber(),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Normal,
@@ -315,7 +315,17 @@ fun OTPTextField(
 ) {
     BasicTextField(
         value = otp,
-        onValueChange = onOtpChange,
+        onValueChange = { newInput ->
+            if (newInput.length <= 4) {
+                // Append only if the new input starts with the current otp
+                if (newInput.startsWith(otp)) {
+                    onOtpChange(newInput)
+                } else if (newInput.length < otp.length) {
+                    // Allow deletion (from the end) only
+                    onOtpChange(newInput)
+                }
+            }
+        },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.NumberPassword,
             imeAction = ImeAction.Done
