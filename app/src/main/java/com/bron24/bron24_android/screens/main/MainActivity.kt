@@ -73,7 +73,6 @@ class MainActivity : ComponentActivity() {
     lateinit var navigationHandler: NavigationHandler
 
     private lateinit var navController: NavHostController
-////    private lateinit var networkConnection: NetworkConnection
 
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,25 +115,7 @@ class MainActivity : ComponentActivity() {
                 localStorage.openMenu = false
                 activity.finish()
             }
-
-//            CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
-//                Bron24_androidTheme(darkTheme = false) {
-//                    val mainViewModel: MainViewModel = hiltViewModel()
-//                    OnboardingNavHost(navController = navController, mainViewModel = mainViewModel)
-//
-//
-////                    NetworkErrorToastHandler(networkConnection)
-//                }
-//            }
-
-//            networkConnection.observe(this) { isConnected ->
-//                if (!isConnected) {
-//                    Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
-//                }
-//            }
         }
-        // Observe Global Auth Events
-        observeAuthEvents()
     }
 
     override fun onStart() {
@@ -161,26 +142,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    private fun observeAuthEvents() {
-        lifecycleScope.launch {
-            GlobalAuthEventBus.authEvents.collect { event ->
-                when (event) {
-                    is AuthEvent.TokenRefreshFailed -> handleTokenRefreshFailure()
-                }
-            }
-        }
-    }
-
-    private fun handleTokenRefreshFailure() {
-        Log.d("MainActivity", "Token refresh failed, navigating to login")
-        runOnUiThread {
-//            navController.navigate(Screen.PhoneNumberInput.route) {
-//                popUpTo(navController.graph.startDestinationId) { inclusive = true }
-//            }
-        }
-    }
-
 
     private val requestNotificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->

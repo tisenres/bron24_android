@@ -1,5 +1,6 @@
 package com.bron24.bron24_android.data.repository
 
+import android.util.Log
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.data.local.db.FavouriteDao
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
@@ -10,6 +11,7 @@ import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.domain.repository.VenueRepository
+import com.bron24.bron24_android.helper.util.formatDateDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -83,7 +85,6 @@ class VenueRepositoryImpl @Inject constructor(
 
     override suspend fun getVenueByFilter(latitude: Double?, longitude: Double?, filterOptions: FilterOptions): List<Venue> =
         withContext(Dispatchers.IO) {
-            try {
                 val res = apiService.getVenueByFilter(
                     latitude = latitude,
                     longitude = longitude,
@@ -94,14 +95,11 @@ class VenueRepositoryImpl @Inject constructor(
                     room = filterOptions.selRoom,
                     shower = filterOptions.selShower,
                     parking = filterOptions.selParking,
-                    date = filterOptions.selectedDate.ifEmpty { null },
+                    date = filterOptions.selectedDate.formatDateDto().ifEmpty { null },
                     startTime = filterOptions.startTime,
                     endTime = filterOptions.endTime
                 )
                 res.data.map { it.toDomainModel() }
-            } catch (e: Exception) {
-                emptyList()
-            }
         }
 
     override fun addFavourite(favourite: Favourite): Flow<Result<Unit>> = flow {

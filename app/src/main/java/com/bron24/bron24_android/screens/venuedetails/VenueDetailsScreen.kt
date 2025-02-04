@@ -96,18 +96,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.components.items.LoadingPlaceholder
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
+import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
-import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
+import com.bron24.bron24_android.screens.util.hiltScreenModel
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -116,6 +119,7 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
+import org.orbitmvi.orbit.compose.collectAsState
 
 data class VenueDetailsScreen(val venueId: Int) : Screen {
     @Composable
@@ -128,7 +132,7 @@ data class VenueDetailsScreen(val venueId: Int) : Screen {
 @Composable
 fun VenueDetailsScreenContent(
     state: State<VenueDetailsContract.UIState>,
-    back: () -> Unit,
+    back:()->Unit,
     intent: (VenueOrderInfo) -> Unit
 ) {
 //    val viewModel: VenueDetailsContract.ViewModel = hiltScreenModel()
@@ -157,7 +161,7 @@ fun VenueDetailsScreenContent(
 
     if (openOrder) {
         BookingBottomSheet(
-            venueId = state.value.venue?.venueId ?: 0,
+            venueId = state.value.venue?.venueId?:0,
             venueName = state.value.venue?.venueName ?: "",
             sectors = state.value.venue?.sectors ?: emptyList(),
             pricePerHour = state.value.venue?.pricePerHour ?: "",
@@ -432,10 +436,10 @@ private fun copyAddressToClipboard(context: Context, address: String?) {
     val clip = ClipData.newPlainText("Venue Address", address)
     clipboard?.setPrimaryClip(clip)
 
-//    ToastManager.showToast(
-//        "Address copied to clipboard",
-//        ToastType.SUCCESS
-//    )
+    ToastManager.showToast(
+        "Address copied to clipboard",
+        ToastType.SUCCESS
+    )
 }
 
 fun shareVenueDetails(context: Context, details: VenueDetails?) {
@@ -476,7 +480,7 @@ fun DescriptionSection(state: State<VenueDetailsContract.UIState>) {
         SectionTitle(state = state, text = stringResource(id = R.string.Additional_info))
         Spacer(modifier = Modifier.height(15.dp))
         Text(
-            text = state.value.venue?.description ?: "",
+            text = state.value.venue?.description?:"",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -579,11 +583,11 @@ fun VenueImage(imageUrl: String, page: Int) {
     var isLoading by remember {
         mutableStateOf(false)
     }
-    if (isLoading) {
+    if(isLoading){
         LoadingPlaceholder()
     }
     Image(
-        painter = rememberAsyncImagePainter(model = imageUrl, onLoading = { isLoading = true }, onSuccess = { isLoading = false }),
+        painter = rememberAsyncImagePainter(model = imageUrl, onLoading = { isLoading = true}, onSuccess = { isLoading = false}),
         contentDescription = "Venue Image $page",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
@@ -782,7 +786,7 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
     Column(modifier = Modifier.padding(bottom = 14.dp)) {
         AddressRow(details, onCopyAddressClick)
         //AvailableSlots(details)
-        if (details?.distance?.toInt() != 0) {
+        if(details?.distance?.toInt()!=0){
             DistanceRow(details)
         }
 
@@ -959,7 +963,7 @@ fun InfrastructureSection(state: State<VenueDetailsContract.UIState>) {
             showBottomSheet = true
         }
     }
-
+    
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -1067,7 +1071,7 @@ fun FacilitiesGrid(state: State<VenueDetailsContract.UIState>, onItemClick: (Str
                     onItemClick
                 )
                 InfrastructureItem(
-                    "${venue.workingHoursFrom.formatISODateTimeToHourString()} - ${venue.workingHoursTill.formatISODateTimeToHourString()}",
+                    "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
                     null,
                     R.drawable.baseline_access_time_filled_24,
                     onItemClick
@@ -1288,7 +1292,7 @@ fun MapSection(state: State<VenueDetailsContract.UIState>) {
                                     try {
                                         val venueLocation = Point(venue.latitude, venue.longitude)
                                         view.map.move(
-                                            CameraPosition(venueLocation, 14.0f, 0.0f, 0.0f),
+                                            CameraPosition(venueLocation, 15.0f, 0.0f, 0.0f),
                                             Animation(Animation.Type.SMOOTH, 0.3f),
                                             null
                                         )
@@ -1310,7 +1314,6 @@ fun MapSection(state: State<VenueDetailsContract.UIState>) {
 
                                         errorMessage = null
                                     } catch (e: Exception) {
-                                        Log.e("MapSection", "Error updating map: ${e.message}")
                                         errorMessage = "Error loading map: ${e.message}"
                                     }
                                 }
@@ -1443,7 +1446,7 @@ private fun MapDetails(details: VenueDetails?) {
             ),
         )
         Spacer(modifier = Modifier.height(4.dp))
-        if (details?.distance?.toInt() != 0) {
+        if(details?.distance?.toInt()!=0){
             DistanceInfo(
                 icon = R.drawable.mingcute_navigation_fill,
                 text = String.format("%.1f ${stringResource(id = R.string.km)} ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
@@ -1528,7 +1531,7 @@ fun PricingSection(
                     ),
                 )
             }
-            if (state.value.isLoading) {
+            if(state.value.isLoading){
                 Box(
                     modifier = Modifier
                         .width(157.dp)
@@ -1537,7 +1540,7 @@ fun PricingSection(
                         .shimmer()
                         .background(Color.Gray.copy(alpha = 0.2f))
                 )
-            } else {
+            }else{
                 Button(
                     onClick = onOrderClick,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),

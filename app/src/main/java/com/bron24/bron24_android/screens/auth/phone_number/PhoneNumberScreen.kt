@@ -75,7 +75,6 @@ class PhoneNumberScreen:Screen{
         val viewModel:PhoneNumberScreenContract.ViewModel = getViewModel<PhoneNumberScreenVM>()
         val uiState = viewModel.collectAsState()
         viewModel.collectSideEffect {
-            Log.d("AAA", "Content: ishladi side effect")
             ToastManager.showToast(
                     "Error: " + it.message,
                     ToastType.ERROR
@@ -97,58 +96,6 @@ fun PhoneNumberScreenContent(
         mutableStateOf("")
     }
 
-//    LaunchedEffect(authState) {
-//        when (authState) {
-//            is AuthState.Loading -> {
-//                isLoading = true
-//            }
-//
-//            is AuthState.OTPRequested -> {
-//                isLoading = false
-//                val status = (authState as AuthState.OTPRequested).status
-//                when (status) {
-//                    PhoneNumberResponseStatusCode.SUCCESS -> {
-//                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
-//                    }
-//
-//                    PhoneNumberResponseStatusCode.MANY_REQUESTS -> {
-//                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
-//                    }
-//
-//                    PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER -> {
-//                        ToastManager.showToast(
-//                            "Incorrect phone number. Please try again.",
-//                            ToastType.ERROR
-//                        )
-//                    }
-//
-//                    else -> {
-//                        // TODO: remove when fix otpreq 404 bug
-//                        onNavigateToOTPScreen(phoneNumber.slice(1 until phoneNumber.length))
-//
-//                        ToastManager.showToast(
-//                            "Failed to request OTP. Please try again later.",
-//                            ToastType.ERROR
-//                        )
-//                    }
-//                }
-//            }
-//
-//            is AuthState.Error -> {
-//                isLoading = false
-//                ToastManager.showToast(
-//                    "Error: " + (authState as AuthState.Error).message,
-//                    ToastType.ERROR
-//                )
-//
-//            }
-//
-//            else -> {
-//                isLoading = false
-//                // Handle other states if necessary
-//            }
-//        }
-//    }
 
     Box(
         modifier = Modifier

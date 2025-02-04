@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,30 +68,36 @@ import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.LoadingPlaceholder
+import com.bron24.bron24_android.components.items.VenueLoadingPlaceholder
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
+import com.bron24.bron24_android.screens.venuedetails.AddressAndPhoneSection
+import com.bron24.bron24_android.screens.venuedetails.ClickableIconButton
+import com.bron24.bron24_android.screens.venuedetails.DistanceRow
+import com.bron24.bron24_android.screens.venuedetails.InfoRow
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
+import com.bron24.bron24_android.screens.venuedetails.shareVenueDetails
+import com.google.android.material.color.utilities.MaterialDynamicColors.background
 import com.valentinilk.shimmer.shimmer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapVenueDetails(
-    venueDetails: VenueDetails,
+    state: State<VenueDetailsContract.UIState>,
     modifier: Modifier = Modifier,
-    onOrderPressed: () -> Unit,
+    onOrderPressed: (Int) -> Unit,
     onDismiss: () -> Unit,
-    imageUrls: List<String>
 ) {
     val context = LocalContext.current
     var isFavorite by remember { mutableStateOf(false) }
-    val isLoading by remember { derivedStateOf { false } }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
-        onDismissRequest = { onDismiss() },
+        onDismissRequest = { onDismiss.invoke() },
         sheetState = sheetState,
         scrimColor = Color.Black.copy(alpha = 0.32f),
         containerColor = Color.Transparent,
@@ -101,19 +109,18 @@ fun MapVenueDetails(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
         ) {
-            if (isLoading) {
+            if (state.value.isLoading) {
                 LoadingScreen(modifier)
             } else {
                 SmallImageSection(
-                    imageUrls = imageUrls,
-                    onShareClick = { shareVenueDetails(context, venueDetails) },
+                    imageUrls = state.value.imageUrls,
+                    onShareClick = { shareVenueDetails(context, state.value.venue) },
                     onFavoriteClick = { isFavorite = !isFavorite },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp)
                         .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                 )
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -121,15 +128,15 @@ fun MapVenueDetails(
                         .padding(top = 12.dp)
                 ) {
                     SmallDetailsContent(
-                        venueDetails = venueDetails,
+                        venueDetails = state.value.venue,
                         onFavoriteClick = { isFavorite = !isFavorite },
                         onCopyAddressClick = {
                             copyAddressToClipboard(
                                 context,
-                                venueDetails.address.addressName
+                                state.value.venue?.address?.addressName ?: ""
                             )
                         },
-                        onOrderPressed = onOrderPressed,
+                        onOrderPressed = { onOrderPressed.invoke(state.value.venue?.venueId ?: 0) },
                     )
                 }
             }
@@ -142,31 +149,38 @@ fun LoadingScreen(modifier: Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .height(340.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(Color.White)
-            .shimmer()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
                     .clip(RoundedCornerShape(8.dp))
+                    .shimmer()
                     .background(Color.LightGray)
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             Box(
                 modifier = Modifier
                     .width(200.dp)
-                    .height(24.dp)
+                    .height(20.dp)
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
                     .clip(RoundedCornerShape(4.dp))
+                    .shimmer()
+                    .background(Color.LightGray)
+            )
+            Box(
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(20.dp)
+                    .padding(horizontal = 16.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmer()
                     .background(Color.LightGray)
             )
 
@@ -174,16 +188,18 @@ fun LoadingScreen(modifier: Modifier) {
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(0.5f)
                     .height(16.dp)
+                    .padding(horizontal = 16.dp)
                     .clip(RoundedCornerShape(4.dp))
+                    .shimmer()
                     .background(Color.LightGray)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 repeat(5) {
@@ -191,6 +207,7 @@ fun LoadingScreen(modifier: Modifier) {
                         modifier = Modifier
                             .size(16.dp)
                             .clip(RoundedCornerShape(2.dp))
+                            .shimmer()
                             .background(Color.LightGray)
                     )
                 }
@@ -199,7 +216,7 @@ fun LoadingScreen(modifier: Modifier) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -208,6 +225,7 @@ fun LoadingScreen(modifier: Modifier) {
                         .width(100.dp)
                         .height(24.dp)
                         .clip(RoundedCornerShape(4.dp))
+                        .shimmer()
                         .background(Color.LightGray)
                 )
                 Box(
@@ -215,6 +233,7 @@ fun LoadingScreen(modifier: Modifier) {
                         .width(120.dp)
                         .height(40.dp)
                         .clip(RoundedCornerShape(8.dp))
+                        .shimmer()
                         .background(Color.LightGray)
                 )
             }

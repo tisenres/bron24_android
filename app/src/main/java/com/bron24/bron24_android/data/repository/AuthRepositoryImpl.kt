@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.data.repository
 
-import android.util.Log
 import androidx.compose.ui.input.key.Key.Companion.U
 import com.bron24.bron24_android.data.network.apiservices.AuthApi
 import com.bron24.bron24_android.data.network.mappers.toDomainEntity
@@ -77,7 +76,6 @@ class AuthRepositoryImpl @Inject constructor(
     private fun handleHttpExceptionPhone(e: HttpException): PhoneNumberResponse {
         return when (e.code()) {
             429 -> {
-                Log.d("AuthRepository", "429 error")
                 PhoneNumberResponse(PhoneNumberResponseStatusCode.MANY_REQUESTS)
             }
             400 -> PhoneNumberResponse(PhoneNumberResponseStatusCode.INCORRECT_PHONE_NUMBER)
@@ -98,7 +96,6 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun handleRefreshFailure() {
-        Log.e("AuthRepository", "handleRefreshFailure")
         tokenRepository.clearTokens()
         GlobalAuthEventBus.postEventBlocking(AuthEvent.TokenRefreshFailed)
     }
@@ -106,12 +103,10 @@ class AuthRepositoryImpl @Inject constructor(
     private fun handleHttpExceptionAuth(e: HttpException): AuthResponse {
         return when (e.code()) {
             401 -> {
-                Log.d("AuthRepository", "401 error")
                 handleRefreshFailure()
                 AuthResponse("", "", "", "")
             }
             else -> {
-                Log.d("AuthRepository", "Unexpected error: ${e.code()}")
                 AuthResponse("", "", "", "")
             }
         }

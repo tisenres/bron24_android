@@ -14,6 +14,7 @@ import com.google.android.play.integrity.internal.f
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import org.orbitmvi.orbit.viewmodel.container
@@ -41,7 +42,7 @@ class HomePageVM @Inject constructor(
             }
 
             HomePageContract.Intent.Refresh -> {
-                if(state.count.isEmpty()){
+                if (state.count.isEmpty()) {
                     getVenuesUseCase.invoke().onStart {
                         reduce { state.copy(isLoading = true, refresh = true, checkBack = false) }
                     }.onEach {
@@ -50,15 +51,17 @@ class HomePageVM @Inject constructor(
                         }.onFailure {
                             postSideEffect(it.message.toString())
                         }
-                    }.launchIn(screenModelScope)
+                    }.onCompletion { reduce { state.copy(isLoading = false) } }.launchIn(screenModelScope)
 
                     getSpecialOfferUseCase.invoke().onEach {
                         reduce { state.copy(specialOffers = it) }
                     }.launchIn(screenModelScope)
-                }else{
-                    getFilterUseCase.invoke(state.filterOptions?:FilterOptions()).onEach { state.copy(isLoading = true) }.onEach {
-                        reduce { state.copy(itemData = it, isLoading = false) }
-                    }.launchIn(screenModelScope)
+                } else {
+                    getFilterUseCase.invoke(state.filterOptions ?: FilterOptions()).onStart {
+                        reduce { state.copy(isLoading = true, refresh = true) }
+                    }.onEach {
+                        reduce { state.copy(itemData = it) }
+                    }.onCompletion { reduce { state.copy(isLoading = false, refresh = false) } }.launchIn(screenModelScope)
                 }
             }
 
@@ -99,32 +102,34 @@ class HomePageVM @Inject constructor(
 
             is HomePageContract.Intent.Filter -> {
                 var count = 0
-                if(intent.options.selShower||intent.options.selParking||intent.options.selRoom){
+                if (intent.options.selShower || intent.options.selParking || intent.options.selRoom) {
                     count++
                 }
-                if(intent.options.maxSumma<1000000||intent.options.minSumma>0){
+                if (intent.options.maxSumma < 1000000 || intent.options.minSumma > 0) {
                     count++
                 }
-                if(intent.options.selIndoor||intent.options.selOutdoor){
+                if (intent.options.selIndoor || intent.options.selOutdoor) {
                     count++
                 }
-                if(intent.options.startTime!="00:00"||intent.options.endTime!="00:00"){
+                if (intent.options.startTime != "00:00" || intent.options.endTime != "23:59") {
                     count++
                 }
-                if(intent.options.selectedDate.isNotEmpty()){
+                if (intent.options.selectedDate.isNotEmpty()) {
                     count++
                 }
-                if(intent.options.location.isNotEmpty()){
+                if (intent.options.location.isNotEmpty()) {
                     count++
                 }
-                if(count!=0){
-                    reduce { state.copy(count = count.toString(), filterOptions = intent.options, checkBack = true) }
+                getSpecialOfferUseCase.invoke().onEach {
+                    reduce { state.copy(specialOffers = it) }
+                }.launchIn(screenModelScope)
+                if (count != 0) {
+                    reduce { state.copy(count = count.toString(), filterOptions = intent.options, checkBack = true, isLoading = true) }
                     getFilterUseCase.invoke(intent.options).onEach {
-                        reduce { state.copy(itemData = it) }
-                    }.launchIn(screenModelScope)
-                }else{
-                    reduce { state.copy(filterOptions = FilterOptions(), checkBack = false) }
-                    reduce { state.copy(count = "") }
+                        reduce { state.copy(itemData = it, isLoading = false) }
+                    }.onCompletion {reduce { state.copy(isLoading = false) } }.launchIn(screenModelScope)
+                } else {
+                    reduce { state.copy(filterOptions = FilterOptions(), checkBack = false, count = "") }
                     result()
                 }
             }
