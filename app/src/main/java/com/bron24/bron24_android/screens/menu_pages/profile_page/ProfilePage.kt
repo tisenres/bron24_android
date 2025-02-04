@@ -233,7 +233,6 @@ fun ProfilePageContent(
                 }
             }
             ItemProfileTask(text = stringResource(id = R.string.favorites),
-                additionalIcon = painterResource(R.drawable.baseline_access_time_filled_24),
                 startIcons = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_favorite),

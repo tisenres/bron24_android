@@ -4,7 +4,6 @@ package com.bron24.bron24_android.components.items
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,7 +51,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -381,31 +379,24 @@ fun ItemEditProfile(
 @Composable
 fun ItemProfileTask(
     text: String,
-    modifier: Modifier = Modifier, // Use non-nullable Modifier with default
-    borderColor: Color = GrayLighter, // Avoid nullable + default
+    modifier: Modifier? = Modifier,
+    borderColor: Color? = null,
     index: Int = 0,
-    additionalIcon: Painter? = null,
-    paddingHor: Dp = 20.dp, // Non-nullable with default
+    paddingHor: Dp? = null,
     startIcons: @Composable (() -> Unit)? = null,
     endIcon: @Composable (() -> Unit)? = null,
     listener: () -> Unit
 ) {
-    Row(
-        modifier = modifier // Use the provided modifier
-            .padding(horizontal = paddingHor)
-            .padding(top = 16.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { listener() }
-            .border(
-                color = borderColor,
-                width = 1.dp,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
+    Row(modifier = Modifier
+        .padding(horizontal = paddingHor ?: 20.dp)
+        .padding(top = 16.dp)
+        .fillMaxWidth()
+        .clip(RoundedCornerShape(8.dp))
+        .clickable { listener() }
+        .border(
+            color = borderColor ?: GrayLighter, width = 1.dp, shape = RoundedCornerShape(8.dp)
+        )
+        .padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
         startIcons?.invoke()
         Text(
             text = text,
@@ -413,16 +404,10 @@ fun ItemProfileTask(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = Black,
-            modifier = Modifier.weight(1f) // Removed horizontal padding
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .weight(1f)
         )
-        additionalIcon?.let {
-            Icon(
-                painter = it,
-                contentDescription = "Soon",
-                tint = Color.Red,
-                modifier = Modifier.size(20.dp)
-            )
-        }
         endIcon?.invoke()
     }
 }
