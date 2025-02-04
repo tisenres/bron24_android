@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -96,21 +95,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.components.items.LoadingPlaceholder
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
-import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
-import com.bron24.bron24_android.screens.util.hiltScreenModel
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -119,7 +115,6 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
-import org.orbitmvi.orbit.compose.collectAsState
 
 data class VenueDetailsScreen(val venueId: Int) : Screen {
     @Composable
@@ -1071,7 +1066,7 @@ fun FacilitiesGrid(state: State<VenueDetailsContract.UIState>, onItemClick: (Str
                     onItemClick
                 )
                 InfrastructureItem(
-                    "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
+                    "${venue.workingHoursFrom.formatISODateTimeToHourString()} - ${venue.workingHoursTill.formatISODateTimeToHourString()}",
                     null,
                     R.drawable.baseline_access_time_filled_24,
                     onItemClick

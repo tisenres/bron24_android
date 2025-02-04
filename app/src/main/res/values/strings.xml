@@ -47,14 +47,14 @@
     <string name="get_started">Let\'s go</string>
     <string name="sort_by">Sort by</string>
     <string name="filter">Filter</string>
-    <string name="recommendations">Recommend</string>
+    <string name="recommendations">Recommend for you</string>
     <string name="confirm">Confirm</string>
     <string name="search_result">Search result</string>
     <string name="som">som</string>
     <string name="not_found">Not found!</string>
     <string name="players">players</string>
     <string name="Open_in_maps">Open in Maps</string>
-    <string name="Additional_info">Additional info</string>
+    <string name="Additional_info">About</string>
     <string name="unknown_field">Unknown field</string>
     <string name="see_all_reviews">See all reviews</string>
     <string name="facilities">Facilities</string>
