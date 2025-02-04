@@ -1,9 +1,11 @@
 package com.bron24.bron24_android.screens.venuelisting
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -31,16 +34,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bron24.bron24_android.R
+import com.bron24.bron24_android.components.items.AppButton
 import com.bron24.bron24_android.components.items.VenueItem
 import com.bron24.bron24_android.components.items.VenueLoadingPlaceholder
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.screens.adssection.SpecialOfferCarousel
+import com.bron24.bron24_android.screens.main.theme.GrayLight
+import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import com.valentinilk.shimmer.shimmer
@@ -84,63 +91,91 @@ fun VenueListingView(
             )
         }
     ) {
-        LazyColumn(
-            state = listState,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            item(key = "ads") {
-                if (state.value.isLoading) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .shimmer()
-                            .background(Color.Gray.copy(alpha = 0.2f))
-                    )
-                } else {
-                    SpecialOfferCarousel(uiState = state)
+        if (state.value.itemData.isEmpty()&&!state.value.isLoading){
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.not_found),
+                    contentDescription = "icon",
+                    modifier = Modifier.size(100.dp)
+                )
+                Text(
+                    text = "Not found!",
+                    fontSize = 16.sp,
+                    fontFamily = gilroyFontFamily,
+                    color = GrayLight,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(top = 20.dp)
+                )
+
+                AppButton(text = "Restart", modifier = Modifier.padding(top = 40.dp).fillMaxWidth(0.6f)) {
+                    refreshVenue.invoke()
                 }
+            }
+        }else{
+            LazyColumn(
+                state = listState,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item(key = "ads") {
+                    if (state.value.isLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .shimmer()
+                                .background(Color.Gray.copy(alpha = 0.2f))
+                        )
+                    } else {
+                        SpecialOfferCarousel(uiState = state)
+                    }
 
 //                AdsSection(imageUrls = state.value.offers.map { it.image })
-            }
-            item(key = "title") {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.recommendations),
-                        style = TextStyle(
-                            fontFamily = interFontFamily,
-                            fontWeight = FontWeight(600),
-                            fontSize = 20.sp,
-                            lineHeight = 24.sp,
-                            color = Color.Black
-                        ),
-                        modifier = Modifier.weight(1f)
-                    )
+                }
+                item(key = "title") {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.recommendations),
+                            style = TextStyle(
+                                fontFamily = interFontFamily,
+                                fontWeight = FontWeight(600),
+                                fontSize = 20.sp,
+                                lineHeight = 24.sp,
+                                color = Color.Black
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
 //                    SortRow(
 //                        onSortClick = { sortExpanded = true }
 //                    )
+                    }
                 }
-            }
-            if (state.value.isLoading) {
-                items(5) {
-                    VenueLoadingPlaceholder()
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            } else {
-                items(state.value.itemData) { venue ->
-                    VenueItem(venue = venue, onFavoritesClick = listenerItem)
-                    Spacer(modifier = Modifier.height(10.dp))
+                if (state.value.isLoading) {
+                    items(5) {
+                        VenueLoadingPlaceholder()
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                } else {
+                    items(state.value.itemData) { venue ->
+                        VenueItem(venue = venue, onFavoritesClick = listenerItem)
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
                 }
             }
         }
+
     }
 }
 
