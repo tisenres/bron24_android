@@ -119,7 +119,7 @@ fun VenueListingView(
         }else{
             LazyColumn(
                 state = listState,
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 10.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
                 item(key = "ads") {
@@ -132,34 +132,45 @@ fun VenueListingView(
                                 .shimmer()
                                 .background(Color.Gray.copy(alpha = 0.2f))
                         )
-                    } else {
+                    } else if(state.value.specialOffers.isNotEmpty()){
                         SpecialOfferCarousel(uiState = state)
                     }
-
 //                AdsSection(imageUrls = state.value.offers.map { it.image })
                 }
                 item(key = "title") {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.recommendations),
-                            style = TextStyle(
-                                fontFamily = interFontFamily,
-                                fontWeight = FontWeight(600),
-                                fontSize = 20.sp,
-                                lineHeight = 24.sp,
-                                color = Color.Black
-                            ),
-                            modifier = Modifier.weight(1f)
+                    if(state.value.isLoading){
+                        Box(
+                            modifier = Modifier
+                                .padding(vertical = 10.dp)
+                                .fillMaxWidth(0.5f)
+                                .height(20.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .shimmer()
+                                .background(Color.Gray.copy(alpha = 0.2f))
                         )
+                    }else{
+                        Row(
+                            modifier = Modifier
+                                .padding(bottom = 12.dp, top = 4.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.recommendations),
+                                style = TextStyle(
+                                    fontFamily = interFontFamily,
+                                    fontWeight = FontWeight(600),
+                                    fontSize = 20.sp,
+                                    lineHeight = 24.sp,
+                                    color = Color.Black
+                                ),
+                                modifier = Modifier.weight(1f)
+                            )
 //                    SortRow(
 //                        onSortClick = { sortExpanded = true }
 //                    )
+                        }
                     }
                 }
                 if (state.value.isLoading) {
