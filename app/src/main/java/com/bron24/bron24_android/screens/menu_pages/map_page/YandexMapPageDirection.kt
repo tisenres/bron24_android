@@ -1,7 +1,9 @@
 package com.bron24.bron24_android.screens.menu_pages.map_page
 
-import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.navigator.AppNavigator
+import com.bron24.bron24_android.screens.booking.screens.confirmbooking.BookingConfirmationScreen
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreen
 import javax.inject.Inject
 
 class YandexMapPageDirection @Inject constructor(
@@ -11,7 +13,7 @@ class YandexMapPageDirection @Inject constructor(
         appNavigator.back()
     }
 
-    override suspend fun moveToInfo(venueDetails: VenueDetails) {
-        //appNavigator.push
+    override suspend fun moveToBooking(info: VenueOrderInfo) {
+        appNavigator.push(BookingConfirmationScreen(info))
     }
 }

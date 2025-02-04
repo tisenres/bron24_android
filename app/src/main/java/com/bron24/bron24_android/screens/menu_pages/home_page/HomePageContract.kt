@@ -43,7 +43,7 @@ interface HomePageContract {
         val rangeTime: ClosedFloatingPointRange<Float> = 0.0f..1f,
         val rangeSumma: ClosedFloatingPointRange<Float> = 0.0f..1f,
         val startTime: String = "00:00",
-        val endTime: String = "00:00",
+        val endTime: String = "23:59",
         val minSumma: Int = 0,
         val maxSumma: Int = 1000000,
         val location: String = "",

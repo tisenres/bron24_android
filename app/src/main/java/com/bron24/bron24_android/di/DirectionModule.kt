@@ -16,6 +16,8 @@ import com.bron24.bron24_android.screens.location.LocationScreenContract
 import com.bron24.bron24_android.screens.location.LocationScreenDirection
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageDirection
+import com.bron24.bron24_android.screens.menu_pages.map_page.YandexMapPageContract
+import com.bron24.bron24_android.screens.menu_pages.map_page.YandexMapPageDirection
 import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPageContract
 import com.bron24.bron24_android.screens.menu_pages.orders_page.OrdersPageDirection
 import com.bron24.bron24_android.screens.menu_pages.profile_page.ProfilePageContract
@@ -53,58 +55,61 @@ class DirectionModule {
     @[Provides Singleton]
     fun bindsLanguageSelDirection(impl: LanguageSelDirection): LanguageSelContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsOnBoardDirection(impl: OnBoardPagerDirection): OnBoardPagerContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsPhoneNumberDirection(impl: PhoneNumberScreenDirection): PhoneNumberScreenContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsOTPInputDirection(impl: OTPInputScreenDirection): OTPInputContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsSplashDirection(impl: SplashScreenDirection): SplashScreenContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsMenuScreenDirection(impl: MenuScreenDirection): MenuScreenContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsHomePageDirection(impl: HomePageDirection): HomePageContract.Direction = impl
 
-    @[Provides  Singleton]
-    fun bindsFilterDirection(impl: FilterScreenDirection): FilterScreenContract.Direction =impl
+    @[Provides Singleton]
+    fun bindsFilterDirection(impl: FilterScreenDirection): FilterScreenContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsRegisterDirection(impl: RegisterScreenDirection): RegisterScreenContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsProfilePageDirection(impl: ProfilePageDirection): ProfilePageContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsLanguageDirection(impl: LanguageDirection): LanguageContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsLocationDirection(impl: LocationScreenDirection): LocationScreenContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsSearchDirection(impl: SearchScreenDirection): SearchScreenContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsOrderPageDirection(impl: OrdersPageDirection): OrdersPageContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsVenueDetailsDirection(impl: VenueDetailsDirection): VenueDetailsContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsBookingConfirmDirection(impl: BookingConfirmationDirection): BookingConfirmationContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsBookingSuccessDirection(impl: BookingSuccessDirection): BookingSuccessContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsEditProfileDirection(impl: EditProfileDirection): EditProfileContract.Direction = impl
 
-    @[Provides  Singleton]
+    @[Provides Singleton]
     fun bindsOrderDetailsDirection(impl: OrderDetailsDirection): OrderDetailsContact.Direction = impl
+
+    @[Provides Singleton]
+    fun bindsYandexMapDirection(impl: YandexMapPageDirection): YandexMapPageContract.Direction = impl
 
 }

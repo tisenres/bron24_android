@@ -151,7 +151,6 @@ fun OrderDetailMap(state: State<OrderDetailsContact.UIState>, modifier: Modifier
 
                                         errorMessage = null
                                     } catch (e: Exception) {
-                                        Log.e("MapSection", "Error updating map: ${e.message}")
                                         errorMessage = "Error loading map: ${e.message}"
                                     }
                                 }

@@ -16,6 +16,13 @@ fun formatTime(sliderValue: Float): String {
     val minutes = (selectedInterval * 30) % 60
     return String.format("%02d:%02d", hours, minutes)
 }
+fun String.formatDateDto(): String {
+    val inputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+    val date = inputFormat.parse(this) ?: return ""
+    return outputFormat.format(date)
+}
 
 fun formatMoney(sliderValue: Float): Int {
     val realValue = (sliderValue * 1_000_000).toInt()

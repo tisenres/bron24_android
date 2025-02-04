@@ -158,7 +158,7 @@ fun ProfilePageContent(
                 Image(
                     painter = painterResource(id = R.drawable.avatar),
                     contentDescription = "icon",
-                    modifier = Modifier.align(Alignment.BottomStart),
+                    modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth(),
                     contentScale = ContentScale.Crop,
                 )
                 Column(

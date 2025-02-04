@@ -57,7 +57,6 @@ class BookingRepositoryImpl @Inject constructor(
             timeSlot = formattedTimeSlots
         )
         val response = bookingApiService.startBooking(bookingRequest)
-        Log.d("AAA", "createBooking: $response")
         return booking.copy(
             venueName = response.data.venue?.venueName,
             venueAddress = response.data.venue?.venueAddress,
