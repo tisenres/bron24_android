@@ -1,7 +1,9 @@
 package com.bron24.bron24_android.screens.menu_pages.map_page
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -25,6 +27,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
@@ -32,6 +35,10 @@ import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
+import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.screens.menu_pages.home_page.HomePage
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreenContent
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -72,23 +79,26 @@ object YandexMapPage : Tab {
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun YandexMapPageContent(
     state: State<YandexMapPageContract.UIState>,
     intent: (YandexMapPageContract.Intent) -> Unit,
 ) {
+    var openDetails by remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
     var mapObjects by remember { mutableStateOf<MapObjectCollection?>(null) }
     val mapObjectListeners by remember { mutableStateOf<MutableMap<Point, MapObjectTapListener>>(mutableMapOf()) }
     var selectedMarker by remember { mutableStateOf<PlacemarkMapObject?>(null) }
-    val venueDetails = state.value.venueDetails
     val locationHasBeenChecked = remember { mutableStateOf(false) }
     val initDataLoaded = state.value.venueCoordinates.isNotEmpty() && state.value.userLocation != null
     val coroutineScope = rememberCoroutineScope()
 
-    val shouldShowBottomSheet = remember(state.value.isLoading, state.value.venueDetails) {
-        !state.value.isLoading && state.value.venueDetails != null
+    var shouldShowBottomSheet by remember {
+        mutableStateOf(false)
     }
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
@@ -109,42 +119,59 @@ fun YandexMapPageContent(
     val userLocation = state.value.userLocation.let {
         Point(it?.latitude ?: 41.311198, it?.longitude ?: 69.279746)
     }
+    val tab = LocalTabNavigator.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        AndroidView(
-            factory = { context ->
-                MapView(context).also { view ->
-                    mapView = view
-                    mapObjects = view.map.mapObjects
-
-                    view.map.isZoomGesturesEnabled = true
-                    view.map.isRotateGesturesEnabled = true
-                    view.map.isTiltGesturesEnabled = true
-                    view.map.isScrollGesturesEnabled = true
-
-                    view.map.move(
-                        CameraPosition(userLocation, 15f, 0f, 0f)
-                    )
-                }
-            },
-            modifier = Modifier.fillMaxSize()
-        )
-
-        ZoomControls(
-            modifier = Modifier.align(Alignment.TopEnd),
-            mapView = mapView,
-            userLocation = userLocation
-        )
+    BackHandler {
+        tab.current = HomePage
     }
+    if(openDetails){
+        val states= mutableStateOf(VenueDetailsContract.UIState(state.value.isLoading, venue = state.value.venueDetails, imageUrls = state.value.imageUrls))
+        VenueDetailsScreenContent(state = states, back = {
+            openDetails = false
+            tab.current = HomePage
+        }) {
+            intent.invoke(YandexMapPageContract.Intent.ClickOrder(it))
+        }
+    }else{
+        Box(modifier = Modifier.fillMaxSize()) {
+            AndroidView(
+                factory = { context ->
+                    MapView(context).also { view ->
+                        mapView = view
+                        mapObjects = view.map.mapObjects
 
+                        view.map.isZoomGesturesEnabled = true
+                        view.map.isRotateGesturesEnabled = true
+                        view.map.isTiltGesturesEnabled = true
+                        view.map.isScrollGesturesEnabled = true
+
+                        view.map.move(
+                            CameraPosition(userLocation, 15f, 0f, 0f)
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+
+            ZoomControls(
+                modifier = Modifier.align(Alignment.TopEnd),
+                mapView = mapView,
+                userLocation = userLocation
+            )
+        }
+    }
     if (shouldShowBottomSheet) {
+        val states= mutableStateOf(VenueDetailsContract.UIState(state.value.isLoadingDetails, venue = state.value.venueDetails, imageUrls = state.value.imageUrls))
         MapVenueDetails(
-            venueDetails = venueDetails!!,
+            state = states,
             modifier = Modifier,
             onOrderPressed = {
-                intent.invoke(YandexMapPageContract.Intent.ClickVenueBook(venueDetails = venueDetails))
+                openDetails = true
+                shouldShowBottomSheet = false
+                intent.invoke(YandexMapPageContract.Intent.ClickVenueBook(it))
             },
             onDismiss = {
+                shouldShowBottomSheet = false
                 selectedMarker?.let { marker ->
                     intent.invoke(YandexMapPageContract.Intent.DismissVenueDetails)
                     coroutineScope.launch {
@@ -153,7 +180,6 @@ fun YandexMapPageContent(
                     selectedMarker = null
                 }
             },
-            imageUrls = state.value.imageUrls
         )
     }
 
@@ -168,7 +194,6 @@ fun YandexMapPageContent(
     LaunchedEffect(initDataLoaded) {
         if (initDataLoaded) {
             mapObjects?.let { objects ->
-
                 // Move camera to the location
                 userLocation.let { location ->
                     mapView?.map?.move(
@@ -193,6 +218,7 @@ fun YandexMapPageContent(
                         intent,
                         mapObjectListeners,
                         onMarkerSelected = { newSelectedMarker ->
+                            shouldShowBottomSheet = true
                             selectedMarker?.let { updateMarkerAppearance(it, context, false) }
                             selectedMarker = newSelectedMarker
                             updateMarkerAppearance(newSelectedMarker, context, true)
