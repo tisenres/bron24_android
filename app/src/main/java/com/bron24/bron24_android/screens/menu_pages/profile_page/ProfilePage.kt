@@ -142,7 +142,7 @@ fun ProfilePageContent(
                 }
             }
         }) {
-            
+
         }
 
         Column(
@@ -156,9 +156,11 @@ fun ProfilePageContent(
                     .height(280.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.avatar),
+                    painter = painterResource(id = R.drawable.green_form),
                     contentDescription = "icon",
-                    modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth(),
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .fillMaxWidth(),
                     contentScale = ContentScale.Crop,
                 )
                 Column(
@@ -234,14 +236,14 @@ fun ProfilePageContent(
             }
             ItemProfileTask(text = stringResource(id = R.string.favorites),
                 startIcons = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_favorite),
-                    contentDescription = "icon",
-                    modifier = Modifier.size(20.dp)
-                )
-            }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_favorite),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }) {
                 if (isClickable) {
-                    ToastManager.showToast("Qilinmoqda",ToastType.INFO)
+                    ToastManager.showToast("Qilinmoqda", ToastType.INFO)
                     isClickable = false
                 }
             }
@@ -383,7 +385,7 @@ fun ProfilePageContent(
                         )
                     }
                 ) {
-                    openDialer(context,"998883410807".formatPhoneNumber())
+                    openDialer(context, "998883410807".formatPhoneNumber())
                 }
             }
         }

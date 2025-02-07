@@ -23,16 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Scale
-import com.bron24.bron24_android.components.items.LoadingScreen
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.delay
@@ -66,7 +60,7 @@ fun SpecialOfferCarousel(
         state = pagerState,
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(170.dp)
             .clip(RoundedCornerShape(10.dp)),
         pageSpacing = 20.dp
     ) {
@@ -76,8 +70,6 @@ fun SpecialOfferCarousel(
 
 @Composable
 fun OfferImage(imageRes: String) {
-
-    val context = LocalContext.current
 
     Box(
         modifier = Modifier

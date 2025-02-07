@@ -64,7 +64,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -688,7 +687,7 @@ fun ConfirmButton(
         Text(
             text = title,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Medium,
             fontFamily = gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
             lineHeight = 32.sp
@@ -816,7 +815,7 @@ fun AddCardOption() {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = "Add card (not available)", style = TextStyle(
+                text = stringResource(R.string.pay_by_card), style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,

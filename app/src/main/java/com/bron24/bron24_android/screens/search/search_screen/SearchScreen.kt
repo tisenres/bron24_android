@@ -44,6 +44,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -103,7 +104,7 @@ fun SearchScreenContent(
             }
         )
         Text(
-            text = "Search result",
+            text = stringResource(R.string.search_here),
             modifier = Modifier.padding(start = 16.dp),
             fontSize = 20.sp,
             fontFamily = gilroyFontFamily,
@@ -123,7 +124,7 @@ fun SearchScreenContent(
                     modifier = Modifier.size(100.dp)
                 )
                 Text(
-                    text = "Not found!",
+                    text = stringResource(R.string.not_found),
                     fontSize = 14.sp,
                     fontFamily = gilroyFontFamily,
                     color = GrayLight,
@@ -180,7 +181,7 @@ private fun SearchBarSection(
             colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF32B768))
         ) {
             Text(
-                "Cancel",
+                stringResource(R.string.cancel),
                 fontSize = 14.sp,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Medium
@@ -245,7 +246,7 @@ private fun CustomSearchField(
                 decorationBox = { innerTextField ->
                     if (query.isEmpty()) {
                         Text(
-                            text = "Search here...",
+                            text = stringResource(R.string.search_here),
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontFamily = gilroyFontFamily,

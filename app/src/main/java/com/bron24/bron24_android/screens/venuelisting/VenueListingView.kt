@@ -91,7 +91,7 @@ fun VenueListingView(
             )
         }
     ) {
-        if (state.value.itemData.isEmpty()&&!state.value.isLoading){
+        if (state.value.itemData.isEmpty() && !state.value.isLoading) {
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -112,11 +112,13 @@ fun VenueListingView(
                     modifier = Modifier.padding(top = 20.dp)
                 )
 
-                AppButton(text = "Restart", modifier = Modifier.padding(top = 40.dp).fillMaxWidth(0.6f)) {
+                AppButton(text = "Restart", modifier = Modifier
+                    .padding(top = 40.dp)
+                    .fillMaxWidth(0.6f)) {
                     refreshVenue.invoke()
                 }
             }
-        }else{
+        } else {
             LazyColumn(
                 state = listState,
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 10.dp),
@@ -127,31 +129,31 @@ fun VenueListingView(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp)
+                                .height(170.dp)
                                 .clip(RoundedCornerShape(8.dp))
                                 .shimmer()
                                 .background(Color.Gray.copy(alpha = 0.2f))
                         )
-                    } else if(state.value.specialOffers.isNotEmpty()){
+                    } else if (state.value.specialOffers.isNotEmpty()) {
                         SpecialOfferCarousel(uiState = state)
                     }
 //                AdsSection(imageUrls = state.value.offers.map { it.image })
                 }
                 item(key = "title") {
-                    if(state.value.isLoading){
+                    if (state.value.isLoading) {
                         Box(
                             modifier = Modifier
-                                .padding(vertical = 10.dp)
+                                .padding(vertical = 16.dp)
                                 .fillMaxWidth(0.5f)
                                 .height(20.dp)
                                 .clip(RoundedCornerShape(4.dp))
                                 .shimmer()
                                 .background(Color.Gray.copy(alpha = 0.2f))
                         )
-                    }else{
+                    } else {
                         Row(
                             modifier = Modifier
-                                .padding(bottom = 12.dp, top = 4.dp)
+                                .padding(bottom = 16.dp, top = 16.dp)
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
@@ -161,7 +163,7 @@ fun VenueListingView(
                                 style = TextStyle(
                                     fontFamily = interFontFamily,
                                     fontWeight = FontWeight(600),
-                                    fontSize = 20.sp,
+                                    fontSize = 22.sp,
                                     lineHeight = 24.sp,
                                     color = Color.Black
                                 ),

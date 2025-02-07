@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.menu_pages.orders_page
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -20,7 +18,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -160,7 +157,7 @@ fun OrdersPageContent(
         if (state.value.isLoading) {
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(contentPadding = PaddingValues(vertical = 24.dp)) {
-                    items(5){
+                    items(5) {
                         VenueLoadingPlaceholder()
                     }
                 }
@@ -206,30 +203,30 @@ fun OrdersPageContent(
 fun OrdersList(
     stateUi: State<OrdersPageContract.UIState>,
     state: LazyListState,
-    clickBooking:()->Unit,
-    refresh:Boolean,
+    clickBooking: () -> Unit,
+    refresh: Boolean,
     onClick: (order: Order) -> Unit,
 ) {
-    if(stateUi.value.selected==OrdersType.UPCOMING){
-        if (stateUi.value.inProcess.isEmpty()){
-            EmptyOrdersList{
+    if (stateUi.value.selected == OrdersType.UPCOMING) {
+        if (stateUi.value.inProcess.isEmpty()) {
+            EmptyOrdersList {
                 clickBooking.invoke()
             }
-        }else{
+        } else {
             LazyColumn(state = state, verticalArrangement = Arrangement.spacedBy(16.dp), contentPadding = PaddingValues(vertical = 24.dp)) {
                 if (stateUi.value.inProcess.isEmpty()) {
                     item {
 
                     }
-                }else{
-                    if(!refresh)
+                } else {
+                    if (!refresh)
                         items(stateUi.value.inProcess) { order ->
                             OrderCard(
                                 order = order, modifier = Modifier.fillMaxSize(),
                                 onClick = { onClick(order) })
                         }
-                    else{
-                        items(5){
+                    else {
+                        items(5) {
                             VenueLoadingPlaceholder()
                         }
                     }
@@ -237,26 +234,26 @@ fun OrdersList(
 
             }
         }
-    }else{
-        if (stateUi.value.history.isEmpty()){
-            EmptyOrdersList{
+    } else {
+        if (stateUi.value.history.isEmpty()) {
+            EmptyOrdersList {
                 clickBooking.invoke()
             }
-        }else{
+        } else {
             LazyColumn(state = state, verticalArrangement = Arrangement.spacedBy(16.dp), contentPadding = PaddingValues(vertical = 24.dp)) {
                 if (stateUi.value.history.isEmpty()) {
                     item {
 
                     }
-                }else{
-                    if(!refresh)
+                } else {
+                    if (!refresh)
                         items(stateUi.value.history) { order ->
                             OrderCard(
                                 order = order, modifier = Modifier.fillMaxSize(),
                                 onClick = { onClick(order) })
                         }
-                    else{
-                        items(5){
+                    else {
+                        items(5) {
                             VenueLoadingPlaceholder()
                         }
                     }
@@ -269,7 +266,7 @@ fun OrdersList(
     val history = stateUi.value.history
 
 
-    }
+}
 
 @Composable
 fun EmptyOrdersList(onButtonClick: () -> Unit = {}) {

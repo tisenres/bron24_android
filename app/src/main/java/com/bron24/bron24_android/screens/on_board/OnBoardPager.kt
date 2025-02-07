@@ -1,12 +1,20 @@
 package com.bron24.bron24_android.screens.on_board
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberCoroutineScope
@@ -72,21 +80,23 @@ fun OnBoardPagerContent(
                 .padding(horizontal = 10.dp)
         ) {
             // Skip button
-            TextButton(
-                onClick = { intent.invoke(OnBoardPagerContract.Intent.ClickMoveTo) },
-                modifier = Modifier.align(Alignment.CenterStart)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.skip),
-                    style = TextStyle(
-                        fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        color = Color.Black,
-                        lineHeight = 17.15.sp,
-                        textAlign = TextAlign.Center,
+            if (pagerState.currentPage != 2) {
+                TextButton(
+                    onClick = { intent.invoke(OnBoardPagerContract.Intent.ClickMoveTo) },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.skip),
+                        style = TextStyle(
+                            fontFamily = gilroyFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = Color.Black,
+                            lineHeight = 17.15.sp,
+                            textAlign = TextAlign.Center,
+                        )
                     )
-                )
+                }
             }
 
             // Centered Pager Indicator

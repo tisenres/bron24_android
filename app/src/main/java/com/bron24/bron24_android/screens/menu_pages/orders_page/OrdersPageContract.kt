@@ -6,32 +6,32 @@ import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 
 interface OrdersPageContract {
-    interface ViewModel:ContainerHost<UIState,SideEffect>{
-        fun onDispatchers(intent:Intent):Job
-        fun initData():Job
+    interface ViewModel : ContainerHost<UIState, SideEffect> {
+        fun onDispatchers(intent: Intent): Job
+        fun initData(): Job
     }
 
     data class UIState(
-        val selected:OrdersType = OrdersType.UPCOMING,
-        val updateUiState:Boolean = true,
-        val isLoading:Boolean = true,
-        val refresh:Boolean = false,
-        val history:List<Order> = emptyList(),
-        val inProcess:List<Order> = emptyList()
+        val selected: OrdersType = OrdersType.UPCOMING,
+        val updateUiState: Boolean = true,
+        val isLoading: Boolean = true,
+        val refresh: Boolean = false,
+        val history: List<Order> = emptyList(),
+        val inProcess: List<Order> = emptyList()
     )
 
     data class SideEffect(
-        val message:String
+        val message: String
     )
 
-    sealed interface Intent{
-        data object ClickHistory:Intent
-        data object ClickUpcoming:Intent
-        data class ClickItemOrder(val orderId:Int):Intent
-        data class Refresh(val type:OrdersType) :Intent
+    sealed interface Intent {
+        data object ClickHistory : Intent
+        data object ClickUpcoming : Intent
+        data class ClickItemOrder(val orderId: Int) : Intent
+        data class Refresh(val type: OrdersType) : Intent
     }
 
-    interface Direction{
+    interface Direction {
         suspend fun moveToInfo(orderId: Int)
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,7 +40,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,7 +66,6 @@ import androidx.core.content.ContextCompat
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.LoadingPlaceholder
-import com.bron24.bron24_android.components.items.VenueLoadingPlaceholder
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
@@ -80,7 +77,6 @@ import com.bron24.bron24_android.screens.venuedetails.DistanceRow
 import com.bron24.bron24_android.screens.venuedetails.InfoRow
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
 import com.bron24.bron24_android.screens.venuedetails.shareVenueDetails
-import com.google.android.material.color.utilities.MaterialDynamicColors.background
 import com.valentinilk.shimmer.shimmer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -118,7 +114,7 @@ fun MapVenueDetails(
                     onFavoriteClick = { isFavorite = !isFavorite },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(150.dp)
+                        .height(200.dp)
                         .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                 )
                 Column(
@@ -250,7 +246,7 @@ fun SmallDetailsContent(
 ) {
     Column {
         SmallHeaderSection(venueDetails, onCopyAddressClick)
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(10.dp))
         SmallPricingSection(venueDetails, onOrderPressed)
     }
 }
@@ -263,9 +259,9 @@ fun SmallHeaderSection(venueDetails: VenueDetails?, onCopyAddressClick: () -> Un
             .padding(horizontal = 16.dp)
     ) {
         SmallTitleSection(venueDetails)
-        Spacer(modifier = Modifier.height(8.dp))
-        AddressAndPhoneSection(venueDetails, onCopyAddressClick)
         Spacer(modifier = Modifier.height(12.dp))
+        AddressAndPhoneSection(venueDetails, onCopyAddressClick)
+        Spacer(modifier = Modifier.height(10.dp))
         SmallRatingSection(venueDetails)
     }
 }
@@ -576,25 +572,14 @@ fun SmallRatingSection(details: VenueDetails?) {
             )
             if (index < 4) Spacer(modifier = Modifier.width(4.dp))
         }
-        Spacer(modifier = Modifier.width(7.dp))
+        Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = details?.rate.toString(),
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 13.sp,
+                fontSize = 16.sp,
                 color = Color(0xFF32B768),
-                lineHeight = 18.sp,
-            )
-        )
-        Spacer(modifier = Modifier.width(7.dp))
-        Text(
-            text = "(4,981)",
-            style = TextStyle(
-                fontFamily = interFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 13.sp,
-                color = Color(0xFF949494),
                 lineHeight = 18.sp,
             )
         )
@@ -629,14 +614,14 @@ fun SmallPricingSection(
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .height(40.dp)
-                .width(157.dp)
+                .width(140.dp)
         ) {
             Text(
-                text = "Order",
+                text = stringResource(id = R.string.boking),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp,
                     color = Color.White,
                     lineHeight = 16.8.sp,
                 )

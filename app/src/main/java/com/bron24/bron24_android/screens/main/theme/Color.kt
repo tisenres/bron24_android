@@ -9,6 +9,7 @@ val TertiaryColor = Color(0xFF2C9A63)
 
 val GreenNormal = Color(0xFF3DDA7E)
 val Green = Color(0xFF32B768)
+val GreenDark = Color(0xFF26A045)
 val GreenPressed = Color(0xFF1FBC4B)
 val GreenDisable = Color(0xFFB6DAC4).copy(alpha = 0.67f)
 val GreenLight = Color(0xFFC2F5D7)

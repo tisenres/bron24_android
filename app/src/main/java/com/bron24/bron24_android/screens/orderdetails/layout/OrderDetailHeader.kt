@@ -33,11 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
-import com.bron24.bron24_android.domain.entity.order.OrderAddress
 import com.bron24.bron24_android.domain.entity.order.OrderDetails
+import com.bron24.bron24_android.helper.util.formatPrice
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 
 @Composable
@@ -81,7 +80,7 @@ fun OrderDetailHeader(order: OrderDetails?, modifier: Modifier = Modifier) {
 private fun OrderPrice(price: String) {
     OrderInfoItem(
         icon = R.drawable.icon_cost,
-        text ="$price ${stringResource(R.string.som)}",
+        text ="${price.formatPrice()} ${stringResource(R.string.som)}",
         modifier = Modifier,
         contentDescription = "Price"
     )

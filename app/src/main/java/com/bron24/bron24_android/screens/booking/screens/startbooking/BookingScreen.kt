@@ -224,7 +224,7 @@ fun StadiumPartSection(
         ) {
             sectors.forEach { sector ->
                 SectorButton(
-                    sectorName = sector.displayName,
+                    sectorName = stringResource(sector.displayNameRes),
                     onClick = { onSectorSelected(sector) },
                     isSelected = sector == selectedSector
                 )
@@ -244,7 +244,7 @@ fun SectorButton(
 
     Box(
         modifier = Modifier
-            .widthIn(min = 110.dp, max = 150.dp)
+            .widthIn(min = 110.dp, max = 180.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
             .clickable(onClick = onClick)
@@ -315,7 +315,7 @@ fun DateSection(
                     colorFilter = ColorFilter.tint(Color(0xFF949494)),
                 )
                 Text(
-                    visibleMonthYear,
+                    text = visibleMonthYear,
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
@@ -389,7 +389,7 @@ fun DateItem(dateItem: DateItem, onClick: () -> Unit, modifier: Modifier) {
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Text(
-            text = dateItem.dayOfWeek.slice(0..2),
+            text = dateItem.dayOfWeek,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -460,8 +460,8 @@ fun PricingSection(
                     text = stringResource(id = R.string.order),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp,
                         lineHeight = 16.8.sp,
                     )
                 )

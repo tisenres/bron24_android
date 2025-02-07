@@ -2,7 +2,14 @@ package com.bron24.bron24_android.screens.on_board.pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,24 +49,24 @@ fun HowItWorksScreen2() {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
+                fontSize = 26.sp,
                 color = Color(0xFF3C2E56),
-                lineHeight = 29.4.sp
+                lineHeight = 30.sp
             ),
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         Text(
             text = stringResource(id = R.string.select_stadium_desc),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                fontSize = 18.sp,
                 color = Color.Black,
-                lineHeight = 14.sp,
+                lineHeight = 22.sp,
                 textAlign = TextAlign.Center,
             ),
             modifier = Modifier
-                .widthIn(max = 300.dp)
+                .widthIn(max = 330.dp)
         )
     }
 }

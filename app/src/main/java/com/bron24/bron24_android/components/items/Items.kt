@@ -325,7 +325,8 @@ fun CustomAppBar(
             .fillMaxWidth()
             .height(56.dp)
             .background(color = backgroundColor ?: White)
-            .padding(start = if (startIcons == null) 20.dp else 16.dp, end = 24.dp),
+            .padding(start = if (startIcons == null) 20.dp else 16.dp, end = 10.dp),
+//            .padding(start = if (startIcons == null) 10.dp else 8.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (startIcons != null) {
@@ -364,7 +365,9 @@ fun ItemEditProfile(
             imageVector = Icons.Default.Edit,
             contentDescription = "icon",
             tint = White,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier
+                .padding(end = 5.dp)
+                .size(20.dp)
         )
         Text(
             text = stringResource(id = R.string.edit_profile),
@@ -622,7 +625,7 @@ fun SearchView(
             .fillMaxWidth()
             .height(150.dp)
             .background(
-                color = Color(0xFF32B768),
+                color = MaterialTheme.colorScheme.tertiary,
                 shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
             )
             .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp),
@@ -689,7 +692,7 @@ fun SearchRow(
                     color = Color.White, shape = RoundedCornerShape(5.dp)
                 )
                 .height(40.dp)
-                .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
+                .clip(RoundedCornerShape(5.dp))
                 .clickable { onSearchClick.invoke() }
                 .padding(horizontal = 10.dp, vertical = 10.dp)) {
             Image(
@@ -699,10 +702,10 @@ fun SearchRow(
             )
             Spacer(modifier = Modifier.width(9.dp))
             val searchHint = stringResource(id = R.string.search_stadium)
-            androidx.compose.material3.Text(
+            Text(
                 text = searchHint, style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
                     color = Color(0xFF9C9E9C),
                     lineHeight = 16.sp

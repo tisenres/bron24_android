@@ -166,7 +166,7 @@ fun VenueDetailsRow(venue: Venue) {
             text = venue.address.addressName,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 color = Color(0xFF949494),
                 lineHeight = 21.sp,
@@ -175,12 +175,12 @@ fun VenueDetailsRow(venue: Venue) {
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
-        if(venue.distance.toInt()!=0){
+        if (venue.distance.toInt() != 0) {
             Text(
                 text = String.format("%.1f", venue.distance) + " " + stringResource(id = R.string.km),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
                     color = Color(0xFF949494),
                     lineHeight = 21.sp,
@@ -233,8 +233,8 @@ fun VenueTitleRow(venue: Venue) {
                 text = venue.rate.toString(),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
                     color = Color(0xFF3C2E56),
                     lineHeight = 14.4.sp,
                 ),

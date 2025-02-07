@@ -132,4 +132,14 @@
     <string name="full_stadion">Toʻla stadion</string>
     <string name="sector">Sektor</string>
     <string name="total">Jami</string>
+    <string name="pay_by_card">Add card (not available)</string>
+    <string name="sector_a">Сектор A</string>
+    <string name="sector_b">Сектор Б</string>
+    <string name="sector_c">Сектор C</string>
+    <string name="sector_d">Сектор D</string>
+    <string name="sector_e">Сектор E</string>
+    <string name="sector_f">Сектор F</string>
+    <string name="sector_g">Сектор G</string>
+    <string name="sector_h">Сектор H</string>
+    <string name="search_here">Search result</string>
 </resources>

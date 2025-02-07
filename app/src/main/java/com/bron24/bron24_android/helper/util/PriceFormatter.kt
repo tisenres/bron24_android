@@ -6,7 +6,7 @@ fun String.formatPrice(): String {
         val intPrice = floatPrice.toInt()
         String.format("%,d", intPrice).replace(",", " ")
     } catch (e: NumberFormatException) {
-        "0" // Return "0" if parsing fails
+        "0"
     }
 }
 
