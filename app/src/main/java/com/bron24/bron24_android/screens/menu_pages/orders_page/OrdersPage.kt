@@ -59,6 +59,7 @@ import com.bron24.bron24_android.screens.main.theme.Purple
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePage
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.orbitmvi.orbit.compose.collectAsState
 
 
@@ -94,6 +95,9 @@ fun OrdersPageContent(
     state: State<OrdersPageContract.UIState>,
     intent: (OrdersPageContract.Intent) -> Unit
 ) {
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = White, darkIcons = true)
 
     val upcomingListState = rememberLazyListState()
     val historyListState = rememberLazyListState()

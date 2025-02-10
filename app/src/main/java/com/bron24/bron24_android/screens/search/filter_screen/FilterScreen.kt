@@ -1,5 +1,8 @@
 package com.bron24.bron24_android.screens.search.filter_screen
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,10 +23,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
-//noinspection UsingMaterialAndMaterial3Libraries
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -40,7 +40,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -60,9 +59,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.FilterOptions
-import com.bron24.bron24_android.helper.util.formatDate
-import com.bron24.bron24_android.helper.util.formatMoney
-import com.bron24.bron24_android.helper.util.formatTime
 import com.bron24.bron24_android.components.items.AppButton
 import com.bron24.bron24_android.components.items.CheckBox
 import com.bron24.bron24_android.components.items.CustomAppBar
@@ -70,6 +66,9 @@ import com.bron24.bron24_android.components.items.ItemInfosData
 import com.bron24.bron24_android.components.items.ItemProfileTask
 import com.bron24.bron24_android.components.items.ItemSelectedData
 import com.bron24.bron24_android.components.items.RangeSlider
+import com.bron24.bron24_android.helper.util.formatDate
+import com.bron24.bron24_android.helper.util.formatMoney
+import com.bron24.bron24_android.helper.util.formatTime
 import com.bron24.bron24_android.screens.main.theme.BgColorF3
 import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.Black17
@@ -79,6 +78,7 @@ import com.bron24.bron24_android.screens.main.theme.Success
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 import java.util.Locale
@@ -104,6 +104,8 @@ fun FilterScreenContent(
     resend: () -> Unit,
     filterOptions: (FilterOptions) -> Unit,
 ) {
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = White, darkIcons = true)
 
     var rangeTime by remember { mutableStateOf(state.value.filter.rangeTime) }
     var rangeSumma by remember { mutableStateOf(state.value.filter.rangeSumma) }

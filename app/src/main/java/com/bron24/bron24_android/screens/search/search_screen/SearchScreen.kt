@@ -58,6 +58,7 @@ import com.bron24.bron24_android.components.items.VenueLoadingPlaceholder
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.orbitmvi.orbit.compose.collectAsState
 
 class SearchScreen : Screen {
@@ -75,6 +76,10 @@ fun SearchScreenContent(
     state: State<SearchScreenContract.UIState>,
     intent: (SearchScreenContract.Intent) -> Unit
 ) {
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = White, darkIcons = true)
+
     val focusManager = LocalFocusManager.current
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }

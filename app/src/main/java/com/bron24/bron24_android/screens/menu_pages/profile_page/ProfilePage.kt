@@ -102,6 +102,10 @@ fun ProfilePageContent(
     state: State<ProfilePageContract.UIState>,
     intent: (ProfilePageContract.Intent) -> Unit
 ) {
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = White, darkIcons = true)
+
     var isClickable by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -398,8 +402,8 @@ fun ProfilePageContent(
             onDismiss = { showDialog = false },
             onConfirm = { intent.invoke(ProfilePageContract.Intent.ClickLogout) })
     }
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(Color.White, darkIcons = true)
+//    val systemUiController = rememberSystemUiController()
+//    systemUiController.setStatusBarColor(Color.White, darkIcons = true)
 }
 
 @Preview

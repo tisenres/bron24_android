@@ -30,7 +30,9 @@ import com.bron24.bron24_android.helper.util.NetworkConnection
 import com.bron24.bron24_android.helper.util.presentation.logOut
 import com.bron24.bron24_android.navigator.NavigationHandler
 import com.bron24.bron24_android.screens.main.theme.Bron24_androidTheme
+import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.splash.SplashScreen
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -103,6 +105,9 @@ class MainActivity : ComponentActivity() {
                 localStorage.openMenu = false
                 activity.finish()
             }
+
+            val systemUiController = rememberSystemUiController()
+            systemUiController.setStatusBarColor(color = White, darkIcons = true)
         }
     }
 
