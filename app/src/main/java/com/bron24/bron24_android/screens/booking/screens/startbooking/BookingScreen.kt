@@ -27,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -224,7 +225,7 @@ fun StadiumPartSection(
         ) {
             sectors.forEach { sector ->
                 SectorButton(
-                    sectorName = sector.displayName,
+                    sectorName = stringResource(sector.displayNameRes),
                     onClick = { onSectorSelected(sector) },
                     isSelected = sector == selectedSector
                 )
@@ -239,12 +240,12 @@ fun SectorButton(
     onClick: () -> Unit,
     isSelected: Boolean
 ) {
-    val backgroundColor = if (isSelected) Color(0xFF32B768) else Color(0xFFF5F5F5)
+    val backgroundColor = if (isSelected) MaterialTheme.colorScheme.tertiary else Color(0xFFF5F5F5)
     val textColor = if (isSelected) Color.White else Color.Black
 
     Box(
         modifier = Modifier
-            .widthIn(min = 110.dp, max = 150.dp)
+            .widthIn(min = 110.dp, max = 180.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(backgroundColor)
             .clickable(onClick = onClick)
@@ -315,7 +316,7 @@ fun DateSection(
                     colorFilter = ColorFilter.tint(Color(0xFF949494)),
                 )
                 Text(
-                    visibleMonthYear,
+                    text = visibleMonthYear,
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
@@ -374,7 +375,7 @@ fun DateSection(
 
 @Composable
 fun DateItem(dateItem: DateItem, onClick: () -> Unit, modifier: Modifier) {
-    val backgroundColor = if (dateItem.isSelected) Color(0xFF32B768) else Color(0xFFF5F5F5)
+    val backgroundColor = if (dateItem.isSelected) MaterialTheme.colorScheme.tertiary else Color(0xFFF5F5F5)
     val textColorDayOfWeek = if (dateItem.isSelected) Color.White else Color(0xFF616161)
     val textColorDay = if (dateItem.isSelected) Color.White else Color.Black
 
@@ -389,7 +390,7 @@ fun DateItem(dateItem: DateItem, onClick: () -> Unit, modifier: Modifier) {
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Text(
-            text = dateItem.dayOfWeek.slice(0..2),
+            text = dateItem.dayOfWeek,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
@@ -445,7 +446,7 @@ fun PricingSection(
             Button(
                 onClick = onOrderClick,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isOrderEnabled) Color(0xff32b768) else Color(0xFFE4E4E4),
+                    containerColor = if (isOrderEnabled) MaterialTheme.colorScheme.tertiary else Color(0xFFE4E4E4),
                     contentColor = Color.White,
                     disabledContainerColor = Color(0xFFE4E4E4),
                     disabledContentColor = Color.Gray
@@ -453,15 +454,15 @@ fun PricingSection(
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
                     .height(47.dp)
-                    .width(157.dp),
+                    .widthIn(min = 130.dp, max = 170.dp),
                 enabled = isOrderEnabled
             ) {
                 Text(
                     text = stringResource(id = R.string.order),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp,
                         lineHeight = 16.8.sp,
                     )
                 )
@@ -574,7 +575,7 @@ fun TimeSlotItem(
     onTimeSelected: () -> Unit,
 ) {
     val backgroundColor = when {
-        timeSlot.isSelected -> Color(0xFF32B768)
+        timeSlot.isSelected -> MaterialTheme.colorScheme.tertiary
         timeSlot.isAvailable -> Color(0xFFF5F5F5)
         else -> Color(0xFFE7E7E7)
     }
@@ -621,7 +622,7 @@ fun LoadingScreen() {
             .background(Color.White)
     ) {
         CircularProgressIndicator(
-            color = Color(0xFF32B768),
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.align(Alignment.Center)
         )
     }

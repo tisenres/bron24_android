@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -55,7 +56,7 @@ fun OrderDetailContacts(order: OrderDetails?, modifier: Modifier) {
                             }
                             .padding(horizontal = 8.dp),
                         fontSize = 12.sp,
-                        color = Color(0xff32B768),
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline
@@ -68,7 +69,7 @@ fun OrderDetailContacts(order: OrderDetails?, modifier: Modifier) {
                             openDialer(context, order?.phoneNumber2?.formatPhoneNumber()?:"")
                         },
                         fontSize = 12.sp,
-                        color = Color(0xff32B768),
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline

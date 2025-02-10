@@ -102,6 +102,10 @@ fun ProfilePageContent(
     state: State<ProfilePageContract.UIState>,
     intent: (ProfilePageContract.Intent) -> Unit
 ) {
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = White, darkIcons = true)
+
     var isClickable by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -142,7 +146,7 @@ fun ProfilePageContent(
                 }
             }
         }) {
-            
+
         }
 
         Column(
@@ -156,9 +160,11 @@ fun ProfilePageContent(
                     .height(280.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.avatar),
+                    painter = painterResource(id = R.drawable.green_form),
                     contentDescription = "icon",
-                    modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth(),
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .fillMaxWidth(),
                     contentScale = ContentScale.Crop,
                 )
                 Column(
@@ -233,16 +239,15 @@ fun ProfilePageContent(
                 }
             }
             ItemProfileTask(text = stringResource(id = R.string.favorites),
-//                additionalIcon = painterResource(R.drawable.baseline_access_time_filled_24),
                 startIcons = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_favorite),
-                    contentDescription = "icon",
-                    modifier = Modifier.size(20.dp)
-                )
-            }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_favorite),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }) {
                 if (isClickable) {
-                    ToastManager.showToast("Qilinmoqda",ToastType.INFO)
+                    ToastManager.showToast("Qilinmoqda", ToastType.INFO)
                     isClickable = false
                 }
             }
@@ -384,21 +389,21 @@ fun ProfilePageContent(
                         )
                     }
                 ) {
-                    openDialer(context,"998883410807".formatPhoneNumber())
+                    openDialer(context, "998883410807".formatPhoneNumber())
                 }
             }
         }
     }
     if (showDialog) {
         CustomDialog(
-            message = "Logout",
-            yes = "Logout",
-            no = "Cancel",
+            message = stringResource(R.string.confirm_logout),
+            yes = stringResource(R.string.logout),
+            no = stringResource(R.string.cancel),
             onDismiss = { showDialog = false },
             onConfirm = { intent.invoke(ProfilePageContract.Intent.ClickLogout) })
     }
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(Color.White, darkIcons = true)
+//    val systemUiController = rememberSystemUiController()
+//    systemUiController.setStatusBarColor(Color.White, darkIcons = true)
 }
 
 @Preview

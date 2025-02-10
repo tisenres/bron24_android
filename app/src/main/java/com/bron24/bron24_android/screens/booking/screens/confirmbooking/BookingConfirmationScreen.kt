@@ -36,6 +36,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -56,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -64,7 +66,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,25 +86,25 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-data class BookingConfirmationScreen(val bookingInfo:VenueOrderInfo):Screen{
+data class BookingConfirmationScreen(val bookingInfo: VenueOrderInfo) : Screen {
     @Composable
     override fun Content() {
-        val viewModel:BookingConfirmationContract.ViewModel = getViewModel<BookingConfirmationVM>()
+        val viewModel: BookingConfirmationContract.ViewModel = getViewModel<BookingConfirmationVM>()
         val uiState = viewModel.collectAsState()
         remember {
             viewModel.initData(bookingInfo)
         }
         viewModel.collectSideEffect {
-            ToastManager.showToast(it.message,ToastType.INFO)
+            ToastManager.showToast(it.message, ToastType.INFO)
         }
-        BookingConfirmationContent(uiState = uiState,viewModel::onDispatchers)
+        BookingConfirmationContent(uiState = uiState, viewModel::onDispatchers)
     }
 }
 
 @Composable
 fun BookingConfirmationContent(
-    uiState:State<BookingConfirmationContract.UIState>,
-    intent:(BookingConfirmationContract.Intent)->Unit
+    uiState: State<BookingConfirmationContract.UIState>,
+    intent: (BookingConfirmationContract.Intent) -> Unit
 ) {
     var showPaymentMethods by remember { mutableStateOf(false) }
     var showPromoCode by remember { mutableStateOf(false) }
@@ -125,7 +126,7 @@ fun BookingConfirmationContent(
         AnimatedToolbar(
             visible = toolbarVisible,
             title = stringResource(id = R.string.booking_info),
-            onBackClick = {intent.invoke(BookingConfirmationContract.Intent.Back)},
+            onBackClick = { intent.invoke(BookingConfirmationContract.Intent.Back) },
             modifier = Modifier
                 .fillMaxWidth()
                 .zIndex(1f)
@@ -147,7 +148,7 @@ fun BookingConfirmationContent(
             ) {
                 item {
                     uiState.value.booking?.let {
-                        BookingInfoCard( it, uiState.value.secondPhoneNumber?:""){
+                        BookingInfoCard(it, uiState.value.secondPhoneNumber ?: "") {
                             intent.invoke(BookingConfirmationContract.Intent.UpdatePhone(it))
                         }
                         Spacer(modifier = Modifier.height(15.dp))
@@ -290,7 +291,10 @@ fun BookingInfoCard(
                 BookingDetail(stringResource(id = R.string.date_x), formatDate(booking.bookingDate))
                 Spacer(modifier = Modifier.height(15.dp))
 
-                BookingDetail(stringResource(id = R.string.total_hour), (booking.totalHours.toString() + " ${stringResource(id = R.string.hours)}"))
+                BookingDetail(
+                    stringResource(id = R.string.total_hour),
+                    (pluralStringResource(id = R.plurals.hours, count = booking.totalHours.toInt(), booking.totalHours.toInt()))
+                )
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Row(
@@ -365,7 +369,7 @@ fun BookingInfoCard(
 fun SecondNumberField(
     value: String,
     onValueChange: (String) -> Unit,
-    updatePhone:(String)->Unit
+    updatePhone: (String) -> Unit
 ) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = value.removePrefix("+998"))) }
 
@@ -669,7 +673,7 @@ fun ConfirmButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val colors = ButtonDefaults.buttonColors(
-        containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4),
+        containerColor = if (isEnabled) MaterialTheme.colorScheme.tertiary else Color(0xFFE4E4E4),
         contentColor = Color.White,
         disabledContainerColor = Color(0xFFE4E4E4),
         disabledContentColor = Color.Gray
@@ -688,7 +692,7 @@ fun ConfirmButton(
         Text(
             text = title,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Medium,
             fontFamily = gilroyFontFamily,
             color = if (isEnabled) Color.White else Color.Gray,
             lineHeight = 32.sp
@@ -785,7 +789,7 @@ fun PaymentOption(title: String, iconRes: Int, isSelected: Boolean, onClick: () 
                 selected = isSelected,
                 onClick = {},
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = Color(0xFF32B768),
+                    selectedColor = MaterialTheme.colorScheme.tertiary,
                     unselectedColor = Color.Gray
                 )
             )
@@ -816,7 +820,7 @@ fun AddCardOption() {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = "Add card (not available)", style = TextStyle(
+                text = stringResource(R.string.pay_by_card), style = TextStyle(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,

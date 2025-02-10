@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -94,7 +95,7 @@ fun CustomToast(
                         },
                         contentDescription = "Toast icon",
                         tint = when (type) {
-                            ToastType.SUCCESS -> Color(0xFF32B768)
+                            ToastType.SUCCESS -> MaterialTheme.colorScheme.tertiary
                             ToastType.ERROR -> Color(0xFFFF6B6B)
                             ToastType.WARNING -> Color(0xFFFFA726)
                             ToastType.INFO -> Color(0xFF2196F3)

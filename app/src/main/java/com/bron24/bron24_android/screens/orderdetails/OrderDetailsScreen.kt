@@ -1,29 +1,21 @@
 package com.bron24.bron24_android.screens.orderdetails
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -44,7 +36,6 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.CustomAppBar
 import com.bron24.bron24_android.components.items.CustomDialog
-import com.bron24.bron24_android.domain.entity.order.OrderAddress
 import com.bron24.bron24_android.screens.main.theme.Black61
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
@@ -83,12 +74,18 @@ fun OrderDetailsContent(
         mutableStateOf(false)
     }
 
-    if(openDetails){
-        val venues = mutableStateOf(VenueDetailsContract.UIState(isLoading = state.value.isLoading, venue = state.value.venueDetails, imageUrls = state.value.imageUrls))
+    if (openDetails) {
+        val venues = mutableStateOf(
+            VenueDetailsContract.UIState(
+                isLoading = state.value.isLoading,
+                venue = state.value.venueDetails,
+                imageUrls = state.value.imageUrls
+            )
+        )
         VenueDetailsScreenContent(state = venues, back = { openDetails = false }) {
             intent.invoke(OrderDetailsContact.Intent.ClickOrder(it))
         }
-    }else{
+    } else {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -132,14 +129,14 @@ fun OrderDetailsContent(
         }
     }
 
-    if(showDialog){
+    if (showDialog) {
         CustomDialog(
             message = stringResource(id = R.string.cancel_dialog),
             yes = stringResource(id = R.string.yes),
             no = stringResource(id = R.string.no),
             onDismiss = { showDialog = false }
         ) {
-            intent.invoke(OrderDetailsContact.Intent.ClickCancel(state.value.order?.id?:0))
+            intent.invoke(OrderDetailsContact.Intent.ClickCancel(state.value.order?.id ?: 0))
             showDialog = false
         }
     }

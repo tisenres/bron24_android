@@ -1,21 +1,21 @@
 package com.bron24.bron24_android.data.network.mappers
 
-import android.location.Address
 import com.bron24.bron24_android.data.network.dto.orders.AddressDto
 import com.bron24.bron24_android.data.network.dto.orders.OrderDetailsDto
 import com.bron24.bron24_android.data.network.dto.orders.OrderDto
-import com.bron24.bron24_android.data.network.dto.orders.TimeSlotDto
 import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.domain.entity.order.OrderAddress
 import com.bron24.bron24_android.domain.entity.order.OrderDetails
 import com.bron24.bron24_android.domain.entity.order.OrderStatus
 
 fun OrderDto.toDomainModel(): Order = Order(
-    id  =id,
-    timeSlot =timeSlot,
+    id = id,
+    timeSlot = timeSlot,
     bookingDate = bookingDate,
     sector = sector,
-    status = if(status == "INPROCESS"){OrderStatus.IN_PROCESS}else if(status=="COMPLETED") OrderStatus.COMPLETED else OrderStatus.CANCELLED,
+    status = if (status == "INPROCESS") {
+        OrderStatus.IN_PROCESS
+    } else if (status == "COMPLETED") OrderStatus.COMPLETED else OrderStatus.CANCELLED,
     hours = hours,
     orderId = orderId,
     payment = payment,
@@ -25,14 +25,15 @@ fun OrderDto.toDomainModel(): Order = Order(
     statusName = statusName,
     venueName = venueName,
 )
+
 fun OrderDetailsDto.toDomainModel(): OrderDetails = OrderDetails(
-    id  =id,
-    timeSlot =timeSlot,
+    id = id,
+    timeSlot = timeSlot,
     bookingDate = bookingDate,
     sector = sector,
     status = status,
     hours = hours,
-    phoneNumber1= phoneNumber1,
+    phoneNumber1 = phoneNumber1,
     phoneNumber2 = phoneNumber2,
     orderId = orderId,
     payment = payment,
@@ -52,7 +53,7 @@ fun List<OrderDto>.toDomainModel(): List<Order> {
     return this.map { it.toDomainModel() }
 }
 
-fun AddressDto.toDomain():OrderAddress = OrderAddress(
+fun AddressDto.toDomain(): OrderAddress = OrderAddress(
     id = id,
     addressName = addressName,
     district = district,

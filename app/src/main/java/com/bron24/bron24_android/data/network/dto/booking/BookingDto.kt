@@ -25,7 +25,7 @@ data class BookingData(
     @SerializedName("time_slot") val timeSlots: List<TimeSlot>,
     @SerializedName("date") val date:String,
     @SerializedName("cost") val cost: Int?,
-    @SerializedName("hours") val hours: String,
+    @SerializedName("hours") val hours: Double?,
     @SerializedName("sector") val sector: String?,
     @SerializedName("is_saved") val isSaved: Boolean?,
     @SerializedName("order_id") val orderIds: List<String>

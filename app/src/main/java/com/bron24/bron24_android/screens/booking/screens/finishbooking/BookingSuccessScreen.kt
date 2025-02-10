@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -261,7 +262,7 @@ fun MainPageButton(
         enabled = isEnabled,
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.textButtonColors(
-            contentColor = Color(0xFF32B768)
+            contentColor = MaterialTheme.colorScheme.tertiary
         ),
         interactionSource = interactionSource,
         modifier = modifier

@@ -44,6 +44,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,6 +58,7 @@ import com.bron24.bron24_android.components.items.VenueLoadingPlaceholder
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.orbitmvi.orbit.compose.collectAsState
 
 class SearchScreen : Screen {
@@ -74,6 +76,10 @@ fun SearchScreenContent(
     state: State<SearchScreenContract.UIState>,
     intent: (SearchScreenContract.Intent) -> Unit
 ) {
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = White, darkIcons = true)
+
     val focusManager = LocalFocusManager.current
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -103,7 +109,7 @@ fun SearchScreenContent(
             }
         )
         Text(
-            text = "Search result",
+            text = stringResource(R.string.search_here),
             modifier = Modifier.padding(start = 16.dp),
             fontSize = 20.sp,
             fontFamily = gilroyFontFamily,
@@ -123,7 +129,7 @@ fun SearchScreenContent(
                     modifier = Modifier.size(100.dp)
                 )
                 Text(
-                    text = "Not found!",
+                    text = stringResource(R.string.not_found),
                     fontSize = 14.sp,
                     fontFamily = gilroyFontFamily,
                     color = GrayLight,
@@ -177,10 +183,10 @@ private fun SearchBarSection(
         )
         TextButton(
             onClick = onCancelClick,
-            colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF32B768))
+            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
         ) {
             Text(
-                "Cancel",
+                stringResource(R.string.cancel),
                 fontSize = 14.sp,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Medium
@@ -221,7 +227,7 @@ private fun CustomSearchField(
             Icon(
                 painter = painterResource(R.drawable.ic_search_green),
                 contentDescription = "Search Icon",
-                tint = Color(0xFF32B768)
+                tint = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.width(8.dp)) // Spacing between icon and text
             BasicTextField(
@@ -245,7 +251,7 @@ private fun CustomSearchField(
                 decorationBox = { innerTextField ->
                     if (query.isEmpty()) {
                         Text(
-                            text = "Search here...",
+                            text = stringResource(R.string.search_stadium),
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontFamily = gilroyFontFamily,
