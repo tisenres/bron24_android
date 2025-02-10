@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -85,7 +86,7 @@ fun LanguageScreenContent(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 26.sp,
-                    color = Color(0xFF32B768),
+                    color = MaterialTheme.colorScheme.tertiary,
                     lineHeight = 31.85.sp,
                 ),
             )

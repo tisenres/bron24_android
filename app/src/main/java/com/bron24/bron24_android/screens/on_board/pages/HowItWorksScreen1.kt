@@ -48,7 +48,7 @@ fun HowItWorksScreen1() {
             text = stringResource(id = R.string.nearby_stadiums),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.ExtraBold,
+                fontWeight = FontWeight.Black,
                 fontSize = 26.sp,
                 color = Color(0xFF3C2E56),
                 lineHeight = 30.sp,

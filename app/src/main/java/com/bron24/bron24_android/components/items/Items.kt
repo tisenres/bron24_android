@@ -123,7 +123,7 @@ fun LoadingPlaceholder() {
             .background(color = White)
     ) {
         CircularProgressIndicator(
-            color = Color(0xFF32B768),
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier
                 .background(color = White)
                 .align(Alignment.Center)
@@ -579,7 +579,7 @@ fun LoadingScreen() {
             .background(Color.White)
     ) {
         CircularProgressIndicator(
-            color = Color(0xFF32B768),
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.align(Alignment.Center)
         )
     }
@@ -742,7 +742,7 @@ fun SearchRow(
             Image(
                 painter = painterResource(id = R.drawable.ic_filter),
                 contentDescription = "filter_icon",
-                colorFilter = ColorFilter.tint(Color(0xFF32B768)),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.tertiary),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(18.dp)

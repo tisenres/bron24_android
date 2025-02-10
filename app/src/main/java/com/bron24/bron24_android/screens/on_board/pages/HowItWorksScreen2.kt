@@ -48,7 +48,7 @@ fun HowItWorksScreen2() {
             text = stringResource(id = R.string.select_stadium),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Black,
                 fontSize = 26.sp,
                 color = Color(0xFF3C2E56),
                 lineHeight = 30.sp

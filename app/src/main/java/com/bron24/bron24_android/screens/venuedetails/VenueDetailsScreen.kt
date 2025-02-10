@@ -1123,7 +1123,7 @@ fun InfrastructureItem(text: String, info: String? = null, iconRes: Int, onClick
         ), label = ""
     )
     val backgroundColor by animateColorAsState(
-        targetValue = if (isPressed) Color(0xFF32B768) else Color.White,
+        targetValue = if (isPressed) MaterialTheme.colorScheme.tertiary else Color.White,
         animationSpec = tween(durationMillis = 300), label = ""
     )
     val textColor by animateColorAsState(
@@ -1574,7 +1574,7 @@ fun PricingSection(
             } else {
                 Button(
                     onClick = onOrderClick,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .height(47.dp)

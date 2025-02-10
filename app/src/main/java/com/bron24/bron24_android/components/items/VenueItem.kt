@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -208,9 +209,9 @@ fun VenueTitleRow(venue: Venue) {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight(800),
-                fontSize = 16.sp,
+                fontSize = 18.sp,
                 color = Color(0xFF3C2E56),
-                lineHeight = 19.6.sp,
+                lineHeight = 20.sp,
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -279,9 +280,9 @@ fun VenueFooter(venue: Venue) {
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         color = Color(0xFF3C2E56),
-                        lineHeight = 16.sp,
+                        lineHeight = 20.sp,
                     ),
                     modifier = Modifier.align(Alignment.Bottom)
                 )
@@ -303,7 +304,7 @@ fun VenueFooter(venue: Venue) {
                     modifier = Modifier.align(Alignment.Bottom)
                 )
                 Text(
-                    text = venue.slots.toString() + " " + stringResource(id = R.string.hours),
+                    text = pluralStringResource(id = R.plurals.hours, count = venue.slots, venue.slots),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
                         fontWeight = FontWeight(800),

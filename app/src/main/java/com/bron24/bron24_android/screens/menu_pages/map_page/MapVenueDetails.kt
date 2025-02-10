@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -34,6 +35,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -54,6 +56,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -471,7 +474,7 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
 fun AvailableSlots(details: VenueDetails?) {
     InfoRow(
         icon = R.drawable.baseline_event_available_24,
-        text = details?.slots.toString() + " " + stringResource(id = R.string.hours),
+        text = pluralStringResource(id = R.plurals.hours, count = details?.slots ?: 0, details?.slots ?: 0)
     )
 }
 
@@ -579,7 +582,7 @@ fun SmallRatingSection(details: VenueDetails?) {
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,
-                color = Color(0xFF32B768),
+                color = MaterialTheme.colorScheme.tertiary,
                 lineHeight = 18.sp,
             )
         )
@@ -610,11 +613,11 @@ fun SmallPricingSection(
         )
         Button(
             onClick = { onOrderPressed() },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .height(40.dp)
-                .width(140.dp)
+                .widthIn(min = 130.dp, max = 170.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.boking),

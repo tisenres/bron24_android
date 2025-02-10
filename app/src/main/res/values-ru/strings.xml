@@ -51,7 +51,7 @@
     <string name="recommendations">Для вас</string>
     <string name="confirm">Подтвердить</string>
     <string name="som">сум</string>
-    <string name="not_found">Не найдено!</string>
+    <string name="not_found">По вашему запросу ничего не найдено!</string>
     <string name="players">игроов</string>
     <string name="Open_in_maps">Открыть на карте</string>
     <string name="Additional_info">Описание</string>
@@ -78,15 +78,17 @@
     <string name="favorites">Избранное</string>
     <string name="support">О приложении</string>
     <string name="help">Поддержка</string>
+    <string name="take">Поддержка</string>
     <string name="about_us">О нас</string>
     <string name="add_venue">Стать партнером</string>
     <string name="logout">Выйти</string>
+    <string name="confirm_logout">Вы уверены, что хотите выйти?</string>
     <string name="edit_profile">Редактировать</string>
     <string name="personal">Профиль</string>
-    <string name="delete_acc">Удалить аккаунт</string>
-    <string name="save_change">Сохранять</string>
+    <string name="confirm_delete_acc">Вы уверены, что хотите удалить аккаунт? Это действие нельзя вернуть назад!</string>
+    <string name="delete_acc">Удалить</string>
+    <string name="save_change">Сохранить</string>
     <string name="order">Забронировать</string>
-    <string name="hours">час</string>
     <string name="banned_user">Слишком много попыток. Повторите попытку позже.</string>
     <string name="start_booking">Начать</string>
     <string name="info_booking">Просмотрите наши стадионы и начните бронирование</string>
@@ -108,14 +110,13 @@
     <string name="cancel">Отмена</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="take">Выберите маршрут</string>
     <string name="open_map">Открыть в Картах</string>
-    <string name="view_deatil">Посмотреть детали места</string>
-    <string name="contacts">Контакты</string>
+    <string name="view_deatil">Посмотреть стадион детальнее</string>
+    <string name="contacts">Контакт</string>
     <string name="inprocess">В процессе</string>
     <string name="completed">Завершено</string>
     <string name="cancelled">Отменено</string>
-    <string name="empty_info">Нет доступных временных интервалов на эту дату</string>
+    <string name="empty_info">Нет свободных мест на сегодня :(</string>
     <string name="stadium_part">"Сектор"</string>
     <string name="available_times">Время</string>
     <string name="booking_info">Оформление заказа</string>
@@ -141,5 +142,13 @@
     <string name="sector_f">Сектор F</string>
     <string name="sector_g">Сектор G</string>
     <string name="sector_h">Сектор H</string>
-    <string name="search_here">Search result</string>
+    <string name="search_here">Результаты поиска</string>
+
+    <plurals name="hours">
+        <item quantity="one">%d час</item>
+        <item quantity="few">%d часа</item>
+        <item quantity="many">%d часов</item>
+        <item quantity="other">%d часов</item>
+    </plurals>
+
 </resources>

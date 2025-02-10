@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -145,7 +146,7 @@ fun RegisterScreenContent(
                 .background(Color.White.copy(alpha = 0.8f)),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = Color(0xFF32B768))
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
         }
     }
 }
@@ -262,7 +263,7 @@ fun ConfirmButtonUser(
         },
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4)
+            containerColor = if (isEnabled) MaterialTheme.colorScheme.tertiary else Color(0xFFE4E4E4)
         ),
         enabled = isEnabled,
         shape = RoundedCornerShape(10.dp),

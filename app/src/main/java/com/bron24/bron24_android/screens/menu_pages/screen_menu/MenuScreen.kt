@@ -63,10 +63,8 @@ data class MenuScreen(val tab: String? = null) : Screen {
 }
 
 @Composable
-fun MenuScreenContent(
-    tab: Tab? = null
-) {
-    TabNavigator(tab = tab ?: HomePage) {
+fun MenuScreenContent(tab: Tab? = null) {
+    TabNavigator(tab = tab ?: HomePage) { tabNavigator ->
         Scaffold(
             content = {
                 Box(modifier = Modifier.padding(it)) {

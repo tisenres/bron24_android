@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
@@ -85,7 +86,7 @@ fun VenueListingView(
             PullToRefreshDefaults.Indicator(
                 state = pullRefreshState,
                 isRefreshing = state.value.refresh,
-                color = Color(0xFF32B768),
+                color = MaterialTheme.colorScheme.tertiary,
                 containerColor = Color.White,
                 modifier = Modifier.align(Alignment.TopCenter)
             )

@@ -26,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -135,7 +136,7 @@ fun PhoneNumberScreenContent(
                     .background(Color.White.copy(alpha = 0.8f)), // White background with some transparency
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color(0xFF32B768)) // Progress bar in the center
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary) // Progress bar in the center
             }
         }
     }
@@ -307,7 +308,7 @@ fun ConfirmButton(
         },
         colors = ButtonDefaults.buttonColors(
             contentColor = Color.White,
-            containerColor = if (isEnabled) Color(0xFF32B768) else Color(0xFFE4E4E4)
+            containerColor = if (isEnabled) MaterialTheme.colorScheme.tertiary else Color(0xFFE4E4E4)
         ),
         enabled = isEnabled,
         shape = RoundedCornerShape(10.dp),
@@ -338,7 +339,7 @@ fun TermsAndConditionsText() {
         pushStringAnnotation(tag = "URL", annotation = "https://bron24.com/terms")
         withStyle(
             style = SpanStyle(
-                color = Color(0xFF32B768),
+                color = MaterialTheme.colorScheme.tertiary,
                 textDecoration = TextDecoration.Underline,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,

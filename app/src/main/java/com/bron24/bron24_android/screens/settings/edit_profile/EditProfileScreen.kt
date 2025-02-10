@@ -1,26 +1,19 @@
 package com.bron24.bron24_android.screens.settings.edit_profile
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -41,21 +34,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathSegment
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.bron24.bron24_android.R
-import com.bron24.bron24_android.helper.util.MaskVisualTransformation
-import com.bron24.bron24_android.helper.util.formatPhoneNumber
 import com.bron24.bron24_android.components.items.AppButton
 import com.bron24.bron24_android.components.items.CustomAppBar
 import com.bron24.bron24_android.components.items.CustomDialog
@@ -63,10 +52,9 @@ import com.bron24.bron24_android.components.items.ItemInputText
 import com.bron24.bron24_android.components.items.LoadingScreen
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
-import com.bron24.bron24_android.helper.util.presentation.listener
+import com.bron24.bron24_android.helper.util.MaskVisualTransformation
 import com.bron24.bron24_android.screens.main.theme.Black
 import com.bron24.bron24_android.screens.main.theme.Black61
-import com.bron24.bron24_android.screens.main.theme.GrayLighter
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import org.orbitmvi.orbit.compose.collectAsState
@@ -271,9 +259,9 @@ fun EditProfileScreenContent(
     }
     if(showDialog){
         CustomDialog(
-            message = "Delete",
-            yes = "Delete",
-            no = "Cancel",
+            message = stringResource(R.string.confirm_delete_acc),
+            yes = stringResource(R.string.delete_acc),
+            no = stringResource(R.string.cancel),
             onDismiss = { showDialog = false })
         {
             intent.invoke(EditProfileContract.Intent.ClickDeleteAcc)

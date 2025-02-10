@@ -178,7 +178,7 @@ private fun SearchBarSection(
         )
         TextButton(
             onClick = onCancelClick,
-            colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF32B768))
+            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
         ) {
             Text(
                 stringResource(R.string.cancel),
@@ -222,7 +222,7 @@ private fun CustomSearchField(
             Icon(
                 painter = painterResource(R.drawable.ic_search_green),
                 contentDescription = "Search Icon",
-                tint = Color(0xFF32B768)
+                tint = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.width(8.dp)) // Spacing between icon and text
             BasicTextField(
@@ -246,7 +246,7 @@ private fun CustomSearchField(
                 decorationBox = { innerTextField ->
                     if (query.isEmpty()) {
                         Text(
-                            text = stringResource(R.string.search_here),
+                            text = stringResource(R.string.search_stadium),
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontFamily = gilroyFontFamily,

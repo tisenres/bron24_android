@@ -48,7 +48,7 @@ fun HowItWorksScreen3() {
             text = stringResource(id = R.string.confirm_and_pay),
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Black,
                 fontSize = 26.sp,
                 color = Color(0xFF3C2E56),
                 lineHeight = 30.sp,

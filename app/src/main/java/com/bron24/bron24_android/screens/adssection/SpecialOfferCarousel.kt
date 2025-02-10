@@ -12,6 +12,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -89,7 +90,7 @@ fun OfferImage(imageRes: String) {
         if(showLoading){
             Box(modifier = Modifier.fillMaxSize()){
                 CircularProgressIndicator(
-                    color = Color(0xFF32B768),
+                    color = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.align(Alignment.Center).size(32.dp)
                 )
             }

@@ -392,9 +392,9 @@ fun ProfilePageContent(
     }
     if (showDialog) {
         CustomDialog(
-            message = "Logout",
-            yes = "Logout",
-            no = "Cancel",
+            message = stringResource(R.string.confirm_logout),
+            yes = stringResource(R.string.logout),
+            no = stringResource(R.string.cancel),
             onDismiss = { showDialog = false },
             onConfirm = { intent.invoke(ProfilePageContract.Intent.ClickLogout) })
     }

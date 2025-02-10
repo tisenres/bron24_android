@@ -41,6 +41,7 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.State
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -110,7 +111,7 @@ fun LocationRequestScreenContent(
                     fontFamily = gilroyFontFamily,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 26.sp,
-                    color = Color(0xFF32B768),
+                    color = MaterialTheme.colorScheme.tertiary,
                     lineHeight = 31.85.sp,
                 ),
             )
