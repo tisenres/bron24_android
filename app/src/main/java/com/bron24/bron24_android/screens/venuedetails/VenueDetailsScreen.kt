@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
@@ -30,6 +29,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,8 +55,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -73,7 +75,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -85,7 +89,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -96,21 +99,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.components.items.LoadingPlaceholder
 import com.bron24.bron24_android.components.toast.ToastManager
 import com.bron24.bron24_android.components.toast.ToastType
-import com.bron24.bron24_android.domain.entity.user.Location
 import com.bron24.bron24_android.domain.entity.venue.VenueDetails
+import com.bron24.bron24_android.helper.util.formatISODateTimeToHourString
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingScreen
 import com.bron24.bron24_android.screens.booking.screens.startbooking.BookingViewModel
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
-import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
-import com.bron24.bron24_android.screens.util.hiltScreenModel
 import com.valentinilk.shimmer.shimmer
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
@@ -119,7 +119,6 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import kotlinx.coroutines.delay
-import org.orbitmvi.orbit.compose.collectAsState
 
 data class VenueDetailsScreen(val venueId: Int) : Screen {
     @Composable
@@ -132,7 +131,7 @@ data class VenueDetailsScreen(val venueId: Int) : Screen {
 @Composable
 fun VenueDetailsScreenContent(
     state: State<VenueDetailsContract.UIState>,
-    back:()->Unit,
+    back: () -> Unit,
     intent: (VenueOrderInfo) -> Unit
 ) {
 //    val viewModel: VenueDetailsContract.ViewModel = hiltScreenModel()
@@ -161,7 +160,7 @@ fun VenueDetailsScreenContent(
 
     if (openOrder) {
         BookingBottomSheet(
-            venueId = state.value.venue?.venueId?:0,
+            venueId = state.value.venue?.venueId ?: 0,
             venueName = state.value.venue?.venueName ?: "",
             sectors = state.value.venue?.sectors ?: emptyList(),
             pricePerHour = state.value.venue?.pricePerHour ?: "",
@@ -263,7 +262,7 @@ fun VenueDetailsContent(
                                     .padding(horizontal = 16.dp)
                                     .fillMaxWidth(0.6f)
                                     .height(20.dp)
-                                    .clip(RoundedCornerShape(4.dp))
+                                    .clip(RoundedCornerShape(8.dp))
                                     .shimmer()
                                     .background(Color.Gray.copy(alpha = 0.2f))
                             )
@@ -284,7 +283,7 @@ fun VenueDetailsContent(
                                 .padding(horizontal = 16.dp)
                                 .fillMaxWidth(0.5f)
                                 .height(20.dp)
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(RoundedCornerShape(8.dp))
                                 .shimmer()
                                 .background(Color.Gray.copy(alpha = 0.2f))
                         )
@@ -294,7 +293,7 @@ fun VenueDetailsContent(
                                 .padding(bottom = 6.dp)
                                 .fillMaxWidth(0.4f)
                                 .height(20.dp)
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(RoundedCornerShape(8.dp))
                                 .shimmer()
                                 .background(Color.Gray.copy(alpha = 0.2f))
                         )
@@ -304,7 +303,7 @@ fun VenueDetailsContent(
                                 .padding(bottom = 16.dp)
                                 .fillMaxWidth(0.4f)
                                 .height(20.dp)
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(RoundedCornerShape(8.dp))
                                 .shimmer()
                                 .background(Color.Gray.copy(alpha = 0.2f))
                         )
@@ -314,7 +313,7 @@ fun VenueDetailsContent(
                                 .padding(bottom = 12.dp)
                                 .fillMaxWidth(0.6f)
                                 .height(20.dp)
-                                .clip(RoundedCornerShape(4.dp))
+                                .clip(RoundedCornerShape(8.dp))
                                 .shimmer()
                                 .background(Color.Gray.copy(alpha = 0.2f))
                         )
@@ -343,7 +342,7 @@ fun VenueDetailsContent(
                             .padding(bottom = 12.dp)
                             .fillMaxWidth(0.6f)
                             .height(20.dp)
-                            .clip(RoundedCornerShape(4.dp))
+                            .clip(RoundedCornerShape(8.dp))
                             .shimmer()
                             .background(Color.Gray.copy(alpha = 0.2f))
                     )
@@ -480,10 +479,10 @@ fun DescriptionSection(state: State<VenueDetailsContract.UIState>) {
         SectionTitle(state = state, text = stringResource(id = R.string.Additional_info))
         Spacer(modifier = Modifier.height(15.dp))
         Text(
-            text = state.value.venue?.description?:"",
+            text = state.value.venue?.description ?: "",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
                 color = Color.Gray,
                 lineHeight = 22.sp,
@@ -533,7 +532,8 @@ fun HeaderSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         TitleSection(details, onMapClick)
         AddressAndPhoneSection(details, onCopyAddressClick)
@@ -583,11 +583,11 @@ fun VenueImage(imageUrl: String, page: Int) {
     var isLoading by remember {
         mutableStateOf(false)
     }
-    if(isLoading){
+    if (isLoading) {
         LoadingPlaceholder()
     }
     Image(
-        painter = rememberAsyncImagePainter(model = imageUrl, onLoading = { isLoading = true}, onSuccess = { isLoading = false}),
+        painter = rememberAsyncImagePainter(model = imageUrl, onLoading = { isLoading = true }, onSuccess = { isLoading = false }),
         contentDescription = "Venue Image $page",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize()
@@ -741,7 +741,7 @@ fun AnimatedFavoriteButton(onFavoriteClick: () -> Unit) {
 fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
     Row(
         modifier = Modifier
-            .padding(bottom = 14.dp)
+//            .padding(bottom = 14.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -783,10 +783,10 @@ fun TitleSection(details: VenueDetails?, onMapClick: (Double, Double) -> Unit) {
 
 @Composable
 fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Unit) {
-    Column(modifier = Modifier.padding(bottom = 14.dp)) {
+    Column {
         AddressRow(details, onCopyAddressClick)
         //AvailableSlots(details)
-        if(details?.distance?.toInt()!=0){
+        if (details?.distance?.toInt() != 0) {
             DistanceRow(details)
         }
 
@@ -796,7 +796,7 @@ fun AddressAndPhoneSection(details: VenueDetails?, onCopyAddressClick: () -> Uni
 @Composable
 fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
     Row(
-        modifier = Modifier.padding(bottom = 4.dp),
+        modifier = Modifier.padding(bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -810,8 +810,8 @@ fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
             text = details?.address?.addressName ?: "",
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
                 color = Color(0xFF949494),
                 lineHeight = 18.sp,
             ),
@@ -819,29 +819,60 @@ fun AddressRow(details: VenueDetails?, onCopyClick: () -> Unit) {
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
-        Box(
+//        Box(
+//            modifier = Modifier
+//                .clip(RoundedCornerShape(10.dp))
+//                .clickable(onClick = onCopyClick)
+//                .padding(
+//                    horizontal = 8.dp,
+//                    vertical = 6.dp,
+//                )
+//        ) {
+//            Text(
+//                text = stringResource(id = R.string.copy),
+//                style = TextStyle(
+//                    fontFamily = gilroyFontFamily,
+//                    fontWeight = FontWeight.SemiBold,
+//                    fontSize = 12.sp,
+//                    color = Color(0xFF0067FF),
+//                    lineHeight = 18.sp,
+//                    textDecoration = TextDecoration.Underline
+//                ),
+//                modifier = Modifier.align(Alignment.Center)
+//            )
+        TextButton(
+            onClick = {
+                onCopyClick()
+            },
+            colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF0067FF)),
+            contentPadding = PaddingValues(0.dp),
             modifier = Modifier
-                .clip(RoundedCornerShape(10.dp))
-                .clickable(onClick = onCopyClick)
-                .padding(
-                    horizontal = 8.dp,
-                    vertical = 6.dp,
-                )
+                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+                .height(20.dp)
+
         ) {
             Text(
                 text = stringResource(id = R.string.copy),
-                style = TextStyle(
-                    fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp,
-                    color = Color(0xFF0067FF),
-                    lineHeight = 18.sp,
-                    textDecoration = TextDecoration.Underline
-                ),
-                modifier = Modifier.align(Alignment.Center)
+                fontSize = 13.sp,
+                maxLines = 1,
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .drawBehind {
+                        val strokeWidthPx = 1.dp.toPx()
+                        val verticalOffset = size.height - 2.sp.toPx()
+                        drawLine(
+                            color = Color(0xFF0067FF),
+                            strokeWidth = strokeWidthPx,
+                            start = Offset(0f, verticalOffset),
+                            end = Offset(size.width, verticalOffset)
+                        )
+                    },
             )
         }
     }
+//    }
 }
 
 @Composable
@@ -876,8 +907,8 @@ fun InfoRow(icon: Int, text: String) {
             text = text,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
                 color = Color(0xFF949494),
                 lineHeight = 18.sp,
             ),
@@ -897,52 +928,52 @@ fun RatingSection(details: VenueDetails?) {
                 tint = Color(0xffffb800),
                 modifier = Modifier.size(16.dp)
             )
-            if (index < 4) Spacer(modifier = Modifier.width(4.dp))
+            if (index < 4) Spacer(modifier = Modifier.width(5.dp))
         }
-        Spacer(modifier = Modifier.width(7.dp))
+        Spacer(modifier = Modifier.width(6.dp))
         Text(
             text = details?.rate.toString(),
             style = TextStyle(
                 fontFamily = interFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = Color(0xFF32B768),
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.tertiary,
                 lineHeight = 18.sp,
             )
         )
-        Spacer(modifier = Modifier.width(7.dp))
-        Text(
-            text = "(4,981)",
-            style = TextStyle(
-                fontFamily = interFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = Color(0xFF949494),
-                lineHeight = 18.sp,
-            )
-        )
-        Spacer(modifier = Modifier.width(7.dp))
+//        Spacer(modifier = Modifier.width(7.dp))
+//        Text(
+//            text = "(4,981)",
+//            style = TextStyle(
+//                fontFamily = interFontFamily,
+//                fontWeight = FontWeight.SemiBold,
+//                fontSize = 12.sp,
+//                color = Color(0xFF949494),
+//                lineHeight = 18.sp,
+//            )
+//        )
+//        Spacer(modifier = Modifier.width(7.dp))
 
-        Box(modifier = Modifier
-            .clip(RoundedCornerShape(10.dp))
-            .clickable {}
-            .padding(
-                horizontal = 8.dp,
-                vertical = 6.dp,
-            )
-        ) {
-            Text(
-                text = stringResource(id = R.string.see_all_reviews),
-                style = TextStyle(
-                    fontFamily = interFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp,
-                    color = Color(0xFF32B768),
-                    lineHeight = 18.sp,
-                    textDecoration = TextDecoration.Underline
-                )
-            )
-        }
+//        Box(modifier = Modifier
+//            .clip(RoundedCornerShape(10.dp))
+//            .clickable {}
+//            .padding(
+//                horizontal = 8.dp,
+//                vertical = 6.dp,
+//            )
+//        ) {
+//            Text(
+//                text = stringResource(id = R.string.see_all_reviews),
+//                style = TextStyle(
+//                    fontFamily = interFontFamily,
+//                    fontWeight = FontWeight.SemiBold,
+//                    fontSize = 12.sp,
+//                    color = Color(0xFF32B768),
+//                    lineHeight = 18.sp,
+//                    textDecoration = TextDecoration.Underline
+//                )
+//            )
+//        }
     }
 }
 
@@ -963,7 +994,7 @@ fun InfrastructureSection(state: State<VenueDetailsContract.UIState>) {
             showBottomSheet = true
         }
     }
-    
+
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -1071,7 +1102,7 @@ fun FacilitiesGrid(state: State<VenueDetailsContract.UIState>, onItemClick: (Str
                     onItemClick
                 )
                 InfrastructureItem(
-                    "${venue.workingHoursFrom} - ${venue.workingHoursTill}",
+                    "${venue.workingHoursFrom.formatISODateTimeToHourString()} - ${venue.workingHoursTill.formatISODateTimeToHourString()}",
                     null,
                     R.drawable.baseline_access_time_filled_24,
                     onItemClick
@@ -1092,7 +1123,7 @@ fun InfrastructureItem(text: String, info: String? = null, iconRes: Int, onClick
         ), label = ""
     )
     val backgroundColor by animateColorAsState(
-        targetValue = if (isPressed) Color(0xFF32B768) else Color.White,
+        targetValue = if (isPressed) MaterialTheme.colorScheme.tertiary else Color.White,
         animationSpec = tween(durationMillis = 300), label = ""
     )
     val textColor by animateColorAsState(
@@ -1125,7 +1156,7 @@ fun InfrastructureItem(text: String, info: String? = null, iconRes: Int, onClick
             text = text,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 color = textColor,
                 lineHeight = 21.sp,
@@ -1440,20 +1471,20 @@ private fun MapDetails(details: VenueDetails?) {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = Color.Black,
                 lineHeight = 18.sp
             ),
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        if(details?.distance?.toInt()!=0){
+        Spacer(modifier = Modifier.height(8.dp))
+        if (details?.distance?.toInt() != 0) {
             DistanceInfo(
                 icon = R.drawable.mingcute_navigation_fill,
                 text = String.format("%.1f ${stringResource(id = R.string.km)} ${stringResource(id = R.string.from_you)}", details?.distance ?: 0.0),
                 tintColor = Color(0xFFD9D9D9),
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         DistanceInfo(
             icon = R.drawable.ic_metro,
             text = details?.address?.closestMetroStation ?: "Unknown metro station",
@@ -1479,7 +1510,7 @@ private fun DistanceInfo(icon: Int, text: String, tintColor: Color) {
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
+                fontSize = 14.sp,
                 color = Color(0xFFB7B3B3),
                 lineHeight = 18.sp,
             ),
@@ -1531,7 +1562,7 @@ fun PricingSection(
                     ),
                 )
             }
-            if(state.value.isLoading){
+            if (state.value.isLoading) {
                 Box(
                     modifier = Modifier
                         .width(157.dp)
@@ -1540,10 +1571,10 @@ fun PricingSection(
                         .shimmer()
                         .background(Color.Gray.copy(alpha = 0.2f))
                 )
-            }else{
+            } else {
                 Button(
                     onClick = onOrderClick,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xff32b768)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .height(47.dp)
@@ -1553,8 +1584,8 @@ fun PricingSection(
                         text = stringResource(id = R.string.boking),
                         style = TextStyle(
                             fontFamily = gilroyFontFamily,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 16.sp,
                             color = Color.White,
                             lineHeight = 16.8.sp,
                         )

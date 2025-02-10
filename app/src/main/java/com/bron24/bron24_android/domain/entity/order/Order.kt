@@ -17,9 +17,10 @@ data class Order(
     val user: Int,
     val venueId: Int,
     val previewImage: String,
-    val statusName:String,
-    val venueName:String,
+    val statusName: String,
+    val venueName: String,
 )
+
 @Keep
 data class OrderDetails(
     val id: Int,
@@ -28,19 +29,19 @@ data class OrderDetails(
     val sector: String,
     val status: String,
     val hours: String,
-    val cost:String,
+    val cost: String,
     val address: OrderAddress,
-    val phoneNumber1:String,
+    val phoneNumber1: String,
     val phoneNumber2: String,
     val orderId: String,
     val payment: String,
     val user: Int,
     val venueId: Int,
-    val statusName:String,
-    val venueName:String,
-    val latitude:Double,
-    val longitude:Double,
-    val distance:Double
+    val statusName: String,
+    val venueName: String,
+    val latitude: Double,
+    val longitude: Double,
+    val distance: Double
 )
 
 @Keep

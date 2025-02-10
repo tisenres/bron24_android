@@ -5,41 +5,31 @@ package com.bron24.bron24_android.screens.menu_pages.home_page
 import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.components.items.SearchView
-import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.Success
-import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.search.filter_screen.FilterScreenContent
 import com.bron24.bron24_android.screens.util.hiltScreenModel
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
@@ -77,6 +67,11 @@ fun HomePageContent(
     state: State<HomePageContract.UIState>,
     intent: (HomePageContract.Intent) -> Unit
 ) {
+    var statusBarColor by remember { mutableStateOf(Success) }
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = statusBarColor, darkIcons = true)
+
     val listState = rememberLazyListState()
     var openFilter by remember {
         mutableStateOf(false)
@@ -97,6 +92,7 @@ fun HomePageContent(
         }
     }
     if (openFilter) {
+        statusBarColor = White
         FilterScreenContent(
             state = state,
             intent = intent,
@@ -104,9 +100,11 @@ fun HomePageContent(
                 if (changeFilter.value.isEmpty() && state.value.checkBack) {
                     intent.invoke(HomePageContract.Intent.Refresh)
                 }
+                statusBarColor = Success
                 openFilter = !openFilter
             },
             resend = {
+                statusBarColor = Success
                 changeFilter.value = ""
                 intent.invoke(HomePageContract.Intent.ClickReset)
             }
@@ -115,24 +113,28 @@ fun HomePageContent(
                 changeFilter.value = state.value.count
             } else changeFilter.value = ""
             openFilter = !openFilter
+            statusBarColor = Success
             intent.invoke(HomePageContract.Intent.Filter(it))
         }
     } else if (openVenueDetails) {
+        statusBarColor = White
         val states =
             mutableStateOf(VenueDetailsContract.UIState(state.value.isLoading, venue = state.value.venueDetails, imageUrls = state.value.imageUrls))
         VenueDetailsScreenContent(states, back = {
+            statusBarColor = Success
             openVenueDetails = false
         }) {
+            statusBarColor = Success
             openVenueDetails = false
             intent.invoke(HomePageContract.Intent.ClickOrder(it))
         }
+
     } else {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -160,6 +162,5 @@ fun HomePageContent(
             }
         }
     }
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(Success)
+
 }

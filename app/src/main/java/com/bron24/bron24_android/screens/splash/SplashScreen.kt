@@ -19,7 +19,7 @@ import com.bron24.bron24_android.R
 class SplashScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel:SplashScreenContract.ViewModel = getViewModel<SplashScreenVM>()
+        val viewModel: SplashScreenContract.ViewModel = getViewModel<SplashScreenVM>()
         SplashScreenContent()
     }
 
@@ -34,7 +34,7 @@ fun SplashScreenContent() {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo_bron24), // Replace with your actual logo
+            painter = painterResource(id = R.drawable.logo_bron24),
             contentDescription = "Logo",
             modifier = Modifier
                 .padding(47.dp)

@@ -1,6 +1,7 @@
 package com.bron24.bron24_android.navigator
 
 import cafe.adriel.voyager.core.screen.Screen
+
 typealias AppScreen = Screen
 
 interface AppNavigator {

@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.components.items
 
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,11 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -50,9 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.bron24.bron24_android.R
 import com.bron24.bron24_android.domain.entity.order.Order
 import com.bron24.bron24_android.domain.entity.order.OrderStatus
@@ -335,8 +329,8 @@ private fun OrderStatusItem(status: OrderStatus) {
 
 private fun getStatusColor(status: OrderStatus): Color {
     return when (status) {
-        OrderStatus.IN_PROCESS -> Color(0xFF3DDA7E)
-        OrderStatus.COMPLETED -> Color(0xFF32B768)
+        OrderStatus.IN_PROCESS -> Color(0xFF32B768)
+        OrderStatus.COMPLETED -> Color(0xFF26A045)
         OrderStatus.CANCELLED -> Color(0xFFDC2626)
     }
 }

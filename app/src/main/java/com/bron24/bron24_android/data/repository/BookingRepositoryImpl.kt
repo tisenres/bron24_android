@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.data.repository
 
-import android.util.Log
 import com.bron24.bron24_android.common.VenueOrderInfo
 import com.bron24.bron24_android.data.local.preference.LocalStorage
 import com.bron24.bron24_android.data.network.apiservices.BookingApiService
@@ -60,9 +59,9 @@ class BookingRepositoryImpl @Inject constructor(
         return booking.copy(
             venueName = response.data.venue?.venueName,
             venueAddress = response.data.venue?.venueAddress,
-            totalHours = response.data.hours,
+            totalHours = response.data.hours ?: 0.0,
             cost = response.data.cost.toString().formatPrice(),
-            orderIds = response.data.orderIds?: emptyList(),
+            orderIds = response.data.orderIds,
         )
     }
 

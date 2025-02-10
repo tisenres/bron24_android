@@ -36,9 +36,11 @@ import com.bron24.bron24_android.components.toast.ToastType
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.VenueCoordinates
 import com.bron24.bron24_android.helper.util.BitmapCache
+import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePage
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
 import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreenContent
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
@@ -85,6 +87,10 @@ fun YandexMapPageContent(
     state: State<YandexMapPageContract.UIState>,
     intent: (YandexMapPageContract.Intent) -> Unit,
 ) {
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = White, darkIcons = true)
+
     var openDetails by remember {
         mutableStateOf(false)
     }

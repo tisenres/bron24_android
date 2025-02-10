@@ -123,8 +123,8 @@ class BookingViewModel @Inject constructor(
             val date = calendar.time
             val roundedTimestamp = roundToStartOfDay(date.time)
 
-            val dayOfWeek = SimpleDateFormat("EEEE", Locale.getDefault()).format(date)
-            val month = SimpleDateFormat("MMMM", Locale.getDefault()).format(date)
+            val dayOfWeek = SimpleDateFormat("E", Locale.getDefault()).format(date)
+            val month = SimpleDateFormat("MMMM", Locale.getDefault()).format(date).toUpperCase(Locale.ROOT)
             val year = SimpleDateFormat("yyyy", Locale.getDefault()).format(date).toInt()
             val day = SimpleDateFormat("d", Locale.getDefault()).format(date).toInt()
 
@@ -175,13 +175,14 @@ class BookingViewModel @Inject constructor(
     }
 
     private fun updateVisibleMonthYear(timestamp: Long) {
-        val formatter = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
+        val formatter = SimpleDateFormat("LLLL yyyy", Locale("ru"))
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = timestamp
         }
 
         val formattedDate = formatter.format(calendar.time)
+            .replaceFirstChar { it.uppercase() } // Заглавная буква
 
         _visibleMonthYear.value = formattedDate
     }

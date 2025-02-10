@@ -4,7 +4,6 @@ package com.bron24.bron24_android.components.items
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,7 +51,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -125,7 +123,7 @@ fun LoadingPlaceholder() {
             .background(color = White)
     ) {
         CircularProgressIndicator(
-            color = Color(0xFF32B768),
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier
                 .background(color = White)
                 .align(Alignment.Center)
@@ -327,7 +325,8 @@ fun CustomAppBar(
             .fillMaxWidth()
             .height(56.dp)
             .background(color = backgroundColor ?: White)
-            .padding(start = if (startIcons == null) 20.dp else 16.dp, end = 24.dp),
+            .padding(start = if (startIcons == null) 20.dp else 16.dp, end = 10.dp),
+//            .padding(start = if (startIcons == null) 10.dp else 8.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (startIcons != null) {
@@ -366,7 +365,9 @@ fun ItemEditProfile(
             imageVector = Icons.Default.Edit,
             contentDescription = "icon",
             tint = White,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier
+                .padding(end = 5.dp)
+                .size(20.dp)
         )
         Text(
             text = stringResource(id = R.string.edit_profile),
@@ -381,31 +382,24 @@ fun ItemEditProfile(
 @Composable
 fun ItemProfileTask(
     text: String,
-    modifier: Modifier = Modifier, // Use non-nullable Modifier with default
-    borderColor: Color = GrayLighter, // Avoid nullable + default
+    modifier: Modifier? = Modifier,
+    borderColor: Color? = null,
     index: Int = 0,
-    additionalIcon: Painter? = null,
-    paddingHor: Dp = 20.dp, // Non-nullable with default
+    paddingHor: Dp? = null,
     startIcons: @Composable (() -> Unit)? = null,
     endIcon: @Composable (() -> Unit)? = null,
     listener: () -> Unit
 ) {
-    Row(
-        modifier = modifier // Use the provided modifier
-            .padding(horizontal = paddingHor)
-            .padding(top = 16.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { listener() }
-            .border(
-                color = borderColor,
-                width = 1.dp,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
+    Row(modifier = Modifier
+        .padding(horizontal = paddingHor ?: 20.dp)
+        .padding(top = 16.dp)
+        .fillMaxWidth()
+        .clip(RoundedCornerShape(8.dp))
+        .clickable { listener() }
+        .border(
+            color = borderColor ?: GrayLighter, width = 1.dp, shape = RoundedCornerShape(8.dp)
+        )
+        .padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
         startIcons?.invoke()
         Text(
             text = text,
@@ -413,16 +407,10 @@ fun ItemProfileTask(
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = Black,
-            modifier = Modifier.weight(1f) // Removed horizontal padding
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .weight(1f)
         )
-        additionalIcon?.let {
-            Icon(
-                painter = it,
-                contentDescription = "Soon",
-                tint = Color.Red,
-                modifier = Modifier.size(20.dp)
-            )
-        }
         endIcon?.invoke()
     }
 }
@@ -591,7 +579,7 @@ fun LoadingScreen() {
             .background(Color.White)
     ) {
         CircularProgressIndicator(
-            color = Color(0xFF32B768),
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.align(Alignment.Center)
         )
     }
@@ -637,7 +625,7 @@ fun SearchView(
             .fillMaxWidth()
             .height(150.dp)
             .background(
-                color = Color(0xFF32B768),
+                color = MaterialTheme.colorScheme.tertiary,
                 shape = RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp)
             )
             .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 10.dp),
@@ -704,7 +692,7 @@ fun SearchRow(
                     color = Color.White, shape = RoundedCornerShape(5.dp)
                 )
                 .height(40.dp)
-                .clip(RoundedCornerShape(5.dp)) // Ensure rounded corners
+                .clip(RoundedCornerShape(5.dp))
                 .clickable { onSearchClick.invoke() }
                 .padding(horizontal = 10.dp, vertical = 10.dp)) {
             Image(
@@ -714,10 +702,10 @@ fun SearchRow(
             )
             Spacer(modifier = Modifier.width(9.dp))
             val searchHint = stringResource(id = R.string.search_stadium)
-            androidx.compose.material3.Text(
+            Text(
                 text = searchHint, style = TextStyle(
                     fontFamily = gilroyFontFamily,
-                    fontWeight = FontWeight.Normal,
+                    fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,
                     color = Color(0xFF9C9E9C),
                     lineHeight = 16.sp
@@ -754,7 +742,7 @@ fun SearchRow(
             Image(
                 painter = painterResource(id = R.drawable.ic_filter),
                 contentDescription = "filter_icon",
-                colorFilter = ColorFilter.tint(Color(0xFF32B768)),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.tertiary),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(18.dp)

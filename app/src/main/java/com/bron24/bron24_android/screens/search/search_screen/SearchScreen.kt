@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.screens.search.search_screen
 
+import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -44,6 +46,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,6 +60,9 @@ import com.bron24.bron24_android.components.items.VenueLoadingPlaceholder
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreenContent
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.orbitmvi.orbit.compose.collectAsState
 
 class SearchScreen : Screen {
@@ -69,14 +75,22 @@ class SearchScreen : Screen {
 
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun SearchScreenContent(
     state: State<SearchScreenContract.UIState>,
     intent: (SearchScreenContract.Intent) -> Unit
 ) {
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = White, darkIcons = true)
+
     val focusManager = LocalFocusManager.current
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
+    var openDetails by remember {
+        mutableStateOf(false)
+    }
 
     DisposableEffect(Unit) {
         focusRequester.requestFocus()
@@ -84,70 +98,94 @@ fun SearchScreenContent(
             focusManager.clearFocus()
         }
     }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = White)
-    ) {
-        SearchBarSection(
-            query = query,
-            focusManager = focusManager,
-            focusRequester = focusRequester,
-            onQueryChanged = { query = it },
-            onSearch = {
-                intent.invoke(SearchScreenContract.Intent.Search(query))
-            },
-            onCancelClick = {
-                intent.invoke(SearchScreenContract.Intent.Back)
-            }
-        )
-        Text(
-            text = "Search result",
-            modifier = Modifier.padding(start = 16.dp),
-            fontSize = 20.sp,
-            fontFamily = gilroyFontFamily,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        if (!state.value.isLoading && state.value.searchResult.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.not_found),
-                    contentDescription = "icon",
-                    modifier = Modifier.size(100.dp)
-                )
-                Text(
-                    text = "Not found!",
-                    fontSize = 14.sp,
-                    fontFamily = gilroyFontFamily,
-                    color = GrayLight,
-                    modifier = Modifier.padding(top = 20.dp)
-                )
-            }
+    BackHandler {
+        if (openDetails) {
+            openDetails = false
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                if (state.value.isLoading) {
-                    items(5) {
-                        VenueLoadingPlaceholder()
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                } else {
-                    items(state.value.searchResult) { venue ->
-                        VenueItem(venue = venue, onFavoritesClick = {})
-                        Spacer(modifier = Modifier.height(10.dp))
+            intent.invoke(SearchScreenContract.Intent.Back)
+        }
+    }
+    if (openDetails) {
+        val venues = mutableStateOf(
+            VenueDetailsContract.UIState(
+                isLoading = state.value.isLoading,
+                venue = state.value.venueDetails,
+                imageUrls = state.value.imageUrls
+            )
+        )
+        VenueDetailsScreenContent(state =venues, back = { openDetails = false }) {
+            intent.invoke(SearchScreenContract.Intent.ClickOrder(it))
+        }
+    } else {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = White)
+        ) {
+            SearchBarSection(
+                query = query,
+                focusManager = focusManager,
+                focusRequester = focusRequester,
+                onQueryChanged = { query = it },
+                onSearch = {
+                    intent.invoke(SearchScreenContract.Intent.Search(query))
+                },
+                onCancelClick = {
+                    openDetails = false
+                    intent.invoke(SearchScreenContract.Intent.Back)
+                }
+            )
+            Text(
+                text = stringResource(R.string.search_here),
+                modifier = Modifier.padding(start = 16.dp),
+                fontSize = 20.sp,
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            if (!state.value.isLoading && state.value.searchResult.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.not_found),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(100.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.not_found),
+                        fontSize = 14.sp,
+                        fontFamily = gilroyFontFamily,
+                        color = GrayLight,
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    if (state.value.isLoading) {
+                        items(5) {
+                            VenueLoadingPlaceholder()
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                    } else {
+                        items(state.value.searchResult) { venue ->
+                            VenueItem(venue = venue, onFavoritesClick = {
+                                openDetails = true
+                                intent.invoke(SearchScreenContract.Intent.OpenVenueDetails(it.venueId))
+
+                            })
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
                     }
                 }
-
             }
         }
     }
@@ -177,10 +215,10 @@ private fun SearchBarSection(
         )
         TextButton(
             onClick = onCancelClick,
-            colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFF32B768))
+            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
         ) {
             Text(
-                "Cancel",
+                stringResource(R.string.cancel),
                 fontSize = 14.sp,
                 fontFamily = gilroyFontFamily,
                 fontWeight = FontWeight.Medium
@@ -221,7 +259,7 @@ private fun CustomSearchField(
             Icon(
                 painter = painterResource(R.drawable.ic_search_green),
                 contentDescription = "Search Icon",
-                tint = Color(0xFF32B768)
+                tint = MaterialTheme.colorScheme.tertiary
             )
             Spacer(modifier = Modifier.width(8.dp)) // Spacing between icon and text
             BasicTextField(
@@ -245,7 +283,7 @@ private fun CustomSearchField(
                 decorationBox = { innerTextField ->
                     if (query.isEmpty()) {
                         Text(
-                            text = "Search here...",
+                            text = stringResource(R.string.search_stadium),
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontFamily = gilroyFontFamily,
