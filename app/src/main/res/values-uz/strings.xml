@@ -16,7 +16,7 @@
     <string name="nearby_stadiums_desc">Yaxshi stadion topish yoki chaqirish uchun uzoqqa borishingiz shart emas, biz sizga yaqin bo‘lgan barcha stadionlarni taqdim etdik</string>
     <string name="select_stadium">Stadionni tanlang</string>
     <string name="select_stadium_desc">Sizga yoqqan stadionni tanlang, o‘yin vaqti va sanasini tanlang va shunchaki bron qiling :)</string>
-    <string name="confirm_and_pay">Confirm and Pay</string>
+    <string name="confirm_and_pay">Va qulay tarzda to\'lang</string>
     <string name="hello">Salom</string>
     <string name="football_field">Futbol maydoni</string>
     <string name="free_time">Bo‘sh vaqt</string>
@@ -144,6 +144,12 @@
     <string name="sector_g">Sektor G</string>
     <string name="sector_h">Sektor H</string>
     <string name="search_here">Qidiruv natijalari</string>
+    <string name="order_details">Buyurtma tafsilotlari</string>
+    <string name="order_id">Buyurtma ID</string>
+    <string name="order_success">Buyurtma muvaffaqiyatli bajarildi</string>
+    <string name="success">Muvaffaqiyat!</string>
+    <string name="my_orders">Mening buyurtmalarim</string>
+    <string name="main_page">Asosiy sahifa</string>
 
     <plurals name="hours">
         <item quantity="one">%d soat</item>

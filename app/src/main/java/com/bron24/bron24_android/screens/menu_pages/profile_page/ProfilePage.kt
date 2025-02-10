@@ -329,7 +329,6 @@ fun ProfilePageContent(
             sheetState = bottomSheetState,
             containerColor = White,
             tonalElevation = 100.dp,
-
             ) {
             Column(
                 modifier = Modifier

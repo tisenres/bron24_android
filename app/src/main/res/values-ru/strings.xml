@@ -14,7 +14,7 @@
     <string name="select_city">Выберите город</string>
     <string name="nearby_stadiums">Стадионы рядом</string>
     <string name="nearby_stadiums_desc">Не тратьте время на поиски! Все лучшие стадионы уже рядом с вами – выбирайте и звоните!</string>
-    <string name="confirm_and_pay">Confirm and Pay</string>
+    <string name="confirm_and_pay">И удобно оплатите</string>
     <string name="select_stadium">Выберите стадион</string>
     <string name="select_stadium_desc">Выберите стадион, удобное время, и забронируйте его всего за несколько кликов!</string>
     <string name="hello">Привет</string>
@@ -77,7 +77,7 @@
     <string name="change_lan">Сменить язык</string>
     <string name="favorites">Избранное</string>
     <string name="support">О приложении</string>
-    <string name="help">Поддержка</string>
+    <string name="help">Свяжитесь с нами</string>
     <string name="take">Поддержка</string>
     <string name="about_us">О нас</string>
     <string name="add_venue">Стать партнером</string>
@@ -143,6 +143,12 @@
     <string name="sector_g">Сектор G</string>
     <string name="sector_h">Сектор H</string>
     <string name="search_here">Результаты поиска</string>
+    <string name="order_details">Детали бронирования</string>
+    <string name="order_id">Номер заказа</string>
+    <string name="order_success">Успешно забронировано</string>
+    <string name="success">Успешно!</string>
+    <string name="my_orders">Мои заказы</string>
+    <string name="main_page">Просмотреть другие поля</string>
 
     <plurals name="hours">
         <item quantity="one">%d час</item>

@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -71,9 +72,9 @@ fun BookingSuccessContent(
         item {
             Image(
                 painter = painterResource(id = R.drawable.success_booking),
-                contentDescription = "Booking Success",
+                contentDescription = stringResource(R.string.order_success),
                 modifier = Modifier
-                    .padding(bottom = 60.dp)
+                    .padding(bottom = 40.dp)
                     .size(200.dp)
 
             )
@@ -83,7 +84,7 @@ fun BookingSuccessContent(
 
         item {
             Text(
-                text = "Success!",
+                text = stringResource(R.string.success),
                 color = Color(0xFF3C2E56),
                 style = TextStyle(
                     fontFamily = gilroyFontFamily,
@@ -110,7 +111,7 @@ fun BookingSuccessContent(
         item {
             ConfirmButton(
                 isEnabled = true,
-                title = "My orders",
+                title = stringResource(R.string.my_orders),
                 onClick = {
                     intent.invoke(BookingSuccessContract.Intent.ClickOrder)
                 }
@@ -121,7 +122,7 @@ fun BookingSuccessContent(
         item {
             MainPageButton(
                 isEnabled = true,
-                title = "Main page",
+                title = stringResource(R.string.main_page),
                 onClick = {
                     intent.invoke(BookingSuccessContract.Intent.ClickMenu)
                 }
@@ -153,10 +154,10 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
                     .padding(end = 56.dp)
             ) {
                 Text(
-                    text = "Order details",
+                    text = stringResource(R.string.order_details),
                     style = TextStyle(
                         fontFamily = gilroyFontFamily,
-                        fontWeight = FontWeight.Normal,
+                        fontWeight = FontWeight.Medium,
                         fontSize = 16.sp,
                         color = Color.Black,
                         lineHeight = 20.sp,
@@ -192,10 +193,10 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
                 ) {
                     items(info.orderId.size) { index ->
                         Text(
-                            text = "Order ID: " + info.orderId[index],
+                            text = stringResource(R.string.order_id) + ": " + info.orderId[index],
                             style = TextStyle(
                                 fontFamily = gilroyFontFamily,
-                                fontWeight = FontWeight.Normal,
+                                fontWeight = FontWeight.Medium,
                                 fontSize = 16.sp,
                                 color = Color.Black,
                                 lineHeight = 20.sp,
@@ -203,7 +204,7 @@ fun BookingInfoCard(info: VenueOrderInfo, onMapClick: () -> Unit) {
                             modifier = Modifier.padding(bottom = 5.dp)
                         )
                         Text(
-                            text = "Time: " + info.resTimeSlot[index],
+                            text = stringResource(R.string.time) + ": "+ info.resTimeSlot[index],
                             style = TextStyle(
                                 fontFamily = gilroyFontFamily,
                                 fontWeight = FontWeight.ExtraBold,
@@ -272,7 +273,7 @@ fun MainPageButton(
             text = title,
             style = TextStyle(
                 fontFamily = gilroyFontFamily,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
                 lineHeight = 32.sp,
             )

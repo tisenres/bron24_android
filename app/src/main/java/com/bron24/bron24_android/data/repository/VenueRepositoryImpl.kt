@@ -1,8 +1,8 @@
 package com.bron24.bron24_android.data.repository
 
-import android.util.Log
 import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.data.local.db.FavouriteDao
+import com.bron24.bron24_android.data.local.db.FavouriteDaoImpl
 import com.bron24.bron24_android.data.network.apiservices.VenueApiService
 import com.bron24.bron24_android.data.network.mappers.toDomainModel
 import com.bron24.bron24_android.domain.entity.favourite.Favourite
@@ -20,10 +20,12 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
 class VenueRepositoryImpl @Inject constructor(
-    private val apiService: VenueApiService, private val favouriteDao: FavouriteDao
+    private val apiService: VenueApiService
 ) : VenueRepository {
+
+    private val favouriteDao: FavouriteDao = FavouriteDaoImpl()
+
     override suspend fun getVenues(
         latitude: Double?,
         longitude: Double?,

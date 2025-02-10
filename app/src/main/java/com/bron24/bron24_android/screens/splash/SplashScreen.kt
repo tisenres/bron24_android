@@ -34,10 +34,11 @@ fun SplashScreenContent() {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.logo_bron24),
+            painter = painterResource(id = R.drawable.bron24_logo2),
             contentDescription = "Logo",
             modifier = Modifier
-                .padding(47.dp)
+                .fillMaxSize()
+                .padding(60.dp)
         )
     }
 }
@@ -45,5 +46,5 @@ fun SplashScreenContent() {
 @Preview
 @Composable
 fun PreviewSplashScreen() {
-    SplashScreen()
+    SplashScreenContent()
 }

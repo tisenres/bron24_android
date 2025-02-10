@@ -50,7 +50,7 @@ android {
         abi {
             isEnable = true
             reset()
-            include("armeabi-v7a", "arm64-v8a") // Add 'armeabi-v7a', 'arm64-v8a'
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
             isUniversalApk = false
         }
     }
@@ -130,19 +130,19 @@ dependencies {
     implementation(libs.datetimepicker)
 
     //orbit
-    implementation("org.orbit-mvi:orbit-core:9.0.0")
-    implementation("org.orbit-mvi:orbit-viewmodel:9.0.0")
-    implementation("org.orbit-mvi:orbit-compose:9.0.0")
+    implementation(libs.orbit.core)
+    implementation(libs.orbit.viewmodel)
+    implementation(libs.orbit.compose)
 
     //status bar color
     implementation(libs.accompanist.systemuicontroller)
     //motion orbital
-    implementation("com.github.skydoves:orbital:0.4.0")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(libs.orbital)
+    implementation(libs.androidx.datastore.preferences)
 
     //Chuck
-    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
-    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:3.5.2")
+    debugImplementation(libs.library)
+    releaseImplementation(libs.library.no.op)
 
 
     //voyager
