@@ -52,6 +52,7 @@ import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
 import com.bron24.bron24_android.screens.main.theme.interFontFamily
 import com.bron24.bron24_android.screens.menu_pages.home_page.HomePageContract
 import com.valentinilk.shimmer.shimmer
+import kotlinx.coroutines.runBlocking
 
 //var filterCallback: (FilterOptions) -> Unit = {}
 
@@ -172,7 +173,7 @@ fun VenueListingView(
                             )
 //                    SortRow(
 //                        onSortClick = { sortExpanded = true }
-//                    )
+//                      )
                         }
                     }
                 }
@@ -186,6 +187,7 @@ fun VenueListingView(
                         VenueItem(venue = venue, onFavoritesClick = listenerItem)
                         Spacer(modifier = Modifier.height(10.dp))
                     }
+                    runBlocking {  }
                 }
             }
         }
