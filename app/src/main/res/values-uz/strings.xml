@@ -144,6 +144,12 @@
     <string name="sector_g">Sektor G</string>
     <string name="sector_h">Sektor H</string>
     <string name="search_here">Qidiruv natijalari</string>
+    <string name="order_details">Order details</string>
+    <string name="order_id">Order ID</string>
+    <string name="order_success">Order success</string>
+    <string name="success">Success!</string>
+    <string name="my_orders">My orders</string>
+    <string name="main_page">Main page</string>
 
     <plurals name="hours">
         <item quantity="one">%d soat</item>

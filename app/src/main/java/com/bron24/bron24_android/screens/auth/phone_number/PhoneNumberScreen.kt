@@ -1,6 +1,5 @@
 package com.bron24.bron24_android.screens.auth.phone_number
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -145,7 +144,7 @@ fun PhoneNumberScreenContent(
 @Composable
 fun Logo() {
     Image(
-        painter = painterResource(id = R.drawable.logo_bron24),
+        painter = painterResource(id = R.drawable.bron24_logo2),
         contentDescription = "Logo Bron24",
         modifier = Modifier
             .fillMaxWidth()
@@ -367,7 +366,9 @@ fun TermsAndConditionsText() {
                     uriHandler.openUri(annotation.item)
                 }
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp)
     )
 }
 
