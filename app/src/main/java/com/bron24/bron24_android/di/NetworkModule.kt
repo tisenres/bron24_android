@@ -1,7 +1,6 @@
 package com.bron24.bron24_android.di
 
 import android.content.Context
-import android.util.Log
 import com.bron24.bron24_android.BuildConfig
 import com.bron24.bron24_android.data.network.interceptors.HttpInterceptor
 import com.bron24.bron24_android.domain.repository.TokenRepository
@@ -18,7 +17,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 import javax.inject.Singleton
 
 @Module
@@ -72,14 +70,14 @@ class NetworkModule {
 
     @[Provides Singleton]
     fun provideBaseRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl("http://13.60.36.176:8000/")
+        .baseUrl("http://161.97.140.41:8000/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     @[Provides Singleton Public]
     fun providePublicRetrofit(@Public okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl("http://13.60.36.176:8000/")
+        .baseUrl("http://161.97.140.41:8000/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
