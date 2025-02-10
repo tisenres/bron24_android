@@ -1,5 +1,7 @@
 package com.bron24.bron24_android.screens.search.search_screen
 
+import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -58,6 +60,8 @@ import com.bron24.bron24_android.components.items.VenueLoadingPlaceholder
 import com.bron24.bron24_android.screens.main.theme.GrayLight
 import com.bron24.bron24_android.screens.main.theme.White
 import com.bron24.bron24_android.screens.main.theme.gilroyFontFamily
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsContract
+import com.bron24.bron24_android.screens.venuedetails.VenueDetailsScreenContent
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -71,6 +75,7 @@ class SearchScreen : Screen {
 
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun SearchScreenContent(
     state: State<SearchScreenContract.UIState>,
@@ -83,6 +88,9 @@ fun SearchScreenContent(
     val focusManager = LocalFocusManager.current
     var query by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
+    var openDetails by remember {
+        mutableStateOf(false)
+    }
 
     DisposableEffect(Unit) {
         focusRequester.requestFocus()
@@ -90,70 +98,94 @@ fun SearchScreenContent(
             focusManager.clearFocus()
         }
     }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = White)
-    ) {
-        SearchBarSection(
-            query = query,
-            focusManager = focusManager,
-            focusRequester = focusRequester,
-            onQueryChanged = { query = it },
-            onSearch = {
-                intent.invoke(SearchScreenContract.Intent.Search(query))
-            },
-            onCancelClick = {
-                intent.invoke(SearchScreenContract.Intent.Back)
-            }
-        )
-        Text(
-            text = stringResource(R.string.search_here),
-            modifier = Modifier.padding(start = 16.dp),
-            fontSize = 20.sp,
-            fontFamily = gilroyFontFamily,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        if (!state.value.isLoading && state.value.searchResult.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.not_found),
-                    contentDescription = "icon",
-                    modifier = Modifier.size(100.dp)
-                )
-                Text(
-                    text = stringResource(R.string.not_found),
-                    fontSize = 14.sp,
-                    fontFamily = gilroyFontFamily,
-                    color = GrayLight,
-                    modifier = Modifier.padding(top = 20.dp)
-                )
-            }
+    BackHandler {
+        if (openDetails) {
+            openDetails = false
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                if (state.value.isLoading) {
-                    items(5) {
-                        VenueLoadingPlaceholder()
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                } else {
-                    items(state.value.searchResult) { venue ->
-                        VenueItem(venue = venue, onFavoritesClick = {})
-                        Spacer(modifier = Modifier.height(10.dp))
+            intent.invoke(SearchScreenContract.Intent.Back)
+        }
+    }
+    if (openDetails) {
+        val venues = mutableStateOf(
+            VenueDetailsContract.UIState(
+                isLoading = state.value.isLoading,
+                venue = state.value.venueDetails,
+                imageUrls = state.value.imageUrls
+            )
+        )
+        VenueDetailsScreenContent(state =venues, back = { openDetails = false }) {
+            intent.invoke(SearchScreenContract.Intent.ClickOrder(it))
+        }
+    } else {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = White)
+        ) {
+            SearchBarSection(
+                query = query,
+                focusManager = focusManager,
+                focusRequester = focusRequester,
+                onQueryChanged = { query = it },
+                onSearch = {
+                    intent.invoke(SearchScreenContract.Intent.Search(query))
+                },
+                onCancelClick = {
+                    openDetails = false
+                    intent.invoke(SearchScreenContract.Intent.Back)
+                }
+            )
+            Text(
+                text = stringResource(R.string.search_here),
+                modifier = Modifier.padding(start = 16.dp),
+                fontSize = 20.sp,
+                fontFamily = gilroyFontFamily,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            if (!state.value.isLoading && state.value.searchResult.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.not_found),
+                        contentDescription = "icon",
+                        modifier = Modifier.size(100.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.not_found),
+                        fontSize = 14.sp,
+                        fontFamily = gilroyFontFamily,
+                        color = GrayLight,
+                        modifier = Modifier.padding(top = 20.dp)
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    if (state.value.isLoading) {
+                        items(5) {
+                            VenueLoadingPlaceholder()
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                    } else {
+                        items(state.value.searchResult) { venue ->
+                            VenueItem(venue = venue, onFavoritesClick = {
+                                openDetails = true
+                                intent.invoke(SearchScreenContract.Intent.OpenVenueDetails(it.venueId))
+
+                            })
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
                     }
                 }
-
             }
         }
     }
