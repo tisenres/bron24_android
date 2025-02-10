@@ -24,48 +24,51 @@ import javax.inject.Singleton
 class NetworkModule {
 
     @[Provides Singleton]
-    fun providesChuck(@ApplicationContext context: Context): ChuckerInterceptor =
-        ChuckerInterceptor.Builder(context).build()
+    fun providesChuck(@ApplicationContext context: Context): ChuckerInterceptor? {
+        return if (BuildConfig.DEBUG) {
+            ChuckerInterceptor.Builder(context).build()
+        } else {
+            null
+        }
+    }
 
     @Provides
     @Singleton
     fun providesOkHttpClient(
-        chuckerInterceptor: ChuckerInterceptor
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(chuckerInterceptor)
-        .build()
+        chuckerInterceptor: ChuckerInterceptor?
+    ): OkHttpClient = OkHttpClient.Builder().apply {
+        chuckerInterceptor?.let { addInterceptor(it) }
+    }.build()
 
     @Provides
     @Singleton
     @Public
     fun provideOkHttpClient(
         tokenRepository: TokenRepository,
-        chuckerInterceptor: ChuckerInterceptor,
+        chuckerInterceptor: ChuckerInterceptor?,
         httpInterceptor: HttpInterceptor,
         authAuthenticator: AuthAuthenticator,
         getSelectedLanguageUseCase: GetSelectedLanguageUseCase
     ): OkHttpClient {
-
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        return OkHttpClient.Builder()
-            .addInterceptor(chuckerInterceptor)
-            .addInterceptor(httpInterceptor)
-            .authenticator(authAuthenticator)
-            .addNetworkInterceptor { chain ->
+        return OkHttpClient.Builder().apply {
+            chuckerInterceptor?.let { addInterceptor(it) }
+            addInterceptor(httpInterceptor)
+            authenticator(authAuthenticator)
+            addNetworkInterceptor { chain ->
                 val token = tokenRepository.getAccessToken() ?: ""
                 val lanCode = getSelectedLanguageUseCase.invoke().languageCode ?: ""
                 val newRequest = chain.request().newBuilder()
                 newRequest.header("Authorization", "Bearer $token")
                 newRequest.header("Accept-Language", lanCode)
                 chain.proceed(newRequest.build())
-            }.apply {
-                if (BuildConfig.DEBUG) {
-                    addInterceptor(logging)
-                }
             }
-            .build()
+            if (BuildConfig.DEBUG) {
+                addInterceptor(logging)
+            }
+        }.build()
     }
 
     @[Provides Singleton]
@@ -81,5 +84,4 @@ class NetworkModule {
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
 }
