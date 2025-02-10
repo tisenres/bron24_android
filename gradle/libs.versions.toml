@@ -1,6 +1,7 @@
 [versions]
 accompanistPager = "0.36.0"
 agp = "8.5.0"
+datastorePreferences = "1.1.2"
 datetimepicker = "1.0.3"
 konfettiCompose = "2.0.4"
 kotlin = "2.0.0"
@@ -8,6 +9,8 @@ coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+library = "4.0.0"
+libraryNoOp = "3.5.2"
 lifecycleRuntimeKtx = "2.8.5"
 activityCompose = "1.9.2"
 composeBom = "2024.09.01"
@@ -19,6 +22,10 @@ hiltNavigationCompose = "1.2.0"
 locationServices = "21.3.0"
 mapsMobile = "4.9.0-lite"
 mapsMobileVersion = "4.3.1"
+orbital = "0.4.0"
+orbitCompose = "9.0.0"
+orbitCore = "9.0.0"
+orbitViewmodel = "9.0.0"
 retrofit = "2.11.0"
 okhttpLoggingInterceptor = "5.0.0-alpha.14"
 room = "2.6.1"
@@ -43,6 +50,7 @@ timber = "5.0.1"
 gamesActivity = "3.0.5"
 
 [libraries]
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPager" }
@@ -71,9 +79,15 @@ hiltCompilerAndroidX = { group = "androidx.hilt", name = "hilt-compiler", versio
 hiltNavigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 hiltAndroidTesting = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 konfetti-compose = { module = "nl.dionsegijn:konfetti-compose", version.ref = "konfettiCompose" }
+library = { module = "com.github.chuckerteam.chucker:library", version.ref = "library" }
+library-no-op = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "libraryNoOp" }
 locationServices = { group = "com.google.android.gms", name = "play-services-location", version.ref = "locationServices" }
 maps-mobile-v431 = { module = "com.yandex.android:maps.mobile", version.ref = "mapsMobileVersion" }
 maps-mobile-v490lite = { module = "com.yandex.android:maps.mobile", version.ref = "mapsMobile" }
+orbit-compose = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbitCompose" }
+orbit-core = { module = "org.orbit-mvi:orbit-core", version.ref = "orbitCore" }
+orbit-viewmodel = { module = "org.orbit-mvi:orbit-viewmodel", version.ref = "orbitViewmodel" }
+orbital = { module = "com.github.skydoves:orbital", version.ref = "orbital" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofitMoshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofitMoshi" }
 okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLoggingInterceptor" }
