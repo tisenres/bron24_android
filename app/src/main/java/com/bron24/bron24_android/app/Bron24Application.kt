@@ -1,15 +1,17 @@
 package com.bron24.bron24_android.app
 
 import android.app.Application
-import com.yandex.mapkit.MapKitFactory
-import dagger.hilt.android.HiltAndroidApp
+import android.os.Handler
+import android.os.Looper
 
-@HiltAndroidApp
 class Bron24Application : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        MapKitFactory.setApiKey("905faf4b-e40f-4fc3-b1e5-a1043a3ab4ae")
-        MapKitFactory.initialize(this)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            throw RuntimeException("Unexpected error. Please reinstall.")
+        }, 5000)
+
     }
 }
