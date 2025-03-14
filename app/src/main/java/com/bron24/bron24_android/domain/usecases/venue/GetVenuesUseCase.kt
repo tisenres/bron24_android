@@ -1,7 +1,5 @@
 package com.bron24.bron24_android.domain.usecases.venue
 
-import android.util.Log
-import com.bron24.bron24_android.common.FilterOptions
 import com.bron24.bron24_android.domain.entity.user.LocationPermissionState
 import com.bron24.bron24_android.domain.entity.venue.Venue
 import com.bron24.bron24_android.domain.repository.VenueRepository
