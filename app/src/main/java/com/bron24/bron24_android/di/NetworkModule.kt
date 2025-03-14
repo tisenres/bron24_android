@@ -73,8 +73,8 @@ class NetworkModule {
 
     @[Provides Singleton]
     fun provideBaseRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl("http://161.97.140.41:8000/")
-//        .baseUrl("https://ff54-195-158-4-4.ngrok-free.app/")
+//        .baseUrl("http://161.97.140.41:8000/")
+        .baseUrl("https://ff54-195-158-4-4.ngrok-free.app/")
 //        .baseUrl("http://10.18.10.14:8000/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
@@ -82,7 +82,8 @@ class NetworkModule {
 
     @[Provides Singleton Public]
     fun providePublicRetrofit(@Public okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl("http://161.97.140.41:8000/")
+//        .baseUrl("http://161.97.140.41:8000/")
+        .baseUrl("https://ff54-195-158-4-4.ngrok-free.app/")
 //        .baseUrl("http://10.18.10.14:8000/")
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
