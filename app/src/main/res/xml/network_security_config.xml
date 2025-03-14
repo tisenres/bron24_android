@@ -28,4 +28,8 @@
         <!-- This is for the ngrok domain -->
         <domain includeSubdomains="true">161.97.140.41</domain>
     </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- This is for the ngrok domain -->
+        <domain includeSubdomains="true">ff54-195-158-4-4.ngrok-free.app</domain>
+    </domain-config>
 </network-security-config>
