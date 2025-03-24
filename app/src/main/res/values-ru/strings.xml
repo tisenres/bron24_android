@@ -101,7 +101,7 @@
     <string name="save_lpcation">Сохранить местоположение</string>
     <string name="infrastructure">Удобства</string>
     <string name="see_result">Применить</string>
-    <string name="boking">Расписание</string>
+    <string name="boking">Забронировать</string>
     <string name="som_hour">Сум/час</string>
     <string name="contact_number">Контактный номер</string>
     <string name="contact_us">Свяжитесь с нами</string>
@@ -149,6 +149,9 @@
     <string name="success">Успешно!</string>
     <string name="my_orders">Мои заказы</string>
     <string name="main_page">Просмотреть другие поля</string>
+    <string name="incorrect_otp">Код подтверждения введен неверно!</string>
+    <string name="network_error">Возникла проблема с интернетом!</string>
+    <string name="unknown_error">Произошла ошибка, попробуйте позже!</string>
 
     <plurals name="hours">
         <item quantity="one">%d час</item>

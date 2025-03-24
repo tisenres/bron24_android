@@ -102,7 +102,7 @@
     <string name="save_lpcation">Save location</string>
     <string name="infrastructure">Facilities</string>
     <string name="see_result">Apply</string>
-    <string name="boking">Schedule</string>
+    <string name="boking">Book</string>
     <string name="som_hour">sum/hour</string>
     <string name="contact_number">Contact number</string>
     <string name="contact_us">Contact us</string>
@@ -150,6 +150,9 @@
     <string name="success">Success!</string>
     <string name="my_orders">My orders</string>
     <string name="main_page">Main page</string>
+    <string name="incorrect_otp">Verification code entered incorrectly!</string>
+    <string name="network_error">There was a problem with the internet!</string>
+    <string name="unknown_error">An error occurred, try again later!</string>
 
     <plurals name="hours">
         <item quantity="one">%d hour</item>

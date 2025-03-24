@@ -69,30 +69,32 @@ class OTPInputScreen(val phoneNumber: String) : Screen {
     override fun Content() {
         val viewModel: OTPInputContract.ViewModel = getViewModel<OTPInputScreenVM>()
         val uiState = viewModel.collectAsState()
+
+        // strings
         val ban = stringResource(id = R.string.banned_user)
-        viewModel.collectSideEffect {
-            if (it.message.isNotEmpty()) {
-                ToastManager.showToast(it.message, type = ToastType.INFO)
+        val incorrectOTP = stringResource(id = R.string.incorrect_otp)
+        val networkError = stringResource(id = R.string.network_error)
+        val unknownError = stringResource(id = R.string.unknown_error)
+
+        viewModel.collectSideEffect { sideEffect ->
+            if (sideEffect.message.isNotEmpty()) {
+                ToastManager.showToast(sideEffect.message, type = ToastType.INFO)
             }
-            when (it.status) {
+            when (sideEffect.status) {
                 OTPStatusCode.CORRECT_OTP -> {
-
+                    // Handle correct OTP
                 }
-
                 OTPStatusCode.INCORRECT_OTP -> {
-                    ToastManager.showToast("Tasdiqlash kodi xato kiritildi!", type = ToastType.ERROR)
+                    ToastManager.showToast(incorrectOTP, type = ToastType.ERROR)
                 }
-
                 OTPStatusCode.NETWORK_ERROR -> {
-                    ToastManager.showToast("Internet bilan muammo yuzaga keldi!", type = ToastType.WARNING)
+                    ToastManager.showToast(networkError, type = ToastType.WARNING)
                 }
-
                 OTPStatusCode.UNKNOWN_ERROR -> {
-                    ToastManager.showToast("Xatolik birozdan kegin qayta urinib ko'ring!", type = ToastType.WARNING)
+                    ToastManager.showToast(unknownError, type = ToastType.WARNING)
                 }
-
                 OTPStatusCode.BANNED_USER -> {
-                    ToastManager.showToast(message = ban, type = ToastType.ERROR)
+                    ToastManager.showToast(ban, type = ToastType.ERROR)
                 }
             }
         }
