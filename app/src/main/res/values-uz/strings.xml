@@ -100,7 +100,7 @@
     <string name="save_lpcation">Manzilni saqlash</string>
     <string name="infrastructure">Infratuzilma</string>
     <string name="see_result">Natijalarni ko\'rish</string>
-    <string name="boking">Bron qilish</string>
+    <string name="boking">Band qilish</string>
     <string name="som_hour">so\'m/soat</string>
     <string name="contact_number">Aloqa raqami</string>
     <string name="contact_us">Biz bilan bog‘laning</string>
@@ -150,6 +150,10 @@
     <string name="success">Muvaffaqiyat!</string>
     <string name="my_orders">Mening buyurtmalarim</string>
     <string name="main_page">Asosiy sahifa</string>
+    <string name="incorrect_otp">Tasdiqlash kodi xato kiritildi!</string>
+    <string name="network_error">Internet bilan muammo yuzaga keldi!</string>
+    <string name="unknown_error">Xatolik birozdan keyin qayta urinib ko\'ring!</string>
+    <string name="soon">Soon will be available</string>
 
     <plurals name="hours">
         <item quantity="one">%d soat</item>

@@ -1527,6 +1527,9 @@ fun PricingSection(
     onOrderClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val toastText = stringResource(id = R.string.soon)
+
     Column(modifier = modifier.fillMaxWidth()) {
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
@@ -1573,8 +1576,13 @@ fun PricingSection(
                 )
             } else {
                 Button(
-                    onClick = onOrderClick,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
+                    onClick = {
+                        ToastManager.showToast(
+                            toastText,
+                            ToastType.INFO
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE4E4E4)),
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .height(47.dp)
@@ -1586,7 +1594,7 @@ fun PricingSection(
                             fontFamily = gilroyFontFamily,
                             fontWeight = FontWeight.Medium,
                             fontSize = 16.sp,
-                            color = Color.White,
+                            color = Color.Gray,
                             lineHeight = 16.8.sp,
                         )
                     )

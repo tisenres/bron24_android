@@ -83,6 +83,7 @@ class OTPInputScreenVM @Inject constructor(
 
             is OTPInputContract.Intent.ClickRestart -> {
                 requestOTPUseCase.invoke(intent.phoneNumber).onEach {
+
                     it.onSuccess {
                         when (it.result) {
                             PhoneNumberResponseStatusCode.SUCCESS -> {

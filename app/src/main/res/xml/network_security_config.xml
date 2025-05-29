@@ -36,4 +36,8 @@
         <!-- This is for the ngrok domain -->
         <domain includeSubdomains="true">10.18.10.14</domain>
     </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- This is for the ngrok domain -->
+        <domain includeSubdomains="true">51.20.35.90</domain>
+    </domain-config>
 </network-security-config>
