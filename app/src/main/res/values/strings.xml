@@ -153,6 +153,7 @@
     <string name="incorrect_otp">Verification code entered incorrectly!</string>
     <string name="network_error">There was a problem with the internet!</string>
     <string name="unknown_error">An error occurred, try again later!</string>
+    <string name="soon">Soon will be available</string>
 
     <plurals name="hours">
         <item quantity="one">%d hour</item>

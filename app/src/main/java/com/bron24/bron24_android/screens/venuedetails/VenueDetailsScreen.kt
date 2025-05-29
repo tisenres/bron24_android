@@ -1528,7 +1528,7 @@ fun PricingSection(
     modifier: Modifier = Modifier
 ) {
 
-    val toastText = stringResource(id = R.string.up_coming)
+    val toastText = stringResource(id = R.string.soon)
 
     Column(modifier = modifier.fillMaxWidth()) {
         HorizontalDivider(

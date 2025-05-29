@@ -153,6 +153,7 @@
     <string name="incorrect_otp">Tasdiqlash kodi xato kiritildi!</string>
     <string name="network_error">Internet bilan muammo yuzaga keldi!</string>
     <string name="unknown_error">Xatolik birozdan keyin qayta urinib ko\'ring!</string>
+    <string name="soon">Soon will be available</string>
 
     <plurals name="hours">
         <item quantity="one">%d soat</item>

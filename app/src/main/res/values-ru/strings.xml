@@ -152,6 +152,7 @@
     <string name="incorrect_otp">Код подтверждения введен неверно!</string>
     <string name="network_error">Возникла проблема с интернетом!</string>
     <string name="unknown_error">Произошла ошибка, попробуйте позже!</string>
+    <string name="soon">Soon will be available</string>
 
     <plurals name="hours">
         <item quantity="one">%d час</item>
