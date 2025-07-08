@@ -1,88 +1,70 @@
-# Bron24 Android
+# Bron24 Android Client
 
-**Bron24** is a native Android application built for booking football stadiums in Uzbekistan. The platform aims to connect players with venue owners by digitizing the offline rental process and simplifying stadium scheduling.
+**Bron24** is a mobile app for booking football stadiums across Tashkent, Uzbekistan.
 
-> 🚧 MVP project built by a small team of university developers.  
-> No CI/CD or automated testing was used.
+This was a team project started in **July 2024**. I initially built the Android client from scratch and later collaborated with a second developer. This README documents the MVP version and lessons learned from development.
 
-## 🚀 Key Features
+## 🌟 Features
 
-- 📍 Search football stadiums via map or list view
-- 📅 View availability and weekly schedules
-- 🕒 Book time slots with instant updates
-- 🧑‍💼 Stadium owners can add and manage their venues
-- 🔐 User registration, login, and role-based access
-- 📦 Built with modern Android stack (see below)
+- OTP Authentication via phone number
+- Stadium listing with filter and search
+- Stadium detail view with images, location, and schedule
+- Booking flow (w/ backend confirmation, no payment integration yet)
+- View current and past bookings
+- User profile management
+- Interactive map using **Yandex Maps**
+- Multilingual UI: English, Russian, Uzbek
+
+## 🧠 Architecture
+
+- **Clean Architecture**: split into `presentation`, `domain`, `data` layers
+- **MVVM** initially, then partially migrated to **MVI** with **Orbit MVI** and **Voyager Navigation**
+- Followed **SOLID** principles
+- **ViewModel + StateFlow** for reactive state management
+- **Navigation Component** and later **Voyager** for screen routing
+- Dependency Injection via **Hilt**
+
+Key reflection: logic started leaking into UI and repository layers. More architecture maturity leads to cleaner, abstracted domain logic.
 
 ## 🛠 Tech Stack
 
-- **Language:** Kotlin  
-- **UI:** Jetpack Compose  
-- **Architecture:** Clean Architecture + MVVM  
-- **Networking:** Retrofit  
-- **State Management:** ViewModel + StateFlow  
-- **Dependency Injection:** Koin  
-- **Date Handling:** kotlinx-datetime  
-- **Backend:** Custom REST API (not open-sourced)  
+- Jetpack Compose (first production use – declarative and clean)
+- Kotlin Coroutines & Flow (reactive and concise)
+- RESTful API integration
+- **Chucker** for HTTP debugging
+- Custom UI based on Figma designs (not using Material Design system)
 
-## 🧱 Architecture Overview
+## 📉 What Didn’t Go Smoothly
 
-Following Clean Architecture principles, the codebase is divided into:
+- Over-engineered MVP: focused too much on “doing it right” than “shipping it fast”
+- Missed sync points with backend & iOS team
+- Kanban process lacked flexibility in Trello (originally used ClickUp)
+- Time wasn't allocated for testing and CI/CD integration
 
-- **Presentation layer**  
-  - Jetpack Compose screens  
-  - ViewModels with `StateFlow`  
-- **Domain layer**  
-  - Use cases and business logic  
-  - Abstract repository interfaces  
-- **Data layer**  
-  - Concrete repository implementations  
-  - API service with Retrofit  
+## 📌 Roadmap & Unfinished Plans
 
-## 📂 Folder Structure (Simplified)
+- Add local cache with Room DB
+- CI/CD with GitLab Pipelines
+- Firebase Crashlytics setup
+- Dark theme support
+- Google Play release (we reached Beta Test stage)
+- Online payment integration (Click / Payme)
 
-/presentation // Jetpack Compose screens and ViewModels
-/domain // Use cases and data interfaces
-/data // Repositories and API
-/di // Koin modules
-/utils // Constants and mappers
+## 🧠 Lessons Learned
 
+- It’s OK to simplify features — but not architecture
+- Jetpack Compose needs performance mindfulness (recompositions matter)
+- Coroutines are powerful but easy to misuse without understanding the internals
+- The architecture you build reflects your "pattern recognition" across projects
 
-## 📲 Installation
+## 📸 Screenshots
 
-Clone the repo and open in Android Studio:
+> Screenshots and demo videos are available in the repository's `media/` folder.
 
-```bash
-git clone https://github.com/tisenres/bron24_android.git
+## 📂 Repository
 
-```
+→ [GitHub: bron24_android](https://github.com/tisenres/bron24_android)
 
-Run on Android 7.0+ (API 24+) device or emulator.
+---
 
-Note: Backend endpoints are currently not public.
-
-🤝 Team & Context
-This project was developed in 2024 as part of a university initiative.
-Team size: 4–6 rotating members.
-Role of main contributor: Android Developer → CTO.
-
-💡 Lessons Learned
-Working in a startup without contracts leads to burnout.
-
-MVP without user feedback or clear validation is risky.
-
-Clean architecture pays off in long-term refactoring and team onboarding.
-
-📌 Roadmap (not implemented)
-Stadium reviews & ratings
-
-Payment integration
-
-Booking reminders
-
-Admin dashboard
-
-📫 For questions or collaboration: LinkedIn
-
-
-Let me know if you want a shorter version for a portfolio or CV link, or want to add screenshots or badges.
+If you're curious about building apps in Central Asia, Clean Architecture, or Kotlin Compose workflows — this repo is a practical showcase with real-world lessons.
