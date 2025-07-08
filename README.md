@@ -2,7 +2,7 @@
 
 **Bron24** is a mobile app for booking football stadiums across Tashkent, Uzbekistan.
 
-This was a team project started in **July 2024**. I initially built the Android client from scratch and later collaborated with a second developer. This README documents the MVP version and lessons learned from development.
+This was a team project initiated in July 2024. I initially built the Android client from scratch and later collaborated with a second developer. This README document outlines the MVP version and lessons learned from the development process.
 
 ## 🌟 Features
 
@@ -36,7 +36,7 @@ Key reflection: logic started leaking into UI and repository layers. More archit
 
 ## 📉 What Didn’t Go Smoothly
 
-- Over-engineered MVP: focused too much on “doing it right” than “shipping it fast”
+- Over-engineered MVP: focused too much on “doing it right” rather than “shipping it fast”
 - Missed sync points with backend & iOS team
 - Kanban process lacked flexibility in Trello (originally used ClickUp)
 - Time wasn't allocated for testing and CI/CD integration
@@ -52,7 +52,7 @@ Key reflection: logic started leaking into UI and repository layers. More archit
 
 ## 🧠 Lessons Learned
 
-- It’s OK to simplify features — but not architecture
+- It’s OK to simplify features, but not architecture
 - Jetpack Compose needs performance mindfulness (recompositions matter)
 - Coroutines are powerful but easy to misuse without understanding the internals
 - The architecture you build reflects your "pattern recognition" across projects
@@ -61,10 +61,6 @@ Key reflection: logic started leaking into UI and repository layers. More archit
 
 > Screenshots and demo videos are available in the repository's `media/` folder.
 
-## 📂 Repository
-
-→ [GitHub: bron24_android](https://github.com/tisenres/bron24_android)
-
 ---
 
-If you're curious about building apps in Central Asia, Clean Architecture, or Kotlin Compose workflows — this repo is a practical showcase with real-world lessons.
+If you're curious about building apps with Clean Architecture or Kotlin Compose workflows, this repo is a practical showcase with real-world lessons.
