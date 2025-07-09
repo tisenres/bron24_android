@@ -9,7 +9,7 @@ This was a team project initiated in July 2024. I initially built the Android cl
 - OTP Authentication via phone number
 - Stadium listing with filter and search
 - Stadium detail view with images, location, and schedule
-- Booking flow (w/ backend confirmation, no payment integration yet)
+- Booking flow (backend confirmation, no payment integration yet)
 - View current and past bookings
 - User profile management
 - Interactive map using **Yandex Maps**
