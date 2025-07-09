@@ -93,9 +93,6 @@ Key reflection: logic started leaking into UI and repository layers. More archit
   <img src="https://github.com/user-attachments/assets/676633ae-b254-4650-907a-7e4e3f50dc2e" width="250" />
 </p>
 
-
-> Screenshots and demo videos are available in the repository's `media/` folder.
-
 ---
 
 If you're curious about building apps with Clean Architecture or Kotlin Compose workflows, this repo is a practical showcase with real-world lessons.
